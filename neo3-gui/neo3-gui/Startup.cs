@@ -29,7 +29,15 @@ namespace Neo
             var root = env.ContentRootPath;
             ContentRootPath = Path.Combine(root, "ClientApp");
 
-            //CommandLineTool.Run("npm start", ContentRootPath);
+            
+            CommandLineTool.Run("set BROWSER=none&&npm start", ContentRootPath, output =>
+            {
+                if (output.Contains("localhost:3000"))
+                {
+                    CommandLineTool.Run("electron .", ContentRootPath);
+
+                }
+            });
         }
 
 

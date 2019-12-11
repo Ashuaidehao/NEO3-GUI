@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -15,6 +16,8 @@ namespace Neo
         public static readonly bool IsMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
         public static readonly bool IsLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
+        public static readonly ConcurrentQueue<Process> CurrentProcesses=new ConcurrentQueue<Process>();
+
         private static string shell
         {
             get
@@ -25,7 +28,7 @@ namespace Neo
 
 
 
-        public static Process Run(string command,string workDirectory="")
+        public static Process Run(string command,string workDirectory="",Action<string> receiveOutput=null)
         {
             Process p = new Process();
             //设置要启动的应用程序
@@ -39,14 +42,15 @@ namespace Neo
             p.StartInfo.RedirectStandardOutput = true;
             // 输出错误
             p.StartInfo.RedirectStandardError = true;
+            //p.StartInfo.StandardOutputEncoding=Encoding.Unicode;
+            ;
             //不显示程序窗口
             //p.StartInfo.CreateNoWindow = true;
             p.OutputDataReceived += (s, r) =>
             {
                 if (r.Data == null)
                 {
-                    //electron had closed;
-                    Console.WriteLine("electron close");
+                    Console.WriteLine($"close");
                     p = null;
                     return;
                 }
@@ -62,14 +66,24 @@ namespace Neo
                 //            onAllWindowClose();
                 //    }
                 //}
-                Console.WriteLine("electron=>" + r.Data);
+                Console.WriteLine(r.Data);
+                receiveOutput?.Invoke(r.Data);
             };
             //启动程序
             p.Start();
             p.StandardInput.WriteLine(command);
             p.BeginOutputReadLine();
-
+            CurrentProcesses.Enqueue(p);
             return p;
+        }
+
+
+        public static void Close()
+        {
+            foreach (var currentProcess in CurrentProcesses)
+            {
+                currentProcess.Kill();
+            }
         }
     }
 }

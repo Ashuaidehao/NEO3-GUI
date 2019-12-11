@@ -10,9 +10,7 @@ namespace Neo
         static void Main(string[] args)
         {
 
-            //System.Diagnostics.Process.Start("CMD.exe", "npm start");
-
-
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
             CreateWebHostBuilder(args).Build().Start();
 
             while (true)
@@ -26,6 +24,12 @@ namespace Neo
             return WebHost.CreateDefaultBuilder(args)
                 .UseUrls(@"http://localhost:8081/")
                 .UseStartup<Startup>();
+        }
+
+
+        public static void CurrentDomain_ProcessExit(object sender,EventArgs e)
+        {
+            CommandLineTool.Close();
         }
     }
 }
