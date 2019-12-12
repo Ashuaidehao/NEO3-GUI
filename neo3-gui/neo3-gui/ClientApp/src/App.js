@@ -1,6 +1,18 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import ReconnectingWebSocket from 'reconnecting-websocket';
+
+//demo
+const rws = new ReconnectingWebSocket('ws://localhost:8081/');
+
+rws.addEventListener('open', () => {
+    rws.send('1111');
+});
+
+rws.onmessage = function(e) {
+  console.log(e.type + ":" + e.data);
+}
 
 function App() {
   return (
