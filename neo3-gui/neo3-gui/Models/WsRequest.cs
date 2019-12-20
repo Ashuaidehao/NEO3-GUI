@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Neo.Models
 {
-    public class Message
+    public class WsRequest
     {
         public string Id { get; set; }
         public string Method { get; set; }

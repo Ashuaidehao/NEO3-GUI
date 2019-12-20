@@ -2,6 +2,7 @@
 using System.Net;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Neo.Common;
 
 namespace Neo
 {
@@ -9,7 +10,6 @@ namespace Neo
     {
         static void Main(string[] args)
         {
-
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
             CreateWebHostBuilder(args).Build().Start();
 
@@ -22,12 +22,12 @@ namespace Neo
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return WebHost.CreateDefaultBuilder(args)
-                .UseUrls(@"http://localhost:8081/")
+                .UseKestrel(k=>k.Listen(IPAddress.Parse("127.0.0.1"),8081))
                 .UseStartup<Startup>();
         }
 
 
-        public static void CurrentDomain_ProcessExit(object sender,EventArgs e)
+        public static void CurrentDomain_ProcessExit(object sender, EventArgs e)
         {
             CommandLineTool.Close();
         }

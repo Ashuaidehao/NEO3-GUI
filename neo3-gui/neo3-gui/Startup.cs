@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.WebSockets;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Neo.Common;
 
 namespace Neo
 {
@@ -28,14 +29,12 @@ namespace Neo
             Configuration = configuration;
             var root = env.ContentRootPath;
             ContentRootPath = Path.Combine(root, "ClientApp");
-
             
             CommandLineTool.Run("set BROWSER=none&&npm start", ContentRootPath, output =>
             {
                 if (output.Contains("localhost:3000"))
                 {
                     CommandLineTool.Run("electron .", ContentRootPath);
-
                 }
             });
         }
@@ -44,7 +43,7 @@ namespace Neo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddSingleton<WebSocketHub>();
             services.AddWebSockets(option =>
             {
 
@@ -64,25 +63,43 @@ namespace Neo
                 {
                     if (context.WebSockets.IsWebSocketRequest)
                     {
+                        var hub = context.RequestServices.GetService<WebSocketHub>();
                         var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-                        await Echo(webSocket);
+                        var client = new WebSocketClient(webSocket);
+                        if (!hub.Accept(client))
+                        {
+                            // unaccepted connection
+                            await client.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Too many connections!");
+                            return;
+                        }
+
+    
+
+                        var _ = Task.Run(async () =>
+                        {
+                            try
+                            {
+                                await client.PushLoop();
+                            }
+                            catch (WebSocketException e)
+                            {
+                                Console.WriteLine(e);
+                                hub.Remove(client);
+                            }
+                        });
+
+                        await client.ReceiveLoop();
+
+                        //await Echo(webSocket);
                         //var message = await LoopSocket(webSocket);
                         //var data = Encoding.UTF8.GetBytes(message);
-
                         //await webSocket.SendAsync(new ArraySegment<byte>(data), WebSocketMessageType.Text, true, CancellationToken.None);
                         return;
                     }
                     await next();
                 });
             });
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseDeveloperExceptionPage();
-            //}
-            //else
-            //{
-            //    app.UseExceptionHandler("/Error");
-            //}
+
 
 
             //app.UseSpa(spa =>
