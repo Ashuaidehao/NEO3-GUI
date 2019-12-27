@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace Neo.Models
 {
-    public class Message
+    public enum WsMessageType
     {
-        public string Id { get; set; }
-        public string Method { get; set; }
-        public object Params { get; set; }
+        None = 0,
+        HeartBeat = 1,
+        Push = 2,
+        Result = 3,
+        Error = -1,
     }
 }

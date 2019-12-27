@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Neo
+namespace Neo.Common
 {
     public class CommandLineTool
     {
@@ -54,18 +50,7 @@ namespace Neo
                     p = null;
                     return;
                 }
-                //if (r.Data.IndexOf("[TAG]") == 0)
-                //{
-                //    var tag = r.Data.Substring(5);
-                //    this.tags.Enqueue(tag);
 
-                //    if (tag.IndexOf("all window closed.") == 0)
-                //    {
-                //        allWindowClose = true;
-                //        if (onAllWindowClose != null)
-                //            onAllWindowClose();
-                //    }
-                //}
                 Console.WriteLine(r.Data);
                 receiveOutput?.Invoke(r.Data);
             };

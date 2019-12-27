@@ -19,9 +19,9 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
+        "NEO_NETWORK": "private",
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      //"applicationUrl": "http://localhost:1844/"
+      }
     }
   }
 }
