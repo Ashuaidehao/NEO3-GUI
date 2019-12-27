@@ -13,5 +13,6 @@ namespace Neo.Models
         public WsMessageType Type { get; set; }
         public string Method { get; set; }
         public object Result { get; set; }
+
     }
 }

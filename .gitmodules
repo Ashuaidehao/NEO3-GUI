@@ -1,3 +1,6 @@
 [submodule "neo"]
 	path = neo
 	url = https://github.com/Ashuaidehao/neo.git
+[submodule "neo-cli"]
+	path = neo-cli
+	url = https://github.com/Ashuaidehao/neo-cli.git

@@ -12,5 +12,6 @@ namespace Neo.Models
         HeartBeat = 1,
         Push = 2,
         Result = 3,
+        Error = -1,
     }
 }

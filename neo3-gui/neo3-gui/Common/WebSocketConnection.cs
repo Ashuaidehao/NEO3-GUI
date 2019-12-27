@@ -10,37 +10,39 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Forms;
 using Neo.Invokers;
 using Neo.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Neo.Common
 {
-
-    public interface IWsClient
+    public interface IWebSocketConnection
     {
-        Task PushMessage(object message);
-        Task Close();
+        void PushMessage(WsMessage message);
     }
-    public class WebSocketClient
+    public class WebSocketConnection:IWebSocketConnection
     {
         private readonly WebSocket _socket;
 
-        private readonly BlockingCollection<object> _messagesQueue = new BlockingCollection<object>();
+        private readonly BlockingCollection<object> _pushMessagesQueue = new BlockingCollection<object>();
 
+        private readonly ArraySegment<byte> _buffer = WebSocket.CreateServerBuffer(4 * 1024);
 
+        public string ConnectionId { get; set; }
 
-        public WebSocketClient(WebSocket socket)
+        public WebSocketConnection(WebSocket socket)
         {
             _socket = socket;
+            ConnectionId = Guid.NewGuid().ToString("N");
         }
 
         /// <summary>
-        ///  send message (json format) to client in queue
+        ///  send message (json format) to connection in queue
         /// </summary>
         /// <param name="message"></param>
-        public void PushMessage(object message)
+        public void PushMessage(WsMessage message)
         {
             if (message != null)
             {
-                _messagesQueue.Add(message);
+                _pushMessagesQueue.Add(message);
             }
         }
 
@@ -50,7 +52,7 @@ namespace Neo.Common
         /// <returns></returns>
         public async Task PushLoop()
         {
-            foreach (var msg in _messagesQueue.GetConsumingEnumerable())
+            foreach (var msg in _pushMessagesQueue.GetConsumingEnumerable())
             {
                 await SendAsync(msg);
             }
@@ -77,42 +79,32 @@ namespace Neo.Common
             await _socket.CloseAsync(closeStatus, closeDescription, CancellationToken.None);
         }
 
-        public async Task ReceiveLoop()
-        {
-            var buffer = WebSocket.CreateServerBuffer(4 * 1024);
-            var result = await _socket.ReceiveAsync(buffer, CancellationToken.None);
-            while (!result.CloseStatus.HasValue)
-            {
-                try
-                {
-                    var input = Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
-                    var request = JsonSerializer.Deserialize<WsRequest>(input);
-                    InvokeAsync(request);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
 
-                result = await _socket.ReceiveAsync(buffer, CancellationToken.None);
+ 
+
+        /// <summary>
+        /// receive string from client
+        /// </summary>
+        /// <returns></returns>
+        public async Task<WebSocketStringResult> ReceiveStringAsync()
+        {
+            var receiveResult= await _socket.ReceiveAsync(_buffer, CancellationToken.None);
+            var result=new WebSocketStringResult(receiveResult.Count,receiveResult.MessageType,receiveResult.EndOfMessage,receiveResult.CloseStatus,receiveResult.CloseStatusDescription);
+            if (result.EndOfMessage)
+            {
+                result.Message = Encoding.UTF8.GetString(_buffer.Array, 0, result.Count);
             }
-            await CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription);
+            else
+            {
+                throw new Exception("too long message!");
+            }
+            return result;
         }
 
 
 
 
 
-        public async Task InvokeAsync(WsRequest request)
-        {
-            var result= await new WebSocketInvoker().Invoke(request);
-            PushMessage(result);
-
-        } 
-
-
-
- 
 
     }
 }

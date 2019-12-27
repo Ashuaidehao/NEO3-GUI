@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -8,15 +9,17 @@ namespace Neo
 {
     class Program
     {
+        public static GuiService Service=new GuiService();
+
         static void Main(string[] args)
         {
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
+
             CreateWebHostBuilder(args).Build().Start();
 
-            while (true)
-            {
-                Console.ReadLine();
-            }
+            Service.Run(args);
+            Service.Stop();
+
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)

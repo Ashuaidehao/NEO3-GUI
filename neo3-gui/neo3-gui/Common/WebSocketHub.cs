@@ -11,8 +11,8 @@ namespace Neo.Common
 {
     public class WebSocketHub
     {
-        private int _limitCount = 1;
-        private readonly ConcurrentDictionary<WebSocketClient, byte> _clients = new ConcurrentDictionary<WebSocketClient, byte>();
+        private int _limitCount = 10;
+        private readonly ConcurrentDictionary<WebSocketConnection, byte> _clients = new ConcurrentDictionary<WebSocketConnection, byte>();
 
         public WebSocketHub()
         {
@@ -21,7 +21,7 @@ namespace Neo.Common
 
 
 
-        public bool Accept(WebSocketClient client)
+        public bool Accept(WebSocketConnection connection)
         {
             lock (_clients)
             {
@@ -29,16 +29,16 @@ namespace Neo.Common
                 {
                     return false;
                 }
-                _clients.TryAdd(client, 0);
+                _clients.TryAdd(connection, 0);
                 return true;
             }
         }
 
-        public bool Remove(WebSocketClient client)
+        public bool Remove(WebSocketConnection connection)
         {
             lock (_clients)
             {
-                var success = _clients.TryRemove(client, out var removedClient);
+                var success = _clients.TryRemove(connection, out var removedClient);
                 return success;
             }
         }
@@ -58,6 +58,23 @@ namespace Neo.Common
                     }
                 }
                 await Task.Delay(TimeSpan.FromSeconds(3));
+            }
+        }
+
+
+        /// <summary>
+        /// Push Message to all Clients
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <returns></returns>
+        public void PushAll(WsMessage msg)
+        {
+            if (_clients.Any())
+            {
+                foreach (var client in _clients.Keys)
+                {
+                    client.PushMessage(msg);
+                }
             }
         }
 
