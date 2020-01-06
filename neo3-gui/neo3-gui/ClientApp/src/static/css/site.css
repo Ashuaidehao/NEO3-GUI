@@ -1,0 +1,39 @@
+
+a{
+    color: #333333;
+}
+
+.ant-layout{
+    padding: 30px;
+    text-align: center;
+}
+.ant-layout-content{
+    padding-bottom: 10px;
+}
+.ant-row{
+    min-height: 100px;
+}
+
+.home-icon{
+    border-top: 1px solid #DDDDDD;
+    padding-top: 30px;
+}
+.home-icon img{
+    height: 80px;
+    width: 80px;
+}
+.home-icon span{
+    display: inline-block;
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+
+/* font */
+.text-r{
+    text-align: right;
+}
+.text-l{
+    text-align: left;
+}
