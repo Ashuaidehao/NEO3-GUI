@@ -4,8 +4,8 @@ a{
 }
 
 .ant-layout{
-    padding: 30px;
-    text-align: center;
+    /* padding: 30px;
+    text-align: center; */
 }
 .ant-layout-content{
     padding-bottom: 10px;
@@ -36,4 +36,11 @@ a{
 }
 .text-l{
     text-align: left;
+}
+
+/* icon */
+.anticon-spin {
+    -webkit-animation: loadingCircle 3s infinite linear;
+    animation: loadingCircle 3s infinite linear;
+    color: #52c41a;
 }

@@ -6,7 +6,6 @@ import 'antd/dist/antd.css';
 const { Text } = Typography;
 
 
-
 class Sync extends React.Component{
   constructor(props){
     super(props);
@@ -58,11 +57,7 @@ class Sync extends React.Component{
     return (
       <div>
         <p>
-          <Icon type="info-circle" theme="twoTone" twoToneColor="#52c41a" />
-          <Text type="secondary"> 版本 v3.0.1</Text>
-        </p>
-        <p>
-          <Icon type="sync" /> 
+          <Icon type="sync" spin/> 
           <Text type="secondary"> {this.state.syncHeight} / {this.state.height} </Text>
           <Text>区块同步中</Text>
         </p>
