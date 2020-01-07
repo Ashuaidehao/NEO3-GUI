@@ -11,7 +11,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Neo.Common;
+using Neo.Common.Json;
 using Neo.IO.Json;
+using Neo.Wallets;
 
 namespace Neo
 {
@@ -24,27 +26,10 @@ namespace Neo
             IgnoreNullValues = true,
             PropertyNameCaseInsensitive = true,
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-            //Converters = { new JObjectConverter() }
+            Converters = { new UInt160Converter(), new UInt256Converter() }
         };
 
-        private class JObjectConverter : JsonConverter<JObject>
-        {
 
-            public override JObject Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-            {
-                throw new NotImplementedException();
-            }
-
-            public override void Write(Utf8JsonWriter writer, JObject value, JsonSerializerOptions options)
-            {
-                //writer.WriteStartObject();
-                //foreach (KeyValuePair<string, JObject> pair in value.Properties)
-                //{
-                //    writer.WriteString(pair.Key,pair.Value.ToString());
-                //}
-                //writer.WriteEndObject();
-            }
-        }
 
         /// <summary>
         /// 
@@ -152,6 +137,27 @@ namespace Neo
                 return val;
             }
             return null;
+        }
+
+
+
+        /// <summary>
+        /// convert private key string(wif or hex) to bytes
+        /// </summary>
+        /// <param name="privateKey"></param>
+        /// <returns></returns>
+        public static byte[] ToPrivateKeyBytes(this string privateKey)
+        {
+            byte[] keyBytes;
+            try
+            {
+                keyBytes = Wallet.GetPrivateKeyFromWIF(privateKey);
+            }
+            catch
+            {
+                keyBytes = privateKey.HexToBytes();
+            }
+            return keyBytes;
         }
     }
 }
