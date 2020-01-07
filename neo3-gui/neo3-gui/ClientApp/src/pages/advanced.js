@@ -3,7 +3,6 @@ import { Row, Col,Typography,Switch,Icon,Skeleton } from 'antd';
 import {Link} from 'react-router-dom';
 
 const { Title } = Typography;
-const DemoBox = props => <p className={`height-${props.value}`}>{props.children}</p>;
 
 class Advanced extends React.Component {
     state = {
@@ -16,7 +15,7 @@ class Advanced extends React.Component {
     componentDidMount(){
         setTimeout(() => {
             this.setState({ loading: false });
-        }, 1000);
+        }, 200);
     }
     render() {
         return (
@@ -28,16 +27,16 @@ class Advanced extends React.Component {
                         </Link>
                     </p>
                     <Title level={4}>链上治理</Title>
-                    <Row type="flex" justify="space-between" align="top">
-                        <Col span={4}>
-                            选举
+                    <Row gutter={[{ xs: 8, sm: 16, md: 24, lg: 32 }, 20]}>
+                        <Col span={6}>
+                            <span>选举</span>
                             <Switch defaultChecked className="Candidate"
                                 checkedChildren={<Icon type="check" />}
                                 unCheckedChildren={<Icon type="close" />}
                                 onChange={this.onChange}/>
                         </Col>
-                        <Col span={4}>
-                            投票
+                        <Col span={6}>
+                            <span>投票</span>
                             <Switch defaultChecked className="Candidate"
                                 checkedChildren={<Icon type="check" />}
                                 unCheckedChildren={<Icon type="close" />}
@@ -46,44 +45,46 @@ class Advanced extends React.Component {
                     </Row>
                     
                     <Title level={4}>开发工具</Title>
-                    <Row type="flex" justify="space-between" align="top">
-                        <Col span={4}>
-                            交易签名
+                    <Row gutter={[{ xs: 8, sm: 16, md: 24, lg: 32 }, 20]}>
+                        <Col span={6}>
+                            <span>交易签名</span>
                             <Switch defaultChecked className="Candidate"
                                 checkedChildren={<Icon type="check" />}
                                 unCheckedChildren={<Icon type="close" />}
                                 onChange={this.onChange}/>
                         </Col>
-                        <Col span={4}>
-                            文本签名
+                        <Col span={6}>
+                            <span>文本签名</span>
                             <Switch defaultChecked className="Candidate"
                                 checkedChildren={<Icon type="check" />}
                                 unCheckedChildren={<Icon type="close" />}
                                 onChange={this.onChange}/>
                         </Col>
-                        <Col span={4}>
-                            构造交易
+                        <Col span={6}>
+                            <span>构造交易</span>
                             <Switch defaultChecked className="Candidate"
                                 checkedChildren={<Icon type="check" />}
                                 unCheckedChildren={<Icon type="close" />}
                                 onChange={this.onChange}/>
                         </Col>
-                        <Col span={4}>
-                            广播交易
+                        <Col span={6}>
+                            <span>广播交易</span>
                             <Switch defaultChecked className="Candidate"
                                 checkedChildren={<Icon type="check" />}
                                 unCheckedChildren={<Icon type="close" />}
                                 onChange={this.onChange}/>
                         </Col>
-                        <Col span={4}>
-                            数据转换
+                    </Row>
+                    <Row gutter={[{ xs: 8, sm: 16, md: 24, lg: 32 }, 20]}>
+                        <Col span={6}>
+                            <span>数据转换</span>
                             <Switch defaultChecked className="Candidate"
                                 checkedChildren={<Icon type="check" />}
                                 unCheckedChildren={<Icon type="close" />}
                                 onChange={this.onChange}/>
                         </Col>
-                        <Col span={4}>
-                            更多功能敬请期待
+                        <Col span={6}>
+                            <span>更多功能敬请期待</span>
                         </Col>
                     </Row>
                 </Skeleton>
