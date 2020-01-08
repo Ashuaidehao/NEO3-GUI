@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using Neo.Models;
 
 namespace Neo.Common
 {
@@ -12,6 +13,12 @@ namespace Neo.Common
         {
             get => _asyncClient.Value;
             set => _asyncClient.Value = value;
+        }
+
+
+        protected ErrorResult Error(string message)
+        {
+            return new ErrorResult(message);
         }
     }
 }

@@ -27,10 +27,11 @@ namespace Neo.Services
             {
                 _hub.PushAll(new WsMessage()
                 {
-                    Type = WsMessageType.Push,
+                    MsgType = WsMessageType.Push,
+                    Method = "getSyncHeight",
                     Result = new HeightStateModel { SyncHeight = Blockchain.Singleton.Height, HeaderHeight = Blockchain.Singleton.HeaderHeight }
                 });
-                await Task.Delay(TimeSpan.FromSeconds(10));
+                await Task.Delay(TimeSpan.FromSeconds(1000));
             }
         }
 

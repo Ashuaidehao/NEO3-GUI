@@ -54,7 +54,7 @@ namespace Neo.Common
                 {
                     foreach (var client in _clients.Keys)
                     {
-                        client.PushMessage(new WsMessage { Type = WsMessageType.HeartBeat, Result = "heart beat" });
+                        client.PushMessage(new WsMessage { MsgType = WsMessageType.HeartBeat, Result = "heart beat" });
                     }
                 }
                 await Task.Delay(TimeSpan.FromSeconds(3));

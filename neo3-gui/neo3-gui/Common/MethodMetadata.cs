@@ -79,18 +79,29 @@ namespace Neo.Common
                 return paras;
             }
 
-            if (inputParas.ValueKind == JsonValueKind.Array)
+            //only accept one parameter
+            if (_parameters.Length == 1)
             {
+                var parameterType = _parameters[0].ParameterType;
                 //input paras is Array format
-                paras.AddRange(_parameters.Select((p, index) => inputParas[index].GetRawText().DeserializeJson(p.ParameterType)));
-                return paras;
+                if (inputParas.ValueKind == JsonValueKind.Array && parameterType.IsArray)
+                {
+                    //only accept one array parameter
+                    paras.Add(inputParas.GetRawText().DeserializeJson(parameterType));
+                    return paras;
+                }
+
+                if (!parameterType.IsPrimitive && !parameterType.IsArray && parameterType != typeof(string))
+                {
+                    //only accept one Object parameter
+                    paras.Add(inputParas.GetRawText().DeserializeJson(_parameters[0].ParameterType));
+                    return paras;
+                }
             }
 
-            // input paras is Object format
-            if (_parameters.Length == 1 && !_parameters[0].ParameterType.IsPrimitive && typeof(string) != _parameters[0].ParameterType)
+            if (inputParas.ValueKind == JsonValueKind.Array)
             {
-                //only accept one Object parameter
-                paras.Add(inputParas.GetRawText().DeserializeJson(_parameters[0].ParameterType));
+                paras.AddRange(_parameters.Select((p, index) => inputParas[index].GetRawText().DeserializeJson(p.ParameterType)));
                 return paras;
             }
 

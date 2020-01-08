@@ -58,7 +58,7 @@ namespace Neo.Common
                 return await method.Invoke(instance, request);
 
             }
-            return $"method [{request.Method}] not found!";
+            return new ErrorResult($"method [{request.Method}] not found!");
         }
 
 

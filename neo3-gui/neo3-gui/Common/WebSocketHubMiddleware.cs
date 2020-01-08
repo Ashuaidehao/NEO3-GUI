@@ -108,7 +108,7 @@ namespace Neo.Common
             try
             {
                 var request = requestString.DeserializeJson<WsRequest>();
-                message.Type = WsMessageType.Result;
+                message.MsgType = WsMessageType.Result;
                 message.Id = request.Id;
                 message.Method = request.Method;
 
@@ -118,15 +118,21 @@ namespace Neo.Common
 
                 var executor = _provider.GetService<WebSocketExecutor>();
                 var result = await executor.Excute(request);
-                message.Result = result;
-            }
-            catch (InvokerException invokerException)
-            {
-                message.Result = invokerException.Message;
+                if (result is ErrorResult error)
+                {
+                    message.MsgType = WsMessageType.Error;
+                    message.Message = error.Message;
+                }
+                else
+                {
+                    message.Result = result;
+
+                }
             }
             catch (Exception e)
             {
-                message.Type = WsMessageType.Error;
+                message.MsgType = WsMessageType.Error;
+                message.Message = e.Message;
                 message.Result = e.ToString();
             }
             finally
