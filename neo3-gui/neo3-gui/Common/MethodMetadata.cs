@@ -75,37 +75,43 @@ namespace Neo.Common
             var paras = new List<object>();
             if (_parameters.Length == 0)
             {
-                //no parameters
+                //no parameter method
                 return paras;
             }
-
+            if (inputParas.ValueKind == JsonValueKind.Undefined)
+            {
+                //no input paras
+                paras.AddRange(_parameters.Select(p=>p.DefaultValue));
+                return paras;
+            }
             //only accept one parameter
             if (_parameters.Length == 1)
             {
                 var parameterType = _parameters[0].ParameterType;
-                //input paras is Array format
+                
                 if (inputParas.ValueKind == JsonValueKind.Array && parameterType.IsArray)
                 {
-                    //only accept one array parameter
+                    // input paras is Array format, method only accept one array parameter
                     paras.Add(inputParas.GetRawText().DeserializeJson(parameterType));
                     return paras;
                 }
 
                 if (!parameterType.IsPrimitive && !parameterType.IsArray && parameterType != typeof(string))
                 {
-                    //only accept one Object parameter
+                    //method only accept one Object parameter
                     paras.Add(inputParas.GetRawText().DeserializeJson(_parameters[0].ParameterType));
                     return paras;
                 }
             }
 
+            //input para is array, method accept many parameters
             if (inputParas.ValueKind == JsonValueKind.Array)
             {
                 paras.AddRange(_parameters.Select((p, index) => inputParas[index].GetRawText().DeserializeJson(p.ParameterType)));
                 return paras;
             }
 
-            // others
+            // input para is Object, method accept many parameters
             foreach (var parameterInfo in _parameters)
             {
                 if (inputParas.TryGetProperty(parameterInfo.Name, out var paraVal))
@@ -124,7 +130,8 @@ namespace Neo.Common
                     else
                     {
                         //not found, set default value
-                        paras.Add(parameterInfo.ParameterType.GetDefaultValue());
+                        //paras.Add(parameterInfo.ParameterType.GetDefaultValue());
+                        paras.Add(parameterInfo.DefaultValue);
                     }
                 }
             }
