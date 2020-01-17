@@ -57,6 +57,18 @@ namespace Neo.Invokers
 
 
         /// <summary>
+        /// close wallet
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> CloseWallet()
+        {
+            Program.Service.CloseWallet();
+            return true;
+        }
+
+
+
+        /// <summary>
         /// create new wallet
         /// </summary>
         /// <param name="path"></param>
@@ -326,15 +338,15 @@ namespace Neo.Invokers
                 return Error("please open wallet first.");
             }
             UInt160 assetId = ConvertToAssetId(asset, out var convertError);
-            if (assetId==null)
+            if (assetId == null)
             {
                 return Error($"input asset is not valid:{convertError}");
             }
-            UInt160 from = ConvertToAddress(sender,out _);
-            UInt160 to = ConvertToAddress(receiver,out var receiverAddressError);
+            UInt160 from = ConvertToAddress(sender, out _);
+            UInt160 to = ConvertToAddress(receiver, out var receiverAddressError);
             if (to == null)
             {
-                return Error( $"receiver address is not valid:{receiverAddressError}");
+                return Error($"receiver address is not valid:{receiverAddressError}");
             }
             AssetDescriptor descriptor = new AssetDescriptor(assetId);
             if (!BigDecimal.TryParse(amount, descriptor.Decimals, out BigDecimal sendAmount) || sendAmount.Sign <= 0)
@@ -412,7 +424,7 @@ namespace Neo.Invokers
             catch (Exception e)
             {
                 error = e.Message;
-                return null ;
+                return null;
             }
         }
 

@@ -126,7 +126,6 @@ namespace Neo.Common
                 else
                 {
                     message.Result = result;
-
                 }
             }
             catch (Exception e)

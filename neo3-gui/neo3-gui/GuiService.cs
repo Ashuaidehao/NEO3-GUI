@@ -17,5 +17,14 @@ namespace Neo
         {
             Start(args);
         }
+
+
+        /// <summary>
+        /// close wallet
+        /// </summary>
+        public void CloseWallet()
+        {
+            base.OnCommand(new[] { "close", "wallet" });
+        }
     }
 }
