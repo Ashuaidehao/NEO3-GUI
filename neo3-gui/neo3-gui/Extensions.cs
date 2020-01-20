@@ -14,7 +14,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Neo.Common;
 using Neo.Common.Json;
 using Neo.IO.Json;
+using Neo.Ledger;
+using Neo.Persistence;
+using Neo.SmartContract;
+using Neo.Tools;
+using Neo.VM;
 using Neo.Wallets;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Neo
 {
@@ -81,6 +87,10 @@ namespace Neo
         /// <returns></returns>
         public static T DeserializeJson<T>(this string json)
         {
+            if (json.IsNull())
+            {
+                return default(T);
+            }
             return JsonSerializer.Deserialize<T>(json, SerializeOptions);
         }
 
@@ -181,6 +191,64 @@ namespace Neo
         public static bool NotNull(this string text)
         {
             return !IsNull(text);
+        }
+
+
+        /// <summary>
+        /// query balance
+        /// </summary>
+        /// <param name="addresses"></param>
+        /// <param name="assetId"></param>
+        /// <returns></returns>
+        public static List<BigDecimal> GetBalanceOf(this IEnumerable<UInt160> addresses, UInt160 assetId)
+        {
+            var assetInfo = AssetCache.GetAssetInfo(assetId);
+            if (assetInfo == null)
+            {
+                throw new ArgumentException($"invalid assetId:[{assetId}]");
+            }
+            using SnapshotView snapshot = Blockchain.Singleton.GetSnapshot();
+            using var sb = new ScriptBuilder();
+            foreach (var address in addresses)
+            {
+                sb.EmitAppCall(assetId, "balanceOf", address);
+            }
+            using ApplicationEngine engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
+            if (engine.State.HasFlag(VMState.FAULT))
+            {
+                throw new Exception($"query balance error");
+            }
+            var result = engine.ResultStack.Select(p => p.GetBigInteger());
+            return result.Select(bigInt => new BigDecimal(bigInt, assetInfo.Decimals)).ToList();
+        }
+
+
+
+        /// <summary>
+        /// query balance
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="assetId"></param>
+        /// <returns></returns>
+        public static BigDecimal GetBalanceOf(this UInt160 address, UInt160 assetId)
+        {
+            var assetInfo = AssetCache.GetAssetInfo(assetId);
+            if (assetInfo == null)
+            {
+                return new BigDecimal(0, 0);
+            }
+            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            using var sb = new ScriptBuilder();
+
+            sb.EmitAppCall(assetId, "balanceOf", address);
+
+            using var engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
+            if (engine.State.HasFlag(VMState.FAULT))
+            {
+                return new BigDecimal(0, 0);
+            }
+            var balances = engine.ResultStack.Pop().GetBigInteger();
+            return new BigDecimal(balances, assetInfo.Decimals);
         }
     }
 }

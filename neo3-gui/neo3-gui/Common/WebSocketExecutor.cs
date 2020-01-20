@@ -48,6 +48,10 @@ namespace Neo.Common
 
         public async Task<object> Excute(WsRequest request)
         {
+            if (request.Method.IsNull())
+            {
+                return new ErrorResult($"method not found!");
+            }
             if (_methods.TryGetValue(request.Method, out var method))
             {
                 var instance = _provider.GetService(method.DeclaringType);

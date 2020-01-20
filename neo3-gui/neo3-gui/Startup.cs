@@ -15,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Neo.Common;
+using Neo.Models.Jobs;
 using Neo.Services;
 
 
@@ -31,7 +32,7 @@ namespace Neo
             Configuration = configuration;
             var root = env.ContentRootPath;
             ContentRootPath = Path.Combine(root, "ClientApp");
-            
+
             CommandLineTool.Run("set BROWSER=none&&npm start", ContentRootPath, output =>
             {
                 if (output.Contains("localhost:3000"))
@@ -61,9 +62,10 @@ namespace Neo
             app.UseMiddleware<JsonRpcMiddleware>();
             app.UseMiddleware<WebSocketHubMiddleware>();
 
-            app.UseNotificationService();
+            var notify = app.UseNotificationService();
+            notify.Register(new SyncHeightJob(TimeSpan.FromSeconds(15)));
+            notify.Register(new SyncWalletJob(TimeSpan.FromSeconds(10)));
 
-            
             //app.UseSpa(spa =>
             //{
             //    spa.Options.SourcePath = "ClientApp";
@@ -74,6 +76,6 @@ namespace Neo
             //    }
             //});
         }
-        
+
     }
 }

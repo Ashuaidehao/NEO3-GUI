@@ -29,7 +29,8 @@ namespace Neo.Common
             context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST";
             context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type";
             context.Response.Headers["Access-Control-Max-Age"] = "31536000";
-            if (context.Request.Method != "GET" && context.Request.Method != "POST")
+            if (context.Request.Method != "GET" && context.Request.Method != "POST"
+                || context.WebSockets.IsWebSocketRequest)
             {
                 await next(context);
                 return;
@@ -63,6 +64,7 @@ namespace Neo.Common
                 var request = new WsRequest();
                 request.Id = httpRequest.Query["id"];
                 request.Method = httpRequest.Query["method"];
+                //var parameters = httpRequest.Query["params"].ToString();
                 request.Params = httpRequest.Query["params"].ToString().DeserializeJson<JsonElement>();
                 return request;
             }
