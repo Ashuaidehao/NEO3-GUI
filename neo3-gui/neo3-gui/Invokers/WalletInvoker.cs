@@ -474,8 +474,8 @@ namespace Neo.Invokers
         private List<AccountModel> GetNeoAndGas(IEnumerable<AccountModel> accounts)
         {
             var addresses = accounts.Select(t => t.ScriptHash).ToList();
-            var neos = GetBalanceOf(addresses, NativeContract.NEO.Hash);
-            var gases = GetBalanceOf(addresses, NativeContract.GAS.Hash);
+            var neos = addresses.GetBalanceOf(NativeContract.NEO.Hash);
+            var gases = addresses.GetBalanceOf(NativeContract.GAS.Hash);
 
             return accounts.Select((account, index) =>
             {
@@ -484,53 +484,6 @@ namespace Neo.Invokers
                 return account;
 
             }).ToList();
-
-        }
-
-
-        private List<BigDecimal> GetBalanceOf(IEnumerable<UInt160> addresses, UInt160 assetId)
-        {
-            var assetInfo = AssetCache.GetAssetInfo(assetId);
-            if (assetInfo == null)
-            {
-                throw new ArgumentException($"invalid assetId:[{assetId}]");
-            }
-            using SnapshotView snapshot = Blockchain.Singleton.GetSnapshot();
-            using var sb = new ScriptBuilder();
-
-            foreach (var address in addresses)
-            {
-                sb.EmitAppCall(assetId, "balanceOf", address);
-            }
-            using ApplicationEngine engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
-            if (engine.State.HasFlag(VMState.FAULT))
-            {
-                throw new Exception($"query balance error");
-            }
-            var result = engine.ResultStack.Select(p => p.GetBigInteger());
-            return result.Select(bigInt => new BigDecimal(bigInt, assetInfo.Decimals)).ToList();
-        }
-
-        private BigDecimal GetBalanceOf(UInt160 address, UInt160 assetId)
-        {
-            var assetInfo = AssetCache.GetAssetInfo(assetId);
-            if (assetInfo == null)
-            {
-                return new BigDecimal(0, 0);
-            }
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
-            using var sb = new ScriptBuilder();
-
-            sb.EmitAppCall(assetId, "balanceOf", address);
-
-            using var engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
-            if (engine.State.HasFlag(VMState.FAULT))
-            {
-                return new BigDecimal(0, 0);
-            }
-            BigInteger balances = engine.ResultStack.Pop().GetBigInteger();
-
-            return new BigDecimal(balances, assetInfo.Decimals);
         }
 
         #endregion
