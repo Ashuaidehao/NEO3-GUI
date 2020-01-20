@@ -13,6 +13,11 @@ namespace Neo.Invokers
     {
 
 
+        /// <summary>
+        /// query transaction info
+        /// </summary>
+        /// <param name="txId"></param>
+        /// <returns></returns>
         public async Task<object> GetTransaction(string txId)
         {
             var transaction = Blockchain.Singleton.GetTransaction(UInt256.Parse(txId));
@@ -22,5 +27,7 @@ namespace Neo.Invokers
             }
             return $"TxId[{txId}] not found!";
         }
+
+        
     }
 }

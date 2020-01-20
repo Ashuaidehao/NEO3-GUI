@@ -15,10 +15,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Neo.Common;
-using Neo.Invokers;
 using Neo.Services;
-using WebSocketContext = System.Net.WebSockets.WebSocketContext;
-using WebSocketMiddleware = Microsoft.AspNetCore.WebSockets.WebSocketMiddleware;
+
 
 namespace Neo
 {
@@ -49,6 +47,7 @@ namespace Neo
         {
             services.AddWebSocketInvoker();
             services.AddSingleton<NotificationService>();
+            services.AddSingleton<JsonRpcMiddleware>();
             services.AddWebSockets(option =>
             {
 
@@ -59,7 +58,7 @@ namespace Neo
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseWebSockets();
-
+            app.UseMiddleware<JsonRpcMiddleware>();
             app.UseMiddleware<WebSocketHubMiddleware>();
 
             app.UseNotificationService();

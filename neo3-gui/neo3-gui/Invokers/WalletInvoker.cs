@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Numerics;
-//using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Akka.Util.Internal;
@@ -23,6 +22,10 @@ using Neo.Wallets.NEP6;
 using Neo.Wallets.SQLite;
 using VMArray = Neo.VM.Types.Array;
 using Neo.Cryptography.ECC;
+using Neo.Network.P2P;
+using Neo.Network.P2P.Payloads;
+using Akka.Actor;
+using Neo.Models.Transactions;
 
 
 namespace Neo.Invokers
@@ -30,6 +33,7 @@ namespace Neo.Invokers
     public class WalletInvoker : Invoker
     {
         private WebSocketSession _session;
+        protected Wallet CurrentWallet => Program.Service.CurrentWallet;
 
 
         public WalletInvoker(WebSocketSession session)
@@ -47,35 +51,21 @@ namespace Neo.Invokers
         public async Task<WalletModel> OpenWallet(string path, string password)
         {
             Program.Service.OpenWallet(path, password);
-            var result = new WalletModel();
-            using (var snapshot = Blockchain.Singleton.GetSnapshot())
-            {
-                foreach (var walletAccount in Program.Service.CurrentWallet.GetAccounts())
-                {
-                    var account = new AccountModel()
-                    {
-                        ScriptHash = walletAccount.ScriptHash,
-                        Address = walletAccount.Address
-                    };
-
-                    if (walletAccount.Contract.Script.IsMultiSigContract(out _, out _))
-                    {
-                        account.AccountType = AccountType.MultiSignature;
-                    }
-                    else if (walletAccount.Contract.Script.IsSignatureContract())
-                    {
-                        account.AccountType = AccountType.Standard;
-                    }
-                    else if (snapshot.Contracts.TryGet(walletAccount.Contract.ScriptHash) != null)
-                    {
-                        account.AccountType = AccountType.DeployedContract;
-                    }
-                    result.Accounts.Add(account);
-                }
-            }
-            GetNeoAndGas(result.Accounts);
-            return result;
+            return GetWalletAddress(CurrentWallet, int.MaxValue);
         }
+
+
+
+        /// <summary>
+        /// close wallet
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> CloseWallet()
+        {
+            Program.Service.CloseWallet();
+            return true;
+        }
+
 
 
         /// <summary>
@@ -130,12 +120,12 @@ namespace Neo.Invokers
         /// <returns></returns>
         public async Task<object> CreateAddress()
         {
-            if (Program.Service.CurrentWallet == null)
+            if (CurrentWallet == null)
             {
                 return Error($"please open wallet first.");
             }
-            var newAccount = Program.Service.CurrentWallet.CreateAccount();
-            if (Program.Service.CurrentWallet is NEP6Wallet wallet)
+            var newAccount = CurrentWallet.CreateAccount();
+            if (CurrentWallet is NEP6Wallet wallet)
             {
                 wallet.Save();
             }
@@ -153,7 +143,7 @@ namespace Neo.Invokers
         /// <returns></returns>
         public async Task<object> CreateMultiAddress(int limit, string[] publicKeys)
         {
-            if (Program.Service.CurrentWallet == null)
+            if (CurrentWallet == null)
             {
                 return Error($"please open wallet first.");
             }
@@ -164,9 +154,9 @@ namespace Neo.Invokers
                 return Error("create multi address fail!");
             }
             var hashSet = new HashSet<ECPoint>(points);
-            var key = Program.Service.CurrentWallet.GetAccounts().FirstOrDefault(p => p.HasKey && hashSet.Contains(p.GetKey().PublicKey))?.GetKey();
-            var newAccount = Program.Service.CurrentWallet.CreateAccount(contract, key);
-            if (Program.Service.CurrentWallet is NEP6Wallet wallet)
+            var key = CurrentWallet.GetAccounts().FirstOrDefault(p => p.HasKey && hashSet.Contains(p.GetKey().PublicKey))?.GetKey();
+            var newAccount = CurrentWallet.CreateAccount(contract, key);
+            if (CurrentWallet is NEP6Wallet wallet)
             {
                 wallet.Save();
             }
@@ -187,7 +177,7 @@ namespace Neo.Invokers
         /// <returns></returns>
         public async Task<object> CreateContractAddress(ContractParameterType[] parameterTypes, string script, string privateKey)
         {
-            if (Program.Service.CurrentWallet == null)
+            if (CurrentWallet == null)
             {
                 return Error($"please open wallet first.");
             }
@@ -196,10 +186,10 @@ namespace Neo.Invokers
             {
                 return Error("create multi address fail!");
             }
-            byte[] keyBytes=privateKey.ToPrivateKeyBytes();
+            byte[] keyBytes = privateKey.ToPrivateKeyBytes();
             var key = new KeyPair(keyBytes);
-            var newAccount = Program.Service.CurrentWallet.CreateAccount(contract, key);
-            if (Program.Service.CurrentWallet is NEP6Wallet wallet)
+            var newAccount = CurrentWallet.CreateAccount(contract, key);
+            if (CurrentWallet is NEP6Wallet wallet)
             {
                 wallet.Save();
             }
@@ -217,21 +207,29 @@ namespace Neo.Invokers
         /// <returns></returns>
         public async Task<object> DeleteAddress(string[] addresses)
         {
-            if (Program.Service.CurrentWallet == null)
+            if (CurrentWallet == null)
             {
                 return Error($"please open wallet first.");
             }
-            var result = new List<bool>();
-            foreach (var address in addresses)
-            {
-                var scriptHash = address.ToScriptHash();
-                result.Add(Program.Service.CurrentWallet.DeleteAccount(scriptHash));
-            }
-            if (Program.Service.CurrentWallet is NEP6Wallet wallet)
+            var result = addresses.Select(address => address.ToScriptHash()).Select(scriptHash => CurrentWallet.DeleteAccount(scriptHash)).ToList();
+            if (CurrentWallet is NEP6Wallet wallet)
             {
                 wallet.Save();
             }
             return result;
+        }
+
+        /// <summary>
+        /// list current wallet address
+        /// </summary>
+        /// <returns></returns>
+        public async Task<object> ListAddress(int count = 100)
+        {
+            if (CurrentWallet == null)
+            {
+                return Error($"please open wallet first.");
+            }
+            return GetWalletAddress(CurrentWallet, count);
         }
 
         /// <summary>
@@ -241,7 +239,7 @@ namespace Neo.Invokers
         /// <returns></returns>
         public async Task<object> ImportWatchOnlyAddress(string[] addresses)
         {
-            if (Program.Service.CurrentWallet == null)
+            if (CurrentWallet == null)
             {
                 return Error($"please open wallet first.");
             }
@@ -249,14 +247,14 @@ namespace Neo.Invokers
             foreach (var address in addresses)
             {
                 var scriptHash = address.ToScriptHash();
-                var account = Program.Service.CurrentWallet.CreateAccount(scriptHash);
+                var account = CurrentWallet.CreateAccount(scriptHash);
                 importedAccounts.Add(new AccountModel
                 {
                     Address = account.Address,
                     ScriptHash = account.ScriptHash,
                 });
             }
-            if (Program.Service.CurrentWallet is NEP6Wallet wallet)
+            if (CurrentWallet is NEP6Wallet wallet)
             {
                 wallet.Save();
             }
@@ -271,21 +269,21 @@ namespace Neo.Invokers
         /// <returns></returns>
         public async Task<object> ImportWif(string[] wifs)
         {
-            if (Program.Service.CurrentWallet == null)
+            if (CurrentWallet == null)
             {
                 return Error($"please open wallet first.");
             }
             var importedAccounts = new List<AccountModel>();
             foreach (var wif in wifs)
             {
-                var account = Program.Service.CurrentWallet.Import(wif);
+                var account = CurrentWallet.Import(wif);
                 importedAccounts.Add(new AccountModel
                 {
                     Address = account.Address,
                     ScriptHash = account.ScriptHash,
                 });
             }
-            if (Program.Service.CurrentWallet is NEP6Wallet wallet)
+            if (CurrentWallet is NEP6Wallet wallet)
             {
                 wallet.Save();
             }
@@ -300,12 +298,12 @@ namespace Neo.Invokers
         /// <returns></returns>
         public async Task<object> ShowPrivateKey(string address)
         {
-            if (Program.Service.CurrentWallet == null)
+            if (CurrentWallet == null)
             {
                 return Error($"please open wallet first.");
             }
             var scriptHash = address.ToScriptHash();
-            var account = Program.Service.CurrentWallet.GetAccount(scriptHash);
+            var account = CurrentWallet.GetAccount(scriptHash);
             if (account == null)
             {
                 return Error($"can not find selected address[{address}]");
@@ -325,8 +323,153 @@ namespace Neo.Invokers
         }
 
 
+        /// <summary>
+        /// send asset
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="receiver"></param>
+        /// <param name="amount"></param>
+        /// <param name="asset"></param>
+        /// <returns></returns>
+        public async Task<object> SendToAddress(string sender, string receiver, string amount, string asset = "neo")
+        {
+            if (CurrentWallet == null)
+            {
+                return Error("please open wallet first.");
+            }
+            UInt160 assetId = ConvertToAssetId(asset, out var convertError);
+            if (assetId == null)
+            {
+                return Error($"input asset is not valid:{convertError}");
+            }
+            UInt160 from = ConvertToAddress(sender, out _);
+            UInt160 to = ConvertToAddress(receiver, out var receiverAddressError);
+            if (to == null)
+            {
+                return Error($"receiver address is not valid:{receiverAddressError}");
+            }
+            AssetDescriptor descriptor = new AssetDescriptor(assetId);
+            if (!BigDecimal.TryParse(amount, descriptor.Decimals, out BigDecimal sendAmount) || sendAmount.Sign <= 0)
+            {
+                return Error("Incorrect Amount Format");
+            }
+            Transaction tx = CurrentWallet.MakeTransaction(new[]
+            {
+                new TransferOutput
+                {
+                    AssetId = assetId,
+                    Value = sendAmount,
+                    ScriptHash = to
+                }
+            }, from);
+
+            if (tx == null)
+            {
+                return Error("Insufficient funds");
+            }
+
+            ContractParametersContext context = new ContractParametersContext(tx);
+            CurrentWallet.Sign(context);
+            if (!context.Completed)
+            {
+                return Error($"SignatureContext:{context}");
+            }
+            tx.Witnesses = context.GetWitnesses();
+            Program.Service.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+            return new TransactionModel(tx);
+        }
+
         #region Private
 
+        /// <summary>
+        /// convert input address string to address hash
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="error"></param>
+        /// <returns></returns>
+        private UInt160 ConvertToAddress(string address, out string error)
+        {
+            error = "";
+            try
+            {
+                return address.ToScriptHash();
+            }
+            catch (Exception e)
+            {
+                error = e.Message;
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// convert input asset string to asset hash
+        /// </summary>
+        /// <param name="asset"></param>
+        /// <returns></returns>
+        private UInt160 ConvertToAssetId(string asset, out string error)
+        {
+            error = "";
+            if ("neo".Equals(asset, StringComparison.OrdinalIgnoreCase))
+            {
+                return NativeContract.NEO.Hash;
+            }
+            if ("gas".Equals(asset, StringComparison.OrdinalIgnoreCase))
+            {
+                return NativeContract.GAS.Hash;
+            }
+            try
+            {
+                return UInt160.Parse(asset);
+            }
+            catch (Exception e)
+            {
+                error = e.Message;
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// get all address info from wallet
+        /// </summary>
+        /// <param name="wallet"></param>
+        /// <returns></returns>
+        private WalletModel GetWalletAddress(Wallet wallet, int count)
+        {
+            var result = new WalletModel();
+            using (var snapshot = Blockchain.Singleton.GetSnapshot())
+            {
+                result.Accounts.AddRange(wallet.GetAccounts().Take(count).Select(account => new AccountModel()
+                {
+                    ScriptHash = account.ScriptHash,
+                    Address = account.Address,
+                    WatchOnly = account.WatchOnly,
+                    AccountType = GetAccountType(account, snapshot),
+                }));
+            }
+            GetNeoAndGas(result.Accounts);
+            return result;
+        }
+
+
+        private AccountType GetAccountType(WalletAccount account, SnapshotView snapshot)
+        {
+            if (account.Contract != null)
+            {
+                if (account.Contract.Script.IsMultiSigContract(out _, out _))
+                {
+                    return AccountType.MultiSignature;
+                }
+                if (account.Contract.Script.IsSignatureContract())
+                {
+                    return AccountType.Standard;
+                }
+                if (snapshot.Contracts.TryGet(account.Contract.ScriptHash) != null)
+                {
+                    return AccountType.DeployedContract;
+                }
+            }
+            return AccountType.NonStandard;
+        }
 
         private List<AccountModel> GetNeoAndGas(IEnumerable<AccountModel> accounts)
         {

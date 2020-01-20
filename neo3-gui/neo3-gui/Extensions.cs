@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Neo.Common;
 using Neo.Common.Json;
@@ -26,7 +27,7 @@ namespace Neo
             IgnoreNullValues = true,
             PropertyNameCaseInsensitive = true,
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-            Converters = { new UInt160Converter(), new UInt256Converter() }
+            Converters = { new UInt160Converter(), new UInt256Converter(),new StringConverter() }
         };
 
 
@@ -158,6 +159,28 @@ namespace Neo
                 keyBytes = privateKey.HexToBytes();
             }
             return keyBytes;
+        }
+
+
+        /// <summary>
+        /// string is null or white space
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static bool IsNull(this string text)
+        {
+            return string.IsNullOrWhiteSpace(text);
+        }
+
+
+        /// <summary>
+        /// string is not null or white space
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static bool NotNull(this string text)
+        {
+            return !IsNull(text);
         }
     }
 }

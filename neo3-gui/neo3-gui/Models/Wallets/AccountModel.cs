@@ -6,6 +6,8 @@
         public string Address { get; set; }
         public AccountType AccountType { get; set; } = AccountType.Standard;
 
+        public bool WatchOnly { get; set; }
+
         public string Neo { get; set; }
         public string Gas { get; set; }
     }

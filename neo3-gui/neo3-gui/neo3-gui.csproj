@@ -42,7 +42,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.0" />
-    <PackageReference Include="Neo.LevelDb.Dev" Version="3.0.0-pre3" />
+    <PackageReference Include="Neo.LevelDb.Dev" Version="3.0.0-pre4" />
   </ItemGroup>
 
 
@@ -83,4 +83,5 @@
       </ResolvedFileToPublish>
     </ItemGroup>
   </Target>
+  <ProjectExtensions><VisualStudio><UserProperties clientapp_4package_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 </Project>
