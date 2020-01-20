@@ -135,7 +135,6 @@ class Wallet extends React.Component{
         }else{
           message.info("钱包文件或密码错误，请检查后重试",2);
         }
-        // ws.close()
     }
     
     ws.onclose = function(e) {
