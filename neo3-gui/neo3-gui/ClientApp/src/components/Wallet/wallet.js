@@ -4,6 +4,7 @@ import 'antd/dist/antd.css';
 import {Link} from 'react-router-dom';
 import { Upload,message,Input, Button, Icon } from 'antd';
 import { element } from 'prop-types';
+import axios from 'axios';
 
 const remote = window.remote;
 const {dialog} = window.remote;
@@ -35,6 +36,21 @@ class Wallet extends React.Component{
     },
   }
   UNSAFE_componentWillMount(){
+    console.log(111);
+    axios.post('http://localhost:8081', {
+      "id":"1234",
+      "method": "OpenWallet",
+      "params": {
+          "path": "C:\\Users\\1860005\\Desktop\\2.neo3.json",
+          "password":"123456"
+      }
+    })
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
   }
   savedialog = () => {
     dialog.showSaveDialog({
@@ -102,50 +118,50 @@ class Wallet extends React.Component{
       return;
     }
     this.setState({ iconLoading: true });
-    var ws = new WebSocket("ws://localhost:8081");
-    let da = {
-      "id":"1234",
-      "method": "OpenWallet",
-      "params": {
-        "path": path,
-        "password": "123456"
-      }
-    };
+    // var ws = new WebSocket("ws://localhost:8081");
     // let da = {
     //   "id":"1234",
     //   "method": "OpenWallet",
     //   "params": {
     //     "path": path,
-    //     "password": pass
+    //     "password": "123456"
     //   }
     // };
-    ws.onopen = function() {
+    // // let da = {
+    // //   "id":"1234",
+    // //   "method": "OpenWallet",
+    // //   "params": {
+    // //     "path": path,
+    // //     "password": pass
+    // //   }
+    // // };
+    // ws.onopen = function() {
       
-      ws.send(JSON.stringify(da));
+    //   ws.send(JSON.stringify(da));
       
-      console.log("数据发送中...");
-    };
+    //   console.log("数据发送中...");
+    // };
     
-    ws.onmessage = function(e) {
-        let data = JSON.parse(e.data);
-        console.log(data)
-        if(data.msgType == 3){
-          _this.setState({ iconLoading: false });
-          message.success("钱包文件已选择",2);
-        }else{
-          message.info("钱包文件或密码错误，请检查后重试",2);
-        }
-    }
+    // ws.onmessage = function(e) {
+    //     let data = JSON.parse(e.data);
+    //     console.log(data)
+    //     if(data.msgType == 3){
+    //       _this.setState({ iconLoading: false });
+    //       message.success("钱包文件已选择",2);
+    //     }else{
+    //       message.info("钱包文件或密码错误，请检查后重试",2);
+    //     }
+    // }
     
-    ws.onclose = function(e) {
-        console.log(e);
-        message.info("网络连接失败，请稍后再试",3);
-    }
+    // ws.onclose = function(e) {
+    //     console.log(e);
+    //     message.info("网络连接失败，请稍后再试",3);
+    // }
     
-    ws.onerror = function(e) {
-        console.log(e);
-        message.info("error" + e);
-    }
+    // ws.onerror = function(e) {
+    //     console.log(e);
+    //     message.info("error" + e);
+    // }
   }
   renderFile = () =>{
     
