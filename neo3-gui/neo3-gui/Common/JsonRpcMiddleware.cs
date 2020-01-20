@@ -35,25 +35,36 @@ namespace Neo.Common
                 await next(context);
                 return;
             }
+
             var request = await GetRequestParameter(context.Request);
             var message = new WsMessage();
             message.MsgType = WsMessageType.Result;
             message.Id = request.Id;
             message.Method = request.Method;
-            var executor = _provider.GetService<WebSocketExecutor>();
-            var result = await executor.Excute(request);
-            if (result is ErrorResult error)
+            try
+            {
+                var executor = _provider.GetService<WebSocketExecutor>();
+                var result = await executor.Excute(request);
+                if (result is ErrorResult error)
+                {
+                    message.MsgType = WsMessageType.Error;
+                    message.Message = error.Message;
+                }
+                else
+                {
+                    message.Result = result;
+                }
+
+                context.Response.ContentType = "application/json-rpc";
+                await context.Response.WriteAsync(message.SerializeJson(), Encoding.UTF8);
+            }
+            catch (Exception e)
             {
                 message.MsgType = WsMessageType.Error;
-                message.Message = error.Message;
-            }
-            else
-            {
-                message.Result = result;
+                message.Message = e.Message;
+                await context.Response.WriteAsync(message.SerializeJson(), Encoding.UTF8);
             }
 
-            context.Response.ContentType = "application/json-rpc";
-            await context.Response.WriteAsync(message.SerializeJson(), Encoding.UTF8);
         }
 
 
