@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout, Menu, Row, Col,Icon,Input  } from 'antd';
 import {Link} from 'react-router-dom';
-import Sync from '../component/sync';
+import Sync from '../components/sync';
 
 const { Sider,Content } = Layout;
 const { Search } = Input;

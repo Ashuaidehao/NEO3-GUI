@@ -1,11 +1,11 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import { Layout,Row, Col,Icon , Typography, Modal, Button } from 'antd';
-import Sync from './component/sync'
+import Sync from './components/sync';
+import Walletopen from './components/Wallet/open';
 import './static/css/site.css';
 import img from './static/images/globe.png';
 import blc from './static/images/blockchain.svg';
-import { render } from '@testing-library/react';
 
 const { Text } = Typography;
 const { Content,Footer } = Layout;
@@ -14,7 +14,7 @@ class App extends React.Component {
   state = {
     ModalText: 'Content of the modal',
     visible: false,
-    confirmLoading: false,
+    confirmLoading: false
   };
 
   showModal = () => {
@@ -28,12 +28,13 @@ class App extends React.Component {
       ModalText: 'The modal will be closed after two seconds',
       confirmLoading: true,
     });
+
     setTimeout(() => {
       this.setState({
         visible: false,
         confirmLoading: false,
       });
-    }, 2000);
+    }, 1000);
   };
 
   handleCancel = () => {
@@ -67,7 +68,7 @@ class App extends React.Component {
                 </Link>
               </Col>
               <Col span={6}>
-                <Link to='/Pages'>
+                <Link to='/Wallet'>
                   <img src={blc} alt="blc" /><br />
                   <span>钱包</span>
                 </Link>
@@ -99,6 +100,7 @@ class App extends React.Component {
           onCancel={this.handleCancel}
         >
           <p>{ModalText}</p>
+          <Walletopen />
         </Modal>
     </div>
     );

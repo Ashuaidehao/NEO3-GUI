@@ -5,8 +5,7 @@ import 'antd/dist/antd.css';
 
 const { Text } = Typography;
 
-
-class Sync extends React.Component{
+class Savewallet extends React.Component{
   constructor(props){
     super(props);
     this.state = {
@@ -66,4 +65,4 @@ class Sync extends React.Component{
   }
 } 
 
-export default Sync;
+export default Savewallet;
