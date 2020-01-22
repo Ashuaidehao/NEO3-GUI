@@ -36,13 +36,13 @@ namespace Neo.Common
                 return;
             }
 
-            var request = await GetRequestParameter(context.Request);
             var message = new WsMessage();
-            message.MsgType = WsMessageType.Result;
-            message.Id = request.Id;
-            message.Method = request.Method;
             try
             {
+                var request = await GetRequestParameter(context.Request);
+                message.MsgType = WsMessageType.Result;
+                message.Id = request.Id;
+                message.Method = request.Method;
                 var executor = _provider.GetService<WebSocketExecutor>();
                 var result = await executor.Excute(request);
                 if (result is ErrorResult error)
@@ -75,7 +75,6 @@ namespace Neo.Common
                 var request = new WsRequest();
                 request.Id = httpRequest.Query["id"];
                 request.Method = httpRequest.Query["method"];
-                //var parameters = httpRequest.Query["params"].ToString();
                 request.Params = httpRequest.Query["params"].ToString().DeserializeJson<JsonElement>();
                 return request;
             }
