@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using Neo.Models;
@@ -9,8 +10,16 @@ namespace Neo.Storage
     public class TrackDB
     {
 
-        private SQLiteContext _db = new SQLiteContext("test.db");
-
+        private SQLiteContext _db;
+        public TrackDB()
+        {
+            var magic = ProtocolSettings.Default.Magic;
+            if (!Directory.Exists("Data_Track"))
+            {
+                Directory.CreateDirectory("Data_Track");
+            }
+            _db = new SQLiteContext(Path.Combine($"Data_Track", $"test.{magic}.db"));
+        }
 
         public void Commit()
         {
