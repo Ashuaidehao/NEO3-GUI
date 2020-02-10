@@ -39,17 +39,20 @@ class Wallet extends React.Component{
     console.log(111);
     axios.post('http://localhost:8081', {
       "id":"1234",
-      "method": "OpenWallet",
+      "method": "OpenWalet",
       "params": {
-          "path": "C:\\Users\\1860005\\Desktop\\2.neo3.json",
+          "path": "C:\\Users\\18605\\Desktop\\2.neo3.json",
           "password":"123456"
       }
     })
     .then(function (response) {
       console.log(response);
+      
+      console.log("sucees");
     })
     .catch(function (error) {
       console.log(error);
+      console.log("error");
     });
   }
   savedialog = () => {
@@ -71,7 +74,8 @@ class Wallet extends React.Component{
     const props = this.props;
     return (
       <div>
-          <Link to='/'>回首页</Link>
+          <Link to='/'>回首页</Link><br />
+          <Link to='/List'>去钱包内部列表</Link>
           <div>
               <img></img>
               <input type="file" id="file" onChange={this.getpath} />
@@ -104,7 +108,10 @@ class Wallet extends React.Component{
         message.info("钱包选择失败，请选择正确的文件格式",2);
     }
   }
-  checkinput = () =>{
+  showMsg = () =>{
+
+  }
+  checkInput = () =>{
     console.log("input")
   }
   openWallet = () => {
@@ -175,7 +182,7 @@ class Wallet extends React.Component{
   renderSave = () =>{
 
   }
-  savefile = () =>{
+  saveFile = () =>{
 
   }
 } 
