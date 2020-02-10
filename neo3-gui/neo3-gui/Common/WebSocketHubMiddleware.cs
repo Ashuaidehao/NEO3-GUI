@@ -64,24 +64,24 @@ namespace Neo.Common
 
 
 
-        /// <summary>
-        /// push message to client, must be single thead
-        /// </summary>
-        /// <param name="connection"></param>
-        /// <param name="hub"></param>
-        /// <returns></returns>
-        private async Task PushLoop(WebSocketConnection connection, WebSocketHub hub)
-        {
-            try
-            {
-                await connection.PushLoop();
-            }
-            catch (WebSocketException e)
-            {
-                Console.WriteLine(e);
-                hub.Remove(connection);
-            }
-        }
+        ///// <summary>
+        ///// push message to client, must be single thead
+        ///// </summary>
+        ///// <param name="connection"></param>
+        ///// <param name="hub"></param>
+        ///// <returns></returns>
+        //private async Task PushLoop(WebSocketConnection connection, WebSocketHub hub)
+        //{
+        //    try
+        //    {
+        //        await connection.PushLoop();
+        //    }
+        //    catch (WebSocketException e)
+        //    {
+        //        Console.WriteLine(e);
+        //        hub.Remove(connection);
+        //    }
+        //}
 
 
         /// <summary>

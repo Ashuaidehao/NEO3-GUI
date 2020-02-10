@@ -26,6 +26,7 @@ using Neo.Network.P2P;
 using Neo.Network.P2P.Payloads;
 using Akka.Actor;
 using Neo.Models.Transactions;
+using Neo.Storage;
 
 
 namespace Neo.Invokers
@@ -35,7 +36,7 @@ namespace Neo.Invokers
         private WebSocketSession _session;
         protected Wallet CurrentWallet => Program.Service.CurrentWallet;
 
-
+        private TrackDB _db = new TrackDB();
         public WalletInvoker(WebSocketSession session)
         {
             _session = session;
@@ -378,6 +379,117 @@ namespace Neo.Invokers
             Program.Service.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
             return new TransactionModel(tx);
         }
+
+
+        /// <summary>
+        /// send asset
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="receivers"></param>
+        /// <param name="asset"></param>
+        /// <returns></returns>
+        public async Task<object> SendToMultiAddress(string sender, MultiReceiverRequest[] receivers, string asset = "neo")
+        {
+            if (CurrentWallet == null)
+            {
+                return Error("please open wallet first.");
+            }
+            UInt160 assetId = ConvertToAssetId(asset, out var convertError);
+            if (assetId == null)
+            {
+                return Error($"input asset is not valid:{convertError}");
+            }
+            AssetDescriptor descriptor = new AssetDescriptor(assetId);
+
+            UInt160 from = ConvertToAddress(sender, out _);
+            if (receivers.IsEmpty())
+            {
+                return Error($"receivers is null");
+            }
+
+            var toes = new List<(UInt160 scriptHash, BigDecimal amount)>();
+            foreach (var receiver in receivers)
+            {
+                UInt160 to = ConvertToAddress(receiver.Address, out var receiverAddressError);
+                if (to == null)
+                {
+                    return Error($"receiver[{receiver.Address}] address is not valid:{receiverAddressError}");
+                }
+                if (!BigDecimal.TryParse(receiver.Amount, descriptor.Decimals, out BigDecimal sendAmount) || sendAmount.Sign <= 0)
+                {
+                    return Error($"Incorrect Amount Format:{receiver.Amount}");
+                }
+                toes.Add((to, sendAmount));
+            }
+            var outputs = toes.Select(t => new TransferOutput()
+            {
+                AssetId = assetId,
+                Value = t.amount,
+                ScriptHash = t.scriptHash,
+            }).ToArray();
+
+            Transaction tx = CurrentWallet.MakeTransaction(outputs, from);
+            if (tx == null)
+            {
+                return Error("Insufficient funds");
+            }
+
+            ContractParametersContext context = new ContractParametersContext(tx);
+            CurrentWallet.Sign(context);
+            if (!context.Completed)
+            {
+                return Error($"SignatureContext:{context}");
+            }
+            tx.Witnesses = context.GetWitnesses();
+            Program.Service.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+            return new TransactionModel(tx);
+        }
+
+        /// <summary>
+        /// query relate my wallet transactions(on chain)
+        /// </summary>
+        /// <returns></returns>
+        public async Task<object> GetMyTransactions()
+        {
+            if (CurrentWallet == null)
+            {
+                return Error("please open wallet first.");
+            }
+
+            var addresses = CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
+            var trans = _db.FindTransfer(new TrackFilter() {FromOrToAddreses = addresses}).ToList();
+            return ConvertToTransactionPreviewModel(trans);
+        }
+
+        private List<TransactionPreviewModel> ConvertToTransactionPreviewModel(IEnumerable<TransferInfo> trans)
+        {
+            return trans.ToLookup(x => x.TxId).Select(ToTransactionPreviewModel).ToList();
+        }
+
+        private TransactionPreviewModel ToTransactionPreviewModel(IGrouping<UInt256,TransferInfo> lookup)
+        {
+            var item = lookup.FirstOrDefault();
+            var model = new TransactionPreviewModel()
+            {
+                Hash = lookup.Key.ToString(),
+                Timestamp = item.TimeStamp,
+                BlockHeight = item.BlockHeight,
+                Transfers = lookup.Select(x =>
+                {
+                    var tran = new TransferModel()
+                    {
+                        From = x.From.ToString(),
+                        To = x.To.ToString(),
+                    };
+                    var (amount, asset) = x.Amount.GetAssetAmount(x.AssetId);
+                    tran.Amount = amount.ToString();
+                    tran.Symbol = asset.Symbol;
+                    return tran;
+                }).ToList(),
+            };
+            return model;
+        }
+
 
         #region Private
 

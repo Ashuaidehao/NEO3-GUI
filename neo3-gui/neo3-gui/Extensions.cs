@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net.WebSockets;
+using System.Numerics;
 using System.Reflection;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -13,8 +15,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Neo.Common;
 using Neo.Common.Json;
+using Neo.IO;
 using Neo.IO.Json;
 using Neo.Ledger;
+using Neo.Models;
 using Neo.Persistence;
 using Neo.SmartContract;
 using Neo.Tools;
@@ -33,7 +37,7 @@ namespace Neo
             IgnoreNullValues = true,
             PropertyNameCaseInsensitive = true,
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-            Converters = { new UInt160Converter(), new UInt256Converter(),new StringConverter() }
+            Converters = { new UInt160Converter(), new UInt256Converter(), new StringConverter() }
         };
 
 
@@ -126,6 +130,15 @@ namespace Neo
             }
         }
 
+        /// <summary>
+        /// change to utc Time without change time
+        /// </summary>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        public static DateTime AsUtcTime(this DateTime time)
+        {
+            return DateTime.SpecifyKind(time, DateTimeKind.Utc);
+        }
 
 
         private static readonly Dictionary<Type, object> defaultValues = new Dictionary<Type, object>();
@@ -193,27 +206,54 @@ namespace Neo
             return !IsNull(text);
         }
 
+        /// <summary>
+        /// collection is null or empty
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static bool IsEmpty<T>(this IEnumerable<T> source)
+        {
+            return source == null || !source.Any();
+        }
+
+
+        /// <summary>
+        /// collection is not null or empty
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static bool NotEmpty<T>(this IEnumerable<T> source)
+        {
+            return !source.IsEmpty();
+        }
+
 
         /// <summary>
         /// query balance
         /// </summary>
         /// <param name="addresses"></param>
         /// <param name="assetId"></param>
+        /// <param name="specificSnapshot"></param>
         /// <returns></returns>
-        public static List<BigDecimal> GetBalanceOf(this IEnumerable<UInt160> addresses, UInt160 assetId)
+        public static List<BigDecimal> GetBalanceOf(this IEnumerable<UInt160> addresses, UInt160 assetId, StoreView specificSnapshot = null)
         {
             var assetInfo = AssetCache.GetAssetInfo(assetId);
             if (assetInfo == null)
             {
                 throw new ArgumentException($"invalid assetId:[{assetId}]");
             }
-            using SnapshotView snapshot = Blockchain.Singleton.GetSnapshot();
+            var executeSnapshot = specificSnapshot;
+            if (executeSnapshot == null)
+            {
+                using var snapshot = Blockchain.Singleton.GetSnapshot();
+                executeSnapshot = snapshot;
+            }
             using var sb = new ScriptBuilder();
             foreach (var address in addresses)
             {
                 sb.EmitAppCall(assetId, "balanceOf", address);
             }
-            using ApplicationEngine engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
+            using ApplicationEngine engine = ApplicationEngine.Run(sb.ToArray(), executeSnapshot, testMode: true);
             if (engine.State.HasFlag(VMState.FAULT))
             {
                 throw new Exception($"query balance error");
@@ -229,26 +269,90 @@ namespace Neo
         /// </summary>
         /// <param name="address"></param>
         /// <param name="assetId"></param>
+        /// <param name="specificSnapshot"></param>
         /// <returns></returns>
-        public static BigDecimal GetBalanceOf(this UInt160 address, UInt160 assetId)
+        public static BigDecimal GetBalanceOf(this UInt160 address, UInt160 assetId, StoreView specificSnapshot = null)
         {
             var assetInfo = AssetCache.GetAssetInfo(assetId);
             if (assetInfo == null)
             {
                 return new BigDecimal(0, 0);
             }
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            var executeSnapshot = specificSnapshot;
+            if (executeSnapshot == null)
+            {
+                using var snapshot = Blockchain.Singleton.GetSnapshot();
+                executeSnapshot = snapshot;
+            }
             using var sb = new ScriptBuilder();
-
             sb.EmitAppCall(assetId, "balanceOf", address);
-
-            using var engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
+            using var engine = ApplicationEngine.Run(sb.ToArray(), executeSnapshot, testMode: true);
             if (engine.State.HasFlag(VMState.FAULT))
             {
                 return new BigDecimal(0, 0);
             }
             var balances = engine.ResultStack.Pop().GetBigInteger();
             return new BigDecimal(balances, assetInfo.Decimals);
+        }
+
+
+        /// <summary>
+        /// convert bigint to asset decimal value
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <param name="assetId"></param>
+        /// <returns></returns>
+        public static (BigDecimal amount, AssetInfo asset) GetAssetAmount(this BigInteger amount, UInt160 assetId)
+        {
+            var asset = AssetCache.GetAssetInfo(assetId);
+            if (asset == null)
+            {
+                return (new BigDecimal(0, 0), null);
+            }
+            return (new BigDecimal(amount, asset.Decimals), asset);
+        }
+
+        /// <summary>
+        /// convert to hex string without "Ox"
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        public static string ToHexString(this UIntBase address)
+        {
+            return address.ToArray().ToHexString(reverse: true);
+        }
+
+        private static readonly DateTime unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="timestamp"></param>
+        /// <returns></returns>
+        public static DateTime FromTimestampMS(this ulong timestamp)
+        {
+            return unixEpoch.AddMilliseconds(timestamp);
+        }
+
+        public static Expression<Func<T, bool>> Or<T>(this Expression<Func<T, bool>> expr1,
+            Expression<Func<T, bool>> expr2)
+        {
+            var invokedExpr = Expression.Invoke(expr2, expr1.Parameters);
+            return Expression.Lambda<Func<T, bool>>
+                (Expression.OrElse(expr1.Body, invokedExpr), expr1.Parameters);
+        }
+
+        public static Expression<Func<T, bool>> And<T>(this Expression<Func<T, bool>> expr1,
+            Expression<Func<T, bool>> expr2)
+        {
+            if (expr1 == null)
+            {
+                return expr2;
+            }
+            var invokedExpr = Expression.Invoke(expr2, expr1.Parameters);
+            return Expression.Lambda<Func<T, bool>>
+                (Expression.AndAlso(expr1.Body, invokedExpr), expr1.Parameters);
         }
     }
 }
