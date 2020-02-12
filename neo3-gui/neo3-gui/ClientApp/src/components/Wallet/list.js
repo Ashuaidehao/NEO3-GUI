@@ -15,13 +15,15 @@ class List extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-        size: 'default'
+        size: 'default',
+        accountlist:[]
     };
   }
   UNSAFE_componentWillMount(){
+    var _this = this;
     axios.post('http://localhost:8081', {
       "id":"1234",
-      "method": "OpenWalet",
+      "method": "OpenWallet",
       "params": {
           "path": "C:\\Users\\18605\\Desktop\\2.neo3.json",
           "password":"123456"
@@ -44,8 +46,13 @@ class List extends React.Component{
       }
     })
     .then(function (response) {
-      console.log(response);
-      
+      var _data = response.data;
+      if(_data.msgType == -1){
+        console.log("需要先打开钱包再进入页面");
+        return;
+      }
+      _this.state.accountlist = _data.result.accounts;
+      console.log(_this.state);
       console.log("listadd");
     })
     .catch(function (error) {

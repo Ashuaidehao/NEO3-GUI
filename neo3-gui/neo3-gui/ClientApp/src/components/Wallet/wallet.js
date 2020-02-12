@@ -2,12 +2,16 @@
 import React from 'react';
 import 'antd/dist/antd.css';
 import {Link} from 'react-router-dom';
-import { Upload,message,Input, Button, Icon } from 'antd';
-import { element } from 'prop-types';
+import { Upload,message,Input, Button, Icon,Tabs } from 'antd';
 import axios from 'axios';
+import Walletopen from './open'
+import Walletcreate from './create'
+import Walletprivate from './private'
+import Tabc from '../Common/Tab'
 
 const remote = window.remote;
-const {dialog} = window.remote;
+const { dialog } = window.remote;
+const { TabPane } = Tabs;
 
 class Wallet extends React.Component{
   constructor(props){
@@ -15,7 +19,8 @@ class Wallet extends React.Component{
     this.state = {
         size: 'default',
         iconLoading:false,
-        path:''
+        path:'',
+        showElem:true
     };
   }
   static defaultProps = {
@@ -37,23 +42,23 @@ class Wallet extends React.Component{
   }
   UNSAFE_componentWillMount(){
     console.log(111);
-    axios.post('http://localhost:8081', {
-      "id":"1234",
-      "method": "OpenWalet",
-      "params": {
-          "path": "C:\\Users\\18605\\Desktop\\2.neo3.json",
-          "password":"123456"
-      }
-    })
-    .then(function (response) {
-      console.log(response);
+    // axios.post('http://localhost:8081', {
+    //   "id":"1234",
+    //   "method": "OpenWallet",
+    //   "params": {
+    //       "path": "C:\\Users\\18605\\Desktop\\2.neo3.json",
+    //       "password":"123456"
+    //   }
+    // })
+    // .then(function (response) {
+    //   console.log(response);
       
-      console.log("sucees");
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error");
-    });
+    //   console.log("sucees");
+    // })
+    // .catch(function (error) {
+    //   console.log(error);
+    //   console.log("error");
+    // });
   }
   savedialog = () => {
     dialog.showSaveDialog({
@@ -67,30 +72,41 @@ class Wallet extends React.Component{
       ]
     }).then(function (res) {
       console.log(res.filePath);
+
     })
+  }
+  changeTab(e){
+    this.setState(prevState => ({
+      showElem: !prevState.showElem
+    }));
   }
   render = () =>{
     const { size } = this.state;
     const props = this.props;
     return (
       <div>
+        <Tabs defaultActiveKey="1">
+          <TabPane tab="打开钱包" key="1">
+            <Walletopen />
+          </TabPane>
+          <TabPane tab="创建钱包" key="2">
+            <Walletcreate />
+          </TabPane>
+          <TabPane tab="私钥导入" key="3">
+            <Walletprivate />
+          </TabPane>
+          <TabPane tab="加密私钥导入" disabled key="4">
+            <Walletcreate />
+          </TabPane>
+          <TabPane tab="助记词导入" disabled key="5">
+            <Walletcreate />
+          </TabPane>
+        </Tabs>
+        <br></br>
+        <br></br>
+        <br></br>
           <Link to='/'>回首页</Link><br />
           <Link to='/List'>去钱包内部列表</Link>
-          <div>
-              <img></img>
-              <input type="file" id="file" onChange={this.getpath} />
-              <Input.Password id="password" placeholder="input password" maxLength="50" onChange={this.checkinput} onPressEnter={this.openWallet}/>
-              <Button onClick={this.openWallet} loading={this.state.iconLoading}>确认</Button>
-              <Button onClick={this.savedialog}>savedialog</Button>
-          </div>
-          <div>
-                <Upload {...props}>
-                  <Button size={size} type="primary">
-                    <Icon type="upload" style={{ fontSize: '15px' }}/>打开钱包
-                  </Button>
-                </Upload>
-                <Button size={size}><Icon type="file-add" style={{ fontSize: '15px' }} />新建钱包</Button>
-          </div>
       </div>
     );
   }

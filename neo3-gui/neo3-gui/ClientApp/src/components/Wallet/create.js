@@ -1,15 +1,12 @@
 /* eslint-disable */ 
 import React from 'react';
 import 'antd/dist/antd.css';
-import {Link} from 'react-router-dom';
-import { Upload,message,Layout, Button, Icon } from 'antd';
-import { element } from 'prop-types';
+import axios from 'axios';
+import { message, Button, Input } from 'antd';
 
-const remote = window.remote;
 const {dialog} = window.remote;
-var ws = new WebSocket("ws://localhost:8081");
 
-class Create extends React.Component{
+class Walletcreate extends React.Component{
   constructor(props){
     super(props);
     this.state = {
@@ -17,53 +14,59 @@ class Create extends React.Component{
         path:''
     };
   }
-  static defaultProps = {
-    name: 'file',
-    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-    headers: {
-      authorization: 'authorization-text',
-    },
-    onChange(info) {
-      if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === 'done') {
-        message.success(`钱包导入成功`);
-      } else if (info.file.status === 'error') {
-        message.error(`钱包导入失败`);
-      }
-    },
-  }
   UNSAFE_componentWillMount(){
   }
   savedialog = () => {
-
+    var _this = this;
+    dialog.showSaveDialog({
+      title: '保存图像文件',
+      defaultPath: '/',
+      filters: [
+          {
+              name: 'JSON',
+              extensions: ['json']
+          }
+      ]
+    }).then(function (res) {
+      _this.setState({ path: res.filePath });
+    }).catch(function (error){
+      console.log(error);
+    })
+  }
+  createWallet = () => {
+    var _this = this.state;
+    var pass = document.getElementById("password").value;
+    axios.post('http://localhost:8081', {
+      "id" : "1",
+      "method" : "CreateWallet",
+      "params" : {
+        "path" : _this.path,
+        "password" : pass
+      }
+    })
+    .then(function (res) {
+      let _data = res.data;
+      if(_data.msgType == 3){
+        message.success("钱包已创建",2);
+      }else{
+        message.info("钱包文件或密码错误，请检查后重试",2);
+      }
+      _this.setState({ iconLoading: false });
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   render = () =>{
-    const { size } = this.state;
-    const props = this.props;
     return (
       <div>
-          <Link to='/'>回首页</Link>
           <div>
               <img></img>
-              <Layout>
-                <Upload {...props}>
-                  <Button size={size} type="primary">
-                    <Icon type="upload" style={{ fontSize: '15px' }}/>打开钱包
-                  </Button>
-                </Upload>
-                <Button size={size}><Icon type="file-add" style={{ fontSize: '15px' }} />新建钱包</Button>
-                <input type="file" id="file" onChange={this.getpath} />
-                <Button onClick={this.openWallet} >确认</Button>
-                <Button onClick={this.savedialog}></Button>
-                <Button onClick={this.openWallet} >确认</Button>
-
-              </Layout>
-          </div>
-          <div>
-              <img></img>
-              <input></input>
+              <Input placeholder="请选择文件存储位置" disabled value={this.state.path}/>
+              <Button onClick={this.savedialog}>选择路径</Button>
+              <Input.Password id="password" placeholder="input password" maxLength="50" onChange={this.checkinput} onPressEnter={this.openWallet}/>
+              <Button onClick={this.createWallet}>创建钱包</Button>
           </div>
       </div>
     );
@@ -72,22 +75,6 @@ class Create extends React.Component{
 
 
   }
-
-  renderFile = () =>{
-
-  }
-  renderPrivate = () =>{
-
-  }
-  renderEncrypted = () =>{
-
-  }
-  renderSave = () =>{
-
-  }
-  savefile = () =>{
-
-  }
 } 
 
-export default Create;
+export default Walletcreate;
