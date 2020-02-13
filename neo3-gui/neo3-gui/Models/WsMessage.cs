@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Neo.Network.P2P.Payloads;
 
 namespace Neo.Models
 {
@@ -13,7 +14,7 @@ namespace Neo.Models
         public WsMessageType MsgType { get; set; }
         public string Method { get; set; }
         public object Result { get; set; }
-        public string Message { get; set; }
+        public WsError Error { get; set; }
 
     }
 }

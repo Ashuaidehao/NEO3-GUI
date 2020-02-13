@@ -23,6 +23,7 @@ using Neo.Persistence;
 using Neo.SmartContract;
 using Neo.Tools;
 using Neo.VM;
+using Neo.VM.Types;
 using Neo.Wallets;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -37,7 +38,13 @@ namespace Neo
             IgnoreNullValues = true,
             PropertyNameCaseInsensitive = true,
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-            Converters = { new UInt160Converter(), new UInt256Converter(), new StringConverter() }
+            Converters =
+            {
+                new UInt160Converter(),
+                new UInt256Converter(),
+                new StringConverter(),
+                new BigDecimalConverter(),
+            }
         };
 
 
@@ -297,6 +304,23 @@ namespace Neo
 
 
         /// <summary>
+        /// sum same asset amount
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static BigDecimal SumAssetAmount(this IEnumerable<BigDecimal> source)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException();
+            }
+            var item = source.FirstOrDefault();
+            var total = source.Select(s => s.Value).Sum();
+            return new BigDecimal(total, item.Decimals);
+        }
+
+
+        /// <summary>
         /// convert bigint to asset decimal value
         /// </summary>
         /// <param name="amount"></param>
@@ -353,6 +377,38 @@ namespace Neo
             var invokedExpr = Expression.Invoke(expr2, expr1.Parameters);
             return Expression.Lambda<Func<T, bool>>
                 (Expression.AndAlso(expr1.Body, invokedExpr), expr1.Parameters);
+        }
+
+
+        private static readonly Dictionary<ErrorCode, string> _errorMap = new Dictionary<ErrorCode, string>()
+        {
+            [ErrorCode.MethodNotFound] = "method not found.",
+            [ErrorCode.WalletNotOpen] = "please open wallet first.",
+        };
+
+        public static WsError ToError(this ErrorCode code)
+        {
+            return new WsError()
+            {
+                Code = (int)code,
+                Message = _errorMap.ContainsKey(code) ? _errorMap[code] : "error...",
+            };
+        }
+
+        public static bool NotVmByteArray(this StackItem item)
+        {
+            return !(item is ByteArray);
+        }
+
+        public static bool NotVmNull(this StackItem item)
+        {
+            return !(item is Null);
+        }
+
+
+        public static bool NotVmInt(this StackItem item)
+        {
+            return !(item is Integer);
         }
     }
 }

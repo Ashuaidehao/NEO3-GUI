@@ -5,8 +5,11 @@ namespace Neo.Storage.SQLiteModules
 {
     public class SQLiteContext : DbContext
     {
-        public DbSet<SyncIndex> SyncIndices { get; set; }
+        public DbSet<SyncIndex> SyncIndexes { get; set; }
         public DbSet<Nep5TransactionEntity> Nep5Transactions { get; set; }
+        public DbSet<AssetEntity> Assets { get; set; }
+        public DbSet<AssetBalanceEntity> AssetBalances { get; set; }
+        public DbSet<AddressEntity> Addresses { get; set; }
 
         private readonly string _filename;
         public SQLiteContext(string filename)
@@ -32,8 +35,8 @@ namespace Neo.Storage.SQLiteModules
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Nep5TransactionEntity>().ToTable("Nep5Transaction");
-            modelBuilder.Entity<Nep5TransactionEntity>().HasIndex(p => p.From);
-            modelBuilder.Entity<Nep5TransactionEntity>().HasIndex(p => p.To);
+            modelBuilder.Entity<Nep5TransactionEntity>().HasIndex(p => p.FromId);
+            modelBuilder.Entity<Nep5TransactionEntity>().HasIndex(p => p.ToId);
             modelBuilder.Entity<Nep5TransactionEntity>().HasIndex(p => p.Time);
             modelBuilder.Entity<Nep5TransactionEntity>().HasIndex(p => p.TxId);
         }

@@ -56,5 +56,10 @@ namespace Neo.Tools
             return assetInfo;
 
         }
+
+        public static List<AssetInfo> GetAllAssets()
+        {
+            return _assets.Values.ToList();
+        }
     }
 }

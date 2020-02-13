@@ -36,7 +36,6 @@ namespace Neo.Invokers
         private WebSocketSession _session;
         protected Wallet CurrentWallet => Program.Service.CurrentWallet;
 
-        private TrackDB _db = new TrackDB();
         public WalletInvoker(WebSocketSession session)
         {
             _session = session;
@@ -123,7 +122,7 @@ namespace Neo.Invokers
         {
             if (CurrentWallet == null)
             {
-                return Error($"please open wallet first.");
+                return Error(ErrorCode.WalletNotOpen);
             }
             var newAccount = CurrentWallet.CreateAccount();
             if (CurrentWallet is NEP6Wallet wallet)
@@ -146,7 +145,7 @@ namespace Neo.Invokers
         {
             if (CurrentWallet == null)
             {
-                return Error($"please open wallet first.");
+                return Error(ErrorCode.WalletNotOpen);
             }
             var points = publicKeys.Select(p => ECPoint.DecodePoint(p.HexToBytes(), ECCurve.Secp256r1)).ToArray();
             Contract contract = Contract.CreateMultiSigContract(limit, points);
@@ -180,7 +179,7 @@ namespace Neo.Invokers
         {
             if (CurrentWallet == null)
             {
-                return Error($"please open wallet first.");
+                return Error(ErrorCode.WalletNotOpen);
             }
             Contract contract = Contract.Create(parameterTypes, script.HexToBytes());
             if (contract == null)
@@ -210,7 +209,7 @@ namespace Neo.Invokers
         {
             if (CurrentWallet == null)
             {
-                return Error($"please open wallet first.");
+                return Error(ErrorCode.WalletNotOpen);
             }
             var result = addresses.Select(address => address.ToScriptHash()).Select(scriptHash => CurrentWallet.DeleteAccount(scriptHash)).ToList();
             if (CurrentWallet is NEP6Wallet wallet)
@@ -228,7 +227,7 @@ namespace Neo.Invokers
         {
             if (CurrentWallet == null)
             {
-                return Error($"please open wallet first.");
+                return Error(ErrorCode.WalletNotOpen);
             }
             return GetWalletAddress(CurrentWallet, count);
         }
@@ -242,7 +241,7 @@ namespace Neo.Invokers
         {
             if (CurrentWallet == null)
             {
-                return Error($"please open wallet first.");
+                return Error(ErrorCode.WalletNotOpen);
             }
             var importedAccounts = new List<AccountModel>();
             foreach (var address in addresses)
@@ -272,7 +271,7 @@ namespace Neo.Invokers
         {
             if (CurrentWallet == null)
             {
-                return Error($"please open wallet first.");
+                return Error(ErrorCode.WalletNotOpen);
             }
             var importedAccounts = new List<AccountModel>();
             foreach (var wif in wifs)
@@ -301,7 +300,7 @@ namespace Neo.Invokers
         {
             if (CurrentWallet == null)
             {
-                return Error($"please open wallet first.");
+                return Error(ErrorCode.WalletNotOpen);
             }
             var scriptHash = address.ToScriptHash();
             var account = CurrentWallet.GetAccount(scriptHash);
@@ -336,7 +335,7 @@ namespace Neo.Invokers
         {
             if (CurrentWallet == null)
             {
-                return Error("please open wallet first.");
+                return Error(ErrorCode.WalletNotOpen);
             }
             UInt160 assetId = ConvertToAssetId(asset, out var convertError);
             if (assetId == null)
@@ -392,7 +391,7 @@ namespace Neo.Invokers
         {
             if (CurrentWallet == null)
             {
-                return Error("please open wallet first.");
+                return Error(ErrorCode.WalletNotOpen);
             }
             UInt160 assetId = ConvertToAssetId(asset, out var convertError);
             if (assetId == null)
@@ -453,20 +452,43 @@ namespace Neo.Invokers
         {
             if (CurrentWallet == null)
             {
-                return Error("please open wallet first.");
+                return Error(ErrorCode.WalletNotOpen);
             }
 
             var addresses = CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
-            var trans = _db.FindTransfer(new TrackFilter() {FromOrToAddreses = addresses}).ToList();
+            using var db = new TrackDB();
+            var trans = db.FindTransfer(new TrackFilter() { FromOrTo = addresses }).List;
             return ConvertToTransactionPreviewModel(trans);
         }
+
+        /// <summary>
+        /// query relate my wallet balances(on chain)
+        /// </summary>
+        /// <returns></returns>
+        public async Task<object> GetMyBalances(UInt160[] assets)
+        {
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+
+            var addresses = CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
+            var balances= assets.Select(asset => new WalletBalanceModel()
+            {
+                Asset = asset,
+                Balance = addresses.GetBalanceOf(asset).SumAssetAmount(),
+            });
+            return balances;
+        }
+
+
 
         private List<TransactionPreviewModel> ConvertToTransactionPreviewModel(IEnumerable<TransferInfo> trans)
         {
             return trans.ToLookup(x => x.TxId).Select(ToTransactionPreviewModel).ToList();
         }
 
-        private TransactionPreviewModel ToTransactionPreviewModel(IGrouping<UInt256,TransferInfo> lookup)
+        private TransactionPreviewModel ToTransactionPreviewModel(IGrouping<UInt256, TransferInfo> lookup)
         {
             var item = lookup.FirstOrDefault();
             var model = new TransactionPreviewModel()
@@ -478,8 +500,8 @@ namespace Neo.Invokers
                 {
                     var tran = new TransferModel()
                     {
-                        From = x.From.ToString(),
-                        To = x.To.ToString(),
+                        From = x.From,
+                        To = x.To,
                     };
                     var (amount, asset) = x.Amount.GetAssetAmount(x.AssetId);
                     tran.Amount = amount.ToString();

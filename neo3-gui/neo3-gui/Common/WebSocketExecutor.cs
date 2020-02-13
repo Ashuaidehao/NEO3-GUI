@@ -50,7 +50,7 @@ namespace Neo.Common
         {
             if (request.Method.IsNull())
             {
-                return new ErrorResult($"method not found!");
+                return ErrorCode.MethodNotFound.ToError();
             }
             if (_methods.TryGetValue(request.Method, out var method))
             {
@@ -62,7 +62,7 @@ namespace Neo.Common
                 return await method.Invoke(instance, request);
 
             }
-            return new ErrorResult($"method [{request.Method}] not found!");
+            return new WsError() { Code = (int)ErrorCode.MethodNotFound, Message = $"method [{request.Method}] not found!" };
         }
 
 
