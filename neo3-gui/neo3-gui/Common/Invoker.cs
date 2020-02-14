@@ -16,9 +16,20 @@ namespace Neo.Common
         }
 
 
-        protected ErrorResult Error(string message)
+        protected WsError Error(ErrorCode code)
         {
-            return new ErrorResult(message);
+            return code.ToError();
+        }
+
+        protected WsError Error(string message)
+        {
+            return Error(-2, message);
+        }
+
+
+        protected WsError Error(int code, string message)
+        {
+            return new WsError() { Code = code, Message = message };
         }
     }
 }

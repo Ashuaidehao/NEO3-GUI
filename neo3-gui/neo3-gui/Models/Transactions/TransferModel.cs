@@ -8,8 +8,8 @@ namespace Neo.Models.Transactions
 {
     public class TransferModel
     {
-        public string From { get; set; }
-        public string To { get; set; }
+        public UInt160 From { get; set; }
+        public UInt160 To { get; set; }
         public string Amount { get; set; }
         public string Symbol { get; set; }
     }

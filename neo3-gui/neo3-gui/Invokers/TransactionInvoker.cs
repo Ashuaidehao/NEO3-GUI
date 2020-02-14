@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Neo.Common;
 using Neo.Ledger;
+using Neo.Models;
 using Neo.Models.Transactions;
+using Neo.Storage;
 
 namespace Neo.Invokers
 {
     public class TransactionInvoker : Invoker
     {
-
 
         /// <summary>
         /// query transaction info
@@ -28,6 +29,18 @@ namespace Neo.Invokers
             return $"TxId[{txId}] not found!";
         }
 
-        
+
+
+        /// <summary>
+        /// query transaction info
+        /// </summary>
+        /// <returns></returns>
+        public async Task<PageList<TransferInfo>> QueryTransaction(TrackFilter filter)
+        {
+            using var db = new TrackDB();
+            var result = db.FindTransfer(filter) as PageList<TransferInfo>;
+            return result;
+        }
+
     }
 }

@@ -99,7 +99,7 @@ namespace Neo.Common
                 if (!parameterType.IsPrimitive && !parameterType.IsArray && parameterType != typeof(string))
                 {
                     //method only accept one Object parameter
-                    paras.Add(inputParas.GetRawText().DeserializeJson(_parameters[0].ParameterType));
+                    paras.Add(inputParas.GetRawText().DeserializeJson(parameterType));
                     return paras;
                 }
             }

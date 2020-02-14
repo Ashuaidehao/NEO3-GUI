@@ -45,10 +45,10 @@ namespace Neo.Common
                 message.Method = request.Method;
                 var executor = _provider.GetService<WebSocketExecutor>();
                 var result = await executor.Excute(request);
-                if (result is ErrorResult error)
+                if (result is WsError error)
                 {
                     message.MsgType = WsMessageType.Error;
-                    message.Message = error.Message;
+                    message.Error = error;
                 }
                 else
                 {
@@ -61,7 +61,11 @@ namespace Neo.Common
             catch (Exception e)
             {
                 message.MsgType = WsMessageType.Error;
-                message.Message = e.Message;
+                message.Error =new WsError()
+                {
+                    Code = -1,
+                    Message = e.Message,
+                };
                 await context.Response.WriteAsync(message.SerializeJson(), Encoding.UTF8);
             }
 

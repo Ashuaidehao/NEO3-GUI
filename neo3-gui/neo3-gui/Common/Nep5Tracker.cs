@@ -65,39 +65,39 @@ namespace Neo.Common
 
         private void HandleNotification(StoreView snapshot, Transaction transaction, UInt160 scriptHash, VMArray stateItems, Header header)
         {
-            if (stateItems.Count == 0) return;
+            if (stateItems.Count < 4) return;
             // Event name should be encoded as a byte array.
-            if (!(stateItems[0] is VM.Types.ByteArray)) return;
+            if (stateItems[0].NotVmByteArray()) return;
+
             var eventName = stateItems[0].GetString();
             if (eventName != "Transfer") return;
-            if (stateItems.Count < 4) return;
 
             var fromItem = stateItems[1];
-            if (!(fromItem is VM.Types.ByteArray)) return;
-            //if (!(fromItem is null) && !(fromItem is VM.Types.ByteArray)) return;
+
+            if (fromItem.NotVmByteArray() && fromItem.NotVmNull()) return;
 
             var toItem = stateItems[2];
-            if (toItem != null && !(toItem is VM.Types.ByteArray)) return;
+            if (toItem != null && toItem.NotVmByteArray()) return;
 
             var amountItem = stateItems[3];
-            if (!(amountItem is VM.Types.ByteArray || amountItem is VM.Types.Integer)) return;
+            if (amountItem.NotVmByteArray() && amountItem.NotVmInt()) return;
 
-            byte[] fromBytes = fromItem?.GetSpan().ToArray();
+            byte[] fromBytes = fromItem is Null ? null : fromItem?.GetSpan().ToArray();
             if (fromBytes?.Length != 20) fromBytes = null;
             byte[] toBytes = toItem?.GetSpan().ToArray();
             if (toBytes?.Length != 20) toBytes = null;
-            if (fromBytes == null && toBytes == null) return;
-            var from = new UInt160(fromBytes);
+            if (fromBytes==null && toBytes == null) return;
+            var from = fromBytes == null ? null : new UInt160(fromBytes);
             var to = new UInt160(toBytes);
             var amount = amountItem.GetBigInteger();
-            var fromBalance = from.GetBalanceOf(scriptHash, snapshot);
+            var fromBalance = from?.GetBalanceOf(scriptHash, snapshot);
             var toBalance = to.GetBalanceOf(scriptHash, snapshot);
 
             var record = new TransferInfo
             {
                 BlockHeight = header.Index,
                 From = from,
-                FromBalance = fromBalance.Value,
+                FromBalance = fromBalance?.Value ?? 0,
                 To = to,
                 ToBalance = toBalance.Value,
                 AssetId = scriptHash,
@@ -112,5 +112,8 @@ namespace Neo.Common
 
 
         }
+
+
+        
     }
 }

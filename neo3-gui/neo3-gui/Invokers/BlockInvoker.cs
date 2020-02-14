@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Neo.Common;
 using Neo.Ledger;
 using Neo.Models.Blocks;
+using Neo.Tools;
 
 namespace Neo.Invokers
 {
@@ -21,6 +22,11 @@ namespace Neo.Invokers
 
             return $"Block[{index}] not found!";
         }
-        
+
+
+        public async Task<object> GetAllAssets()
+        {
+            return AssetCache.GetAllAssets();
+        }
     }
 }
