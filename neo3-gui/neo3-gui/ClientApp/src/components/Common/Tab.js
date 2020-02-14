@@ -6,7 +6,7 @@ import { Upload,message,Input, Button, Icon } from 'antd';
 import { element } from 'prop-types';
 import axios from 'axios';
 import { Steps } from 'antd';
-import Tab from '../Common/Tab'
+import Tab from './tab'
 
 const remote = window.remote;
 const {dialog} = window.remote;

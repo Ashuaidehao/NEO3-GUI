@@ -23,6 +23,7 @@ class Walletprivate extends React.Component{
   veriPrivate = () => {
     var _this = this.state;
     var pass = document.getElementById("privateKey").value;
+    console.log(pass);
     axios.post('http://localhost:8081', {
       "id":"20",
       "method": "ImportWif",

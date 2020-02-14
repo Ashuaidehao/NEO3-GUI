@@ -7,7 +7,7 @@ import axios from 'axios';
 import Walletopen from './open'
 import Walletcreate from './create'
 import Walletprivate from './private'
-import Tabc from '../Common/Tab'
+import Tabc from '../Common/tab'
 
 const remote = window.remote;
 const { dialog } = window.remote;
@@ -105,86 +105,54 @@ class Wallet extends React.Component{
         <br></br>
         <br></br>
         <br></br>
+          <Tabc changeTab={this.changeTab.bind(this)} content="显示/隐藏"/>
+          <div>
+            {this.state.showElem?(
+              <div>显示</div>
+            ):null}
+            {!this.state.showElem?(
+              <div>隐藏</div>
+            ):null}
+          </div>
           <Link to='/'>回首页</Link><br />
-          <Link to='/List'>去钱包内部列表</Link>
+          <Link to='/Walletlist'>去钱包内部列表</Link>
+          <div>
+              <img></img>
+              <input type="file" id="file" onChange={this.getpath} />
+              <Input.Password id="" placeholder="input password" maxLength="50" onChange={this.checkinput} onPressEnter={this.openWallet}/>
+              <Button onClick={this.openWallet} loading={this.state.iconLoading}>确认</Button>
+              
+          </div>
+          <div>
+                <Upload {...props}>
+                  <Button size={size} type="primary">
+                    <Icon type="upload" style={{ fontSize: '15px' }}/>打开钱包
+                  </Button>
+                </Upload>
+                <Button size={size}><Icon type="file-add" style={{ fontSize: '15px' }} />新建钱包</Button>
+          </div>
       </div>
     );
   }
-  getpath = () =>{
-    var _this = this;
-    var file = document.getElementById("file").files[0];
-    var _path = file?(file.path).replace(/\\/g,"\\"):"";
-    console.log(_path);
-    console.log(file.path);
-    if(file){
-        this.setState({
-            path :_path
-        })
-    }else{
-        message.info("钱包选择失败，请选择正确的文件格式",2);
-    }
-  }
+  // getpath = () =>{
+  //   var _this = this;
+  //   var file = document.getElementById("file").files[0];
+  //   var _path = file?(file.path).replace(/\\/g,"\\"):"";
+  //   console.log(_path);
+  //   console.log(file.path);
+  //   if(file){
+  //       this.setState({
+  //           path :_path
+  //       })
+  //   }else{
+  //       message.info("钱包选择失败，请选择正确的文件格式",2);
+  //   }
+  // }
   showMsg = () =>{
 
   }
   checkInput = () =>{
     console.log("input")
-  }
-  openWallet = () => {
-    var path = this.state.path;
-    var _this = this;
-    console.log(path);
-    console.log(file.path);
-    var pass = document.getElementById("password").value;
-    if(!path||!pass){
-      message.error("请确认文件及密码",3);
-      return;
-    }
-    this.setState({ iconLoading: true });
-    // var ws = new WebSocket("ws://localhost:8081");
-    // let da = {
-    //   "id":"1234",
-    //   "method": "OpenWallet",
-    //   "params": {
-    //     "path": path,
-    //     "password": "123456"
-    //   }
-    // };
-    // // let da = {
-    // //   "id":"1234",
-    // //   "method": "OpenWallet",
-    // //   "params": {
-    // //     "path": path,
-    // //     "password": pass
-    // //   }
-    // // };
-    // ws.onopen = function() {
-      
-    //   ws.send(JSON.stringify(da));
-      
-    //   console.log("数据发送中...");
-    // };
-    
-    // ws.onmessage = function(e) {
-    //     let data = JSON.parse(e.data);
-    //     console.log(data)
-    //     if(data.msgType == 3){
-    //       _this.setState({ iconLoading: false });
-    //       message.success("钱包文件已选择",2);
-    //     }else{
-    //       message.info("钱包文件或密码错误，请检查后重试",2);
-    //     }
-    // }
-    
-    // ws.onclose = function(e) {
-    //     console.log(e);
-    //     message.info("网络连接失败，请稍后再试",3);
-    // }
-    
-    // ws.onerror = function(e) {
-    //     console.log(e);
-    //     message.info("error" + e);
-    // }
   }
   renderFile = () =>{
     

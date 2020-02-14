@@ -14,15 +14,17 @@ class Walletopen extends React.Component{
   }
   setpath = () =>{
     var file = document.getElementById("file").files[0];
+    // var _path = file?(file.path).replace(/\\/g,"\\\\"):"";
+    var _path = file.path;
     if(file){
-      this.setState({path :file.path})
+      this.setState({path :_path})
     }else{
       message.info("钱包选择失败，请选择正确的文件格式",2);
     }
   }
   verifi = () => {
     var path = this.state.path;
-    var pass = document.getElementById("password").value;
+    var pass = document.getElementById("opass").value;
     if(!path||!pass){
       message.error("请选择文件及输入密码",3);
       return;
@@ -32,7 +34,17 @@ class Walletopen extends React.Component{
   }
   openWallet = () => {
     var _this = this;
-    var pass = document.getElementById("password").value;
+    var pass = document.getElementById("opass").value;
+    var ss = {
+      "id" : "1",
+      "method" : "OpenWallet",
+      "params" : {
+        "path" : _this.state.path,
+        // "password" : pass
+        "password" : "123456"
+      }
+    };
+    console.log(ss);
     axios.post('http://localhost:8081', {
       "id" : "1",
       "method" : "OpenWallet",
@@ -63,7 +75,7 @@ class Walletopen extends React.Component{
       <div>
         <img></img>
         <input type="file" id="file" onChange={this.setpath} />
-        <Input.Password id="password" placeholder="input password" maxLength="50" onChange={this.checkinput} onPressEnter={this.openWallet}/>
+        <Input.Password id="opass" placeholder="input password" maxLength="50" onChange={this.checkinput} onPressEnter={this.openWallet}/>
         <Button onClick={this.verifi} loading={this.state.iconLoading}>确认</Button>
         <Button onClick={this.savedialog}>savedialog</Button>
       </div>

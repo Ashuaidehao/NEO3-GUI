@@ -21,7 +21,7 @@ class Chain extends React.Component{
   render(){
     return (
       <div>
-        <Layout style={{ minHeight: 'calc( 100vh - 64px )' }}>
+        <Layout style={{ minHeight: 'calc( 100vh - 35px )' }}>
           <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
             <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
               <Menu.Item key="1">
