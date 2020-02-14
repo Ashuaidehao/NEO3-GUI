@@ -7,7 +7,7 @@ import axios from 'axios';
 import Walletopen from './open'
 import Walletcreate from './create'
 import Walletprivate from './private'
-import Tabc from '../Common/tab'
+import Tabc from '../Common/Tab'
 
 const remote = window.remote;
 const { dialog } = window.remote;
