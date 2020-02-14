@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import { Layout,Row, Col,Icon , Typography, Modal, Button } from 'antd';
+import { Layout,Row, Col,Icon , Typography, Modal} from 'antd';
 import Sync from './components/sync';
 import Walletopen from './components/Wallet/open';
 import './static/css/site.css';
@@ -72,9 +72,9 @@ class App extends React.Component {
                   <img src={blc} alt="blc" /><br />
                   <span>钱包</span>
                 </Link>
-                <Button type="primary" onClick={this.showModal}>
+                {/* <Button type="primary" onClick={this.showModal}>
                   Open Modal with async logic
-                </Button>
+                </Button> */}
               </Col>
               <Col span={6}>
                 <Link to='/Pages'>

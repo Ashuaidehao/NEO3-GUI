@@ -41,24 +41,23 @@ class Wallet extends React.Component{
     },
   }
   UNSAFE_componentWillMount(){
-    console.log(111);
-    // axios.post('http://localhost:8081', {
-    //   "id":"1234",
-    //   "method": "OpenWallet",
-    //   "params": {
-    //       "path": "C:\\Users\\18605\\Desktop\\2.neo3.json",
-    //       "password":"123456"
-    //   }
-    // })
-    // .then(function (response) {
-    //   console.log(response);
+    axios.post('http://localhost:8081', {
+      "id":"1234",
+      "method": "OpenWallet",
+      "params": {
+          "path": "C:\\Users\\18605\\Desktop\\2.neo3.json",
+          "password":"123456"
+      }
+    })
+    .then(function (response) {
+      console.log(response);
       
-    //   console.log("sucees");
-    // })
-    // .catch(function (error) {
-    //   console.log(error);
-    //   console.log("error");
-    // });
+      console.log("sucees");
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   savedialog = () => {
     dialog.showSaveDialog({

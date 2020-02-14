@@ -57,6 +57,7 @@ class Walletopen extends React.Component{
     .then(function (res) {
       let _data = res.data;
       _this.setState({ iconLoading: false });
+      console.log(_data);
       if(_data.msgType == 3){
         message.success("钱包文件已打开",2);
         //添加跳转
@@ -77,7 +78,6 @@ class Walletopen extends React.Component{
         <input type="file" id="file" onChange={this.setpath} />
         <Input.Password id="opass" placeholder="input password" maxLength="50" onChange={this.checkinput} onPressEnter={this.openWallet}/>
         <Button onClick={this.verifi} loading={this.state.iconLoading}>确认</Button>
-        <Button onClick={this.savedialog}>savedialog</Button>
       </div>
     );
   }

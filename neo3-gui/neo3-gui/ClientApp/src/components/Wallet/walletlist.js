@@ -65,6 +65,29 @@ class Walletlist extends React.Component{
       console.log("error");
     });
   }
+  showPrivate = () =>{
+    var _this = this;
+    axios.post('http://localhost:8081', {
+      "id":"123456",
+      "method": "ShowPrivateKey",
+      "params": {
+          "address": "NiczZuY3zKVpX2ywVcSKJtAv7RwpCS9czi"
+      }
+    })
+    .then(function (response) {
+      var _data = response.data;
+      if(_data.msgType == -1){
+        console.log("需要先打开钱包再进入页面");
+        return;
+      }
+      console.log(_data);
+
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
+  }
   exitWallet = () =>{
     var _this = this;
     axios.post('http://localhost:8081', {
@@ -112,8 +135,9 @@ class Walletlist extends React.Component{
             </Sider>
             <Layout>
                 <Content>
-                  <Link to='/'>回首页</Link>
+                  <Link to='/'>回首页</Link><br />
                   <Button onClick={this.addAddress}>创建新地址</Button>
+                  <Button onClick={this.showPrivate}>查看私钥</Button>
                   <Button onClick={this.exitWallet}>退出钱包</Button>
                   <Row type="flex">
                     <Col span={12} order={1}>

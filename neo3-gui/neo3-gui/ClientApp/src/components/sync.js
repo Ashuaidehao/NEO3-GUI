@@ -21,15 +21,11 @@ class Sync extends React.Component{
     var ws = new WebSocket("ws://localhost:8081");
     ws.onopen = function() {
         console.log("this open");
-        
-        console.log(this);
-        
-        console.log(_this);
     };
     
     ws.onmessage = function(e) {
         let data = JSON.parse(e.data).result;
-
+        console.log(data);
         _this.getSyncheight(data.syncHeight);
         _this.getHeight(data.headerHeight);
     }
