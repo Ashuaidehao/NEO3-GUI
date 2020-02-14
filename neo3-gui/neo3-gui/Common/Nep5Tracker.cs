@@ -73,7 +73,6 @@ namespace Neo.Common
             if (eventName != "Transfer") return;
 
             var fromItem = stateItems[1];
-
             if (fromItem.NotVmByteArray() && fromItem.NotVmNull()) return;
 
             var toItem = stateItems[2];

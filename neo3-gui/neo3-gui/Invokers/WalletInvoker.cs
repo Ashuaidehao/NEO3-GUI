@@ -483,6 +483,9 @@ namespace Neo.Invokers
 
 
 
+
+        #region Private
+
         private List<TransactionPreviewModel> ConvertToTransactionPreviewModel(IEnumerable<TransferInfo> trans)
         {
             return trans.ToLookup(x => x.TxId).Select(ToTransactionPreviewModel).ToList();
@@ -512,8 +515,6 @@ namespace Neo.Invokers
             return model;
         }
 
-
-        #region Private
 
         /// <summary>
         /// convert input address string to address hash

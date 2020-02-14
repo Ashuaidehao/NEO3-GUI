@@ -280,7 +280,7 @@ namespace Neo
         /// <returns></returns>
         public static BigDecimal GetBalanceOf(this UInt160 address, UInt160 assetId, StoreView specificSnapshot = null)
         {
-            var assetInfo = AssetCache.GetAssetInfo(assetId);
+            var assetInfo = AssetCache.GetAssetInfo(assetId, specificSnapshot);
             if (assetInfo == null)
             {
                 return new BigDecimal(0, 0);
