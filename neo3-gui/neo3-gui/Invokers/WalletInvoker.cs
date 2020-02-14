@@ -73,16 +73,18 @@ namespace Neo.Invokers
         /// </summary>
         /// <param name="path"></param>
         /// <param name="password"></param>
+        /// <param name="privateKey"></param>
         /// <returns></returns>
-        public async Task<WalletModel> CreateWallet(string path, string password)
+        public async Task<WalletModel> CreateWallet(string path, string password, string privateKey = null)
         {
             var result = new WalletModel();
+            var hexPrivateKey = privateKey.TryGetPrivateKey();
             switch (Path.GetExtension(path))
             {
                 case ".db3":
                     {
                         UserWallet wallet = UserWallet.Create(path, password);
-                        var account = wallet.CreateAccount();
+                        var account = hexPrivateKey.NotNull() ? wallet.CreateAccount(hexPrivateKey.HexToBytes()) : wallet.CreateAccount();
                         result.Accounts.Add(new AccountModel()
                         {
                             AccountType = AccountType.Standard,
@@ -96,7 +98,7 @@ namespace Neo.Invokers
                     {
                         NEP6Wallet wallet = new NEP6Wallet(path);
                         wallet.Unlock(password);
-                        var account = wallet.CreateAccount();
+                        var account = hexPrivateKey.NotNull() ? wallet.CreateAccount(hexPrivateKey.HexToBytes()) : wallet.CreateAccount();
                         wallet.Save();
                         result.Accounts.Add(new AccountModel()
                         {
@@ -473,7 +475,7 @@ namespace Neo.Invokers
             }
 
             var addresses = CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
-            var balances= assets.Select(asset => new WalletBalanceModel()
+            var balances = assets.Select(asset => new WalletBalanceModel()
             {
                 Asset = asset,
                 Balance = addresses.GetBalanceOf(asset).SumAssetAmount(),
@@ -506,7 +508,7 @@ namespace Neo.Invokers
                         From = x.From,
                         To = x.To,
                     };
-                    var (amount, asset) = x.Amount.GetAssetAmount(x.AssetId);
+                    var (amount, asset) = x.Amount.GetAssetAmount(x.Asset);
                     tran.Amount = amount.ToString();
                     tran.Symbol = asset.Symbol;
                     return tran;

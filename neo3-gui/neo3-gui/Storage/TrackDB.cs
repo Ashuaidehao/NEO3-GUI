@@ -45,12 +45,12 @@ namespace Neo.Storage
         {
             var from = GetOrCreateAddress(newTransaction.From);
             var to = GetOrCreateAddress(newTransaction.To);
-            var asset = GetOrCreateAsset(newTransaction.AssetId);
+            var asset = GetOrCreateAsset(newTransaction.AssetInfo);
 
             var tran = new Nep5TransactionEntity
             {
                 BlockHeight = newTransaction.BlockHeight,
-                TxId = newTransaction.TxId.ToHexString(),
+                TxId = newTransaction.TxId.ToBigEndianHex(),
                 FromId = from?.Id,
                 ToId = to.Id,
                 FromBalance = newTransaction.FromBalance.ToByteArray(),
@@ -60,29 +60,30 @@ namespace Neo.Storage
                 Time = newTransaction.TimeStamp.FromTimestampMS(),
             };
             _db.Nep5Transactions.Add(tran);
-            UpdateBalance(from, asset, newTransaction.FromBalance);
-            UpdateBalance(to, asset, newTransaction.ToBalance);
+            UpdateBalance(from, asset, newTransaction.FromBalance, newTransaction.BlockHeight);
+            UpdateBalance(to, asset, newTransaction.ToBalance, newTransaction.BlockHeight);
         }
 
-        public void UpdateBalance(AddressEntity address, AssetEntity asset, BigInteger balance)
+        public void UpdateBalance(AddressEntity address, AssetEntity asset, BigInteger balance, uint height)
         {
             if (address == null) return;
             var old = _db.AssetBalances.FirstOrDefault(a => a.AddressId == address.Id && a.AssetId == asset.Id);
             if (old == null)
             {
                 _db.AssetBalances.Add(new AssetBalanceEntity()
-                { AddressId = address.Id, AssetId = asset.Id, Balance = balance.ToByteArray() });
+                { AddressId = address.Id, AssetId = asset.Id, Balance = balance.ToByteArray(), BlockHeight = height });
             }
             else
             {
                 old.Balance = balance.ToByteArray();
+                old.BlockHeight = height;
             }
         }
 
         public AddressEntity GetOrCreateAddress(UInt160 address)
         {
             if (address == null) return null;
-            var addr = address.ToHexString();
+            var addr = address.ToBigEndianHex();
             var old = _db.Addresses.FirstOrDefault(a => a.Address == addr);
             if (old == null)
             {
@@ -93,13 +94,13 @@ namespace Neo.Storage
             return old;
         }
 
-        public AssetEntity GetOrCreateAsset(UInt160 asset)
+        public AssetEntity GetOrCreateAsset(AssetInfo asset)
         {
-            var assetStr = asset.ToHexString();
-            var old = _db.Assets.FirstOrDefault(a => a.Asset == assetStr);
+            var assetScriptHash = asset.Asset.ToBigEndianHex();
+            var old = _db.Assets.FirstOrDefault(a => a.Asset == assetScriptHash);
             if (old == null)
             {
-                old = new AssetEntity() { Hash = asset.ToArray(), Asset = assetStr };
+                old = new AssetEntity() { Hash = asset.Asset.ToArray(), Asset = assetScriptHash, Name = asset.Name, Symbol = asset.Symbol, Decimals = asset.Decimals };
                 _db.Assets.Add(old);
                 _db.SaveChanges();
             }
@@ -116,17 +117,17 @@ namespace Neo.Storage
 
             if (filter.FromOrTo.NotEmpty())
             {
-                var addresses = filter.FromOrTo.Select(a => a.ToHexString()).ToList();
+                var addresses = filter.FromOrTo.Select(a => a.ToBigEndianHex()).ToList();
                 query = query.Where(r => addresses.Contains(r.From.Address) || addresses.Contains(r.To.Address));
             }
             if (filter.From.NotEmpty())
             {
-                var addresses = filter.From.Select(a => a.ToHexString()).ToList();
+                var addresses = filter.From.Select(a => a.ToBigEndianHex()).ToList();
                 query = query.Where(r => addresses.Contains(r.From.Address));
             }
             if (filter.To.NotEmpty())
             {
-                var addresses = filter.To.Select(a => a.ToHexString()).ToList();
+                var addresses = filter.To.Select(a => a.ToBigEndianHex()).ToList();
                 query = query.Where(r => addresses.Contains(r.To.Address));
             }
             if (filter.StartTime != null)
@@ -137,9 +138,9 @@ namespace Neo.Storage
             {
                 query = query.Where(r => r.Time <= filter.EndTime.Value.ToUniversalTime());
             }
-            if (filter.AssetId != null)
+            if (filter.Asset != null)
             {
-                query = query.Where(r => r.Asset.Asset == filter.AssetId.ToHexString());
+                query = query.Where(r => r.Asset.Asset == filter.Asset.ToBigEndianHex());
             }
             if (filter.BlockHeight != null)
             {
@@ -147,7 +148,7 @@ namespace Neo.Storage
             }
             if (filter.TxId != null)
             {
-                query = query.Where(r => r.TxId == filter.TxId.ToHexString());
+                query = query.Where(r => r.TxId == filter.TxId.ToBigEndianHex());
             }
 
             var pageList = new PageList<TransferInfo>();
@@ -171,6 +172,18 @@ namespace Neo.Storage
             return pageList;
         }
 
+        public IEnumerable<AssetBalanceEntity> FindAssetBalance(UInt160 address, UInt160 asset = null)
+        {
+            var addr = address.ToBigEndianHex();
+            var query = _db.AssetBalances.Include(a => a.Asset).Include(a => a.Address).Where(a => a.Address.Address == addr);
+            if (asset != null)
+            {
+                var assetStr = asset.ToBigEndianHex();
+                query = query.Where(a => a.Asset.Asset == assetStr);
+            }
+            return query.ToList();
+        }
+
 
 
         private TransferInfo ToNep5TransferInfo(Nep5TransactionEntity entity)
@@ -184,7 +197,7 @@ namespace Neo.Storage
                 FromBalance = new BigInteger(entity.FromBalance),
                 ToBalance = new BigInteger(entity.ToBalance),
                 Amount = new BigInteger(entity.Amount),
-                AssetId = UInt160.Parse(entity.Asset.Asset),
+                Asset = UInt160.Parse(entity.Asset.Asset),
 
                 TimeStamp = entity.Time.AsUtcTime().ToTimestampMS(),
             };

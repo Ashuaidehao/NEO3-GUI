@@ -11,6 +11,7 @@ using Neo.Network.P2P.Payloads;
 using Neo.Persistence;
 using Neo.Plugins;
 using Neo.Storage;
+using Neo.Tools;
 using Neo.VM;
 using Neo.VM.Types;
 using Neo.Wallets;
@@ -91,7 +92,7 @@ namespace Neo.Common
             var amount = amountItem.GetBigInteger();
             var fromBalance = from?.GetBalanceOf(scriptHash, snapshot);
             var toBalance = to.GetBalanceOf(scriptHash, snapshot);
-
+            var asset = AssetCache.GetAssetInfo(scriptHash, snapshot);
             var record = new TransferInfo
             {
                 BlockHeight = header.Index,
@@ -99,10 +100,11 @@ namespace Neo.Common
                 FromBalance = fromBalance?.Value ?? 0,
                 To = to,
                 ToBalance = toBalance.Value,
-                AssetId = scriptHash,
+                Asset = scriptHash,
                 Amount = amount,
                 TxId = transaction.Hash,
                 TimeStamp = header.Timestamp,
+                AssetInfo = asset,
             };
             _db.AddTransfer(record);
 

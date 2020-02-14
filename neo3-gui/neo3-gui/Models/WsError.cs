@@ -1,4 +1,6 @@
-﻿namespace Neo.Models
+﻿using System.ComponentModel;
+
+namespace Neo.Models
 {
     public class WsError
     {
@@ -8,7 +10,13 @@
 
     public enum ErrorCode
     {
-        MethodNotFound = -999,
-        WalletNotOpen =-1000,
+        [Description("invalid private key!")]
+        InvalidPrivateKey = -1003,
+        [Description("parameter cannot be empty!")]
+        ParameterIsNull = -1002,
+        [Description("method not found!")]
+        MethodNotFound = -1001,
+        [Description("wallet should be open first!")]
+        WalletNotOpen = -1000,
     }
 }

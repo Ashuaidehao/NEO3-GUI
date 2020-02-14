@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Neo.Storage.SQLiteModules
 {
+    [Table("Nep5Transaction")]
     public class Nep5TransactionEntity
     {
         [Key]
@@ -19,10 +20,6 @@ namespace Neo.Storage.SQLiteModules
 
         public long? FromId { get; set; }
 
-        //[ForeignKey(nameof(FromId))]
-        //public AddressEntity From { get; set; }
-
-        //[ForeignKey(nameof(FromId))]
         public AddressEntity From { get; set; }
 
         public long ToId { get; set; }

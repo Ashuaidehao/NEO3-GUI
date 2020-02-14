@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Neo.Common;
 using Neo.Ledger;
 using Neo.Models.Blocks;
+using Neo.Storage;
 using Neo.Tools;
 
 namespace Neo.Invokers
@@ -27,6 +28,12 @@ namespace Neo.Invokers
         public async Task<object> GetAllAssets()
         {
             return AssetCache.GetAllAssets();
+        }
+
+        public async Task<object> GetAddressBalance(UInt160 address,UInt160 asset=null)
+        {
+            using var db=new TrackDB();
+            return db.FindAssetBalance(address, asset);
         }
     }
 }
