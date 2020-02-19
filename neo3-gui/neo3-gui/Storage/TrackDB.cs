@@ -41,6 +41,13 @@ namespace Neo.Storage
             return _db.SyncIndexes.FirstOrDefault(s => s.BlockHeight == index) != null;
         }
 
+
+        public void AddExecuteResult(ExecuteResultEntity execResult)
+        {
+            _db.ExecuteResults.Add(execResult);
+            _db.SaveChanges();
+        }
+
         public void AddTransfer(TransferInfo newTransaction)
         {
             var from = GetOrCreateAddress(newTransaction.From);
@@ -172,6 +179,11 @@ namespace Neo.Storage
             return pageList;
         }
 
+
+        public IEnumerable<NotifyEventEntity> GetNotifyEventsByTxId(UInt256 txId)
+        {
+            return _db.ExecuteResults.Include(e=>e.Notifications).Where(e => e.TxId == txId.ToString()).SelectMany(e => e.Notifications);
+        }
         public IEnumerable<AssetBalanceEntity> FindAssetBalance(UInt160 address, UInt160 asset = null)
         {
             var addr = address.ToBigEndianHex();

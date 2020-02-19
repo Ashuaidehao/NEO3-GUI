@@ -96,7 +96,7 @@ namespace Neo.Common
                     return paras;
                 }
 
-                if (!parameterType.IsPrimitive && !parameterType.IsArray && parameterType != typeof(string))
+                if (!parameterType.IsPrimitive && !parameterType.IsArray && parameterType != typeof(string) && parameterType != typeof(UInt256) && parameterType != typeof(UInt160))
                 {
                     //method only accept one Object parameter
                     paras.Add(inputParas.GetRawText().DeserializeJson(parameterType));

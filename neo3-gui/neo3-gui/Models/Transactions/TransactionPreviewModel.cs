@@ -10,7 +10,7 @@ namespace Neo.Models.Transactions
     {
         public uint BlockHeight { get; set; }
         public string Hash { get; set; }
-        public DateTime Time => Timestamp.FromTimestampMS();
+        public DateTime Time => Timestamp.FromTimestampMS().ToLocalTime();
         public ulong Timestamp { get; set; }
         public List<TransferModel> Transfers { get; set; }
     }

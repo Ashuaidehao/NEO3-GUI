@@ -13,11 +13,6 @@ namespace Neo.Common.Json
     /// </summary>
     public class StringConverter : JsonConverter<string>
     {
-  
-        public override bool CanConvert(Type typeToConvert)
-        {
-            return typeof(string) == typeToConvert;
-        }
 
         public override string Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

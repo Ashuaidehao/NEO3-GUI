@@ -25,6 +25,17 @@ namespace Neo.Invokers
         }
 
 
+        public async Task<object> GetBlockByHash(UInt256 hash)
+        {
+            var block = Blockchain.Singleton.GetBlock(hash);
+            if (block != null)
+            {
+                return new BlockModel(block);
+            }
+
+            return $"Block[{hash}] not found!";
+        }
+
         public async Task<object> GetAllAssets()
         {
             return AssetCache.GetAllAssets();

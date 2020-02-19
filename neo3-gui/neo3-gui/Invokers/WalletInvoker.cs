@@ -324,6 +324,66 @@ namespace Neo.Invokers
             };
         }
 
+        /// <summary>
+        /// show unclaimed gas amount
+        /// </summary>
+        /// <returns></returns>
+        public async Task<object> ShowGas()
+        {
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            BigInteger gas = BigInteger.Zero;
+            using (SnapshotView snapshot = Blockchain.Singleton.GetSnapshot())
+                foreach (UInt160 account in CurrentWallet.GetAccounts().Select(p => p.ScriptHash))
+                {
+                    gas += NativeContract.NEO.UnclaimedGas(snapshot, account, snapshot.Height + 1);
+                }
+            return new UnclaimedGasModel()
+            {
+                UnclaimedGas = new BigDecimal(gas, NativeContract.GAS.Decimals)
+            };
+        }
+
+        /// <summary>
+        /// show private key
+        /// </summary>
+        /// <returns></returns>
+        public async Task<object> ClaimGas()
+        {
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            var addresses = CurrentWallet.GetAccounts().Where(a => !a.Lock && !a.WatchOnly).Select(a => a.ScriptHash).ToList();
+
+            var balances = addresses.GetBalanceOf(NativeContract.NEO.Hash);
+            var outputs = balances.Select((t, index) => new TransferOutput()
+            {
+                AssetId = NativeContract.NEO.Hash,
+                Value = t,
+                ScriptHash = addresses[index],
+            }).ToArray();
+
+            Transaction tx = CurrentWallet.MakeTransaction(outputs);
+            if (tx == null)
+            {
+                return Error("Insufficient funds");
+            }
+
+            ContractParametersContext context = new ContractParametersContext(tx);
+            CurrentWallet.Sign(context);
+            if (!context.Completed)
+            {
+                return Error($"SignatureContext:{context}");
+            }
+            tx.Witnesses = context.GetWitnesses();
+            Program.Service.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+            return new TransactionModel(tx);
+        }
+
+
 
         /// <summary>
         /// send asset
@@ -475,11 +535,12 @@ namespace Neo.Invokers
             }
 
             var addresses = CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
-            var balances = assets.Select(asset => new WalletBalanceModel()
+
+            var balances = assets.Where(asset => AssetCache.GetAssetInfo(asset) != null).Select(asset => new WalletBalanceModel()
             {
                 Asset = asset,
                 Balance = addresses.GetBalanceOf(asset).SumAssetAmount(),
-            });
+            }).ToList();
             return balances;
         }
 
@@ -501,18 +562,7 @@ namespace Neo.Invokers
                 Hash = lookup.Key.ToString(),
                 Timestamp = item.TimeStamp,
                 BlockHeight = item.BlockHeight,
-                Transfers = lookup.Select(x =>
-                {
-                    var tran = new TransferModel()
-                    {
-                        From = x.From,
-                        To = x.To,
-                    };
-                    var (amount, asset) = x.Amount.GetAssetAmount(x.Asset);
-                    tran.Amount = amount.ToString();
-                    tran.Symbol = asset.Symbol;
-                    return tran;
-                }).ToList(),
+                Transfers = lookup.Select(x => x.ToTransferModel()).ToList(),
             };
             return model;
         }

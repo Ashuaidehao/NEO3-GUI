@@ -5,12 +5,14 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Neo.IO;
+using Neo.IO.Json;
 using Neo.Ledger;
 using Neo.Models;
 using Neo.Network.P2P.Payloads;
 using Neo.Persistence;
 using Neo.Plugins;
 using Neo.Storage;
+using Neo.Storage.SQLiteModules;
 using Neo.Tools;
 using Neo.VM;
 using Neo.VM.Types;
@@ -21,11 +23,10 @@ namespace Neo.Common
 {
     public class Nep5Tracker : Plugin, IPersistencePlugin
     {
-
-        private readonly TrackDB _db = new TrackDB();
+        private TrackDB _db;
         public void OnPersist(StoreView snapshot, IReadOnlyList<Blockchain.ApplicationExecuted> applicationExecutedList)
         {
-
+            _db = new TrackDB();
             Header header = snapshot.GetHeader(snapshot.CurrentBlockHash);
 
             if (_db.GetSyncIndex(header.Index))
@@ -35,6 +36,41 @@ namespace Neo.Common
             }
             foreach (Blockchain.ApplicationExecuted appExecuted in applicationExecutedList)
             {
+                if (appExecuted.Transaction == null)
+                {
+                    continue;//ignore system trigger
+                }
+
+                var log = new ExecuteResultEntity();
+                log.TxId = appExecuted.Transaction?.Hash.ToString();
+                log.Trigger = appExecuted.Trigger;
+                log.VMState = appExecuted.VMState;
+                log.GasConsumed = appExecuted.GasConsumed;
+                try
+                {
+                    var results = appExecuted.Stack.Select(q => q.ToParameter().ToJson());
+                    log.ResultStack = results.SerializeJson();
+                }
+                catch (InvalidOperationException)
+                {
+                    log.ResultStack = "error: recursive reference";
+                }
+                log.Notifications = appExecuted.Notifications.Select(q =>
+                {
+                    var notification = new NotifyEventEntity();
+                    notification.Contract = q.ScriptHash.ToString();
+                    try
+                    {
+                        notification.State = q.State.ToParameter().ToJson().ToString();
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        notification.State = "error: recursive reference";
+                    }
+                    return notification;
+                }).ToList();
+
+                _db.AddExecuteResult(log);
                 // Executions that fault won't modify storage, so we can skip them.
                 if (appExecuted.VMState.HasFlag(VMState.FAULT)) continue;
                 foreach (var notifyEventArgs in appExecuted.Notifications)
@@ -56,6 +92,7 @@ namespace Neo.Common
         public void OnCommit(StoreView snapshot)
         {
             _db.Commit();
+            _db.Dispose();
         }
 
         public bool ShouldThrowExceptionFromCommit(Exception ex)
@@ -86,7 +123,7 @@ namespace Neo.Common
             if (fromBytes?.Length != 20) fromBytes = null;
             byte[] toBytes = toItem?.GetSpan().ToArray();
             if (toBytes?.Length != 20) toBytes = null;
-            if (fromBytes==null && toBytes == null) return;
+            if (fromBytes == null && toBytes == null) return;
             var from = fromBytes == null ? null : new UInt160(fromBytes);
             var to = new UInt160(toBytes);
             var amount = amountItem.GetBigInteger();
@@ -115,6 +152,6 @@ namespace Neo.Common
         }
 
 
-        
+
     }
 }

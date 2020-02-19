@@ -64,7 +64,7 @@ namespace Neo.Common
                 message.Error =new WsError()
                 {
                     Code = -1,
-                    Message = e.Message,
+                    Message = e.ToString(),
                 };
                 await context.Response.WriteAsync(message.SerializeJson(), Encoding.UTF8);
             }

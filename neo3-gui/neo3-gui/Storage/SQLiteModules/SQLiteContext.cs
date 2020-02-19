@@ -11,6 +11,10 @@ namespace Neo.Storage.SQLiteModules
         public DbSet<AssetBalanceEntity> AssetBalances { get; set; }
         public DbSet<AddressEntity> Addresses { get; set; }
 
+
+        public DbSet<ExecuteResultEntity> ExecuteResults { get; set; }
+        public DbSet<NotifyEventEntity> NotifyEvents { get; set; }
+
         private readonly string _filename;
         public SQLiteContext(string filename)
         {
@@ -42,6 +46,10 @@ namespace Neo.Storage.SQLiteModules
             modelBuilder.Entity<AddressEntity>().HasIndex(p => p.Address);
 
             modelBuilder.Entity<AssetBalanceEntity>().HasIndex(p => new { p.AddressId, p.AssetId });
+
+            modelBuilder.Entity<ExecuteResultEntity>().HasIndex(p => p.TxId);
+
+            modelBuilder.Entity<NotifyEventEntity>().HasIndex(p => p.Contract);
         }
     }
 }
