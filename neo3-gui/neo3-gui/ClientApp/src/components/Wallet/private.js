@@ -27,8 +27,7 @@ class Walletprivate extends React.Component{
     axios.post('http://localhost:8081', {
       "id":"20",
       "method": "ImportWif",
-      "params":["L3H8iw9nmcHuvRX2xs5c95EP6bQotHZpYNuz7K4UkBzTK7tx3eXQ",
-      "L3Abqzw7vqBBzbcJz1Yo5SERpbefLNAo9dN94hxXkVxAFYCQJRyQ"]
+      "params":["ad247e986a9cd1ca2b01c50cd6ad1ef8de39da91f7113fc506ee08465ce0a591"]
     })
     .then(function (res) {
       let _data = res.data;

@@ -47,3 +47,23 @@ a{
     animation: loadingCircle 3s infinite linear;
     color: #52c41a;
 }
+
+/* common */
+.w200{
+    max-width: 200px;
+}
+.w300{
+    max-width: 300px;
+}
+.w400{
+    max-width: 400px;
+}
+
+/* walletlist */
+.ellipsis{
+    display: inline-block;
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

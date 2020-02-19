@@ -31,6 +31,7 @@ class Sync extends React.Component{
     }
     
     ws.onclose = function(e) {
+        console.log(e);
         console.log("closed");
     }
     

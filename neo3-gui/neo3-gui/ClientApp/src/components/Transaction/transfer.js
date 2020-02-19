@@ -41,7 +41,6 @@ class Transfer extends React.Component{
     })
     .then(function (response) {
       var _data = response.data;
-      var _op = _data.result.accounts;
       if(_data.msgType == -1){
         console.log("需要先打开钱包再进入页面");
         return;
@@ -49,15 +48,19 @@ class Transfer extends React.Component{
       _this.setState({
         accountlist:_data.result.accounts
       })
-
-      const selectlist = [];
-      for (let i = 10; i < 36; i++) {
-        selectlist.push(<Option key={i}>{i}</Option>);
-      }
-      _this.setState({
-        selectlist:selectlist
-      })
-      console.log(selectlist);
+      
+      // var _op = _data.result.accounts;
+      // const selectlist = [];
+      // _op.forEach((item,index)=>{
+      //   selectlist.push(
+      //     <Option key={index}>
+      //       {item.address}
+      //     </Option>
+      //   )
+      // });
+      // _this.setState({
+      //   selectlist:selectlist
+      // })
     })
     .catch(function (error) {
       console.log(error);
@@ -65,11 +68,16 @@ class Transfer extends React.Component{
     });
   }
   render() {
-    const {size} = this.state;
+    const {size,accountlist} = this.state;
     return (
         <div>
+          <h1>转账</h1>
             <Select size={size} defaultValue="请选择要转出的地址" style={{ width: 200 }}>
-                {this.state.selectlist}
+              {accountlist.map((item,index)=>{
+                return(
+                    <Option key={index}>{item.address}</Option>
+                )
+              })}
             </Select>
             <Input
             placeholder="Enter your username"
@@ -77,9 +85,7 @@ class Transfer extends React.Component{
             suffix={
                 <Tooltip title="Extra information">
                 <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
-                </Tooltip>
-            }
-            />
+                </Tooltip>}/>
 
             <br />
             <br />

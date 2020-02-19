@@ -76,12 +76,14 @@ class Walletlist extends React.Component{
     })
     .then(function (response) {
       var _data = response.data;
+      console.log(_data);
       if(_data.msgType == -1){
         console.log("需要先打开钱包再进入页面");
         return;
       }
       console.log(_data);
-
+// "ad247e986a9cd1ca2b01c50cd6ad1ef8de39da91f7113fc506ee08465ce0a591"
+// "ad247e986a9cd1ca2b01c50cd6ad1ef8de39da91f7113fc506ee08465ce0a591"
     })
     .catch(function (error) {
       console.log(error);
@@ -141,7 +143,6 @@ class Walletlist extends React.Component{
                   <Button onClick={this.exitWallet}>退出钱包</Button>
                   <Row type="flex">
                     <Col span={12} order={1}>
-                      
                       <h1>地址列表</h1>
                       {/* {
                         accountlist.map((item,index)=>{
