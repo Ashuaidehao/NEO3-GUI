@@ -8,7 +8,7 @@ namespace Neo.Models
 {
     public class AssetInfo
     {
-        public UInt160 AssetId { get; set; }
+        public UInt160 Asset { get; set; }
 
         public string Name { get; set; }
         public string Symbol { get; set; }

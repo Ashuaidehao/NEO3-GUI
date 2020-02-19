@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Neo.Models;
 
 namespace Neo.Storage
 {
@@ -13,7 +14,9 @@ namespace Neo.Storage
         public BigInteger FromBalance { get; set; }
         public BigInteger ToBalance { get; set; }
         public BigInteger Amount { get; set; }
-        public UInt160 AssetId { get; set; }
         public ulong TimeStamp { get; set; }
+
+        public UInt160 Asset { get; set; }
+        public AssetInfo AssetInfo { get; set; }
     }
 }

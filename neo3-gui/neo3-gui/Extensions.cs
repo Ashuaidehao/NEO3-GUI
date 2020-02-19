@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net.WebSockets;
@@ -26,6 +27,7 @@ using Neo.VM;
 using Neo.VM.Types;
 using Neo.Wallets;
 using JsonSerializer = System.Text.Json.JsonSerializer;
+using StringConverter = Neo.Common.Json.StringConverter;
 
 namespace Neo
 {
@@ -44,6 +46,7 @@ namespace Neo
                 new UInt256Converter(),
                 new StringConverter(),
                 new BigDecimalConverter(),
+                new DatetimeJsonConverter(),
             }
         };
 
@@ -244,7 +247,7 @@ namespace Neo
         /// <returns></returns>
         public static List<BigDecimal> GetBalanceOf(this IEnumerable<UInt160> addresses, UInt160 assetId, StoreView specificSnapshot = null)
         {
-            var assetInfo = AssetCache.GetAssetInfo(assetId);
+            var assetInfo = AssetCache.GetAssetInfo(assetId, specificSnapshot);
             if (assetInfo == null)
             {
                 throw new ArgumentException($"invalid assetId:[{assetId}]");
@@ -281,6 +284,7 @@ namespace Neo
         public static BigDecimal GetBalanceOf(this UInt160 address, UInt160 assetId, StoreView specificSnapshot = null)
         {
             var assetInfo = AssetCache.GetAssetInfo(assetId, specificSnapshot);
+
             if (assetInfo == null)
             {
                 return new BigDecimal(0, 0);
@@ -337,11 +341,11 @@ namespace Neo
         }
 
         /// <summary>
-        /// convert to hex string without "Ox"
+        /// convert to Big Endian hex string without "Ox"
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
-        public static string ToHexString(this UIntBase address)
+        public static string ToBigEndianHex(this UIntBase address)
         {
             return address.ToArray().ToHexString(reverse: true);
         }
@@ -380,19 +384,27 @@ namespace Neo
         }
 
 
-        private static readonly Dictionary<ErrorCode, string> _errorMap = new Dictionary<ErrorCode, string>()
-        {
-            [ErrorCode.MethodNotFound] = "method not found.",
-            [ErrorCode.WalletNotOpen] = "please open wallet first.",
-        };
+        private static readonly Dictionary<ErrorCode, string> _errorMap = new Dictionary<ErrorCode, string>();
 
         public static WsError ToError(this ErrorCode code)
         {
+            if (!_errorMap.ContainsKey(code))
+            {
+                var message = GetErrorMsg(code);
+                _errorMap[code] = message ?? code.ToString();
+            }
             return new WsError()
             {
                 Code = (int)code,
-                Message = _errorMap.ContainsKey(code) ? _errorMap[code] : "error...",
+                Message = _errorMap[code],
             };
+        }
+
+        private static string GetErrorMsg(this ErrorCode errorCode)
+        {
+            FieldInfo fieldInfo = errorCode.GetType().GetField(errorCode.ToString());
+            var desc= fieldInfo.GetCustomAttribute<DescriptionAttribute>();
+            return desc?.Description;
         }
 
         public static bool NotVmByteArray(this StackItem item)
@@ -409,6 +421,40 @@ namespace Neo
         public static bool NotVmInt(this StackItem item)
         {
             return !(item is Integer);
+        }
+
+
+        /// <summary>
+        /// try get private key from hex string or wif,error will return null
+        /// </summary>
+        /// <param name="privateKey"></param>
+        /// <returns></returns>
+        public static string TryGetPrivateKey(this string privateKey)
+        {
+            if (privateKey.IsNull())
+            {
+                return null;
+            }
+            byte[] prikey = null;
+            try
+            {
+                prikey = Wallet.GetPrivateKeyFromWIF(privateKey);
+                return prikey.ToHexString();
+            }
+            catch (FormatException) { }
+
+            if (privateKey.Length == 64)
+            {
+                try
+                {
+                    prikey = privateKey.HexToBytes();
+                    return privateKey;
+                }
+                catch (Exception e)
+                {
+                }
+            }
+            return null;
         }
     }
 }

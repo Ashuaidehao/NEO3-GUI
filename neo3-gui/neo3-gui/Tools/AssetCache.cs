@@ -17,14 +17,28 @@ namespace Neo.Tools
         private static readonly Dictionary<UInt160, AssetInfo> _assets = new Dictionary<UInt160, AssetInfo>();
 
 
+        /// <summary>
+        /// https://github.com/neo-project/proposals/blob/master/nep-5.mediawiki
+        /// </summary>
+        /// <param name="assetId"></param>
+        /// <returns></returns>
+        public static AssetInfo GetAssetInfoByCache(UInt160 assetId)
+        {
+            if (_assets.ContainsKey(assetId))
+            {
+                return _assets[assetId];
+            }
+            return null;
+        }
 
 
         /// <summary>
         /// https://github.com/neo-project/proposals/blob/master/nep-5.mediawiki
         /// </summary>
         /// <param name="assetId"></param>
+        /// <param name="snapshot"></param>
         /// <returns></returns>
-        public static AssetInfo GetAssetInfo(UInt160 assetId,StoreView snapshot=null)
+        public static AssetInfo GetAssetInfo(UInt160 assetId, StoreView snapshot = null)
         {
             if (_assets.ContainsKey(assetId))
             {
@@ -35,8 +49,8 @@ namespace Neo.Tools
             {
                 using var snap = Blockchain.Singleton.GetSnapshot();
                 snapshot = snap;
-
             }
+
             using var sb = new ScriptBuilder();
             sb.EmitAppCall(assetId, "decimals");
             sb.EmitAppCall(assetId, "symbol");
@@ -53,7 +67,7 @@ namespace Neo.Tools
             }
             var assetInfo = new AssetInfo()
             {
-                AssetId = assetId,
+                Asset = assetId,
                 Decimals = decimals,
                 Symbol = symbol,
                 Name = name,

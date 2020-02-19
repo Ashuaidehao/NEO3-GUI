@@ -34,11 +34,14 @@ namespace Neo.Storage.SQLiteModules
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Nep5TransactionEntity>().ToTable("Nep5Transaction");
             modelBuilder.Entity<Nep5TransactionEntity>().HasIndex(p => p.FromId);
             modelBuilder.Entity<Nep5TransactionEntity>().HasIndex(p => p.ToId);
             modelBuilder.Entity<Nep5TransactionEntity>().HasIndex(p => p.Time);
             modelBuilder.Entity<Nep5TransactionEntity>().HasIndex(p => p.TxId);
+
+            modelBuilder.Entity<AddressEntity>().HasIndex(p => p.Address);
+
+            modelBuilder.Entity<AssetBalanceEntity>().HasIndex(p => new { p.AddressId, p.AssetId });
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Neo.Storage.SQLiteModules
 {
+    [Table("AssetBalance")]
     public class AssetBalanceEntity
     {
         [Key]
@@ -20,5 +21,7 @@ namespace Neo.Storage.SQLiteModules
         public AssetEntity Asset { get; set; }
 
         public byte[] Balance { get; set; }
+
+        public uint BlockHeight { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace Neo.Storage
         public DateTime? EndTime { get; set; }
         public List<UInt160> From { get; set; }
         public List<UInt160> To { get; set; }
-        public UInt160 AssetId { get; set; }
+        public UInt160 Asset { get; set; }
         public uint? BlockHeight { get; set; }
         public UInt256 TxId { get; set; }
 
