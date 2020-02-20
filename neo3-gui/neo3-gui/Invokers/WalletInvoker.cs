@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Numerics;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Akka.Util.Internal;
@@ -21,12 +22,13 @@ using Neo.Wallets;
 using Neo.Wallets.NEP6;
 using Neo.Wallets.SQLite;
 using VMArray = Neo.VM.Types.Array;
-using Neo.Cryptography.ECC;
 using Neo.Network.P2P;
 using Neo.Network.P2P.Payloads;
 using Akka.Actor;
 using Neo.Models.Transactions;
 using Neo.Storage;
+using ECCurve = Neo.Cryptography.ECC.ECCurve;
+using ECPoint = Neo.Cryptography.ECC.ECPoint;
 
 
 namespace Neo.Invokers
@@ -48,9 +50,24 @@ namespace Neo.Invokers
         /// <param name="path">wallet path</param>
         /// <param name="password">wallet password</param>
         /// <returns></returns>
-        public async Task<WalletModel> OpenWallet(string path, string password)
+        public async Task<object> OpenWallet(string path, string password)
         {
-            Program.Service.OpenWallet(path, password);
+            if (!File.Exists(path))
+            {
+                return Error(ErrorCode.WalletFileNotFound);
+            }
+            try
+            {
+                Program.Service.OpenWallet(path, password);
+            }
+            catch (CryptographicException e)
+            {
+                return Error(ErrorCode.WrongPassword);
+            }
+            catch (Exception e)
+            {
+                return Error(ErrorCode.FailToOpenWallet);
+            }
             return GetWalletAddress(CurrentWallet, int.MaxValue);
         }
 
@@ -75,42 +92,50 @@ namespace Neo.Invokers
         /// <param name="password"></param>
         /// <param name="privateKey"></param>
         /// <returns></returns>
-        public async Task<WalletModel> CreateWallet(string path, string password, string privateKey = null)
+        public async Task<object> CreateWallet(string path, string password, string privateKey = null)
         {
             var result = new WalletModel();
             var hexPrivateKey = privateKey.TryGetPrivateKey();
-            switch (Path.GetExtension(path))
+            try
             {
-                case ".db3":
-                    {
-                        UserWallet wallet = UserWallet.Create(path, password);
-                        var account = hexPrivateKey.NotNull() ? wallet.CreateAccount(hexPrivateKey.HexToBytes()) : wallet.CreateAccount();
-                        result.Accounts.Add(new AccountModel()
+                switch (Path.GetExtension(path))
+                {
+                    case ".db3":
                         {
-                            AccountType = AccountType.Standard,
-                            Address = account.Address,
-                            ScriptHash = account.ScriptHash,
+                            UserWallet wallet = UserWallet.Create(path, password);
+                            var account = hexPrivateKey.NotNull() ? wallet.CreateAccount(hexPrivateKey.HexToBytes()) : wallet.CreateAccount();
+                            result.Accounts.Add(new AccountModel()
+                            {
+                                AccountType = AccountType.Standard,
+                                Address = account.Address,
+                                ScriptHash = account.ScriptHash,
 
-                        });
-                    }
-                    break;
-                case ".json":
-                    {
-                        NEP6Wallet wallet = new NEP6Wallet(path);
-                        wallet.Unlock(password);
-                        var account = hexPrivateKey.NotNull() ? wallet.CreateAccount(hexPrivateKey.HexToBytes()) : wallet.CreateAccount();
-                        wallet.Save();
-                        result.Accounts.Add(new AccountModel()
+                            });
+                        }
+                        break;
+                    case ".json":
                         {
-                            AccountType = AccountType.Standard,
-                            ScriptHash = account.ScriptHash,
-                            Address = account.Address,
-                        });
-                    }
-                    break;
-                default:
-                    throw new Exception("Wallet files in that format are not supported, please use a .json or .db3 file extension.");
+                            NEP6Wallet wallet = new NEP6Wallet(path);
+                            wallet.Unlock(password);
+                            var account = hexPrivateKey.NotNull() ? wallet.CreateAccount(hexPrivateKey.HexToBytes()) : wallet.CreateAccount();
+                            wallet.Save();
+                            result.Accounts.Add(new AccountModel()
+                            {
+                                AccountType = AccountType.Standard,
+                                ScriptHash = account.ScriptHash,
+                                Address = account.Address,
+                            });
+                        }
+                        break;
+                    default:
+                        throw new Exception("Wallet files in that format are not supported, please use a .json or .db3 file extension.");
+                }
             }
+            catch (CryptographicException e)
+            {
+                return Error(ErrorCode.WrongPassword);
+            }
+
 
             GetNeoAndGas(result.Accounts);
             return result;
@@ -275,6 +300,14 @@ namespace Neo.Invokers
             {
                 return Error(ErrorCode.WalletNotOpen);
             }
+            foreach (var wif in wifs)
+            {
+                var priKey = wif.TryGetPrivateKey();
+                if (priKey.IsNull())
+                {
+                    return Error(ErrorCode.InvalidPrivateKey);
+                }
+            }
             var importedAccounts = new List<AccountModel>();
             foreach (var wif in wifs)
             {
@@ -308,11 +341,11 @@ namespace Neo.Invokers
             var account = CurrentWallet.GetAccount(scriptHash);
             if (account == null)
             {
-                return Error($"can not find selected address[{address}]");
+                return Error(ErrorCode.AddressNotFound);
             }
             if (!account.HasKey)
             {
-                return Error($"can not get private key[{address}], only standard address can get private key");
+                return Error(ErrorCode.AddressNotFoundPrivateKey);
             }
             var key = account.GetKey();
             return new PrivateKeyModel()
@@ -510,7 +543,7 @@ namespace Neo.Invokers
         /// query relate my wallet transactions(on chain)
         /// </summary>
         /// <returns></returns>
-        public async Task<object> GetMyTransactions()
+        public async Task<object> GetMyTransactions(int limit = 100)
         {
             if (CurrentWallet == null)
             {
@@ -519,7 +552,7 @@ namespace Neo.Invokers
 
             var addresses = CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
             using var db = new TrackDB();
-            var trans = db.FindTransfer(new TrackFilter() { FromOrTo = addresses }).List;
+            var trans = db.FindTransactions(new TrackFilter() { FromOrTo = addresses, PageIndex = 1, PageSize = limit }).List;
             return ConvertToTransactionPreviewModel(trans);
         }
 
@@ -559,7 +592,7 @@ namespace Neo.Invokers
             var item = lookup.FirstOrDefault();
             var model = new TransactionPreviewModel()
             {
-                Hash = lookup.Key.ToString(),
+                Hash = lookup.Key,
                 Timestamp = item.TimeStamp,
                 BlockHeight = item.BlockHeight,
                 Transfers = lookup.Select(x => x.ToTransferModel()).ToList(),

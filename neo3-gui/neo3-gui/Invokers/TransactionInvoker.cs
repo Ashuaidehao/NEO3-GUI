@@ -27,7 +27,7 @@ namespace Neo.Invokers
             var transaction = Blockchain.Singleton.GetTransaction(txId);
             if (transaction == null)
             {
-                return Error(ErrorCode.InvalidTxId);
+                return Error(ErrorCode.TxIdNotFound);
             }
 
            

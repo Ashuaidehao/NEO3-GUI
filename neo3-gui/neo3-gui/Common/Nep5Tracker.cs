@@ -42,7 +42,7 @@ namespace Neo.Common
                 }
 
                 var log = new ExecuteResultEntity();
-                log.TxId = appExecuted.Transaction?.Hash.ToString();
+                log.TxId = appExecuted.Transaction?.Hash.ToBigEndianHex();
                 log.Trigger = appExecuted.Trigger;
                 log.VMState = appExecuted.VMState;
                 log.GasConsumed = appExecuted.GasConsumed;
@@ -58,7 +58,7 @@ namespace Neo.Common
                 log.Notifications = appExecuted.Notifications.Select(q =>
                 {
                     var notification = new NotifyEventEntity();
-                    notification.Contract = q.ScriptHash.ToString();
+                    notification.Contract = q.ScriptHash.ToBigEndianHex();
                     try
                     {
                         notification.State = q.State.ToParameter().ToJson().ToString();

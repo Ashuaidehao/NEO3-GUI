@@ -58,6 +58,16 @@ namespace Neo.Common
                 context.Response.ContentType = "application/json-rpc";
                 await context.Response.WriteAsync(message.SerializeJson(), Encoding.UTF8);
             }
+            catch (ArgumentException ex)
+            {
+                message.MsgType = WsMessageType.Error;
+                message.Error = new WsError()
+                {
+                    Code = (int)ErrorCode.InvalidPara,
+                    Message = ex.Message,
+                };
+                await context.Response.WriteAsync(message.SerializeJson(), Encoding.UTF8);
+            }
             catch (Exception e)
             {
                 message.MsgType = WsMessageType.Error;

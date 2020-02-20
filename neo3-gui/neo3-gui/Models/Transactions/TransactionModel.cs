@@ -16,7 +16,7 @@ namespace Neo.Models.Transactions
             NetworkFee = tx.NetworkFee;
             Nonce = tx.Nonce;
             Script = tx.Script;
-            Sender = tx.Sender.ToString();
+            Sender = tx.Sender;
             SystemFee = tx.SystemFee;
             ValidUntilBlock = tx.ValidUntilBlock;
             Version = tx.Version;
@@ -40,7 +40,7 @@ namespace Neo.Models.Transactions
 
         public byte[] Script { get; set; }
 
-        public string Sender { get; set; }
+        public UInt160 Sender { get; set; }
 
         public long SystemFee { get; set; }
 

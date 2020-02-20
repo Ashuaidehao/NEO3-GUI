@@ -17,6 +17,10 @@ namespace Neo.Storage.SQLiteModules
     {
         [Key]
         public long Id { get; set; }
+
+        /// <summary>
+        /// bin-endian hex string without "0x"
+        /// </summary>
         public string TxId { get; set; }
 
         public TriggerType Trigger { get; internal set; }
@@ -37,7 +41,7 @@ namespace Neo.Storage.SQLiteModules
         public long Id { get; set; }
 
         /// <summary>
-        /// executing contract
+        /// executing contract,bin-endian hex string without "0x"
         /// </summary>
         public string Contract { get; set; }
 

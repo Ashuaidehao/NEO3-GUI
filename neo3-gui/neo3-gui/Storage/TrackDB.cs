@@ -114,8 +114,57 @@ namespace Neo.Storage
             return old;
         }
 
+        public PageList<TransferInfo> FindTransactions(TrackFilter filter)
+        {
+            if (filter.PageIndex.HasValue)
+            {
+                var query = BuildQuery(filter);
+                var pageList = new PageList<TransferInfo>();
+                var pageIndex = filter.PageIndex <= 0 ? 0 : filter.PageIndex.Value - 1;
+                pageList.TotalCount = query.GroupBy(q=>q.TxId).Count();
+                pageList.PageIndex = pageIndex + 1;
+                pageList.PageSize = filter.PageSize;
+                if (filter.PageSize > 0)
+                {
+                    var txIds = query.OrderByDescending(q => q.Time).GroupBy(q => q.TxId).Select(g=>g.Key)
+                        .Skip(pageIndex * filter.PageSize)
+                        .Take(filter.PageSize).ToList();
+                    pageList.List.AddRange(query.Where(q=>txIds.Contains(q.TxId)).OrderByDescending(r => r.Time).ToList().Select(ToNep5TransferInfo));
+                }
+
+                return pageList;
+            }
+            else
+            {
+                return FindTransfer(filter);
+            }
+        }
 
         public PageList<TransferInfo> FindTransfer(TrackFilter filter)
+        {
+            var query = BuildQuery(filter);
+            var pageList = new PageList<TransferInfo>();
+            if (filter.PageIndex.HasValue)
+            {
+                var pageIndex = filter.PageIndex <= 0 ? 0 : filter.PageIndex.Value - 1;
+                pageList.TotalCount = query.Count();
+                pageList.PageIndex = pageIndex + 1;
+                pageList.PageSize = filter.PageSize;
+                if (filter.PageSize > 0)
+                {
+                    pageList.List.AddRange(query.OrderByDescending(r => r.Time).Skip(pageIndex * filter.PageSize)
+                        .Take(filter.PageSize).ToList().Select(ToNep5TransferInfo));
+                }
+            }
+            else
+            {
+                pageList.List.AddRange(query.OrderByDescending(r => r.Time).ToList().Select(ToNep5TransferInfo));
+                pageList.TotalCount = pageList.List.Count;
+            }
+            return pageList;
+        }
+
+        private IQueryable<Nep5TransactionEntity> BuildQuery(TrackFilter filter)
         {
             IQueryable<Nep5TransactionEntity> query = _db.Nep5Transactions
                 .Include(t => t.From)
@@ -158,31 +207,12 @@ namespace Neo.Storage
                 query = query.Where(r => r.TxId == filter.TxId.ToBigEndianHex());
             }
 
-            var pageList = new PageList<TransferInfo>();
-            if (filter.PageIndex.HasValue)
-            {
-                var pageIndex = filter.PageIndex <= 0 ? 0 : filter.PageIndex.Value - 1;
-                pageList.TotalCount = query.Count();
-                pageList.PageIndex = pageIndex + 1;
-                pageList.PageSize = filter.PageSize;
-                if (filter.PageSize > 0)
-                {
-                    pageList.List.AddRange(query.OrderByDescending(r => r.Time).Skip(pageIndex * filter.PageSize)
-                        .Take(filter.PageSize).ToList().Select(ToNep5TransferInfo));
-                }
-            }
-            else
-            {
-                pageList.List.AddRange(query.OrderByDescending(r => r.Time).ToList().Select(ToNep5TransferInfo));
-                pageList.TotalCount = pageList.List.Count;
-            }
-            return pageList;
+            return query;
         }
-
 
         public IEnumerable<NotifyEventEntity> GetNotifyEventsByTxId(UInt256 txId)
         {
-            return _db.ExecuteResults.Include(e=>e.Notifications).Where(e => e.TxId == txId.ToString()).SelectMany(e => e.Notifications);
+            return _db.ExecuteResults.Include(e => e.Notifications).Where(e => e.TxId == txId.ToString()).SelectMany(e => e.Notifications);
         }
         public IEnumerable<AssetBalanceEntity> FindAssetBalance(UInt160 address, UInt160 asset = null)
         {

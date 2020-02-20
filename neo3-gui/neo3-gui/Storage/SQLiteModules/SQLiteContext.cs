@@ -10,8 +10,6 @@ namespace Neo.Storage.SQLiteModules
         public DbSet<AssetEntity> Assets { get; set; }
         public DbSet<AssetBalanceEntity> AssetBalances { get; set; }
         public DbSet<AddressEntity> Addresses { get; set; }
-
-
         public DbSet<ExecuteResultEntity> ExecuteResults { get; set; }
         public DbSet<NotifyEventEntity> NotifyEvents { get; set; }
 

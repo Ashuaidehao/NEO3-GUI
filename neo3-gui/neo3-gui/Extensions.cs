@@ -49,7 +49,7 @@ namespace Neo
                 new StringConverter(),
                 new BigDecimalConverter(),
                 new DatetimeJsonConverter(),
-                //new ByteArrayConverter(),
+                new ByteArrayConverter(),
                 //new JObjectConverter(),
             }
         };
