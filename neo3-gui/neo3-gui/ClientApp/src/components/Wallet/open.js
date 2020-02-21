@@ -35,23 +35,13 @@ class Walletopen extends React.Component{
   openWallet = () => {
     var _this = this;
     var pass = document.getElementById("opass").value;
-    var ss = {
-      "id" : "1",
-      "method" : "OpenWallet",
-      "params" : {
-        "path" : _this.state.path,
-        // "password" : pass
-        "password" : "123456"
-      }
-    };
-    console.log(ss);
     axios.post('http://localhost:8081', {
       "id" : "1",
       "method" : "OpenWallet",
       "params" : {
         "path" : _this.state.path,
-        // "password" : pass
-        "password" : "123456"
+        "password" : pass
+        // "password" : "123456"
       }
     })
     .then(function (res) {

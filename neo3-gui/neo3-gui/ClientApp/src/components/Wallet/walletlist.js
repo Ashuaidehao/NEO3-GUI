@@ -38,7 +38,6 @@ class Walletlist extends React.Component{
       _this.setState({
         accountlist:_data.result.accounts
       })
-      console.log("listadd");
     })
     .catch(function (error) {
       console.log(error);
@@ -57,8 +56,6 @@ class Walletlist extends React.Component{
         console.log("需要先打开钱包再进入页面");
         return;
       }
-      console.log(_data);
-
     })
     .catch(function (error) {
       console.log(error);
@@ -71,7 +68,7 @@ class Walletlist extends React.Component{
       "id":"123456",
       "method": "ShowPrivateKey",
       "params": {
-          "address": "NiczZuY3zKVpX2ywVcSKJtAv7RwpCS9czi"
+          "address": "NdBqia8N7sknTpgheck3ZznFoLzWdbaBoK"
       }
     })
     .then(function (response) {
@@ -81,9 +78,6 @@ class Walletlist extends React.Component{
         console.log("需要先打开钱包再进入页面");
         return;
       }
-      console.log(_data);
-// "ad247e986a9cd1ca2b01c50cd6ad1ef8de39da91f7113fc506ee08465ce0a591"
-// "ad247e986a9cd1ca2b01c50cd6ad1ef8de39da91f7113fc506ee08465ce0a591"
     })
     .catch(function (error) {
       console.log(error);
@@ -104,6 +98,29 @@ class Walletlist extends React.Component{
       }
       console.log(_data);
 
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
+  }
+  importPrivate = () =>{
+    var _this = this.state;
+    // var pass = document.getElementById("privateKey").value;
+    // console.log(pass);
+    axios.post('http://localhost:8081', {
+      "id":"20",
+      "method": "ImportWif",
+      "params":["L5EiKcecQfapmWKNatnZo1Zi6732kyDUNAZr618mdBAbPVS3M6cL"]
+    })
+    .then(function (res) {
+      let _data = res.data;
+      console.log(_data);
+      if(_data.msgType == 3){
+        message.success("私钥打开成功",2);
+      }else{
+        message.info("私钥输入错误",2);
+      }
     })
     .catch(function (error) {
       console.log(error);
@@ -138,9 +155,13 @@ class Walletlist extends React.Component{
             <Layout>
                 <Content>
                   <Link to='/'>回首页</Link><br />
+                  <Link to='/Wallet'>去钱包打开页面</Link><br />
+                  <br />
+                  <br />
                   <Button onClick={this.addAddress}>创建新地址</Button>
                   <Button onClick={this.showPrivate}>查看私钥</Button>
                   <Button onClick={this.exitWallet}>退出钱包</Button>
+                  <Button onClick={this.importPrivate}>导入私钥</Button>
                   <Row type="flex">
                     <Col span={12} order={1}>
                       <h1>地址列表</h1>
@@ -155,7 +176,6 @@ class Walletlist extends React.Component{
                           )
                         })
                       } */}
-                      
                       <List
                         itemLayout="horizontal"
                         dataSource={accountlist}
@@ -175,7 +195,6 @@ class Walletlist extends React.Component{
                       <h1>资产列表</h1>
                     </Col>
                   </Row>
-
                   <Transaction></Transaction>
                 </Content>
             </Layout>

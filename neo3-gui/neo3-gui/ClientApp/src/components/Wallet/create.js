@@ -4,6 +4,8 @@ import 'antd/dist/antd.css';
 import axios from 'axios';
 import { message, Button, Input } from 'antd';
 
+import CheckPass from '../Common/checkpass';
+
 const {dialog} = window.remote;
 
 class Walletcreate extends React.Component{
@@ -11,6 +13,7 @@ class Walletcreate extends React.Component{
     super(props);
     this.state = {
         size: 'default',
+        iconLoading:false,
         path:''
     };
   }
@@ -34,37 +37,26 @@ class Walletcreate extends React.Component{
     })
   }
   createWallet = () => {
-    var _this = this.state;
+    var _this = this;
+    this.setState({ iconLoading: true });
     var pass = document.getElementById("cpass").value;
-    console.log(pass);
-    // var ss  = {
-    //   "id" : "1",
-    //   "method" : "CreateWallet",
-    //   "params" : {
-    //     "path" : _this.path,
-    //     "password" : pass
-    //   }
-    // };
-    // var _path =       
-    // var file = res.filePath;
-    // var _path = file?file.replace(/\\/g,"\\\\"):"";
-    // console.log(_path);
     axios.post('http://localhost:8081', {
       "id" : "1",
       "method" : "CreateWallet",
       "params" : {
-        "path" : _this.path,
+        "path" : _this.state.path,
         "password" : pass
       }
     })
     .then(function (res) {
       let _data = res.data;
-      console.log(_data);
+      _this.setState({ iconLoading: false });
       if(_data.msgType == 3){
         message.success("钱包已创建",2);
       }else{
         message.info("钱包文件选择错误，请检查后重试",2);
       }
+      
     })
     .catch(function (error) {
       console.log(error);
@@ -78,15 +70,13 @@ class Walletcreate extends React.Component{
               <img></img>
               <Input placeholder="请选择文件存储位置" disabled value={this.state.path}/>
               <Button onClick={this.savedialog}>选择路径</Button>
+              
+                    <CheckPass/>
               <Input.Password id="cpass" placeholder="input password" maxLength="50" onChange={this.checkinput} onPressEnter={this.openWallet}/>
-              <Button onClick={this.createWallet}>创建钱包</Button>
+              <Button onClick={this.createWallet} loading={this.state.iconLoading}>创建钱包</Button>
           </div>
       </div>
     );
-  }
-  getpath = () =>{
-
-
   }
 } 
 

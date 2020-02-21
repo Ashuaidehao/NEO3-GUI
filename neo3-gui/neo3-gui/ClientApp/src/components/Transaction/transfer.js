@@ -27,7 +27,7 @@ class Transfer extends React.Component{
     this.state = {
         size: 'default',
         accountlist: [],
-        selectlist:[]
+        selectadd:0
     };
   }
   componentDidMount() {
@@ -48,49 +48,78 @@ class Transfer extends React.Component{
       _this.setState({
         accountlist:_data.result.accounts
       })
-      
-      // var _op = _data.result.accounts;
-      // const selectlist = [];
-      // _op.forEach((item,index)=>{
-      //   selectlist.push(
-      //     <Option key={index}>
-      //       {item.address}
-      //     </Option>
-      //   )
-      // });
-      // _this.setState({
-      //   selectlist:selectlist
-      // })
     })
     .catch(function (error) {
       console.log(error);
       console.log("error2");
     });
   }
+  setAddress = (target) =>{
+    var _this = this;
+    this.setState({
+      selectadd:_this.state.accountlist[target]
+    })
+
+  }
+  getAsset = () =>{
+    this.setState({
+      neo:_data.result.accounts
+    })
+  }
+  verifyInput = () =>{
+    
+  }
+  transfer = () =>{
+
+  }
   render() {
-    const {size,accountlist} = this.state;
+    const {size,accountlist,selectadd,disabled} = this.state;
+    
     return (
         <div>
           <h1>转账</h1>
-            <Select size={size} defaultValue="请选择要转出的地址" style={{ width: 200 }}>
+
+            <Select
+              size={size}
+              defaultValue={"请选择要转出的地址"}
+              style={{ width: 400, marginRight: '3%'}}
+              onChange={this.setAddress}>
               {accountlist.map((item,index)=>{
                 return(
-                    <Option key={index}>{item.address}</Option>
+                <Option key={index}>{item.address}</Option>
                 )
               })}
             </Select>
             <Input
-            placeholder="Enter your username"
-            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-            suffix={
-                <Tooltip title="Extra information">
-                <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
-                </Tooltip>}/>
+             placeholder="请输入要转到 NEO3 地址"  style={{ width: 400 }}
+            />
+            <br />
+            <Input
+              type="text"
+              placeholder="请输入转账金额" 
+              style={{ width: 250, marginRight: 20 }}
+            />
+            <Select
+              style={{ width: 130 }}
+              defaultValue="资产选择" 
+              >
+              <Option value="neo">NEO <small>{selectadd.neo}</small></Option>
+              <Option value="gas">GAS <small>{selectadd.gas}</small></Option>
+            </Select>
+            <br />
+            <div>
+              <Input
+                style={{ width: 250 }}
+                placeholder="手续费(GAS)"
+                suffix={
+                 <Tooltip title="在网络拥堵时加快交易速度">
+                 <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
+                 </Tooltip>}
+              />
+            </div>
 
             <br />
-            <br />
-
-            <Input prefix="￥" suffix="RMB" />
+            <Button onClick={this.transfer}>发送</Button> <small>预计到账时间：20s</small>
         </div>
     );
   }
