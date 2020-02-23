@@ -12,7 +12,7 @@ namespace Neo.Models.Transactions
     {
         public TransactionModel(Transaction tx)
         {
-            Hash = tx.Hash.ToString();
+            Hash = tx.Hash;
             NetworkFee = tx.NetworkFee;
             Nonce = tx.Nonce;
             Script = tx.Script;
@@ -26,14 +26,16 @@ namespace Neo.Models.Transactions
                 Usage = a.Usage,
                 Data = a.Data,
             }).ToList();
-            Witnesses = tx.Witnesses?.Select(w => new WitnessModel()
-            {
-                VerificationScript = w.VerificationScript,
-                InvocationScript = w.InvocationScript,
-                ScriptHash = w.ScriptHash,
-            }).ToList();
+            Witnesses = tx.Witnesses?.Select(w => new WitnessModel(w)
+            ).ToList();
         }
-        public string Hash { get; set; }
+
+        public UInt256 Hash { get; set; }
+        public UInt256 BlockHash { get; set; }
+        public uint BlockHeight { get; set; }
+        public DateTime BlockTime => Timestamp.FromTimestampMS().ToLocalTime();
+        public ulong Timestamp { get; set; }
+        public List<TransferModel> Transfers { get; set; }
         public long NetworkFee { get; set; }
 
         public uint Nonce { get; set; }
@@ -50,35 +52,12 @@ namespace Neo.Models.Transactions
 
 
         public uint Confirmations { get; set; }
-        public uint BlockHeight { get; set; }
-        public UInt256 BlockHash { get; set; }
-        public DateTime BlockTime { get; set; }
+        
         public int Size { get; set; }
 
-        public List<TransferModel> Transfers { get; set; }
         public List<TranAttributeModel> Attributes { get; set; }
         public List<WitnessModel> Witnesses { get; set; }
 
         public List<NotifyModel> Notifies { get; set; }=new List<NotifyModel>();
-    }
-
-    public class NotifyModel
-    {
-        public string Type { get; set; }
-        public object Value { get; set; }
-    }
-
-    public class TranAttributeModel
-    {
-        public TransactionAttributeUsage Usage { get; set; }
-        public byte[] Data { get; set; }
-    }
-
-    public class WitnessModel
-    {
-        public byte[] InvocationScript { get; set; }
-        public byte[] VerificationScript { get; set; }
-
-        public UInt160 ScriptHash { get; set; }
     }
 }

@@ -63,8 +63,8 @@ namespace Neo
             app.UseMiddleware<WebSocketHubMiddleware>();
 
             var notify = app.UseNotificationService();
-            //notify.Register(new SyncHeightJob(TimeSpan.FromSeconds(15)));
-            //notify.Register(new SyncWalletJob(TimeSpan.FromSeconds(10)));
+            notify.Register(new SyncHeightJob(TimeSpan.FromSeconds(15)));
+            notify.Register(new SyncWalletJob(TimeSpan.FromSeconds(10)));
 
             //app.UseSpa(spa =>
             //{

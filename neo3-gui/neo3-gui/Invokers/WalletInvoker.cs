@@ -553,7 +553,7 @@ namespace Neo.Invokers
             var addresses = CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
             using var db = new TrackDB();
             var trans = db.FindTransactions(new TrackFilter() { FromOrTo = addresses, PageIndex = 1, PageSize = limit }).List;
-            return ConvertToTransactionPreviewModel(trans);
+            return trans.ToTransactionPreviewModel();
         }
 
         /// <summary>
@@ -582,23 +582,23 @@ namespace Neo.Invokers
 
         #region Private
 
-        private List<TransactionPreviewModel> ConvertToTransactionPreviewModel(IEnumerable<TransferInfo> trans)
-        {
-            return trans.ToLookup(x => x.TxId).Select(ToTransactionPreviewModel).ToList();
-        }
+        //private List<TransactionPreviewModel> ConvertToTransactionPreviewModel(IEnumerable<TransferInfo> trans)
+        //{
+        //    return trans.ToLookup(x => x.TxId).Select(ToTransactionPreviewModel).ToList();
+        //}
 
-        private TransactionPreviewModel ToTransactionPreviewModel(IGrouping<UInt256, TransferInfo> lookup)
-        {
-            var item = lookup.FirstOrDefault();
-            var model = new TransactionPreviewModel()
-            {
-                Hash = lookup.Key,
-                Timestamp = item.TimeStamp,
-                BlockHeight = item.BlockHeight,
-                Transfers = lookup.Select(x => x.ToTransferModel()).ToList(),
-            };
-            return model;
-        }
+        //private TransactionPreviewModel ToTransactionPreviewModel(IGrouping<UInt256, TransferInfo> lookup)
+        //{
+        //    var item = lookup.FirstOrDefault();
+        //    var model = new TransactionPreviewModel()
+        //    {
+        //        Hash = lookup.Key,
+        //        Timestamp = item.TimeStamp,
+        //        BlockHeight = item.BlockHeight,
+        //        Transfers = lookup.Select(x => x.ToTransferModel()).ToList(),
+        //    };
+        //    return model;
+        //}
 
 
         /// <summary>

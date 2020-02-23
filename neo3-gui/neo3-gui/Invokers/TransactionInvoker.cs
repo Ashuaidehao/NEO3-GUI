@@ -30,9 +30,9 @@ namespace Neo.Invokers
                 return Error(ErrorCode.TxIdNotFound);
             }
 
-           
-          
-            var transactionModel=new TransactionModel(transaction);
+
+
+            var transactionModel = new TransactionModel(transaction);
 
             TransactionState txState = Blockchain.Singleton.View.Transactions.TryGet(txId);
             if (txState != null)
@@ -40,11 +40,10 @@ namespace Neo.Invokers
                 Header header = Blockchain.Singleton.GetHeader(txState.BlockIndex);
                 transactionModel.BlockHash = header.Hash;
                 transactionModel.BlockHeight = txState.BlockIndex;
-                transactionModel.BlockTime = header.Timestamp.FromTimestampMS().ToLocalTime();
                 transactionModel.Confirmations = Blockchain.Singleton.Height - header.Index + 1;
             }
             using var db = new TrackDB();
-            var trans = db.FindTransfer(new TrackFilter() { TxId = txId }).List;
+            var trans = db.FindTransfer(new TrackFilter() { TxIds = new List<UInt256>() { txId } }).List;
             transactionModel.Transfers = trans.Select(tx => tx.ToTransferModel()).ToList();
             var notifies = db.GetNotifyEventsByTxId(txId);
             if (notifies.NotEmpty())

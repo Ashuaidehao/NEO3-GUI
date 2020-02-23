@@ -121,15 +121,15 @@ namespace Neo.Storage
                 var query = BuildQuery(filter);
                 var pageList = new PageList<TransferInfo>();
                 var pageIndex = filter.PageIndex <= 0 ? 0 : filter.PageIndex.Value - 1;
-                pageList.TotalCount = query.GroupBy(q=>q.TxId).Count();
+                pageList.TotalCount = query.GroupBy(q => q.TxId).Count();
                 pageList.PageIndex = pageIndex + 1;
                 pageList.PageSize = filter.PageSize;
                 if (filter.PageSize > 0)
                 {
-                    var txIds = query.OrderByDescending(q => q.Time).GroupBy(q => q.TxId).Select(g=>g.Key)
+                    var txIds = query.OrderByDescending(q => q.Time).GroupBy(q => q.TxId).Select(g => g.Key)
                         .Skip(pageIndex * filter.PageSize)
                         .Take(filter.PageSize).ToList();
-                    pageList.List.AddRange(query.Where(q=>txIds.Contains(q.TxId)).OrderByDescending(r => r.Time).ToList().Select(ToNep5TransferInfo));
+                    pageList.List.AddRange(query.Where(q => txIds.Contains(q.TxId)).OrderByDescending(r => r.Time).ToList().Select(ToNep5TransferInfo));
                 }
 
                 return pageList;
@@ -202,9 +202,10 @@ namespace Neo.Storage
             {
                 query = query.Where(r => r.BlockHeight == filter.BlockHeight);
             }
-            if (filter.TxId != null)
+            if (filter.TxIds.NotEmpty())
             {
-                query = query.Where(r => r.TxId == filter.TxId.ToBigEndianHex());
+                var txids = filter.TxIds.Select(t => t.ToBigEndianHex()).Distinct().ToList();
+                query = query.Where(r => txids.Contains(r.TxId));
             }
 
             return query;
@@ -212,7 +213,7 @@ namespace Neo.Storage
 
         public IEnumerable<NotifyEventEntity> GetNotifyEventsByTxId(UInt256 txId)
         {
-            return _db.ExecuteResults.Include(e => e.Notifications).Where(e => e.TxId == txId.ToString()).SelectMany(e => e.Notifications);
+            return _db.ExecuteResults.Include(e => e.Notifications).Where(e => e.TxId == txId.ToBigEndianHex()).SelectMany(e => e.Notifications);
         }
         public IEnumerable<AssetBalanceEntity> FindAssetBalance(UInt160 address, UInt160 asset = null)
         {

@@ -11,7 +11,7 @@ namespace Neo.Storage
         public List<UInt160> To { get; set; }
         public UInt160 Asset { get; set; }
         public uint? BlockHeight { get; set; }
-        public UInt256 TxId { get; set; }
+        public List<UInt256> TxIds { get; set; }
 
         public List<UInt160> FromOrTo { get; set; }
 

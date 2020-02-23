@@ -23,6 +23,7 @@ using Neo.Models;
 using Neo.Models.Transactions;
 using Neo.Persistence;
 using Neo.SmartContract;
+using Neo.SmartContract.Native;
 using Neo.Storage;
 using Neo.Tools;
 using Neo.VM;
@@ -516,5 +517,37 @@ namespace Neo
             tran.Symbol = asset.Symbol;
             return tran;
         }
+
+
+        public static BigDecimal ToNeo(this BigInteger amount)
+        {
+            return new BigDecimal(amount, NativeContract.NEO.Decimals);
+        }
+
+        public static BigDecimal ToGas(this BigInteger amount)
+        {
+            return new BigDecimal(amount,NativeContract.GAS.Decimals);
+        }
+
+
+
+        public static List<TransactionPreviewModel> ToTransactionPreviewModel(this IEnumerable<TransferInfo> trans)
+        {
+            return trans.ToLookup(x => x.TxId).Select(ToTransactionPreviewModel).ToList();
+        }
+
+        private static TransactionPreviewModel ToTransactionPreviewModel(IGrouping<UInt256, TransferInfo> lookup)
+        {
+            var item = lookup.FirstOrDefault();
+            var model = new TransactionPreviewModel()
+            {
+                Hash = lookup.Key,
+                Timestamp = item.TimeStamp,
+                BlockHeight = item.BlockHeight,
+                Transfers = lookup.Select(x => x.ToTransferModel()).ToList(),
+            };
+            return model;
+        }
+
     }
 }
