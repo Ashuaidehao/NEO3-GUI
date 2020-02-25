@@ -1,8 +1,5 @@
-/* eslint-disable */ 
 import React from 'react';
-import { Tooltip, Input, Form, Icon,Typography } from 'antd';
-
-const { Paragraph } = Typography;
+import { Input,message } from 'antd';
 
 class CheckPass extends React.Component{
   constructor(props){
@@ -10,50 +7,59 @@ class CheckPass extends React.Component{
     this.state = {
         size: 'default',
         show: true,
-        hint:"两次输入需要保持一致"
+        hint:"输入正确"
     };
   }
-  onInpass = () =>{
+  toTrim = (e) => {
+    let _val = e.target.value;
+    e.target.value = _val.trim()
+  }
+  notNull = (num) =>{
+    let _finput = this.refs.fInput.input.value;
+    let _sinput = this.refs.sInput.input.value;
 
+    if(!_finput){
+        message.error('密码不可为空',2);return false;
+    }
+    if(num===0)return false;
+    if(!_sinput){
+        message.error('确认密码不可为空',2);return false;
+    }
+    return true;
+  }
+  onInpass = () => {
+    if(!this.notNull(0)) return;
   }
   onVerify = () => {
-    let cname = this.props.cname ||"";
-    let _list = document.getElementsByClassName(cname);
-    if(_list.length<=0) return;
-    console.log(_list)
-    if(_list[0].value == _list[1].value){
-        this.setState({
-            show:false
-        })
-    }else{
-        this.setState({
-            hint:"两次输入不一致，请重新输入"
-        })
+    if(!this.notNull())return;
+    let _finput = this.refs.fInput.input.value;
+    let _sinput = this.refs.sInput.input.value;
+
+    if(_finput !== _sinput){
+        message.info('两次输入不一致，请确认后输入',2);
     }
-  }
-  testIn = () =>{
   }
   render = () =>{
     return (
         <div className={this.props.priclass}>
             <Input
                 type="password"
-                onBlur={this.onInpass}
                 className={this.props.cname}
                 placeholder="输入密码"
+                data-value="输入密码"
+                onKeyUp={this.toTrim} 
+                onBlur={this.onInpass} 
+                ref="fInput"
             />
             <Input
                 type="password"
-                className={this.props.cname}
-                onBlur={this.onVerify}
                 placeholder="确认密码"
+                data-value="确认密码"
+                className={this.props.cname}
+                onKeyUp={this.toTrim}
+                onBlur={this.onVerify} 
+                ref="sInput"
             />
-            {this.state.show?(
-                <div><Paragraph className="ml1">请确认两次输入的密码一致</Paragraph></div>
-            ):null}
-            {!this.state.show?(
-                <div><Paragraph className="ml1">{this.state.hint}</Paragraph></div>
-            ):null}
         </div>
     )
   }

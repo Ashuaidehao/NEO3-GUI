@@ -73,7 +73,7 @@ class Transfer extends React.Component{
 
   }
   render() {
-    const {size,accountlist,selectadd,disabled} = this.state;
+    const {size,accountlist,selectadd} = this.state;
     
     return (
         <div>
