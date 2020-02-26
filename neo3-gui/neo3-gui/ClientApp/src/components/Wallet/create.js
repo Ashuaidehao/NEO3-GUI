@@ -1,7 +1,7 @@
 import React from 'react';
 import 'antd/dist/antd.css';
 import axios from 'axios';
-import { message, Button, Input } from 'antd';
+import { Input, message, Button } from 'antd';
 
 const {dialog} = window.remote;
 
@@ -10,9 +10,27 @@ class Walletcreate extends React.Component{
     super(props);
     this.state = {
         size: 'default',
+        show: true,
         iconLoading:false,
-        path:''
+        hint:"输入正确"
     };
+  }
+  toTrim = (e) => {
+    let _val = e.target.value;
+    e.target.value = _val.trim();
+  }
+  notNull = (num) =>{
+    let _fpass = this.refs.fPass.input.value;
+    let _spass = this.refs.sPass.input.value;
+
+    if(!_fpass){
+        message.error('密码不可为空',2);return false;
+    }
+    if(num===0)return false;
+    if(!_spass){
+        message.error('确认密码不可为空',2);return false;
+    }
+    return true;
   }
   savedialog = () => {
     var _this = this;
@@ -32,16 +50,16 @@ class Walletcreate extends React.Component{
     })
   }
   createWallet = () => {
-    var _this = this;
+    var _this = this,_pass = this.refs.sPass.input.value;
     this.setState({ iconLoading: true });
-    var pass = document.getElementById("cpass").value;
+    if(!_pass) return;
     axios.post('http://localhost:8081', {
       "id" : "1",
       "method" : "CreateWallet",
       "params" : {
         "path" : _this.state.path,
-        "password" : pass,
-        "privateKey":""
+        "password" : _pass,
+        "privateKey":_this.props.private||""
       }
     })
     .then(function (res) {
@@ -59,19 +77,46 @@ class Walletcreate extends React.Component{
       console.log("error");
     });
   }
+  onInpass = () => {
+    if(!this.notNull(0)) return;
+  }
+  onVerify = () => {
+    if(!this.notNull())return;
+    let _fpass = this.refs.fPass.input.value;
+    let _spass = this.refs.sPass.input.value;
+
+    if(_fpass !== _spass){
+        message.info('两次输入不一致，请确认后输入',2);
+    }
+  }
   render = () =>{
     return (
-      <div>
-          <div>
-              <Input placeholder="请选择文件存储位置" disabled value={this.state.path}/>
-              <Button onClick={this.savedialog}>选择路径</Button>
+      <div className={this.props.priclass} private={this.state.private}>
+        <Input placeholder="请选择文件存储位置" disabled value={this.state.path}/>
+        <Button onClick={this.savedialog}>选择路径</Button>
 
-              <Input.Password id="cpass" placeholder="input password" maxLength="50" onChange={this.checkinput} onPressEnter={this.openWallet}/>
-              <Button onClick={this.createWallet} loading={this.state.iconLoading} ref="create">创建钱包</Button>
-          </div>
+        <Input
+          type="password"
+          className={this.props.cname}
+          placeholder="输入密码"
+          data-value="输入密码"
+          onKeyUp={this.toTrim} 
+          onBlur={this.onInpass} 
+          ref="fPass"
+        />
+        <Input
+          type="password"
+          placeholder="确认密码"
+          data-value="确认密码"
+          className={this.props.cname}
+          onKeyUp={this.toTrim}
+          onBlur={this.onVerify} 
+          ref="sPass"
+        />
+        <Button onClick={this.createWallet} loading={this.state.iconLoading} ref="create">创建钱包</Button>
       </div>
-    );
+    )
   }
-} 
+}
 
 export default Walletcreate;

@@ -2,7 +2,7 @@ import React from 'react';
 import 'antd/dist/antd.css';
 import axios from 'axios';
 import { message, Button, Input,Divider } from 'antd';
-import CheckPass from '../Common/checkpass';
+import Walletcreate from '../Wallet/create';
 
 const {dialog} = window.remote;
 
@@ -57,7 +57,6 @@ class Walletprivate extends React.Component{
   veriPrivate = () => {
     var _this = this;
     let _private = document.getElementById("privateKey").value;
-    // L5EiKcecQfapmWKNatnZo1Zi6732kyDUNAZr618mdBAbPVS3M6cL
     axios.post('http://localhost:8081', {
       "id":"20",
       "method": "VerifyPrivateKey",
@@ -95,7 +94,7 @@ class Walletprivate extends React.Component{
     .then(function (res) {
       let _data = res.data;
       console.log(_data);
-      if(_data.msgType == 3){
+      if(_data.msgType === 3){
         message.success("钱包已创建",2);
         _this.setState({ iconLoading: false });
       }else{
@@ -111,7 +110,7 @@ class Walletprivate extends React.Component{
   render = () =>{
     return (
       <div>
-          <Input id="privateKey" disabled={this.state.showElem} placeholder="导入HEX/WIF格式私钥" onKeyUp={this.toTrim} data-value="私钥"/>
+          <Input id="privateKey" value="L5EiKcecQfapmWKNatnZo1Zi6732kyDUNAZr618mdBAbPVS3M6cL" disabled={this.state.showElem} placeholder="导入HEX/WIF格式私钥" onKeyUp={this.toTrim} data-value="私钥"/>
           {!this.state.showElem?(
             <div>
               <Button onClick={this.veriPrivate}>下一步</Button>
@@ -120,12 +119,11 @@ class Walletprivate extends React.Component{
           {this.state.showElem?(
             <div>
                 <Divider>钱包保存</Divider>
-                <Input placeholder="请选择文件存储位置" disabled value={this.state.path}/>
-                <Button onClick={this.savedialog}>选择路径</Button>
-                <CheckPass priclass="pri-class" cname="pri-pass"/>
-
-                <Button onClick={this.changeTab}>上一步</Button>
-                <Button onClick={this.savePrivate} loading={this.state.iconLoading}>保存钱包</Button>
+                {/* <Input placeholder="请选择文件存储位置" disabled value={this.state.path}/> */}
+                {/* <Button onClick={this.savedialog}>选择路径</Button> */}
+                <Walletcreate priclass="pri-class" cname="pri-pass" private={this.state.private}/>
+                {/* <Button onClick={this.changeTab}>上一步</Button> */}
+                {/* <Button onClick={this.savePrivate} loading={this.state.iconLoading}>保存钱包</Button> */}
                 <p><small>因钱包较为隐私，在选择已有文件的情况下，不会进行覆盖操作。<br />如需要删除原始钱包文件，请手动删除。</small></p>
             </div>
           ):null}
