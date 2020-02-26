@@ -7,6 +7,7 @@ using Neo.Common;
 using Neo.Ledger;
 using Neo.Models;
 using Neo.Models.Blocks;
+using Neo.Models.Wallets;
 using Neo.Network.P2P.Payloads;
 using Neo.Storage;
 using Neo.Tools;
@@ -46,7 +47,7 @@ namespace Neo.Invokers
             return ToBlockModel(block);
         }
 
- 
+
 
         /// <summary>
         /// get latest blocks info
@@ -70,16 +71,32 @@ namespace Neo.Invokers
 
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<object> GetAllAssets()
         {
-            return AssetCache.GetAllAssets();
+            using var db = new TrackDB();
+            return db.GetAllAssets()?.Select(a => new AssetInfo()
+            {
+                Asset = UInt160.Parse(a.Asset),
+                Decimals = a.Decimals,
+                Name = a.Name,
+                Symbol = a.Symbol,
+            });
         }
 
-        public async Task<object> GetAddressBalance(UInt160 address, UInt160 asset = null)
+
+        public async Task<object> GetAddressBalance(UInt160[] addresses, UInt160[] assets)
         {
             using var db = new TrackDB();
-            return db.FindAssetBalance(address, asset);
+            var balances = db.FindAssetBalance(new BalanceFilter()
+            {
+                Addresses = addresses,
+                Assets = assets,
+            });
+            return balances.Select(b=>new AddressBalanceModel(b));
         }
 
 

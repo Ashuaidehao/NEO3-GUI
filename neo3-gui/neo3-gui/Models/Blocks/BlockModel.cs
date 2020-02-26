@@ -15,7 +15,7 @@ namespace Neo.Models.Blocks
 
         public BlockModel(Block block)
         {
-            Hash = block.Hash;
+            BlockHash = block.Hash;
             BlockHeight = block.Index;
             Timestamp = block.Timestamp;
             Size = block.Size;
@@ -34,7 +34,7 @@ namespace Neo.Models.Blocks
             //block.Transactions[1]
         }
 
-        public UInt256 Hash { get; set; }
+        public UInt256 BlockHash { get; set; }
         public uint BlockHeight { get; set; }
         public DateTime BlockTime => Timestamp.FromTimestampMS().ToLocalTime();
         public ulong Timestamp { get; set; }

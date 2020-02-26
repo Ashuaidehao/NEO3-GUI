@@ -11,11 +11,13 @@ using Neo.Models;
 using Neo.Models.Transactions;
 using Neo.Network.P2P.Payloads;
 using Neo.Storage;
+using Neo.Tools;
 
 namespace Neo.Invokers
 {
     public class TransactionInvoker : Invoker
     {
+
 
         /// <summary>
         /// query transaction info
@@ -54,6 +56,18 @@ namespace Neo.Invokers
         }
 
 
+        public async Task<object> GetUnconfirmTransactions()
+        {
+            var tempTransactions = UnconfirmedTransactionCache.GetUnconfirmedTransactions();
+            return tempTransactions.Select(t => t.ToTransactionPreviewModel());
+        }
+
+
+        public async Task<object> RemoveUnconfirmTransaction(UInt256 txId)
+        {
+            UnconfirmedTransactionCache.RemoveUnconfirmedTransactions(txId);
+            return true;
+        }
 
         /// <summary>
         /// query transaction info

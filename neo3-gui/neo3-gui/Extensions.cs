@@ -29,8 +29,8 @@ using Neo.Tools;
 using Neo.VM;
 using Neo.VM.Types;
 using Neo.Wallets;
+using VmArray = Neo.VM.Types.Array;
 using JsonSerializer = System.Text.Json.JsonSerializer;
-using StringConverter = Neo.Common.Json.StringConverter;
 
 namespace Neo
 {
@@ -47,11 +47,11 @@ namespace Neo
             {
                 new UInt160Converter(),
                 new UInt256Converter(),
-                new StringConverter(),
+                new NumToStringConverter(),
                 new BigDecimalConverter(),
                 new DatetimeJsonConverter(),
                 new ByteArrayConverter(),
-                //new JObjectConverter(),
+                new JObjectConverter(),
             }
         };
 
@@ -350,6 +350,7 @@ namespace Neo
         }
 
 
+
         /// <summary>
         /// convert bigint to asset decimal value
         /// </summary>
@@ -463,6 +464,98 @@ namespace Neo
         }
 
 
+
+        public static TransferNotifyItem GetTransferNotify(this VmArray notifyArray,UInt160 asset)
+        {
+            if (notifyArray.Count < 4) return null;
+            // Event name should be encoded as a byte array.
+            if (notifyArray[0].NotVmByteArray()) return null;
+
+            var eventName = notifyArray[0].GetString();
+            if (eventName != "Transfer") return null;
+
+            var fromItem = notifyArray[1];
+            if (fromItem.NotVmByteArray() && fromItem.NotVmNull()) return null;
+
+            var fromBytes = fromItem.GetByteSafely();
+            if (fromBytes?.Length != 20)
+            {
+                fromBytes = null;
+            }
+
+            var toItem = notifyArray[2];
+            if (toItem != null && toItem.NotVmByteArray()) return null;
+
+            byte[] toBytes = toItem.GetByteSafely();
+            if (toBytes?.Length != 20)
+            {
+                toBytes = null;
+            }
+            if (fromBytes == null && toBytes == null) return null;
+
+            var amountItem = notifyArray[3];
+            if (amountItem.NotVmByteArray() && amountItem.NotVmInt()) return null;
+
+            var transfer=new TransferNotifyItem()
+            {
+                Asset = asset,
+                From = fromBytes == null ? null : new UInt160(fromBytes),
+                To = new UInt160(toBytes),
+                Amount = amountItem.GetBigInteger(),
+            };
+            return transfer;
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <returns></returns>
+        public static TransactionPreviewModel ToTransactionPreviewModel(this UnconfirmedTransactionCache.TempTransaction transaction)
+        {
+            return new TransactionPreviewModel()
+            {
+                TxId = transaction.Tx.Hash,
+                Transfers = transaction.Transfers?.Select(tran => tran.ToTransferModel()).ToList()
+            };
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="transfer"></param>
+        /// <returns></returns>
+        public static TransferModel ToTransferModel(this TransferNotifyItem transfer)
+        {
+            return new TransferModel()
+            {
+                From = transfer.From,
+                To = transfer.To,
+                Amount = new BigDecimal(transfer.Amount, transfer.Decimals).ToString(),
+                Symbol = transfer.Symbol,
+            };
+        }
+
+
+        public static byte[] GetByteSafely(this StackItem item)
+        {
+            try
+            {
+                switch (item)
+                {
+                    case Null _:
+                        return null;
+                }
+                return item?.GetSpan().ToArray();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// try get private key from hex string or wif,error will return null
         /// </summary>
@@ -541,7 +634,7 @@ namespace Neo
             var item = lookup.FirstOrDefault();
             var model = new TransactionPreviewModel()
             {
-                Hash = lookup.Key,
+                TxId = lookup.Key,
                 Timestamp = item.TimeStamp,
                 BlockHeight = item.BlockHeight,
                 Transfers = lookup.Select(x => x.ToTransferModel()).ToList(),

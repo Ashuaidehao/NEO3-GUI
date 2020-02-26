@@ -16,7 +16,7 @@ namespace Neo.Storage
         public List<UInt160> FromOrTo { get; set; }
 
         /// <summary>
-        /// start from 1
+        /// start from 1,paged result only if this is not null
         /// </summary>
         public int? PageIndex { get; set; }
         public int PageSize { get; set; }

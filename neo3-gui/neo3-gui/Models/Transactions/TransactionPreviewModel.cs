@@ -9,7 +9,7 @@ namespace Neo.Models.Transactions
 {
     public class TransactionPreviewModel
     {
-        public UInt256 Hash { get; set; }
+        public UInt256 TxId { get; set; }
         public uint BlockHeight { get; set; }
         public DateTime BlockTime => Timestamp.FromTimestampMS().ToLocalTime();
         public ulong Timestamp { get; set; }

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Neo.Models.Wallets
 {
-    public class WalletBalanceModel
+    public class PublicKeyModel
     {
-        public UInt160 Asset { get; set; }
-        public BigDecimal Balance { get; set; }
+        public byte[] PublicKey { get; set; }
+        public string Address { get; set; }
     }
 }

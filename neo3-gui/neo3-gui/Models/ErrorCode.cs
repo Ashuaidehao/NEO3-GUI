@@ -30,5 +30,15 @@ namespace Neo.Models
         BlockHeightInvalid = 20011,
         [Description("the block hash is invalid")]
         BlockHashInvalid = 20012,
+        [Description("balance is not enough")]
+        BalanceNotEnough = 20013,
+        [Description("sign fail")]
+        SignFail = 20014,
+        [Description("create multi address fail!")]
+        CreateMultiContractFail = 20015,
+        [Description("create contract address fail!")]
+        CreateContractAddressFail = 20016,
+        [Description("cliam gas fail!")]
+        ClaimGasFail = 20017,
     }
 }

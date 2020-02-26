@@ -11,13 +11,13 @@ namespace Neo.Models.Blocks
     {
         public BlockPreviewModel(Block block)
         {
-            Hash = block.Hash;
+            BlockHash = block.Hash;
             BlockHeight = block.Index;
             Timestamp = block.Timestamp;
             TransactionCount = block.Transactions?.Length ?? 0;
             Size = block.Size;
         }
-        public UInt256 Hash { get; set; }
+        public UInt256 BlockHash { get; set; }
         public uint BlockHeight { get; set; }
         public DateTime BlockTime => Timestamp.FromTimestampMS().ToLocalTime();
         public ulong Timestamp { get; set; }

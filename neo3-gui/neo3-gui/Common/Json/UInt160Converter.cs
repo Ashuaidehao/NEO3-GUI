@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Neo.Wallets;
 
 namespace Neo.Common.Json
 {
@@ -18,6 +19,14 @@ namespace Neo.Common.Json
             {
                 return hash;
             }
+            try
+            {
+                return data.ToScriptHash();
+            }
+            catch (Exception)
+            {
+            }
+
             throw new ArgumentException($"invalid uint160 string:{data}");
         }
 

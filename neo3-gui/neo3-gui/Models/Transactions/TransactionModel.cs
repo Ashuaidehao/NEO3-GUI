@@ -12,7 +12,7 @@ namespace Neo.Models.Transactions
     {
         public TransactionModel(Transaction tx)
         {
-            Hash = tx.Hash;
+            TxId = tx.Hash;
             NetworkFee = tx.NetworkFee;
             Nonce = tx.Nonce;
             Script = tx.Script;
@@ -30,7 +30,7 @@ namespace Neo.Models.Transactions
             ).ToList();
         }
 
-        public UInt256 Hash { get; set; }
+        public UInt256 TxId { get; set; }
         public UInt256 BlockHash { get; set; }
         public uint BlockHeight { get; set; }
         public DateTime BlockTime => Timestamp.FromTimestampMS().ToLocalTime();

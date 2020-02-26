@@ -25,13 +25,6 @@ namespace Neo.Common
             return new WsError() { Code = (int)code, Message = message };
         }
 
-
-        protected WsError Error(string message)
-        {
-            return Error(-2, message);
-        }
-
-
         protected WsError Error(int code, string message)
         {
             return new WsError() { Code = code, Message = message };

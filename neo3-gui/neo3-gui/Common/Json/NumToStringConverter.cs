@@ -11,7 +11,7 @@ namespace Neo.Common.Json
     /// <summary>
     /// string compatibility
     /// </summary>
-    public class StringConverter : JsonConverter<string>
+    public class NumToStringConverter : JsonConverter<string>
     {
 
         public override string Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
