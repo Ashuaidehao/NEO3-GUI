@@ -159,3 +159,34 @@ a{
     border-radius: 0;
     height: auto;
 }
+
+
+/* 左侧通用menu */
+.menu-down{
+    position: absolute;
+    width:100%;
+    bottom: 20px;
+}
+.menu-down ul{
+    padding: 0;
+    margin-bottom: 4px;
+}
+.menu-down li{
+    list-style:none;
+    margin-top: 8px;
+}
+.menu-down li a{
+    display: inline-block;
+    width: 100%;
+    min-height: 34px;
+    line-height: 34px;
+    padding: 0 16px;
+    vertical-align: middle;
+    color:rgba(255, 255, 255, 0.65);
+}
+.menu-down li a:hover{
+    color: #FFFFFF;
+}
+.menu-down li a .anticon {
+    margin-right: 10px;
+}

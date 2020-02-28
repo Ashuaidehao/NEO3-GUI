@@ -2,7 +2,9 @@
     background: #F9FAFA;
     padding: 25px 60px;
 }
+
 .wa-content{
+    position: relative;
     display: block;
     min-height: 400px;
     background: #FFFFFF;
@@ -20,20 +22,27 @@
 
 /* 路径 */
 .wa-link{
-    position: absolute;
+    position: relative;
+    z-index: 9;
 }
 .wa-link a{
     display: inline-block;
     width: 30px;
     height: 30px;
-    line-height: 30px;
     text-align: center;
-    vertical-align: middle;
+    vertical-align: top;
+}
+.wa-link a.back{
+    float: left;
+}
+.wa-link a.close{
+    float: right;
 }
 .wa-link .anticon{
     color: #666666;
     font-size: 12px;
 }
+
 
 /* 按钮 */
 .wa-open .ant-btn{
