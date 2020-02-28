@@ -3,15 +3,11 @@ a{
     color: #333333;
 }
 
-.ant-layout{
-    /* padding: 30px;
-    text-align: center; */
-}
 .ant-layout-content{
     padding-bottom: 10px;
 }
 .ant-row{
-    min-height: 100px;
+    min-height: 60px;
 }
 
 .home-icon{
@@ -28,9 +24,31 @@ a{
     font-weight: 600;
     margin-top: 5px;
 }
+.ant-layout-footer{
+    background: transparent;
+    text-align: center;
+    color: #999999;
+    padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 
 
 /* font */
+.font-xl{
+    font-size: 20px;
+}
+.font-l{
+    font-size: 16px;
+}
+.font-n{
+    font-size: 14px;
+}
+.font-s{
+    font-size: 12px;
+}
+
 .text-r{
     text-align: right;
 }
@@ -49,14 +67,41 @@ a{
 }
 
 /* common */
+.lighter{
+    font-weight: lighter;
+    font-weight: bold;
+}
+.bold{
+    font-weight: 500;
+}
+.bolder{
+    font-weight: bold;
+}
+.t-normal{
+    color: #222222;
+}
+.t-light{
+    color: #666666!important;
+}
+.t-green{
+    color: #00AF92;
+}
+
+
+.width-full{
+    width: 100%;
+}
 .w200{
     max-width: 200px;
+    width: 100%;
 }
 .w300{
     max-width: 300px;
+    width: 100%;
 }
 .w400{
     max-width: 400px;
+    width: 100%;
 }
 
 /* walletlist */
@@ -76,17 +121,41 @@ a{
     margin-left:auto;
     margin-right:auto;
 }
-.mt1{margin-top: 32px;}
-.mt2{margin-top: 18px;}
-.mt3{margin-top: 12px;}
-.mt4{margin-top: 8px;}
+.mt1{margin-top: 52px;}
+.mt2{margin-top: 32px;}
+.mt3{margin-top: 20px;}
+.mt4{margin-top: 12px;}
+.mt5{margin-top: 8px;}
+.mt0{margin-top: 0px;}
 
-.mb1{margin-bottom: 32px;}
-.mb2{margin-bottom: 18px;}
-.mb3{margin-bottom: 12px;}
-.mb4{margin-bottom: 8px;}
+.mb1{margin-bottom: 52px;}
+.mb2{margin-bottom: 32px;}
+.mb3{margin-bottom: 20px;}
+.mb4{margin-bottom: 12px;}
+.mb5{margin-bottom: 8px;}
+.mb0{margin-bottom: 0;}
 
 .mr1{margin-right: 32px;}
 .mr2{margin-right: 18px;}
 .mr3{margin-right: 12px;}
 .mr4{margin-right: 8px;}
+
+.ml1{margin-left: 32px;}
+.ml2{margin-left: 18px;}
+.ml3{margin-left: 12px;}
+.ml4{margin-left: 8px;}
+
+.pv1{padding: 18px 0;}
+.pv2{padding: 14px 0;}
+.pv3{padding: 12px 0;}
+.pv4{padding: 8px 0;}
+
+.pa1{padding: 0 18px;}
+.pa2{padding: 0 14px;}
+.pa3{padding: 0 12px;}
+.pa4{padding: 0 8px;}
+
+.ant-btn{
+    border-radius: 0;
+    height: auto;
+}

@@ -1,0 +1,33 @@
+.ant-menu-dark,
+.ant-menu-dark .ant-menu-sub{
+    background: #242424;
+}
+
+.ant-layout-sider,
+.ant-menu-dark .ant-menu-inline.ant-menu-sub{
+    background: #242424;
+    box-shadow: none;
+}
+
+.ant-menu.ant-menu-dark .ant-menu-item-selected,
+.ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected{
+    background-color: #00E599;
+}
+
+/* 兼容下拉菜单过长的情况 */
+.menu-scroll{
+    height: calc( 100% - 146px);
+}
+
+.menu-scroll::-webkit-scrollbar{
+    height: 10px;
+    width: 10px;
+    background:transparent;
+}
+
+.menu-scroll::-webkit-scrollbar-thumb{
+    height: 10px;
+    width: 10px;
+    background:rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+}

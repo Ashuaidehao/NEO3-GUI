@@ -8,7 +8,7 @@ import img from './static/images/globe.png';
 import blc from './static/images/blockchain.svg';
 
 const { Text } = Typography;
-const { Content,Footer } = Layout;
+const { Content } = Layout;
 
 class App extends React.Component {
   state = {
@@ -91,7 +91,7 @@ class App extends React.Component {
             </Row>
           </Content>
         </Layout>
-        <Footer style={{ textAlign: 'center',color:'#CCCCCC'}}>Copyright © Neo Team 2014-2019</Footer>
+        
         <Modal
           title="Title"
           visible={visible}

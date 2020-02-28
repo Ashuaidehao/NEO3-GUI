@@ -1,17 +1,24 @@
 /* eslint-disable */ 
 import React from 'react';
 import 'antd/dist/antd.css';
+import '../../static/css/menu.css'
+import '../../static/css/wallet.css'
 import {Link} from 'react-router-dom';
-import { Upload,message,Input, Button, Icon,Tabs } from 'antd';
+import {  Layout, Menu,Row, Col , Upload,message,Input, Button, Icon,Tabs,Divider } from 'antd';
 import axios from 'axios';
 import Walletopen from './open'
 import Walletcreate from './create'
 import Walletprivate from './private'
 import Tabc from '../Common/Tab'
+import Sync from '../sync';
+
 
 const remote = window.remote;
 const { dialog } = window.remote;
 const { TabPane } = Tabs;
+const { Sider, Content,Footer } = Layout;
+const { SubMenu } = Menu;
+
 
 class Wallet extends React.Component{
   constructor(props){
@@ -85,6 +92,76 @@ class Wallet extends React.Component{
     const props = this.props;
     return (
       <div>
+        <Layout style={{ height: 'calc( 100vh )'}}>
+          <Sider>
+            <Menu
+              className="menu-scroll"
+              theme="dark"
+              defaultSelectedKeys={['1']}
+              defaultOpenKeys={['sub1']}
+              mode="inline"
+            >
+              <Menu.Item>
+                <Icon type="home" />
+                <span>主页</span>
+              </Menu.Item>
+              <SubMenu
+                key="sub1"
+                title={
+                  <span>
+                    <Icon type="radius-setting" />
+                    <span>钱包</span>
+                  </span>
+                }
+              >
+                <Menu.Item key="1">账户列表</Menu.Item>
+                <Menu.Item key="2">交易记录</Menu.Item>
+                <Menu.Item key="3">转账</Menu.Item>
+              </SubMenu>
+            </Menu>
+            <Menu
+              className="menu-bottom"
+              theme="dark">
+              <Menu.Item>
+                <Icon type="logout" />
+                <span>登出钱包</span>
+              </Menu.Item>
+              <Menu.Item>
+                <Icon type="key" />
+                <span>修改密码</span>
+              </Menu.Item>
+              <Menu.Item>
+                <Icon type="setting" />
+                <span>设置</span>
+              </Menu.Item>
+            </Menu>
+          </Sider>
+          
+          <Layout className="wa-container">
+            <Sync />
+            <div className="wa-content mt1">
+              <div className="wa-link">
+                {/* 设置一个显示值及返回路径 */}
+                <a href="/home"><Icon type="arrow-left" /></a>
+                <a href="/home"><Icon type="close" /></a>
+              </div>
+              <div className="logo mt5"></div>
+              <div className="wa-open mt1">
+              <Button type="primary">打开钱包文件</Button>
+              <Button className="mt3 mb2" type="primary">创建钱包文件</Button>
+              
+              <Divider className="t-light">导入钱包</Divider>
+              <Row justify="space-between">
+                <Col span={6}><Button  size="small">私钥</Button></Col>
+                <Col span={6} offset={3}><Button size="small">加密私钥</Button></Col>
+                <Col span={6} offset={3}><Button size="small">助记词</Button></Col>
+              </Row>
+              </div>
+            </div>
+            <Footer className="mt1">Copyright © Neo Team 2014-2019</Footer>
+          </Layout>
+        </Layout>
+
         <Tabs defaultActiveKey="1">
           <TabPane tab="打开钱包" key="1">
             <Walletopen />
@@ -102,7 +179,6 @@ class Wallet extends React.Component{
             <Walletcreate />
           </TabPane>
         </Tabs>
-        <br></br>
         <br></br>
         <br></br>
           <Tabc changeTab={this.changeTab.bind(this)} content="显示/隐藏"/>

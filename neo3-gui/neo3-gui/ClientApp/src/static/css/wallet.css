@@ -1,0 +1,62 @@
+.wa-container{
+    background: #F9FAFA;
+    padding: 25px 60px;
+}
+.wa-content{
+    display: block;
+    min-height: 400px;
+    background: #FFFFFF;
+    box-shadow: 0 4px 12px #AAAAAA;
+    padding: 28px;
+}
+.wa-content .logo{
+    background: url(../images/logo.svg) no-repeat;
+    background-position: center;
+    height: 45px;
+}
+.wa-open{
+    padding: 0 90px;
+}
+
+/* 路径 */
+.wa-link{
+    position: absolute;
+}
+.wa-link a{
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    vertical-align: middle;
+}
+.wa-link .anticon{
+    color: #666666;
+    font-size: 12px;
+}
+
+/* 按钮 */
+.wa-open .ant-btn{
+    width: 100%;
+}
+.wa-open .ant-btn{
+    font-size: 16px;
+    padding:8px 0;
+    text-align:center;
+    border: 1px solid #00AF92;
+    color: #00AF92;
+}
+.wa-open .ant-btn-primary{
+    background-color: #00AF92;
+    border-color: #00AF92;
+    color: #FFFFFF;
+}
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
+    color: #fff;
+    background-color: #2b393f;
+    border-color: #2b393f;
+}
+.wa-open .ant-btn-sm{
+    font-size: 12px;
+}
