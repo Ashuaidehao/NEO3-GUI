@@ -52,7 +52,7 @@ class Sync extends React.Component{
   render(){
     return (
       <div>
-        <p className="mb0">
+        <p className="ml3 mb0">
           <Text className="t-normal bold"> {this.state.syncHeight} / {this.state.height} 区块同步中</Text>
           <Icon className="ml3" type="sync" spin/> 
         </p>

@@ -9,8 +9,7 @@ import axios from 'axios';
 import Walletopen from './open'
 import Walletcreate from './create'
 import Walletprivate from './private'
-import Walletlist from './walletlist'
-import MenuDown from '../Common/menudown'
+import Walletlayout from './walletlayout'
 import Sync from '../sync';
 
 
@@ -59,35 +58,8 @@ class Wallet extends React.Component{
     return (
       <div>
         <Layout style={{ height: 'calc( 100vh )'}}>
-          <Sider>
-            <Menu
-              className="menu-scroll"
-              theme="dark"
-              defaultSelectedKeys={['1']}
-              defaultOpenKeys={['sub1']}
-              mode="inline"
-            >
-              <Menu.Item>
-                <Icon type="home" />
-                <span>主页</span>
-              </Menu.Item>
-              <SubMenu
-                key="sub1"
-                title={
-                  <span>
-                    <Icon type="radius-setting" />
-                    <span>钱包</span>
-                  </span>
-                }
-              >
-                <Menu.Item key="1">账户列表</Menu.Item>
-                <Menu.Item key="2">交易记录</Menu.Item>
-                <Menu.Item key="3">转账</Menu.Item>
-              </SubMenu>
-            </Menu>
-            <MenuDown />
-          </Sider>
-          
+          <Walletlayout />
+
           <Layout className="wa-container">
             <Sync />
             <div className="wa-content mt1">
@@ -114,9 +86,10 @@ class Wallet extends React.Component{
               </div>
             </div>
             <Footer className="mt1">Copyright © Neo Team 2014-2019</Footer>
-            <Walletlist />
           </Layout>
         </Layout>
+        
+        <Link to='/Walletlist'>去钱包打开页面</Link><br />
 
         <Tabs defaultActiveKey="1">
           <TabPane tab="打开钱包" key="1">

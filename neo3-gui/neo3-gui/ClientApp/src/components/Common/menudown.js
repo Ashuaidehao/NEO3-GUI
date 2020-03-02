@@ -27,7 +27,24 @@ class menuDown extends React.Component{
         this.setState({showPass:true});
     }
     logout(){
-        console.log(222);
+        var _this = this;
+        axios.post('http://localhost:8081', {
+          "id": "1234",
+          "method": "CloseWallet"
+        })
+        .then(function (response) {
+          var _data = response.data;
+          if(_data.msgType == -1){
+            console.log("需要先打开钱包再进入页面");
+            return;
+          }
+          console.log(_data);
+    
+        })
+        .catch(function (error) {
+          console.log(error);
+          console.log("error");
+        });
     }
     render(){
         return (

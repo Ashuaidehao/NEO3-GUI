@@ -1,4 +1,9 @@
-
+body{
+    font-family: "SF Pro SC", "SF Pro Text", "SF Pro Icons", "PingFang SC", 'Segoe UI', "Microsoft YaHei", "微软雅黑", "Helvetica Neue", "Helvetica", "Arial";
+    letter-spacing: .05em;
+    font-weight: 500;
+    line-height: 22px;
+}
 a{
     color: #333333;
 }
@@ -35,20 +40,6 @@ a{
 }
 
 
-/* font */
-.font-xl{
-    font-size: 20px;
-}
-.font-l{
-    font-size: 16px;
-}
-.font-n{
-    font-size: 14px;
-}
-.font-s{
-    font-size: 12px;
-}
-
 .text-r{
     text-align: right;
 }
@@ -63,13 +54,12 @@ a{
 .anticon-spin {
     -webkit-animation: loadingCircle 3s infinite linear;
     animation: loadingCircle 3s infinite linear;
-    color: #52c41a;
+    color: #00AF92;
 }
 
 /* common */
 .lighter{
     font-weight: lighter;
-    font-weight: bold;
 }
 .bold{
     font-weight: 500;
@@ -86,6 +76,37 @@ a{
 .t-green{
     color: #00AF92;
 }
+/* font size */
+h1,.h1{
+    font-size: 26px;
+}
+h2,.h2,.font-xl{
+    font-size: 20px;
+}
+h3,.h3,.font-l{
+    font-size: 16px;
+}
+h4,.h4,.font-n{
+    font-size: 14px;
+}
+.f-s,.font-s{
+    font-size: 12px;
+}
+small,.small{
+    font-size: 80%;
+}
+
+.f-1{
+    color: #222222;
+    line-height: 1.1;
+    letter-spacing: .05em;
+}
+/* .f-2{
+    font-size: 20px;
+    line-height: 1.1;
+    color: #222222;
+} */
+
 
 
 .width-full{
@@ -121,29 +142,34 @@ a{
     margin-left:auto;
     margin-right:auto;
 }
+
+.mt0{margin-top: 0px!important;}
+.mb0{margin-bottom: 0!important;}
+.pr0{padding-right: 0!important;}
+.pl0{padding-left: 0!important;}
+
 .mt1{margin-top: 52px;}
 .mt2{margin-top: 32px;}
 .mt3{margin-top: 20px;}
 .mt4{margin-top: 12px;}
 .mt5{margin-top: 8px;}
-.mt0{margin-top: 0px;}
 
 .mb1{margin-bottom: 52px;}
 .mb2{margin-bottom: 32px;}
 .mb3{margin-bottom: 20px;}
 .mb4{margin-bottom: 12px;}
 .mb5{margin-bottom: 8px;}
-.mb0{margin-bottom: 0;}
 
 .mr1{margin-right: 32px;}
-.mr2{margin-right: 18px;}
+.mr2{margin-right: 16px;}
 .mr3{margin-right: 12px;}
 .mr4{margin-right: 8px;}
 
 .ml1{margin-left: 32px;}
-.ml2{margin-left: 18px;}
+.ml2{margin-left: 16px;}
 .ml3{margin-left: 12px;}
 .ml4{margin-left: 8px;}
+
 
 .pv1{padding: 18px 0;}
 .pv2{padding: 14px 0;}
@@ -189,4 +215,61 @@ a{
 }
 .menu-down li a .anticon {
     margin-right: 10px;
+}
+
+/* bg通用 */
+.bg-white{
+    background: #FFFFFF;
+}
+
+/* float 通用 */
+.float-r{
+    float: right;
+}
+.float-l{
+    float: left;
+}
+
+/* title */
+.in-title{
+    padding:12px;
+    border-bottom: 1px solid #E8E8E8;
+}
+.in-title .anticon {
+    line-height: inherit;
+}
+.in-title .anticon svg{
+    vertical-align: middle;
+}
+
+
+/* 覆盖 */
+
+
+/* 列表样式覆盖 */
+.ant-list-item{
+    padding-left: 12px;
+    padding-right: 12px;
+}
+.ant-list-item .ant-list-item-meta-description{
+    color:rgba(0, 0, 0, 0.65);
+}
+.ant-list-item:hover{
+    background: #EFEFEF;
+    color: #000000;
+    transition: all 0.2s;
+}
+.ant-list-item:hover .ant-list-item-meta-title > a{
+    text-shadow: 0px 0px 1px #222222;
+}
+.ant-list-item:hover .ant-list-item-meta-description{
+    color:#222222;
+}
+.ant-list-item-meta-title > a{
+    color: #222222;
+    transition: all 0.15s;
+}
+.ant-list-item-meta-title > a:hover{
+    color: #00AF92;
+    text-shadow: none!important;
 }
