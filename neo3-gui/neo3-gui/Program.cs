@@ -15,8 +15,8 @@ namespace Neo
         {
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
 
-            CreateWebHostBuilder(args).Build().Start();
 
+            CreateWebHostBuilder(args).Build().Start();
             Service.Run(args);
             Service.Stop();
 

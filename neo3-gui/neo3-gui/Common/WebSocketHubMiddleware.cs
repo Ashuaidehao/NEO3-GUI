@@ -128,15 +128,24 @@ namespace Neo.Common
                     message.Result = result;
                 }
             }
+            catch (ArgumentException ex)
+            {
+                message.MsgType = WsMessageType.Error;
+                message.Error = new WsError()
+                {
+                    Code = (int)ErrorCode.InvalidPara,
+                    Message = ex.Message,
+                };
+            }
             catch (Exception e)
             {
                 message.MsgType = WsMessageType.Error;
                 message.Error =new WsError()
                 {
                     Code = -1,
-                    Message = e.Message,
+                    Message = e.ToString(),
                 };
-                message.Result = e.ToString();
+               
             }
             finally
             {

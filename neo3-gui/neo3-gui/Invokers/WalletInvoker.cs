@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.WebSockets;
 using System.Numerics;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Akka.Util.Internal;
-using Microsoft.VisualBasic;
 using Neo.Common;
 using Neo.Ledger;
 using Neo.Models;
@@ -20,26 +18,20 @@ using Neo.VM;
 using Neo.Wallets;
 using Neo.Wallets.NEP6;
 using Neo.Wallets.SQLite;
-using VMArray = Neo.VM.Types.Array;
-using Neo.Cryptography.ECC;
 using Neo.Network.P2P;
 using Neo.Network.P2P.Payloads;
 using Akka.Actor;
 using Neo.Models.Transactions;
 using Neo.Storage;
+using ECCurve = Neo.Cryptography.ECC.ECCurve;
+using ECPoint = Neo.Cryptography.ECC.ECPoint;
 
 
 namespace Neo.Invokers
 {
     public class WalletInvoker : Invoker
     {
-        private WebSocketSession _session;
         protected Wallet CurrentWallet => Program.Service.CurrentWallet;
-
-        public WalletInvoker(WebSocketSession session)
-        {
-            _session = session;
-        }
 
 
         /// <summary>
@@ -48,9 +40,24 @@ namespace Neo.Invokers
         /// <param name="path">wallet path</param>
         /// <param name="password">wallet password</param>
         /// <returns></returns>
-        public async Task<WalletModel> OpenWallet(string path, string password)
+        public async Task<object> OpenWallet(string path, string password)
         {
-            Program.Service.OpenWallet(path, password);
+            if (!File.Exists(path))
+            {
+                return Error(ErrorCode.WalletFileNotFound);
+            }
+            try
+            {
+                Program.Service.OpenWallet(path, password);
+            }
+            catch (CryptographicException e)
+            {
+                return Error(ErrorCode.WrongPassword);
+            }
+            catch (Exception e)
+            {
+                return Error(ErrorCode.FailToOpenWallet);
+            }
             return GetWalletAddress(CurrentWallet, int.MaxValue);
         }
 
@@ -75,42 +82,50 @@ namespace Neo.Invokers
         /// <param name="password"></param>
         /// <param name="privateKey"></param>
         /// <returns></returns>
-        public async Task<WalletModel> CreateWallet(string path, string password, string privateKey = null)
+        public async Task<object> CreateWallet(string path, string password, string privateKey = null)
         {
             var result = new WalletModel();
             var hexPrivateKey = privateKey.TryGetPrivateKey();
-            switch (Path.GetExtension(path))
+            try
             {
-                case ".db3":
-                    {
-                        UserWallet wallet = UserWallet.Create(path, password);
-                        var account = hexPrivateKey.NotNull() ? wallet.CreateAccount(hexPrivateKey.HexToBytes()) : wallet.CreateAccount();
-                        result.Accounts.Add(new AccountModel()
+                switch (Path.GetExtension(path))
+                {
+                    case ".db3":
                         {
-                            AccountType = AccountType.Standard,
-                            Address = account.Address,
-                            ScriptHash = account.ScriptHash,
+                            UserWallet wallet = UserWallet.Create(path, password);
+                            var account = hexPrivateKey.NotNull() ? wallet.CreateAccount(hexPrivateKey.HexToBytes()) : wallet.CreateAccount();
+                            result.Accounts.Add(new AccountModel()
+                            {
+                                AccountType = AccountType.Standard,
+                                Address = account.Address,
+                                ScriptHash = account.ScriptHash,
 
-                        });
-                    }
-                    break;
-                case ".json":
-                    {
-                        NEP6Wallet wallet = new NEP6Wallet(path);
-                        wallet.Unlock(password);
-                        var account = hexPrivateKey.NotNull() ? wallet.CreateAccount(hexPrivateKey.HexToBytes()) : wallet.CreateAccount();
-                        wallet.Save();
-                        result.Accounts.Add(new AccountModel()
+                            });
+                        }
+                        break;
+                    case ".json":
                         {
-                            AccountType = AccountType.Standard,
-                            ScriptHash = account.ScriptHash,
-                            Address = account.Address,
-                        });
-                    }
-                    break;
-                default:
-                    throw new Exception("Wallet files in that format are not supported, please use a .json or .db3 file extension.");
+                            NEP6Wallet wallet = new NEP6Wallet(path);
+                            wallet.Unlock(password);
+                            var account = hexPrivateKey.NotNull() ? wallet.CreateAccount(hexPrivateKey.HexToBytes()) : wallet.CreateAccount();
+                            wallet.Save();
+                            result.Accounts.Add(new AccountModel()
+                            {
+                                AccountType = AccountType.Standard,
+                                ScriptHash = account.ScriptHash,
+                                Address = account.Address,
+                            });
+                        }
+                        break;
+                    default:
+                        throw new Exception("Wallet files in that format are not supported, please use a .json or .db3 file extension.");
+                }
             }
+            catch (CryptographicException e)
+            {
+                return Error(ErrorCode.WrongPassword);
+            }
+
 
             GetNeoAndGas(result.Accounts);
             return result;
@@ -153,7 +168,7 @@ namespace Neo.Invokers
             Contract contract = Contract.CreateMultiSigContract(limit, points);
             if (contract == null)
             {
-                return Error("create multi address fail!");
+                return Error(ErrorCode.CreateMultiContractFail);
             }
             var hashSet = new HashSet<ECPoint>(points);
             var key = CurrentWallet.GetAccounts().FirstOrDefault(p => p.HasKey && hashSet.Contains(p.GetKey().PublicKey))?.GetKey();
@@ -186,7 +201,7 @@ namespace Neo.Invokers
             Contract contract = Contract.Create(parameterTypes, script.HexToBytes());
             if (contract == null)
             {
-                return Error("create multi address fail!");
+                return Error(ErrorCode.CreateContractAddressFail);
             }
             byte[] keyBytes = privateKey.ToPrivateKeyBytes();
             var key = new KeyPair(keyBytes);
@@ -207,13 +222,13 @@ namespace Neo.Invokers
         /// delete a address
         /// </summary>
         /// <returns></returns>
-        public async Task<object> DeleteAddress(string[] addresses)
+        public async Task<object> DeleteAddress(UInt160[] addresses)
         {
             if (CurrentWallet == null)
             {
                 return Error(ErrorCode.WalletNotOpen);
             }
-            var result = addresses.Select(address => address.ToScriptHash()).Select(scriptHash => CurrentWallet.DeleteAccount(scriptHash)).ToList();
+            var result = addresses.Select(scriptHash => CurrentWallet.DeleteAccount(scriptHash)).ToList();
             if (CurrentWallet is NEP6Wallet wallet)
             {
                 wallet.Save();
@@ -235,11 +250,29 @@ namespace Neo.Invokers
         }
 
         /// <summary>
+        /// list current wallet address
+        /// </summary>
+        /// <returns></returns>
+        public async Task<object> ListPublicKey(int count = 100)
+        {
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            var accounts = CurrentWallet.GetAccounts().Where(a => a.HasKey).Take(count).ToList();
+            return accounts.Select(a => new PublicKeyModel
+            {
+                Address = a.Address,
+                PublicKey = a.GetKey().PublicKey.EncodePoint(true),
+            });
+        }
+
+        /// <summary>
         /// import watch only addresses
         /// </summary>
         /// <param name="addresses"></param>
         /// <returns></returns>
-        public async Task<object> ImportWatchOnlyAddress(string[] addresses)
+        public async Task<object> ImportWatchOnlyAddress(UInt160[] addresses)
         {
             if (CurrentWallet == null)
             {
@@ -248,8 +281,7 @@ namespace Neo.Invokers
             var importedAccounts = new List<AccountModel>();
             foreach (var address in addresses)
             {
-                var scriptHash = address.ToScriptHash();
-                var account = CurrentWallet.CreateAccount(scriptHash);
+                var account = CurrentWallet.CreateAccount(address);
                 importedAccounts.Add(new AccountModel
                 {
                     Address = account.Address,
@@ -275,6 +307,14 @@ namespace Neo.Invokers
             {
                 return Error(ErrorCode.WalletNotOpen);
             }
+            foreach (var wif in wifs)
+            {
+                var priKey = wif.TryGetPrivateKey();
+                if (priKey.IsNull())
+                {
+                    return Error(ErrorCode.InvalidPrivateKey);
+                }
+            }
             var importedAccounts = new List<AccountModel>();
             foreach (var wif in wifs)
             {
@@ -298,31 +338,91 @@ namespace Neo.Invokers
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
-        public async Task<object> ShowPrivateKey(string address)
+        public async Task<object> ShowPrivateKey(UInt160 address)
         {
             if (CurrentWallet == null)
             {
                 return Error(ErrorCode.WalletNotOpen);
             }
-            var scriptHash = address.ToScriptHash();
-            var account = CurrentWallet.GetAccount(scriptHash);
+            var account = CurrentWallet.GetAccount(address);
             if (account == null)
             {
-                return Error($"can not find selected address[{address}]");
+                return Error(ErrorCode.AddressNotFound);
             }
             if (!account.HasKey)
             {
-                return Error($"can not get private key[{address}], only standard address can get private key");
+                return Error(ErrorCode.AddressNotFoundPrivateKey);
             }
             var key = account.GetKey();
             return new PrivateKeyModel()
             {
-                Address = address,
+                ScriptHash = address,
                 PublicKey = key.PublicKey.EncodePoint(true).ToHexString(),
                 PrivateKey = key.PrivateKey.ToHexString(),
                 Wif = key.Export(),
             };
         }
+
+        /// <summary>
+        /// show unclaimed gas amount
+        /// </summary>
+        /// <returns></returns>
+        public async Task<object> ShowGas()
+        {
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            BigInteger gas = BigInteger.Zero;
+            using (SnapshotView snapshot = Blockchain.Singleton.GetSnapshot())
+                foreach (UInt160 account in CurrentWallet.GetAccounts().Select(p => p.ScriptHash))
+                {
+                    gas += NativeContract.NEO.UnclaimedGas(snapshot, account, snapshot.Height + 1);
+                }
+            return new UnclaimedGasModel()
+            {
+                UnclaimedGas = new BigDecimal(gas, NativeContract.GAS.Decimals)
+            };
+        }
+
+        /// <summary>
+        /// show private key
+        /// </summary>
+        /// <returns></returns>
+        public async Task<object> ClaimGas()
+        {
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            var addresses = CurrentWallet.GetAccounts().Where(a => !a.Lock && !a.WatchOnly).Select(a => a.ScriptHash).ToList();
+
+            var balances = addresses.GetBalanceOf(NativeContract.NEO.Hash);
+            var outputs = balances.Select((t, index) => new TransferOutput()
+            {
+                AssetId = NativeContract.NEO.Hash,
+                Value = t,
+                ScriptHash = addresses[index],
+            }).ToArray();
+
+            Transaction tx = CurrentWallet.MakeTransaction(outputs);
+            if (tx == null)
+            {
+                return Error(ErrorCode.ClaimGasFail);
+            }
+
+            ContractParametersContext context = new ContractParametersContext(tx);
+            CurrentWallet.Sign(context);
+            if (!context.Completed)
+            {
+                return Error(ErrorCode.SignFail, $"SignatureContext:{context}");
+            }
+            tx.Witnesses = context.GetWitnesses();
+            Program.Service.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+            Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
+            return new TransactionModel(tx);
+        }
+
 
 
         /// <summary>
@@ -333,51 +433,68 @@ namespace Neo.Invokers
         /// <param name="amount"></param>
         /// <param name="asset"></param>
         /// <returns></returns>
-        public async Task<object> SendToAddress(string sender, string receiver, string amount, string asset = "neo")
+        public async Task<object> SendToAddress(UInt160 sender, UInt160 receiver, string amount, string asset = "neo")
         {
             if (CurrentWallet == null)
             {
                 return Error(ErrorCode.WalletNotOpen);
             }
-            UInt160 assetId = ConvertToAssetId(asset, out var convertError);
-            if (assetId == null)
+            if (receiver == null)
             {
-                return Error($"input asset is not valid:{convertError}");
+                return Error(ErrorCode.ParameterIsNull, $"receiver address is null!");
             }
-            UInt160 from = ConvertToAddress(sender, out _);
-            UInt160 to = ConvertToAddress(receiver, out var receiverAddressError);
-            if (to == null)
+            UInt160 assetHash = ConvertToAssetId(asset, out var convertError);
+            if (assetHash == null)
             {
-                return Error($"receiver address is not valid:{receiverAddressError}");
+                return Error(ErrorCode.InvalidPara, $"asset is not valid:{convertError}");
             }
-            AssetDescriptor descriptor = new AssetDescriptor(assetId);
-            if (!BigDecimal.TryParse(amount, descriptor.Decimals, out BigDecimal sendAmount) || sendAmount.Sign <= 0)
+            var assetInfo = AssetCache.GetAssetInfo(assetHash);
+            if (assetInfo == null)
             {
-                return Error("Incorrect Amount Format");
+                return Error(ErrorCode.InvalidPara, $"asset is not valid:{convertError}");
+            }
+            if (!BigDecimal.TryParse(amount, assetInfo.Decimals, out BigDecimal sendAmount) || sendAmount.Sign <= 0)
+            {
+                return Error(ErrorCode.InvalidPara, "Incorrect Amount Format");
+            }
+
+            if (sender != null)
+            {
+                var account = CurrentWallet.GetAccount(sender);
+                if (account == null)
+                {
+                    return Error(ErrorCode.AddressNotFound);
+                }
+                var balance = sender.GetBalanceOf(assetHash);
+                if (balance.Value < sendAmount.Value)
+                {
+                    return Error(ErrorCode.BalanceNotEnough);
+                }
             }
             Transaction tx = CurrentWallet.MakeTransaction(new[]
             {
                 new TransferOutput
                 {
-                    AssetId = assetId,
+                    AssetId = assetHash,
                     Value = sendAmount,
-                    ScriptHash = to
+                    ScriptHash = receiver
                 }
-            }, from);
+            }, sender);
 
             if (tx == null)
             {
-                return Error("Insufficient funds");
+                return Error(ErrorCode.BalanceNotEnough, "Insufficient funds");
             }
 
             ContractParametersContext context = new ContractParametersContext(tx);
             CurrentWallet.Sign(context);
             if (!context.Completed)
             {
-                return Error($"SignatureContext:{context}");
+                return Error(ErrorCode.SignFail, $"SignatureContext:{context}");
             }
             tx.Witnesses = context.GetWitnesses();
             Program.Service.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+            Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
             return new TransactionModel(tx);
         }
 
@@ -389,85 +506,109 @@ namespace Neo.Invokers
         /// <param name="receivers"></param>
         /// <param name="asset"></param>
         /// <returns></returns>
-        public async Task<object> SendToMultiAddress(string sender, MultiReceiverRequest[] receivers, string asset = "neo")
+        public async Task<object> SendToMultiAddress(UInt160 sender, MultiReceiverRequest[] receivers, string asset = "neo")
         {
             if (CurrentWallet == null)
             {
                 return Error(ErrorCode.WalletNotOpen);
             }
-            UInt160 assetId = ConvertToAssetId(asset, out var convertError);
-            if (assetId == null)
-            {
-                return Error($"input asset is not valid:{convertError}");
-            }
-            AssetDescriptor descriptor = new AssetDescriptor(assetId);
 
-            UInt160 from = ConvertToAddress(sender, out _);
             if (receivers.IsEmpty())
             {
-                return Error($"receivers is null");
+                return Error(ErrorCode.ParameterIsNull, $"receivers is null!");
+            }
+            UInt160 assetHash = ConvertToAssetId(asset, out var convertError);
+            if (assetHash == null)
+            {
+                return Error(ErrorCode.InvalidPara, $"asset is not valid:{convertError}");
             }
 
+            var assetInfo = AssetCache.GetAssetInfo(assetHash);
+            if (assetInfo == null)
+            {
+                return Error(ErrorCode.InvalidPara, $"asset is not valid:{convertError}");
+            }
+            if (sender != null)
+            {
+                var account = CurrentWallet.GetAccount(sender);
+                if (account == null)
+                {
+                    return Error(ErrorCode.AddressNotFound);
+                }
+            }
             var toes = new List<(UInt160 scriptHash, BigDecimal amount)>();
             foreach (var receiver in receivers)
             {
-                UInt160 to = ConvertToAddress(receiver.Address, out var receiverAddressError);
-                if (to == null)
+                if (!BigDecimal.TryParse(receiver.Amount, assetInfo.Decimals, out BigDecimal sendAmount) || sendAmount.Sign <= 0)
                 {
-                    return Error($"receiver[{receiver.Address}] address is not valid:{receiverAddressError}");
+                    return Error(ErrorCode.InvalidPara, $"Incorrect Amount Format:{receiver.Amount}");
                 }
-                if (!BigDecimal.TryParse(receiver.Amount, descriptor.Decimals, out BigDecimal sendAmount) || sendAmount.Sign <= 0)
-                {
-                    return Error($"Incorrect Amount Format:{receiver.Amount}");
-                }
-                toes.Add((to, sendAmount));
+                toes.Add((receiver.Address, sendAmount));
             }
             var outputs = toes.Select(t => new TransferOutput()
             {
-                AssetId = assetId,
+                AssetId = assetHash,
                 Value = t.amount,
                 ScriptHash = t.scriptHash,
             }).ToArray();
 
-            Transaction tx = CurrentWallet.MakeTransaction(outputs, from);
+            Transaction tx = CurrentWallet.MakeTransaction(outputs, sender);
             if (tx == null)
             {
-                return Error("Insufficient funds");
+                return Error(ErrorCode.BalanceNotEnough, "Insufficient funds");
             }
 
             ContractParametersContext context = new ContractParametersContext(tx);
             CurrentWallet.Sign(context);
             if (!context.Completed)
             {
-                return Error($"SignatureContext:{context}");
+                return Error(ErrorCode.SignFail, $"SignatureContext:{context}");
             }
             tx.Witnesses = context.GetWitnesses();
             Program.Service.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+            Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
             return new TransactionModel(tx);
+        }
+
+
+        /// <summary>
+        /// get my unconfirmed transactions
+        /// </summary>
+        /// <returns></returns>
+        public async Task<object> GetMyUnconfirmedTransactions()
+        {
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+
+            var addresses = CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
+            var tempTransactions = UnconfirmedTransactionCache.GetUnconfirmedTransactions(addresses);
+            return tempTransactions.Select(t => t.ToTransactionPreviewModel());
         }
 
         /// <summary>
         /// query relate my wallet transactions(on chain)
         /// </summary>
         /// <returns></returns>
-        public async Task<object> GetMyTransactions()
+        public async Task<object> GetMyTransactions(int limit = 100, UInt160 address = null)
         {
             if (CurrentWallet == null)
             {
                 return Error(ErrorCode.WalletNotOpen);
             }
 
-            var addresses = CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
+            var addresses = address != null ? new List<UInt160>() { address } : CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
             using var db = new TrackDB();
-            var trans = db.FindTransfer(new TrackFilter() { FromOrTo = addresses }).List;
-            return ConvertToTransactionPreviewModel(trans);
+            var trans = db.FindTransactions(new TrackFilter() { FromOrTo = addresses, PageIndex = 1, PageSize = limit }).List;
+            return trans.ToTransactionPreviewModel();
         }
 
         /// <summary>
-        /// query relate my wallet balances(on chain)
+        /// query relate my wallet balances
         /// </summary>
         /// <returns></returns>
-        public async Task<object> GetMyBalances(UInt160[] assets)
+        public async Task<object> GetMyBalances(UInt160 address = null, UInt160[] assets = null)
         {
             if (CurrentWallet == null)
             {
@@ -475,12 +616,43 @@ namespace Neo.Invokers
             }
 
             var addresses = CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
-            var balances = assets.Select(asset => new WalletBalanceModel()
+            if (address != null)
             {
-                Asset = asset,
-                Balance = addresses.GetBalanceOf(asset).SumAssetAmount(),
+                if (!addresses.Contains(address))
+                {
+                    return Error(ErrorCode.AddressNotFound);
+                }
+                addresses = new List<UInt160>() { address };
+            }
+
+            using var db = new TrackDB();
+            var balances = db.FindAssetBalance(new BalanceFilter() { Addresses = addresses, Assets = assets });
+
+            return balances.OrderByDescending(b => b.Balance).Select(b => new AddressBalanceModel(b));
+        }
+
+        /// <summary>
+        /// query relate my wallet balances
+        /// </summary>
+        /// <returns></returns>
+        public async Task<object> GetMyTotalBalance(UInt160[] assets = null)
+        {
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+
+            var addresses = CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
+
+            using var db = new TrackDB();
+            var balances = db.FindAssetBalance(new BalanceFilter() { Addresses = addresses, Assets = assets });
+
+            return balances.GroupBy(b => new { b.Asset, b.AssetDecimals, b.AssetSymbol }).Select(g => new AssetBalanceModel
+            {
+                Asset = g.Key.Asset,
+                Symbol = g.Key.AssetSymbol,
+                Balance = new BigDecimal(g.Select(b => b.Balance).Sum(), g.Key.AssetDecimals)
             });
-            return balances;
         }
 
 
@@ -488,34 +660,23 @@ namespace Neo.Invokers
 
         #region Private
 
-        private List<TransactionPreviewModel> ConvertToTransactionPreviewModel(IEnumerable<TransferInfo> trans)
-        {
-            return trans.ToLookup(x => x.TxId).Select(ToTransactionPreviewModel).ToList();
-        }
+        //private List<TransactionPreviewModel> ConvertToTransactionPreviewModel(IEnumerable<TransferInfo> trans)
+        //{
+        //    return trans.ToLookup(x => x.TxId).Select(ToTransactionPreviewModel).ToList();
+        //}
 
-        private TransactionPreviewModel ToTransactionPreviewModel(IGrouping<UInt256, TransferInfo> lookup)
-        {
-            var item = lookup.FirstOrDefault();
-            var model = new TransactionPreviewModel()
-            {
-                Hash = lookup.Key.ToString(),
-                Timestamp = item.TimeStamp,
-                BlockHeight = item.BlockHeight,
-                Transfers = lookup.Select(x =>
-                {
-                    var tran = new TransferModel()
-                    {
-                        From = x.From,
-                        To = x.To,
-                    };
-                    var (amount, asset) = x.Amount.GetAssetAmount(x.Asset);
-                    tran.Amount = amount.ToString();
-                    tran.Symbol = asset.Symbol;
-                    return tran;
-                }).ToList(),
-            };
-            return model;
-        }
+        //private TransactionPreviewModel ToTransactionPreviewModel(IGrouping<UInt256, TransferInfo> lookup)
+        //{
+        //    var item = lookup.FirstOrDefault();
+        //    var model = new TransactionPreviewModel()
+        //    {
+        //        TxId = lookup.Key,
+        //        Timestamp = item.TimeStamp,
+        //        BlockHeight = item.BlockHeight,
+        //        Transfers = lookup.Select(x => x.ToTransferModel()).ToList(),
+        //    };
+        //    return model;
+        //}
 
 
         /// <summary>

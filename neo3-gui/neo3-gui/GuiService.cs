@@ -9,14 +9,17 @@ using Neo.CLI;
 using Neo.Common;
 using Neo.Ledger;
 using Neo.Network.P2P.Payloads;
+using Neo.Tools;
 
 namespace Neo
 {
     public class GuiService : MainService
     {
-        public async Task StartGui(string[] args)
+
+        protected override void OnStart(string[] args)
         {
-            Start(args);
+            base.OnStart(args);
+            UnconfirmedTransactionCache.RegisterBlockPersistEvent();
         }
 
 
