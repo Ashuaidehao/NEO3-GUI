@@ -191,17 +191,16 @@ class Walletlist extends React.Component{
         <Sync />
 
         <Content className="mt3">
-          <Row gutter={[30, 0]} type="flex" style={{ height: 'calc( 100vh - 135px )'}}>
+          <Row gutter={[30, 0]} type="flex" style={{ 'min-height': 'calc( 100vh - 135px )'}}>
             <Col span={13} className="bg-white pv4">
-              {/* <Intitle content="账户列表" show="false"/> */}
-              <Intitle content="账户列表"/>
+              <Intitle content="账户列表" show="true"/>
               <List
                 itemLayout="horizontal"
                 dataSource={accountlist}
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
-                      title={<a href={"/wallet/walletlist:"+item.address} title="查看详情">{item.address}</a>}
+                      title={<Link to={"/wallet/walletlist:"+item.address} title="查看详情">{item.address}</Link>}
                       description={
                       <span className="f-xs">
                         <span className="mr2">NEO {item.neo}</span>
@@ -214,53 +213,21 @@ class Walletlist extends React.Component{
             </Col>
             <Col span={10} offset={1} className="bg-white pv4">
               <Intitle content="资产列表"/>
-
-              <Button className="w200" onClick={this.claimGas} loading={this.state.iconLoading}>提取 {this.state.gas} GAS</Button>
+              <div className="w200 mt4">
+                  <Button className="w200" onClick={this.claimGas} loading={this.state.iconLoading}>提取 {this.state.gas} GAS</Button>
+              </div>
             </Col>
           </Row>
-          
-          <Link to='/'>回首页</Link><br />
-          <Link to='/Wallet'>去钱包打开页面</Link><br />
-          <br />
-          <br />
+          <div className="mt1 pv3">
+              <Link to='/'>回首页</Link><br />
+              <Link to='/Wallet'>去钱包打开页面</Link>
+          </div>
           <Button onClick={this.addAddress}>创建新地址</Button>
           <Button onClick={this.showPrivate}>查看私钥</Button>
           <Button onClick={this.exitWallet}>退出钱包</Button>
-          <Button onClick={this.importPrivate}>导入私钥</Button>
-          <Row>
-            <Col span={14} order={1}>
-              <Icon type="plus-circle"></Icon>
-              <h1 className="f-1">账户列表</h1>
-              {/* {
-                accountlist.map((item,index)=>{
-                  return(
-                      <div key={index}>
-                          <p>地址：{item.address}</p>
-                          <p>neo: {item.neo}</p>
-                          <p>gas: {item.gas}</p>
-                      </div>
-                  )
-                })
-              } */}
-              <List
-                itemLayout="horizontal"
-                dataSource={accountlist}
-                renderItem={item => (
-                  <List.Item>
-                    <List.Item.Meta
-                      avatar={<Avatar src={logo} />}
-                      title={<a href="/" title="查看详情">{item.address}</a>}
-                      description={<span>{item.neo}<b>NEO</b>{item.gas}<b>GAS</b></span>}
-                    />
-                  </List.Item>
-                )}
-              />
-            </Col>
-            <Col span={10} order={2}>
-              <h1>资产列表</h1>
-            </Col>
-          </Row>
-          <Transaction></Transaction>
+          <Button onClick={this.importPrivate} className="mb1">导入私钥</Button>
+
+          <Transaction ></Transaction>
         </Content>
       </Layout>
     );

@@ -73,3 +73,25 @@
     font-size: 12px;
 }
 
+.ant-list-item.wa-half{
+    width: 49%;
+    display: inline-block;
+}
+.ant-list-item.wa-half:nth-child(2){
+    margin-left: 2%;
+    display: inline-block;
+}
+.ant-list-item.wa-half .upcase{
+    margin-right:120px ;
+}
+
+.show-pri{
+    margin-top: 20px;
+    padding-right: 35px;
+}
+.show-pri p{
+    font-size: 12px;
+    word-break: break-all;
+}
+
+

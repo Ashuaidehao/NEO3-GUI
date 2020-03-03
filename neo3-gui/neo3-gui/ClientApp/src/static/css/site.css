@@ -116,14 +116,20 @@ small,.small{
 .w200{
     max-width: 200px;
     width: 100%;
+    margin-right: auto;
+    margin-left: auto;
 }
 .w300{
     max-width: 300px;
     width: 100%;
+    margin-right: auto;
+    margin-left: auto;
 }
 .w400{
     max-width: 400px;
     width: 100%;
+    margin-right: auto;
+    margin-left: auto;
 }
 
 /* walletlist */
@@ -250,10 +256,17 @@ small,.small{
     text-align:center;
     border: 1px solid #00AF92;
     color: #00AF92;
+    background: transparent;
+    min-width: 100px;
+}
+.ant-btn-primary{
+    color: #FFFFFF;
+    background: #00AF92;
 }
 .ant-btn:hover{
-    border: 1px solid #00AF92;
-    color: #00AF92;
+    color: #FFFFFF!important;
+    background-color: #2b393f;
+    border-color: #2b393f!important;
 }
 
 /* 列表样式覆盖 */
@@ -285,3 +298,5 @@ small,.small{
     color: #00AF92;
     text-shadow: none!important;
 }
+
+.upcase{}
