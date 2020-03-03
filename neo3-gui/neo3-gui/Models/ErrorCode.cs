@@ -40,5 +40,9 @@ namespace Neo.Models
         CreateContractAddressFail = 20016,
         [Description("cliam gas fail!")]
         ClaimGasFail = 20017,
+        [Description("Insufficient GAS")]
+        GasNotEnough = 20018,
+        [Description("Transfer Error")]
+        TransferError =20019,
     }
 }
