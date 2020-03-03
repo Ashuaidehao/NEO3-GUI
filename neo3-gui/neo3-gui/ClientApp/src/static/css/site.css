@@ -135,7 +135,7 @@ small,.small{
 /* walletlist */
 .ellipsis{
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: bottom;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -290,13 +290,11 @@ small,.small{
 .ant-list-item:hover .ant-list-item-meta-description{
     color:#222222;
 }
-.ant-list-item-meta-title > a{
+.ant-list-item-meta-title a{
     color: #222222;
     transition: all 0.15s;
 }
-.ant-list-item-meta-title > a:hover{
+.ant-list-item-meta-title a:hover{
     color: #00AF92;
     text-shadow: none!important;
 }
-
-.upcase{}

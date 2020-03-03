@@ -22,15 +22,9 @@ class Walletlayout extends React.Component{
         size: 'default'
     };
   }
-  toHome = () =>{
-    location.href=location.origin;
-  }
   toPage = (e) =>{
     console.log(e.key);
     let _link = location.origin + "/Walletlist"
-    switch(e.key){
-      case 1:
-    }
   }
   render = () =>{
     return (
@@ -43,9 +37,8 @@ class Walletlayout extends React.Component{
               defaultOpenKeys={['sub1']}
               mode="inline"
             >
-              <Menu.Item onClick={this.toHome}>
-                <Icon type="home" />
-                <span>主页</span>
+              <Menu.Item>
+                <Link to="/"><Icon type="home" />主页</Link>
               </Menu.Item>
               <SubMenu
                 key="sub1"
@@ -56,9 +49,14 @@ class Walletlayout extends React.Component{
                   </span>
                 }
               >
-                <Menu.Item key="1" onClick={this.toPage}>账户列表</Menu.Item>
-                <Menu.Item key="2" onClick={this.toPage}>交易记录</Menu.Item>
-                <Menu.Item key="3" onClick={this.toPage}>转账</Menu.Item>
+                <Menu.Item key="1">账户列表</Menu.Item>
+                <Menu.Item key="2">
+                  <Link to="/wallet/trans">交易列表</Link>
+                </Menu.Item>
+                <Menu.Item key="3">
+                  <Link to="/wallet/transfer">转账</Link>
+                </Menu.Item>
+
               </SubMenu>
             </Menu>
             <MenuDown />

@@ -95,3 +95,16 @@
 }
 
 
+.wa-detail .ant-list-item{
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+.wa-detail .ant-list,
+.wa-detail .ant-typography{
+    color:#222222;
+}
+
+.wa-amount{
+    min-width: 100px;
+    text-align: right;
+}

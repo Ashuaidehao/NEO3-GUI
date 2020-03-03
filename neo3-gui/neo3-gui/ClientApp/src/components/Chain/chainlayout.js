@@ -34,9 +34,8 @@ class Chainlayout extends React.Component{
               defaultOpenKeys={['sub1']}
               mode="inline"
             >
-              <Menu.Item onClick={this.toHome}>
-                <Icon type="home" />
-                <span>主页</span>
+              <Menu.Item>
+                <Link to="/"><Icon type="home" />主页</Link>
               </Menu.Item>
               <SubMenu
                 key="sub1"

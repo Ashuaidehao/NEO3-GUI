@@ -12,6 +12,9 @@ import Wallet from '../components/Wallet/wallet';
 import Walletlayout from '../components/Wallet/walletlayout';
 import Walletlist from '../components/Wallet/walletlist';
 import Walletdetail from '../components/Wallet/walletdetail';
+import Wallettrans from '../components/Wallet/trans';
+
+import Transfer from '../components/Transaction/transfer';
 
 import { Layout } from 'antd';
 
@@ -33,6 +36,8 @@ const BasicRoute = () => (
                     <Route exact path="/wallet" component={Wallet} />
                     <Route exact path="/wallet/walletlist" component={Walletlist} />
                     <Route exact path="/wallet/walletlist:address" component={Walletdetail} />
+                    <Route exact path="/wallet/trans" component={Wallettrans} />
+                    <Route exact path="/wallet/transfer" component={Transfer} />
                 </Layout>
             </Route>
         </Switch>

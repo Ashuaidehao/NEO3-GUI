@@ -156,7 +156,7 @@ class Walletdetail extends React.Component{
   render = () =>{
     const { assetlist,address } = this.state;
     return (
-        <Layout className="wa-container">
+        <Layout className="wa-container wa-detail">
             <Sync />
 
             <Content className="mt3">
@@ -171,7 +171,7 @@ class Walletdetail extends React.Component{
                     dataSource={assetlist}
                     renderItem={item => (
                     <List.Item className="wa-half">
-                        <Typography.Text >
+                        <Typography.Text className="font-s">
                             <span className="upcase">{item.symbol}</span>
                             <span>{item.balance}</span>
                         </Typography.Text>
@@ -186,10 +186,8 @@ class Walletdetail extends React.Component{
             </Row>
             <Row gutter={[30, 0]} className="mt3">
                 <Col span={28} className="bg-white pv4">
-                {/* <Intitle content="账户列表" show="false"/> */}
-                <Intitle content="账户列表"/>
+                <Intitle content="交易记录"/>
                 <List
-                
                     header={<div>Header</div>}
                     footer={<div>Footer</div>}
                     itemLayout="horizontal"
