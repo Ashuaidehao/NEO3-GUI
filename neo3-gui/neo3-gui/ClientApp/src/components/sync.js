@@ -25,9 +25,11 @@ class Sync extends React.Component{
     
     ws.onmessage = function(e) {
         let data = JSON.parse(e.data).result;
+        if(data.syncHeight){
+          _this.getSyncheight(data.syncHeight);
+          _this.getHeight(data.headerHeight);
+        }
         console.log(data);
-        _this.getSyncheight(data.syncHeight);
-        _this.getHeight(data.headerHeight);
     }
     
     ws.onclose = function(e) {

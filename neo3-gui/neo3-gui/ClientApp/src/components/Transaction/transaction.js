@@ -9,94 +9,6 @@ import AddressBook from '../Transaction/addressbook';
 
 
 const { Sider, Content } = Layout;
-const demo1 = [
-  {
-      "blockHeight": 155812,
-      "hash": "0xc7f154d7ebb8b0519e5a1548c735d7f84f347fc9207fe697bd4529f199c5f896",
-      "time": "2020-01-22T08:10:31.755Z",
-      "timestamp": 1579680631755,
-      "transfers": [
-          {
-              "from": "0x587fb1e813e1fd7955147a23edf904887a6707a3",
-              "to": "0x3aa6c73ba3aba1ad38f73878c5505eabccf12d6d",
-              "amount": "1",
-              "symbol": "neo"
-          }
-      ]
-  },
-  {
-      "blockHeight": 155830,
-      "hash": "0x853c62fd5cb8fc98ec99d910eb18ac6744549ebf69c1be8fbb9689c8f7f64a73",
-      "time": "2020-01-22T08:15:02.015Z",
-      "timestamp": 1579680902015,
-      "transfers": [
-          {
-              "from": "0x587fb1e813e1fd7955147a23edf904887a6707a3",
-              "to": "0x3aa6c73ba3aba1ad38f73878c5505eabccf12d6d",
-              "amount": "1",
-              "symbol": "gas"
-          }
-      ]
-  }
-];
-
-const demo = [
-  {
-      "blockHeight": 155812,
-      "hash": "0xc7f154d7ebb8b0519e5a1548c735d7f84f347fc9207fe697bd4529f199c5f896",
-      "time": "2020-01-22T08:10:31.755Z",
-      "timestamp": 1579680631755,
-      "transfers": [
-          {
-              "from": "0x587fb1e813e1fd7955147a23edf904887a6707a3",
-              "to": "0x3aa6c73ba3aba1ad38f73878c5505eabccf12d6d",
-              "amount": "1",
-              "symbol": "neo"
-          }
-      ]
-  },
-  {
-      "blockHeight": 155830,
-      "hash": "0x853c62fd5cb8fc98ec99d910eb18ac6744549ebf69c1be8fbb9689c8f7f64a73",
-      "time": "2020-01-22T08:15:02.015Z",
-      "timestamp": 1579680902015,
-      "transfers": [
-          {
-              "from": "0x587fb1e813e1fd7955147a23edf904887a6707a3",
-              "to": "0x3aa6c73ba3aba1ad38f73878c5505eabccf12d6d",
-              "amount": "1",
-              "symbol": "gas"
-          }
-      ]
-  }, {
-    "blockHeight": 155812,
-    "hash": "0xc7f154d7ebb8b0519e5a1548c735d7f84f347fc9207fe697bd4529f199c5f896",
-    "time": "2020-01-22T08:10:31.755Z",
-    "timestamp": 1579680631755,
-    "transfers": [
-        {
-            "from": "0x587fb1e813e1fd7955147a23edf904887a6707a3",
-            "to": "0x3aa6c73ba3aba1ad38f73878c5505eabccf12d6d",
-            "amount": "1",
-            "symbol": "neo"
-        }
-    ]
-},
-{
-    "blockHeight": 155830,
-    "hash": "0x853c62fd5cb8fc98ec99d910eb18ac6744549ebf69c1be8fbb9689c8f7f64a73",
-    "time": "2020-01-22T08:15:02.015Z",
-    "timestamp": 1579680902015,
-    "transfers": [
-        {
-            "from": "0x587fb1e813e1fd7955147a23edf904887a6707a3",
-            "to": "0x3aa6c73ba3aba1ad38f73878c5505eabccf12d6d",
-            "amount": "1",
-            "symbol": "gas"
-        }
-    ]
-}
-];
 
 class Transaction extends React.Component{
   constructor(props){
@@ -138,6 +50,7 @@ class Transaction extends React.Component{
     }
   }
   render = () =>{
+    const {translist} = this.state;
     return (
       <div>
         <h1>待确认交易</h1>
@@ -157,7 +70,7 @@ class Transaction extends React.Component{
             )
           })} */}
           <List
-            dataSource={demo1}
+            dataSource={translist}
             size="large"
             renderItem={item => (
               <List.Item>
@@ -165,14 +78,14 @@ class Transaction extends React.Component{
                   title={
                   <div>
                     <Tag>{item.time}</Tag>
-                    <a className="w400 ellipsis" title={item.hash}>{item.hash}</a>
+                    <a className="w400 ellipsis" title={item.txId}>{item.txId}</a>
                     <a onClick={this.copyHash(item.hash)}><Icon type="copy" /></a>
                   </div>}
                   description={
                   <div>
-                    <span className="w200 ellipsis">{item.transfers[0].from}</span>
+                    <span className="w200 ellipsis">{item.transfers[0].fromAddress}</span>
                      -> 
-                    <span className="w200 ellipsis" >{item.transfers[0].to}</span>
+                    <span className="w200 ellipsis" >{item.transfers[0].toAddress}</span>
                     <b className="upcase">&nbsp;{item.transfers[0].amount} {item.transfers[0].symbol}</b>
                   </div>}
                 />
@@ -197,7 +110,7 @@ class Transaction extends React.Component{
             )
           })} */}
           <List
-            dataSource={demo}
+            dataSource={translist}
             size="large"
             renderItem={item => (
               <List.Item>

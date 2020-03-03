@@ -1,30 +1,44 @@
 /* eslint-disable */ 
 import React from 'react';
 import 'antd/dist/antd.css';
-import {Link} from 'react-router-dom';
-import { Upload,message,Input, Button, Icon } from 'antd';
-import { element } from 'prop-types';
+import { message,  Icon } from 'antd';
 import axios from 'axios';
-import { Steps } from 'antd';
-
-const remote = window.remote;
-const {dialog} = window.remote;
 
 class menuDown extends React.Component{
     constructor (props){
         super(props);
         this.state = {
-            showOut:true,
+            showOut:false,
             showPass:false
         };
     }
     componentDidMount () {
-        this.showOut();
+        this.checkWallet();
+        this.showPass();
     }
-    showOut (){
-        let _path = location.href.search(/Wallet/g);
+    showPass (){
+        let _path = location.href.search(/wallet/g);
         if(_path <= -1) return;
         this.setState({showPass:true});
+    }
+    checkWallet (){
+        var _this = this;
+        axios.post('http://localhost:8081', {
+            "id": "1",
+            "method": "ShowGas"
+        })
+        .then(function (response) {
+            var _data = response.data;
+            if(_data.msgType == -1){
+                _this.setState({showOut:false})
+            }else{
+                _this.setState({showOut:true})
+            }
+        })
+        .catch(function (error) {
+            console.log(error);
+            console.log("error");
+        });
     }
     logout(){
         var _this = this;
@@ -32,14 +46,11 @@ class menuDown extends React.Component{
           "id": "1234",
           "method": "CloseWallet"
         })
-        .then(function (response) {
-          var _data = response.data;
-          if(_data.msgType == -1){
-            console.log("需要先打开钱包再进入页面");
-            return;
-          }
-          console.log(_data);
-    
+        .then(function () {
+          _this.setState({
+            showOut:false
+          })
+          message.success("钱包退出成功",2)
         })
         .catch(function (error) {
           console.log(error);

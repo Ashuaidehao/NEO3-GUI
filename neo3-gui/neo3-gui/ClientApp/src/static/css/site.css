@@ -82,6 +82,7 @@ h1,.h1{
 }
 h2,.h2,.font-xl{
     font-size: 20px;
+    text-shadow: 0.1px 0 0 #222222;
 }
 h3,.h3,.font-l{
     font-size: 16px;
@@ -244,9 +245,20 @@ small,.small{
 
 
 /* 覆盖 */
-
+.ant-btn{
+    padding:6px 0;
+    text-align:center;
+    border: 1px solid #00AF92;
+    color: #00AF92;
+}
+.ant-btn:hover{
+    border: 1px solid #00AF92;
+    color: #00AF92;
+}
 
 /* 列表样式覆盖 */
+.ant-list-header,
+.ant-list-footer,
 .ant-list-item{
     padding-left: 12px;
     padding-right: 12px;

@@ -56,41 +56,37 @@ class Wallet extends React.Component{
     const { size } = this.state;
     const props = this.props;
     return (
-      <div>
-        <Layout style={{ height: 'calc( 100vh )'}}>
-          <Walletlayout />
+        <Layout className="wa-container">
+          <Sync />
+          <div className="wa-content mt1">
+            <div className="">
 
-          <Layout className="wa-container">
-            <Sync />
-            <div className="wa-content mt1">
-              <div className="">
-
-              </div>
-              <div className="wa-link">
-                {/* 设置一个显示值及返回路径 */}
-                <a className="back" href="/home"><Icon type="arrow-left" /></a>
-                <a className="close" href="/home"><Icon type="close" /></a>
-              </div>
-              <div className="logo mt5"></div>
-              <div className="wa-open mt1">
-                <Button type="primary">打开钱包文件</Button>
-                <Button className="mt3 mb2" type="primary">创建钱包文件</Button>
-                
-                <Divider className="t-light">导入钱包</Divider>
-                <Row justify="space-between">
-                  <Col span={6}><Button  size="small">私钥</Button></Col>
-                  <Col span={6} offset={3}><Button size="small">加密私钥</Button></Col>
-                  <Col span={6} offset={3}><Button size="small">助记词</Button></Col>
-                </Row>
-                <Walletopen />
-              </div>
             </div>
-            <Footer className="mt1">Copyright © Neo Team 2014-2019</Footer>
-          </Layout>
-        </Layout>
+            <div className="wa-link">
+              {/* 设置一个显示值及返回路径 */}
+              <a className="back" href="/home"><Icon type="arrow-left" /></a>
+              <a className="close" href="/home"><Icon type="close" /></a>
+            </div>
+            <div className="logo mt5"></div>
+            <div className="wa-open mt1">
+              <Button type="primary">打开钱包文件</Button>
+              <Button className="mt3 mb2" type="primary">创建钱包文件</Button>
+              
+              <Divider className="t-light">导入钱包</Divider>
+              <Row justify="space-between">
+                <Col span={6}><Button  size="small">私钥</Button></Col>
+                <Col span={6} offset={3}><Button size="small">加密私钥</Button></Col>
+                <Col span={6} offset={3}><Button size="small">助记词</Button></Col>
+              </Row>
+              <Walletopen />
+            </div>
+          </div>
+          <Footer className="mt1">Copyright © Neo Team 2014-2019</Footer>
         
-        <Link to='/Walletlist'>去钱包打开页面</Link><br />
+      
+      <Link to='/wallet/walletlist'>去钱包打开页面</Link><br />
 
+      <div>
         <Tabs defaultActiveKey="1">
           <TabPane tab="打开钱包" key="1">
             
@@ -118,6 +114,8 @@ class Wallet extends React.Component{
             ):null}
           </div>
       </div>
+
+      </Layout>
     );
   }
 } 
