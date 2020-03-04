@@ -4,11 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using Microsoft.EntityFrameworkCore;
+using Neo.Common.Storage.SQLiteModules;
 using Neo.IO;
 using Neo.Models;
-using Neo.Storage.SQLiteModules;
 
-namespace Neo.Storage
+namespace Neo.Common.Storage
 {
     public class TrackDB : IDisposable
     {

@@ -13,7 +13,6 @@ using Neo.Models.Wallets;
 using Neo.Persistence;
 using Neo.SmartContract;
 using Neo.SmartContract.Native;
-using Neo.Tools;
 using Neo.VM;
 using Neo.Wallets;
 using Neo.Wallets.NEP6;
@@ -21,8 +20,9 @@ using Neo.Wallets.SQLite;
 using Neo.Network.P2P;
 using Neo.Network.P2P.Payloads;
 using Akka.Actor;
+using Neo.Common.Storage;
+using Neo.Common.Utility;
 using Neo.Models.Transactions;
-using Neo.Storage;
 using ECCurve = Neo.Cryptography.ECC.ECCurve;
 using ECPoint = Neo.Cryptography.ECC.ECPoint;
 

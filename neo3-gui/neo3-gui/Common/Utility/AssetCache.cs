@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Neo.Ledger;
 using Neo.Models;
 using Neo.Persistence;
 using Neo.SmartContract;
 using Neo.VM;
 
-namespace Neo.Tools
+namespace Neo.Common.Utility
 {
     public class AssetCache
     {

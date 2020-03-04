@@ -1,23 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using Akka.Actor;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Neo.Common;
 using Neo.Ledger;
 using Neo.Models;
 using Neo.Network.P2P.Payloads;
 using Neo.SmartContract;
-using Neo.VM;
-using Neo.VM.Types;
 using VmArray = Neo.VM.Types.Array;
 
-namespace Neo.Tools
+namespace Neo.Common.Utility
 {
     public class UnconfirmedTransactionCache
     {
@@ -25,9 +15,6 @@ namespace Neo.Tools
 
         private static IActorRef _actor;
 
-        public UnconfirmedTransactionCache()
-        {
-        }
 
 
         public static void RegisterBlockPersistEvent()

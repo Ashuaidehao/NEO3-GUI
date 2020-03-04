@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Neo.SmartContract;
 using Neo.VM;
-using Neo.VM.Types;
 
-namespace Neo.Storage.SQLiteModules
+namespace Neo.Common.Storage.SQLiteModules
 {
     
     [Table("ExecuteResult")]
