@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter, Route, Switch} from 'react-router-dom';
+import {BrowserRouter, Route, Switch,Redirect} from 'react-router-dom';
 import Home from '../App';
 import Sync from '../components/sync';
 
@@ -40,6 +40,7 @@ const BasicRoute = () => (
                     <Route exact path="/wallet/transfer" component={Transfer} />
                 </Layout>
             </Route>
+            <Redirect from="*" to="/home" />
         </Switch>
     </BrowserRouter>
 );

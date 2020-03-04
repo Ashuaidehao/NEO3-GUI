@@ -3,7 +3,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
-import { Layout, message, Row, Col,Icon,List, Avatar, Button  } from 'antd';
+import { Layout, message, Row, Col,Icon,List, Avatar, Button, Typography  } from 'antd';
 import Sync from '../sync';
 import logo from '../../static/images/logo.svg';
 import Transaction from '../Transaction/transaction';
@@ -19,6 +19,7 @@ class Walletlist extends React.Component{
     this.state = {
         size: 'default',
         accountlist:[],
+        assetlist:[],
         iconLoading:false,
         gas:0
     };
@@ -45,7 +46,7 @@ class Walletlist extends React.Component{
         return;
       }
       _this.setState({
-        asset:_data.result
+        assetlist:_data.result
       })
     })
     .catch(function (error) {
@@ -184,14 +185,12 @@ class Walletlist extends React.Component{
     });
   }
   render = () =>{
-    const { accountlist,asset } = this.state;
+    const { accountlist,assetlist } = this.state;
     return (
       <Layout className="wa-container">
-        
         <Sync />
-
         <Content className="mt3">
-          <Row gutter={[30, 0]} type="flex" style={{ 'min-height': 'calc( 100vh - 135px )'}}>
+          <Row gutter={[30, 0]} type="flex" style={{ 'min-height': 'calc( 100vh - 120px )'}}>
             <Col span={13} className="bg-white pv4">
               <Intitle content="账户列表" show="true"/>
               <List
@@ -202,7 +201,7 @@ class Walletlist extends React.Component{
                     <List.Item.Meta
                       title={<Link to={"/wallet/walletlist:"+item.address} title="查看详情">{item.address}</Link>}
                       description={
-                      <span className="f-xs">
+                      <span className="f-s">
                         <span className="mr2">NEO {item.neo}</span>
                         <span>GAS {item.gas}</span>
                       </span>}
@@ -213,6 +212,24 @@ class Walletlist extends React.Component{
             </Col>
             <Col span={10} offset={1} className="bg-white pv4">
               <Intitle content="资产列表"/>
+              <List
+                className="asset-list"
+                itemLayout="horizontal"
+                style={{ 'min-height': 'calc( 100% - 135px )'}}
+                dataSource={assetlist}
+                renderItem={item => (
+                  <List.Item>
+                    <List.Item.Meta
+                      avatar={
+                        <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                      }
+                      title={<span className="upcase">{item.symbol}</span>}
+                      description={<span className="f-xs">{item.asset}</span>}
+                    />
+                    <Typography>{item.balance}</Typography>
+                  </List.Item>
+                )}
+              />
               <div className="w200 mt4">
                   <Button className="w200" onClick={this.claimGas} loading={this.state.iconLoading}>提取 {this.state.gas} GAS</Button>
               </div>

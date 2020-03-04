@@ -93,6 +93,10 @@ h4,.h4,.font-n{
 .f-s,.font-s{
     font-size: 12px;
 }
+.f-xs{
+    font-weight: 400;
+    font-size: 10px;
+}
 small,.small{
     font-size: 80%;
 }

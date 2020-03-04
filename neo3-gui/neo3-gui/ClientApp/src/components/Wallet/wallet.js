@@ -75,8 +75,8 @@ class Wallet extends React.Component{
               <Divider className="t-light">导入钱包</Divider>
               <Row justify="space-between">
                 <Col span={6}><Button  size="small">私钥</Button></Col>
-                <Col span={6} offset={3}><Button size="small">加密私钥</Button></Col>
-                <Col span={6} offset={3}><Button size="small">助记词</Button></Col>
+                <Col span={6} offset={3}><Button size="small" disabled>加密私钥</Button></Col>
+                <Col span={6} offset={3}><Button size="small" disabled>助记词</Button></Col>
               </Row>
               <Walletopen />
             </div>
