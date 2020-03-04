@@ -16,12 +16,12 @@ class menuDown extends React.Component{
         this.checkWallet();
         this.showPass();
     }
-    showPass (){
+    showPass = () =>{
         let _path = location.href.search(/wallet/g);
         if(_path <= -1) return;
         this.setState({showPass:true});
     }
-    checkWallet (){
+    checkWallet = () =>{
         var _this = this;
         axios.post('http://localhost:8081', {
             "id": "1",
@@ -40,7 +40,7 @@ class menuDown extends React.Component{
             console.log("error");
         });
     }
-    logout(){
+    logout = () =>{
         var _this = this;
         axios.post('http://localhost:8081', {
           "id": "1234",
@@ -59,7 +59,7 @@ class menuDown extends React.Component{
     }
     render(){
         return (
-            <div className="menu-down">
+            <div className="menu-down" id="Menu">
                 <ul>
                     {this.state.showOut?(
                     <li>
@@ -73,7 +73,7 @@ class menuDown extends React.Component{
                     <li>
                         <a>
                         <Icon type="key" />
-                        <span>修改密码</span>
+                        <span>修改密码{this.props.aaa}</span>
                         </a>
                     </li>
                     ):null}

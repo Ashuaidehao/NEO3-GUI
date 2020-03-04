@@ -226,8 +226,6 @@ class Walletlist extends React.Component{
           <Button onClick={this.showPrivate}>查看私钥</Button>
           <Button onClick={this.exitWallet}>退出钱包</Button>
           <Button onClick={this.importPrivate} className="mb1">导入私钥</Button>
-
-          <Transaction ></Transaction>
         </Content>
       </Layout>
     );
