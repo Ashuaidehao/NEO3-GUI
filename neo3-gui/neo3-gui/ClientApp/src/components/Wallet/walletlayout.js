@@ -7,6 +7,7 @@ import {Link} from 'react-router-dom';
 import axios from 'axios';
 import { Layout, Menu, Icon, message } from 'antd';
 import MenuDown from '../Common/menudown';
+import Topath from '../Common/topath';
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
@@ -16,15 +17,13 @@ class Walletlayout extends React.Component{
     super(props);
     this.state = {
         size: 'default',
-        isopen: false
+        // isopen: false
+        isopen: true
     };
-  }
-  toPage = (e) =>{
-    console.log(e.key);
-    let _link = location.origin + "/Walletlist"
   }
   componentDidMount = () =>{
     this.getGas()
+    console.log("dakailoyout");
   }
   getGas = () =>{
     var _this = this;
@@ -35,9 +34,11 @@ class Walletlayout extends React.Component{
     .then(function (response) {
       var _data = response.data;
       if(_data.msgType == -1){
+        message.info("请先打开钱包",2);
         return;
       }
-      _this.setState({isopen:true},()=>{})
+      _this.setState({isopen:true});
+      _this.setState({topath:"/wallet/walletlist"});
     })
     .catch(function (error) {
       console.log(error);
@@ -47,73 +48,75 @@ class Walletlayout extends React.Component{
   hint = () =>{
     this.getGas();
     if(this.state.isopen) return;
-    message.info("请先打开钱包",2);
-    this.setState({
-      aaa:"aaa"
-    })
   }
   render = () =>{
     return (
       <div style={{ height: '100%'}}>
-          <Sider style={{ height: '100%'}} >
-            <Menu
-              className="menu-scroll"
-              theme="dark"
-              defaultSelectedKeys={['1']}
-              defaultOpenKeys={['sub1']}
-              mode="inline"
-            >
-              <Menu.Item>
-                <Link to="/"><Icon type="home" />主页</Link>
-              </Menu.Item>
-                
-              {!this.state.isopen?(
-                <SubMenu
-                  key="sub1"
-                  title={
-                    <span>
-                      <Icon type="radius-setting" />
-                      <span>钱包</span>
-                    </span>
-                  }
-                >
-                  <Menu.Item key="1">
-                    <Link to="/wallet" onClick={this.hint}>账户列表</Link>
-                  </Menu.Item>
-                  <Menu.Item key="2">
-                    <Link to="/wallet" onClick={this.hint}>交易列表</Link>
-                  </Menu.Item>
-                  <Menu.Item key="3">
-                    <Link to="/wallet" onClick={this.hint}>转账</Link>
-                  </Menu.Item>
-                </SubMenu>
-              ):null}
-              {this.state.isopen?(
-                <SubMenu
-                  key="sub1"
-                  title={
-                    <span>
-                      <Icon type="radius-setting" />
-                      <span>钱包</span>
-                    </span>
-                  }
-                >
-                  <Menu.Item key="1">
-                    <Link to="/wallet/walletlist">账户列表</Link>
-                  </Menu.Item>
-                  <Menu.Item key="2">
-                    <Link to="/wallet/trans">交易列表</Link>
-                  </Menu.Item>
-                  <Menu.Item key="3">
-                    <Link to="/wallet/transfer">转账</Link>
-                  </Menu.Item>
-                </SubMenu>
-              ):null}
-            </Menu>
-            <MenuDown aaa={this.state.aaa}/>
-          </Sider>
+        <Topath topath={this.state.topath}></Topath>
+        <Sider style={{ height: '100%'}} >
+          <Menu
+            className="menu-scroll"
+            theme="dark"
+            defaultSelectedKeys={['1']}
+            defaultOpenKeys={['sub1']}
+            mode="inline"
+          >
+            <Menu.Item>
+              <Link to="/"><Icon type="home" />主页</Link>
+            </Menu.Item>
+
+            {!this.state.isopen?(
+              <SubMenu
+                key="sub1"
+                title={
+                  <span>
+                    <Icon type="radius-setting" />
+                    <span>钱包</span>
+                  </span>
+                }
+                onClick={this.test}
+              >
+                <Menu.Item key="1">
+                  <Link to="/wallet" onClick={this.hint}>账户列表</Link>
+                </Menu.Item>
+                <Menu.Item key="2">
+                  <Link to="/wallet" onClick={this.hint}>交易列表</Link>
+                </Menu.Item>
+                <Menu.Item key="3">
+                  <Link to="/wallet" onClick={this.hint}>转账</Link>
+                </Menu.Item>
+              </SubMenu>
+            ):null}
+            {this.state.isopen?(
+              <SubMenu
+                key="sub1"
+                title={
+                  <span>
+                    <Icon type="radius-setting" />
+                    <span>钱包</span>
+                  </span>
+                }
+              >
+                <Menu.Item key="1">
+                  <Link to="/wallet/walletlist">账户列表</Link>
+                </Menu.Item>
+                <Menu.Item key="2">
+                  <Link to="/wallet/trans">交易列表</Link>
+                </Menu.Item>
+                <Menu.Item key="3">
+                  <Link to="/wallet/transfer">转账</Link>
+                </Menu.Item>
+              </SubMenu>
+            ):null}
+          </Menu>
+          <MenuDown isl={this.state.isopen}/>
+        </Sider>
       </div>
     );
+  }
+
+  test() {
+    console.log(window.location.pathname)
   }
 } 
 

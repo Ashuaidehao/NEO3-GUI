@@ -4,12 +4,11 @@ import 'antd/dist/antd.css';
 import '../../static/css/menu.css'
 import '../../static/css/wallet.css'
 import {  Layout, Menu, Icon } from 'antd';
+import {Link} from 'react-router-dom';
 import MenuDown from '../Common/menudown'
-
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
-
 
 class Chainlayout extends React.Component{
   constructor(props){

@@ -64,8 +64,9 @@ class menuDown extends React.Component{
             return (<Redirect to="/" />);
         }
         return (
-            <div className="menu-down" id="Menu">
+            <div className="menu-down">
                 <ul>
+                    {this.props.isl === true?this.state.showOut=true:null}
                     {this.state.showOut?(
                     <li>
                         <a onClick={this.logout}>

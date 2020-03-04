@@ -130,3 +130,19 @@
     color: #000000;
     FONT-WEIGHT: 400;
 }
+
+/* trans */
+.wa-trans{
+    color: #222222;
+}
+.wa-trans .ant-select-selection,
+.wa-trans input{
+    border-radius: 0;
+}
+.wa-trans .anticon{
+    font-size: 15px;
+    color: #00AF92!important;
+}
+.wa-trans button {
+    width: 100%;
+}

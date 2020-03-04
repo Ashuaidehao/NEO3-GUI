@@ -38,9 +38,6 @@ class Wallet extends React.Component{
       <Layout className="wa-container">
         <Sync />
         <div className="wa-content mt1">
-          <div className="">
-
-          </div>
           <div className="wa-link">
             {/* 设置一个显示值及返回路径 */}
             <a className="back" href="/home"><Icon type="arrow-left" /></a>
