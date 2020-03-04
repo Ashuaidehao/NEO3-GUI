@@ -23,10 +23,28 @@ namespace Neo.Common
 {
     public class Nep5Tracker : Plugin, IPersistencePlugin
     {
-        private TrackDB _db;
+        private TrackDB _db = new TrackDB();
+
+        public void CommitAndResetDb()
+        {
+            if (_db.LiveTime.TotalSeconds >= 1)
+            {
+                CommitAsync(_db);
+                _db = new TrackDB();
+            }
+        }
+
+        private Task CommitAsync(TrackDB db)
+        {
+            return Task.Run(() =>
+            {
+                db.Commit();
+                db.Dispose();
+            });
+        }
+
         public void OnPersist(StoreView snapshot, IReadOnlyList<Blockchain.ApplicationExecuted> applicationExecutedList)
         {
-            _db = new TrackDB();
             Header header = snapshot.GetHeader(snapshot.CurrentBlockHash);
 
             if (_db.GetSyncIndex(header.Index))
@@ -86,13 +104,11 @@ namespace Neo.Common
                 }
             }
             _db.AddSyncIndex(header.Index);
-
         }
 
         public void OnCommit(StoreView snapshot)
         {
-            _db.Commit();
-            _db.Dispose();
+            CommitAndResetDb();
         }
 
         public bool ShouldThrowExceptionFromCommit(Exception ex)
@@ -108,9 +124,9 @@ namespace Neo.Common
             {
                 return;
             }
-           
+
             var fromBalance = transferNotify.From?.GetBalanceOf(scriptHash, snapshot);
-            var toBalance = transferNotify.To.GetBalanceOf(scriptHash, snapshot);
+            var toBalance = transferNotify.To == transferNotify.From ? fromBalance : transferNotify.To.GetBalanceOf(scriptHash, snapshot);
             var asset = AssetCache.GetAssetInfo(scriptHash, snapshot);
             var record = new TransferInfo
             {
@@ -118,7 +134,7 @@ namespace Neo.Common
                 From = transferNotify.From,
                 FromBalance = fromBalance?.Value ?? 0,
                 To = transferNotify.To,
-                ToBalance = toBalance.Value,
+                ToBalance = toBalance?.Value ?? 0,
                 Asset = scriptHash,
                 Amount = transferNotify.Amount,
                 TxId = transaction.Hash,

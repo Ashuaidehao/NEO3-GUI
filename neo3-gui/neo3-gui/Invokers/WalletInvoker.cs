@@ -786,7 +786,7 @@ namespace Neo.Invokers
         {
             if (account.Contract != null)
             {
-                if (account.Contract.Script.IsMultiSigContract(out _, out _))
+                if (account.Contract.Script.IsMultiSigContract(out _, out int _))
                 {
                     return AccountType.MultiSignature;
                 }

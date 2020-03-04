@@ -12,6 +12,7 @@ namespace Neo.Storage.SQLiteModules
     public class SyncIndex
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public uint BlockHeight { get; set; }
     }
 }

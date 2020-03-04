@@ -15,6 +15,9 @@ namespace Neo.Storage
 
         private SQLiteContext _db;
         private uint _magic;
+        private DateTime _createTime = DateTime.Now;
+
+        public TimeSpan LiveTime => DateTime.Now - _createTime;
         public TrackDB()
         {
             _magic = ProtocolSettings.Default.Magic;
@@ -128,7 +131,7 @@ namespace Neo.Storage
             }
         }
 
-      
+
 
 
         /// <summary>
