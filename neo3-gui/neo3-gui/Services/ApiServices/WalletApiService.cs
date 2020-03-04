@@ -4,34 +4,32 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
+using Akka.Actor;
 using Neo.Common;
+using Neo.Common.Storage;
+using Neo.Common.Utility;
 using Neo.Ledger;
 using Neo.Models;
+using Neo.Models.Transactions;
 using Neo.Models.Wallets;
+using Neo.Network.P2P;
+using Neo.Network.P2P.Payloads;
 using Neo.Persistence;
 using Neo.SmartContract;
 using Neo.SmartContract.Native;
-using Neo.VM;
 using Neo.Wallets;
 using Neo.Wallets.NEP6;
 using Neo.Wallets.SQLite;
-using Neo.Network.P2P;
-using Neo.Network.P2P.Payloads;
-using Akka.Actor;
-using Neo.Common.Storage;
-using Neo.Common.Utility;
-using Neo.Models.Transactions;
 using ECCurve = Neo.Cryptography.ECC.ECCurve;
 using ECPoint = Neo.Cryptography.ECC.ECPoint;
 
 
-namespace Neo.Invokers
+namespace Neo.Services.ApiServices
 {
-    public class WalletInvoker : Invoker
+    public class WalletApiService : ApiService
     {
-        protected Wallet CurrentWallet => Program.Service.CurrentWallet;
+        protected Wallet CurrentWallet => Program.Starter.CurrentWallet;
 
 
         /// <summary>
@@ -48,7 +46,7 @@ namespace Neo.Invokers
             }
             try
             {
-                Program.Service.OpenWallet(path, password);
+                Program.Starter.OpenWallet(path, password);
             }
             catch (CryptographicException e)
             {
@@ -69,7 +67,7 @@ namespace Neo.Invokers
         /// <returns></returns>
         public async Task<bool> CloseWallet()
         {
-            Program.Service.CloseWallet();
+            Program.Starter.CloseWallet();
             return true;
         }
 
@@ -164,7 +162,7 @@ namespace Neo.Invokers
             {
                 return Error(ErrorCode.WalletNotOpen);
             }
-            var points = publicKeys.Select(p => ECPoint.DecodePoint(p.HexToBytes(), ECCurve.Secp256r1)).ToArray();
+            var points = publicKeys.Select(p => ECPoint.DecodePoint(Helper.HexToBytes(p), ECCurve.Secp256r1)).ToArray();
             Contract contract = Contract.CreateMultiSigContract(limit, points);
             if (contract == null)
             {
@@ -418,8 +416,8 @@ namespace Neo.Invokers
                     return Error(ErrorCode.SignFail, $"SignatureContext:{context}");
                 }
                 tx.Witnesses = context.GetWitnesses();
-                Program.Service.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
-                Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
+                Program.Starter.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+                var task = Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
                 return new TransactionModel(tx);
             }
             catch (Exception ex)
@@ -505,8 +503,8 @@ namespace Neo.Invokers
                     return Error(ErrorCode.SignFail, $"SignatureContext:{context}");
                 }
                 tx.Witnesses = context.GetWitnesses();
-                Program.Service.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
-                Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
+                Program.Starter.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+                var task = Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
                 return new TransactionModel(tx);
 
             }
@@ -589,8 +587,8 @@ namespace Neo.Invokers
                     return Error(ErrorCode.SignFail, $"SignatureContext:{context}");
                 }
                 tx.Witnesses = context.GetWitnesses();
-                Program.Service.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
-                Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
+                Program.Starter.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+                var task = Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
                 return new TransactionModel(tx);
             }
             catch (Exception ex)

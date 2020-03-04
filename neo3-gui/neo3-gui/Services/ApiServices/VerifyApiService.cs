@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Neo.Common;
 using Neo.Models;
-using Neo.Wallets;
 
-namespace Neo.Invokers
+namespace Neo.Services.ApiServices
 {
-    public class VerifyInvoker : Invoker
+    public class VerifyApiService : ApiService
     {
         public async Task<object> VerifyPrivateKey(string privateKey)
         {

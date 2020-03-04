@@ -21,7 +21,7 @@ namespace Neo.Common.Utility
         {
             if (_actor == null)
             {
-                _actor = Program.Service.NeoSystem.ActorSystem.ActorOf(EventWrapper<Blockchain.PersistCompleted>.Props(Blockchain_PersistCompleted));
+                _actor = Program.Starter.NeoSystem.ActorSystem.ActorOf(EventWrapper<Blockchain.PersistCompleted>.Props(Blockchain_PersistCompleted));
             }
         }
 

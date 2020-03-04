@@ -15,9 +15,9 @@ namespace Neo.Models.Jobs
         }
         public override async Task<WsMessage> Invoke()
         {
-            if (Program.Service.CurrentWallet != null)
+            if (Program.Starter.CurrentWallet != null)
             {
-                var accounts = Program.Service.CurrentWallet.GetAccounts().ToList();
+                var accounts = Program.Starter.CurrentWallet.GetAccounts().ToList();
 
                 var neoBalances = accounts.Select(a => a.ScriptHash).GetBalanceOf(NativeContract.NEO.Hash);
                 var gasBalances = accounts.Select(a => a.ScriptHash).GetBalanceOf(NativeContract.GAS.Hash);

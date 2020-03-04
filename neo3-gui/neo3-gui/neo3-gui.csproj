@@ -9,6 +9,10 @@
 
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;1998;</NoWarn>
+  </PropertyGroup>
+
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->

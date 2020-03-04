@@ -24,6 +24,7 @@ using Neo.Ledger;
 using Neo.Models;
 using Neo.Models.Transactions;
 using Neo.Persistence;
+using Neo.Services;
 using Neo.SmartContract;
 using Neo.SmartContract.Native;
 using Neo.VM;
@@ -34,7 +35,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Neo
 {
-    public static class Extensions
+    public static class Helpers
     {
 
         public static readonly JsonSerializerOptions SerializeOptions = new JsonSerializerOptions
@@ -139,7 +140,7 @@ namespace Neo
             services.AddSingleton<WebSocketHubMiddleware>();
             services.AddSingleton<WebSocketSession>();
             services.AddSingleton<WebSocketExecutor>();
-            var interfaceType = typeof(IInvoker);
+            var interfaceType = typeof(IApiService);
             var assembly = interfaceType.Assembly;
             foreach (var type in assembly.GetExportedTypes()
                 .Where(t => !t.IsAbstract && interfaceType.IsAssignableFrom(t)))

@@ -9,7 +9,7 @@ namespace Neo
 {
     class Program
     {
-        public static GuiService Service = new GuiService();
+        public static GuiStarter Starter = new GuiStarter();
 
         static void Main(string[] args)
         {
@@ -17,8 +17,8 @@ namespace Neo
 
 
             CreateWebHostBuilder(args).Build().Start();
-            Service.Run(args);
-            Service.Stop();
+            Starter.Run(args);
+            Starter.Stop();
 
         }
 

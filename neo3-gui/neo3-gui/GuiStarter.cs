@@ -13,7 +13,7 @@ using Neo.Network.P2P.Payloads;
 
 namespace Neo
 {
-    public class GuiService : MainService
+    public class GuiStarter : MainService
     {
 
         protected override void OnStart(string[] args)
