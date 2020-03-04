@@ -33,29 +33,56 @@ namespace Neo.Tools
 
 
         /// <summary>
-        /// https://github.com/neo-project/proposals/blob/master/nep-5.mediawiki
+        /// read nep5 from cache first
         /// </summary>
         /// <param name="assetId"></param>
-        /// <param name="snapshot"></param>
         /// <returns></returns>
-        public static AssetInfo GetAssetInfo(UInt160 assetId, StoreView snapshot = null)
+        public static AssetInfo GetAssetInfo(UInt160 assetId)
         {
             if (_assets.ContainsKey(assetId))
             {
                 return _assets[assetId];
             }
+            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            return GetAssetInfoFromChain(assetId, snapshot);
+        }
 
-            if (snapshot == null)
+
+        /// <summary>
+        /// read nep5 from cache first
+        /// </summary>
+        /// <param name="assetId"></param>
+        /// <param name="snapshot"></param>
+        /// <returns></returns>
+        public static AssetInfo GetAssetInfo(UInt160 assetId, StoreView snapshot)
+        {
+            if (_assets.ContainsKey(assetId))
             {
-                using var snap = Blockchain.Singleton.GetSnapshot();
-                snapshot = snap;
+                return _assets[assetId];
             }
+            return GetAssetInfoFromChain(assetId, snapshot);
+        }
 
+
+        /// <summary>
+        /// read nep5 from chain, and set cache
+        /// https://github.com/neo-project/proposals/blob/master/nep-5.mediawiki
+        /// </summary>
+        /// <param name="assetId"></param>
+        /// <param name="snapshot"></param>
+        /// <returns></returns>
+        public static AssetInfo GetAssetInfoFromChain(UInt160 assetId, StoreView snapshot)
+        {
             using var sb = new ScriptBuilder();
             sb.EmitAppCall(assetId, "decimals");
             sb.EmitAppCall(assetId, "symbol");
             sb.EmitAppCall(assetId, "name");
 
+            var contract = snapshot.Contracts.TryGet(assetId);
+            if (contract == null)
+            {
+                return null;
+            }
             using var engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
             var name = engine.ResultStack.Pop().GetString();
             var symbol = engine.ResultStack.Pop().GetString();
@@ -74,7 +101,6 @@ namespace Neo.Tools
             };
             _assets[assetId] = assetInfo;
             return assetInfo;
-
         }
 
         public static List<AssetInfo> GetAllAssets()

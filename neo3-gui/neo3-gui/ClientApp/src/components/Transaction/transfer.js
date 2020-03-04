@@ -15,8 +15,12 @@ import {
     Button,
     AutoComplete,
   } from 'antd';
+  
+import {  Layout, Menu } from 'antd';
+import Intitle from '../Common/intitle'
 
 const { Option } = Select;
+const { Sider, Content } = Layout;
 const AutoCompleteOption = AutoComplete.Option;
 
 const {dialog} = window.remote;
@@ -76,51 +80,58 @@ class Transfer extends React.Component{
     const {size,accountlist,selectadd} = this.state;
     
     return (
-        <div>
-          <h1>转账</h1>
 
-            <Select
-              size={size}
-              defaultValue={"请选择要转出的地址"}
-              style={{ width: 400, marginRight: '3%'}}
-              onChange={this.setAddress}>
-              {accountlist.map((item,index)=>{
-                return(
-                <Option key={index}>{item.address}</Option>
-                )
-              })}
-            </Select>
-            <Input
-             placeholder="请输入要转到 NEO3 地址"  style={{ width: 400 }}
-            />
-            <br />
-            <Input
-              type="text"
-              placeholder="请输入转账金额" 
-              style={{ width: 250, marginRight: 20 }}
-            />
-            <Select
-              style={{ width: 130 }}
-              defaultValue="资产选择" 
-              >
-              <Option value="neo">NEO <small>{selectadd.neo}</small></Option>
-              <Option value="gas">GAS <small>{selectadd.gas}</small></Option>
-            </Select>
-            <br />
-            <div>
+      <Layout className="wa-container">
+      <Content className="mt3">
+          <Row gutter={[30, 0]}>
+              <Col span={28} className="bg-white pv4">
+              {/* <Intitle content="账户列表" show="false"/> */}
+              <Intitle content="转账"/>
+                <Select
+                size={size}
+                defaultValue={"请选择要转出的地址"}
+                style={{ width: 400, marginRight: '3%'}}
+                onChange={this.setAddress}>
+                {accountlist.map((item,index)=>{
+                  return(
+                  <Option key={index}>{item.address}</Option>
+                  )
+                })}
+              </Select>
               <Input
-                style={{ width: 250 }}
-                placeholder="手续费(GAS)"
-                suffix={
-                 <Tooltip title="在网络拥堵时加快交易速度">
-                 <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
-                 </Tooltip>}
+              placeholder="请输入要转到 NEO3 地址"  style={{ width: 400 }}
               />
-            </div>
+              <br />
+              <Input
+                type="text"
+                placeholder="请输入转账金额" 
+                style={{ width: 250, marginRight: 20 }}
+              />
+              <Select
+                style={{ width: 130 }}
+                defaultValue="资产选择" 
+                >
+                <Option value="neo">NEO <small>{selectadd.neo}</small></Option>
+                <Option value="gas">GAS <small>{selectadd.gas}</small></Option>
+              </Select>
+              <br />
+              <div>
+                <Input
+                  style={{ width: 250 }}
+                  placeholder="手续费(GAS)"
+                  suffix={
+                  <Tooltip title="在网络拥堵时加快交易速度">
+                  <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
+                  </Tooltip>}
+                />
+              </div>
 
-            <br />
-            <Button onClick={this.transfer}>发送</Button> <small>预计到账时间：20s</small>
-        </div>
+              <br />
+              <Button onClick={this.transfer}>发送</Button> <small>预计到账时间：20s</small>
+              </Col>
+          </Row>
+        </Content>
+      </Layout>
     );
   }
 }

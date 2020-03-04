@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Neo.Wallets;
 
 namespace Neo.Common.Json
 {
@@ -13,7 +15,19 @@ namespace Neo.Common.Json
         public override UInt160 Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var data = reader.GetString();
-            return UInt160.Parse(data);
+            if (UInt160.TryParse(data, out var hash))
+            {
+                return hash;
+            }
+            try
+            {
+                return data.ToScriptHash();
+            }
+            catch (Exception)
+            {
+            }
+
+            throw new ArgumentException($"invalid uint160 string:{data}");
         }
 
         public override void Write(Utf8JsonWriter writer, UInt160 value, JsonSerializerOptions options)

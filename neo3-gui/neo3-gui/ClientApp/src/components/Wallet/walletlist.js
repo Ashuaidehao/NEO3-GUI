@@ -3,10 +3,13 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
-import { Layout, Menu, Row, Col,Icon,List, Avatar, Button  } from 'antd';
+import { Layout, message, Row, Col,Icon,List, Avatar, Button, Typography  } from 'antd';
 import Sync from '../sync';
 import logo from '../../static/images/logo.svg';
 import Transaction from '../Transaction/transaction';
+import Walletlayout from './walletlayout'
+import Intitle from '../Common/intitle'
+import '../../static/css/wallet.css'
 
 const { Sider, Content } = Layout;
 
@@ -15,12 +18,43 @@ class Walletlist extends React.Component{
     super(props);
     this.state = {
         size: 'default',
-        accountlist:[]
+        accountlist:[],
+        assetlist:[],
+        iconLoading:false,
+        gas:0
     };
   }
   UNSAFE_componentWillMount() {
   }
   componentDidMount() {
+    this.getAddress();
+    this.getAllasset();
+    this.getGas();
+  }
+  getAllasset = () =>{
+    var _this = this;
+    axios.post('http://localhost:8081', {
+      "id": "12",
+      "method": "GetMyTotalBalance",
+      "params": {}
+    })
+    .then(function (response) {
+      var _data = response.data;
+      console.log(_data);
+      if(_data.msgType == -1){
+        console.log("需要先打开钱包再进入页面");
+        return;
+      }
+      _this.setState({
+        assetlist:_data.result
+      })
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
+  }
+  getAddress = () =>{
     var _this = this;
     axios.post('http://localhost:8081', {
       "id": "1234",
@@ -31,6 +65,7 @@ class Walletlist extends React.Component{
     })
     .then(function (response) {
       var _data = response.data;
+      console.log(_data);
       if(_data.msgType == -1){
         console.log("需要先打开钱包再进入页面");
         return;
@@ -38,6 +73,48 @@ class Walletlist extends React.Component{
       _this.setState({
         accountlist:_data.result.accounts
       })
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
+  }
+  getGas = () =>{
+    var _this = this;
+    axios.post('http://localhost:8081', {
+      "id":51,
+      "method": "ShowGas"
+    })
+    .then(function (response) {
+      var _data = response.data;
+      console.log(_data);
+      if(_data.msgType == -1){
+        console.log("需要先打开钱包再进入页面");
+        return;
+      }
+      _this.setState({
+        gas:_data.result.unclaimedGas
+      })
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
+  }
+  claimGas = () =>{
+    var _this = this;
+    axios.post('http://localhost:8081', {
+      "id":51,
+      "method": "ClaimGas"
+    })
+    .then(function (response) {
+      var _data = response.data;
+      if(_data.msgType == -1){
+        console.log("需要先打开钱包再进入页面");
+        return;
+      }else if(_data.msgType=3){
+        message.success("GAS 提取成功，请稍后刷新页面查看",3);
+      }
     })
     .catch(function (error) {
       console.log(error);
@@ -84,26 +161,6 @@ class Walletlist extends React.Component{
       console.log("error");
     });
   }
-  exitWallet = () =>{
-    var _this = this;
-    axios.post('http://localhost:8081', {
-      "id": "1234",
-      "method": "CloseWallet"
-    })
-    .then(function (response) {
-      var _data = response.data;
-      if(_data.msgType == -1){
-        console.log("需要先打开钱包再进入页面");
-        return;
-      }
-      console.log(_data);
-
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error");
-    });
-  }
   importPrivate = () =>{
     var _this = this.state;
     // var pass = document.getElementById("privateKey").value;
@@ -128,81 +185,66 @@ class Walletlist extends React.Component{
     });
   }
   render = () =>{
-    const { accountlist } = this.state;
+    const { accountlist,assetlist } = this.state;
     return (
-      <div>
-        <Layout style={{ height: 'calc( 100vh - 35px )' }}>
-            <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
-              <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
-                <Menu.Item key="1">
-                  <Icon type="radius-setting" />
-                  <span>账户列表</span>
-                </Menu.Item>
-                <Menu.Item key="2">
-                  <Icon type="swap" />
-                  <span>交易记录</span>
-                </Menu.Item>
-                <Menu.Item key="3">
-                  <Icon type="dollar" />
-                  <span>转账</span>
-                </Menu.Item>
-                <Menu.Item key="4">
-                  <Icon type="snippets" />
-                  <span>地址簿</span>
-                </Menu.Item>
-              </Menu>
-            </Sider>
-            <Layout>
-                <Content>
-                  <Link to='/'>回首页</Link><br />
-                  <Link to='/Wallet'>去钱包打开页面</Link><br />
-                  <br />
-                  <br />
-                  <Button onClick={this.addAddress}>创建新地址</Button>
-                  <Button onClick={this.showPrivate}>查看私钥</Button>
-                  <Button onClick={this.exitWallet}>退出钱包</Button>
-                  <Button onClick={this.importPrivate}>导入私钥</Button>
-                  <Row type="flex">
-                    <Col span={12} order={1}>
-                      <h1>地址列表</h1>
-                      {/* {
-                        accountlist.map((item,index)=>{
-                          return(
-                              <div key={index}>
-                                  <p>地址：{item.address}</p>
-                                  <p>neo: {item.neo}</p>
-                                  <p>gas: {item.gas}</p>
-                              </div>
-                          )
-                        })
-                      } */}
-                      <List
-                        itemLayout="horizontal"
-                        dataSource={accountlist}
-                        renderItem={item => (
-                          <List.Item>
-                            <List.Item.Meta
-                              avatar={<Avatar src={logo} />}
-                              title={<a href="/" title="查看详情">{item.address}</a>}
-                              description={<span>{item.neo}<b>NEO</b>{item.gas}<b>GAS</b></span>}
-                            />
-                            
-                          </List.Item>
-                        )}
-                      />
-                    </Col>
-                    <Col span={12} order={2}>
-                      <h1>资产列表</h1>
-                    </Col>
-                  </Row>
-                  <Transaction></Transaction>
-                </Content>
-            </Layout>
-        </Layout>
-        <Layout theme='dark'>
-          <Sync />
-        </Layout>
-      </div>
+      <Layout className="wa-container">
+        <Sync />
+        <Content className="mt3">
+          <Row gutter={[30, 0]} type="flex" style={{ 'min-height': 'calc( 100vh - 120px )'}}>
+            <Col span={13} className="bg-white pv4">
+              <Intitle content="账户列表" show="true"/>
+              <List
+                itemLayout="horizontal"
+                dataSource={accountlist}
+                renderItem={item => (
+                  <List.Item>
+                    <List.Item.Meta
+                      title={<Link to={"/wallet/walletlist:"+item.address} title="查看详情">{item.address}</Link>}
+                      description={
+                      <span className="f-s">
+                        <span className="mr2">NEO {item.neo}</span>
+                        <span>GAS {item.gas}</span>
+                      </span>}
+                    />
+                  </List.Item>
+                )}
+              />
+            </Col>
+            <Col span={10} offset={1} className="bg-white pv4">
+              <Intitle content="资产列表"/>
+              <List
+                className="asset-list"
+                itemLayout="horizontal"
+                style={{ 'min-height': 'calc( 100% - 135px )'}}
+                dataSource={assetlist}
+                renderItem={item => (
+                  <List.Item>
+                    <List.Item.Meta
+                      avatar={
+                        <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                      }
+                      title={<span className="upcase">{item.symbol}</span>}
+                      description={<span className="f-xs">{item.asset}</span>}
+                    />
+                    <Typography>{item.balance}</Typography>
+                  </List.Item>
+                )}
+              />
+              <div className="w200 mt4">
+                  <Button className="w200" onClick={this.claimGas} loading={this.state.iconLoading}>提取 {this.state.gas} GAS</Button>
+              </div>
+            </Col>
+          </Row>
+          <div className="mt1 pv3">
+              <Link to='/'>回首页</Link><br />
+              <Link to='/Wallet'>去钱包打开页面</Link>
+          </div>
+          <Button onClick={this.addAddress}>创建新地址</Button>
+          <Button onClick={this.showPrivate}>查看私钥</Button>
+          <Button onClick={this.exitWallet}>退出钱包</Button>
+          <Button onClick={this.importPrivate} className="mb1">导入私钥</Button>
+        </Content>
+      </Layout>
     );
   }
 } 

@@ -22,7 +22,7 @@ namespace Neo.Storage
             {
                 Directory.CreateDirectory("Data_Track");
             }
-            _db = new SQLiteContext(Path.Combine($"Data_Track", $"test.{_magic}.db"));
+            _db = new SQLiteContext(Path.Combine($"Data_Track", $"track.{_magic}.db"));
         }
 
         public void Commit()
@@ -30,6 +30,7 @@ namespace Neo.Storage
             _db.SaveChanges();
         }
 
+        #region SyncIndex
 
         public void AddSyncIndex(uint index)
         {
@@ -39,6 +40,53 @@ namespace Neo.Storage
         public bool GetSyncIndex(uint index)
         {
             return _db.SyncIndexes.FirstOrDefault(s => s.BlockHeight == index) != null;
+        }
+
+        #endregion
+
+        #region ExeResult
+
+        public void AddExecuteResult(ExecuteResultEntity execResult)
+        {
+            _db.ExecuteResults.Add(execResult);
+            //_db.SaveChanges();
+        }
+
+
+        public IEnumerable<NotifyEventEntity> GetNotifyEventsByTxId(UInt256 txId)
+        {
+            return _db.ExecuteResults.Include(e => e.Notifications).Where(e => e.TxId == txId.ToBigEndianHex()).SelectMany(e => e.Notifications);
+        }
+
+        #endregion
+
+        #region transfer
+
+        public AddressEntity GetOrCreateAddress(UInt160 address)
+        {
+            if (address == null) return null;
+            var addr = address.ToBigEndianHex();
+            var old = _db.Addresses.FirstOrDefault(a => a.Address == addr);
+            if (old == null)
+            {
+                old = new AddressEntity() { Hash = address.ToArray(), Address = addr };
+                _db.Addresses.Add(old);
+                _db.SaveChanges();
+            }
+            return old;
+        }
+
+        public AssetEntity GetOrCreateAsset(AssetInfo asset)
+        {
+            var assetScriptHash = asset.Asset.ToBigEndianHex();
+            var old = _db.Assets.FirstOrDefault(a => a.Asset == assetScriptHash);
+            if (old == null)
+            {
+                old = new AssetEntity() { Hash = asset.Asset.ToArray(), Asset = assetScriptHash, Name = asset.Name, Symbol = asset.Symbol, Decimals = asset.Decimals };
+                _db.Assets.Add(old);
+                _db.SaveChanges();
+            }
+            return old;
         }
 
         public void AddTransfer(TransferInfo newTransaction)
@@ -80,35 +128,119 @@ namespace Neo.Storage
             }
         }
 
-        public AddressEntity GetOrCreateAddress(UInt160 address)
+      
+
+
+        /// <summary>
+        ///  Paged by Transactions
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public PageList<TransferInfo> FindTransactions(TrackFilter filter)
         {
-            if (address == null) return null;
-            var addr = address.ToBigEndianHex();
-            var old = _db.Addresses.FirstOrDefault(a => a.Address == addr);
-            if (old == null)
+            if (filter.PageIndex.HasValue)
             {
-                old = new AddressEntity() { Hash = address.ToArray(), Address = addr };
-                _db.Addresses.Add(old);
-                _db.SaveChanges();
+                var query = BuildQuery(filter);
+                var pageList = new PageList<TransferInfo>();
+                var pageIndex = filter.PageIndex <= 0 ? 0 : filter.PageIndex.Value - 1;
+                pageList.TotalCount = query.GroupBy(q => q.TxId).Count();
+                pageList.PageIndex = pageIndex + 1;
+                pageList.PageSize = filter.PageSize;
+                if (filter.PageSize > 0)
+                {
+                    var txIds = query.OrderByDescending(q => q.Time).GroupBy(q => q.TxId).Select(g => g.Key)
+                        .Skip(pageIndex * filter.PageSize)
+                        .Take(filter.PageSize).ToList();
+                    pageList.List.AddRange(query.Where(q => txIds.Contains(q.TxId)).OrderByDescending(r => r.Time).ToList().Select(ToNep5TransferInfo));
+                }
+
+                return pageList;
             }
-            return old;
+            else
+            {
+                return FindTransfer(filter);
+            }
         }
 
-        public AssetEntity GetOrCreateAsset(AssetInfo asset)
-        {
-            var assetScriptHash = asset.Asset.ToBigEndianHex();
-            var old = _db.Assets.FirstOrDefault(a => a.Asset == assetScriptHash);
-            if (old == null)
-            {
-                old = new AssetEntity() { Hash = asset.Asset.ToArray(), Asset = assetScriptHash, Name = asset.Name, Symbol = asset.Symbol, Decimals = asset.Decimals };
-                _db.Assets.Add(old);
-                _db.SaveChanges();
-            }
-            return old;
-        }
 
-
+        /// <summary>
+        /// Paged by transfer
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         public PageList<TransferInfo> FindTransfer(TrackFilter filter)
+        {
+            var query = BuildQuery(filter);
+            var pageList = new PageList<TransferInfo>();
+            if (filter.PageIndex.HasValue)
+            {
+                var pageIndex = filter.PageIndex <= 0 ? 0 : filter.PageIndex.Value - 1;
+                pageList.TotalCount = query.Count();
+                pageList.PageIndex = pageIndex + 1;
+                pageList.PageSize = filter.PageSize;
+                if (filter.PageSize > 0)
+                {
+                    pageList.List.AddRange(query.OrderByDescending(r => r.Time).Skip(pageIndex * filter.PageSize)
+                        .Take(filter.PageSize).ToList().Select(ToNep5TransferInfo));
+                }
+            }
+            else
+            {
+                pageList.List.AddRange(query.OrderByDescending(r => r.Time).ToList().Select(ToNep5TransferInfo));
+                pageList.TotalCount = pageList.List.Count;
+            }
+            return pageList;
+        }
+
+
+        /// <summary>
+        /// query balances
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public IEnumerable<BalanceInfo> FindAssetBalance(BalanceFilter filter)
+        {
+            IQueryable<AssetBalanceEntity> query = _db.AssetBalances.Include(a => a.Address).Include(a => a.Asset);
+            if (filter.Addresses.NotEmpty())
+            {
+                var addrs = filter.Addresses.Select(a => a.ToBigEndianHex()).ToList();
+                query = query.Where(q => addrs.Contains(q.Address.Address));
+            }
+
+            if (filter.Assets.NotEmpty())
+            {
+                var assets = filter.Assets.Select(a => a.ToBigEndianHex()).ToList();
+                query = query.Where(q => assets.Contains(q.Asset.Asset));
+            }
+
+            var balances = query.ToList();
+            return balances.Select(b => new BalanceInfo()
+            {
+                Address = UInt160.Parse(b.Address.Address),
+                Asset = UInt160.Parse(b.Asset.Asset),
+                AssetName = b.Asset.Name,
+                AssetSymbol = b.Asset.Symbol,
+                AssetDecimals = b.Asset.Decimals,
+                Balance = new BigInteger(b.Balance),
+                BlockHeight = b.BlockHeight,
+            });
+        }
+
+
+        public IEnumerable<AssetEntity> GetAllAssets()
+        {
+            return _db.Assets.ToList();
+        }
+
+        #endregion
+
+
+
+
+        #region Private
+
+
+        private IQueryable<Nep5TransactionEntity> BuildQuery(TrackFilter filter)
         {
             IQueryable<Nep5TransactionEntity> query = _db.Nep5Transactions
                 .Include(t => t.From)
@@ -146,44 +278,14 @@ namespace Neo.Storage
             {
                 query = query.Where(r => r.BlockHeight == filter.BlockHeight);
             }
-            if (filter.TxId != null)
+            if (filter.TxIds.NotEmpty())
             {
-                query = query.Where(r => r.TxId == filter.TxId.ToBigEndianHex());
+                var txids = filter.TxIds.Select(t => t.ToBigEndianHex()).Distinct().ToList();
+                query = query.Where(r => txids.Contains(r.TxId));
             }
 
-            var pageList = new PageList<TransferInfo>();
-            if (filter.PageIndex.HasValue)
-            {
-                var pageIndex = filter.PageIndex <= 0 ? 0 : filter.PageIndex.Value - 1;
-                pageList.TotalCount = query.Count();
-                pageList.PageIndex = pageIndex + 1;
-                pageList.PageSize = filter.PageSize;
-                if (filter.PageSize > 0)
-                {
-                    pageList.List.AddRange(query.OrderByDescending(r => r.Time).Skip(pageIndex * filter.PageSize)
-                        .Take(filter.PageSize).ToList().Select(ToNep5TransferInfo));
-                }
-            }
-            else
-            {
-                pageList.List.AddRange(query.OrderByDescending(r => r.Time).ToList().Select(ToNep5TransferInfo));
-                pageList.TotalCount = pageList.List.Count;
-            }
-            return pageList;
+            return query;
         }
-
-        public IEnumerable<AssetBalanceEntity> FindAssetBalance(UInt160 address, UInt160 asset = null)
-        {
-            var addr = address.ToBigEndianHex();
-            var query = _db.AssetBalances.Include(a => a.Asset).Include(a => a.Address).Where(a => a.Address.Address == addr);
-            if (asset != null)
-            {
-                var assetStr = asset.ToBigEndianHex();
-                query = query.Where(a => a.Asset.Asset == assetStr);
-            }
-            return query.ToList();
-        }
-
 
 
         private TransferInfo ToNep5TransferInfo(Nep5TransactionEntity entity)
@@ -202,6 +304,11 @@ namespace Neo.Storage
                 TimeStamp = entity.Time.AsUtcTime().ToTimestampMS(),
             };
         }
+
+        #endregion
+
+
+
 
         public void Dispose()
         {

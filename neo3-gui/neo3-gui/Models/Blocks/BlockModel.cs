@@ -3,39 +3,57 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Query.Internal;
+using Neo.Models.Transactions;
 using Neo.Network.P2P.Payloads;
+using Neo.SmartContract.Native;
 
 namespace Neo.Models.Blocks
 {
     public class BlockModel
     {
-        public string Hash { get; set; }
-        public uint Version { get; set; }
-        public string PrevHash { get; set; }
-        public string MerkleRoot { get; set; }
-        public ulong Timestamp { get; set; }
-        public uint Index { get; set; }
-        public string NextConsensus { get; set; }
-        public Witness Witness { get; set; }
 
-        public ConsensusData ConsensusData { get; set; }
-        public Transaction[] Transactions { get; set; }
-
-        //public Header _header { get; set; }
-    
         public BlockModel(Block block)
         {
-            Version = block.Version;
-            PrevHash = block.PrevHash.ToString();
-            MerkleRoot = block.MerkleRoot.ToString();
+            BlockHash = block.Hash;
+            BlockHeight = block.Index;
             Timestamp = block.Timestamp;
-            Index = block.Index;
-            NextConsensus = block.NextConsensus.ToString();
-            Hash = block.Hash.ToString();
-
-            Witness = block.Witness;
-            Transactions = block.Transactions;
-            ConsensusData = block.ConsensusData;
+            Size = block.Size;
+            Version = block.Version;
+            PrevHash = block.PrevHash;
+            MerkleRoot = block.MerkleRoot;
+            NextConsensus = block.NextConsensus;
+            Witness = new WitnessModel(block.Witness);
+            //Transactions = block.Transactions;
+            ConsensusData = new ConsensusDataModel(block.ConsensusData);
+            if (block.Transactions.NotEmpty())
+            {
+                SystemFee = block.Transactions.Sum(t =>t.SystemFee).ToString();
+                NetworkFee= block.Transactions.Sum(t => t.NetworkFee).ToString();
+            }
+            //block.Transactions[1]
         }
+
+        public UInt256 BlockHash { get; set; }
+        public uint BlockHeight { get; set; }
+        public DateTime BlockTime => Timestamp.FromTimestampMS().ToLocalTime();
+        public ulong Timestamp { get; set; }
+
+        public int Size { get; set; }
+
+
+        public uint Version { get; set; }
+        public UInt256 PrevHash { get; set; }
+        public UInt256 MerkleRoot { get; set; }
+        public UInt160 NextConsensus { get; set; }
+
+        public uint Confirmations { get; set; }
+        //public long Nonce { get; set; }
+        public string SystemFee { get; set; }
+        public string NetworkFee { get; set; }
+        public WitnessModel Witness { get; set; }
+        public ConsensusDataModel ConsensusData { get; set; }
+        public List<TransactionPreviewModel> Transactions { get; set; }
+
     }
 }

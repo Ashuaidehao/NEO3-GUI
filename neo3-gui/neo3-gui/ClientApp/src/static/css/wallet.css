@@ -1,0 +1,132 @@
+.wa-container{
+    background: #F9FAFA;
+    padding: 25px 60px;
+}
+
+.wa-content{
+    position: relative;
+    display: block;
+    min-height: 400px;
+    background: #FFFFFF;
+    box-shadow: 0 4px 12px #AAAAAA;
+    padding: 28px;
+}
+.wa-content .logo{
+    background: url(../images/logo.svg) no-repeat;
+    background-position: center;
+    height: 45px;
+}
+.wa-open{
+    padding: 0 90px;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 路径 */
+.wa-link{
+    position: relative;
+    z-index: 9;
+}
+.wa-link a{
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    vertical-align: top;
+}
+.wa-link a.back{
+    float: left;
+}
+.wa-link a.close{
+    float: right;
+}
+.wa-link .anticon{
+    color: #666666;
+    font-size: 12px;
+}
+
+
+/* 按钮 */
+.wa-open .ant-btn{
+    width: 100%;
+}
+.wa-open .ant-btn{
+    font-size: 16px;
+    padding:8px 0;
+    text-align:center;
+    border: 1px solid #00AF92;
+    color: #00AF92;
+}
+.wa-open .ant-btn-primary{
+    background-color: #00AF92;
+    border-color: #00AF92;
+    color: #FFFFFF;
+}
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
+    color: #fff;
+    background-color: #2b393f;
+    border-color: #2b393f;
+}
+.wa-open .ant-btn-sm{
+    font-size: 12px;
+}
+
+.ant-list-item.wa-half{
+    width: 49%;
+    display: inline-block;
+}
+.ant-list-item.wa-half:nth-child(2){
+    margin-left: 2%;
+    display: inline-block;
+}
+.ant-list-item.wa-half .upcase{
+    margin-right:120px ;
+}
+
+.show-pri{
+    margin-top: 20px;
+    padding-right: 35px;
+}
+.show-pri p{
+    font-size: 12px;
+    word-break: break-all;
+}
+
+
+.wa-detail .ant-list-item{
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+.wa-detail .ant-list,
+.wa-detail .ant-typography{
+    color:#222222;
+}
+
+.wa-amount{
+    min-width: 100px;
+    text-align: right;
+}
+
+.asset-list{
+    line-height: 14px;
+}
+.asset-list .ant-list-item-meta-title{
+    line-height: 1.1;
+    color:#222222;
+}
+.asset-list .ant-list-item-meta-description{
+    line-height: 1.1;
+    word-break: break-all;
+}
+.asset-list .ant-typography{
+    width: 70px;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    color: #000000;
+    FONT-WEIGHT: 400;
+}

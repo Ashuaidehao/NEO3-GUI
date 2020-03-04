@@ -62,13 +62,13 @@ class App extends React.Component {
           <Content className="home-icon">
             <Row>
               <Col span={6}>
-                <Link to='/Chain'>
+                <Link to='/chain'>
                   <img src={blc} alt="blc" /><br />
                   <span>区块链</span>
                 </Link>
               </Col>
               <Col span={6}>
-                <Link to='/Wallet'>
+                <Link to='/wallet'>
                   <img src={blc} alt="blc" /><br />
                   <span>钱包</span>
                 </Link>
@@ -77,13 +77,13 @@ class App extends React.Component {
                 </Button> */}
               </Col>
               <Col span={6}>
-                <Link to='/Pages'>
+                <Link to='/pages'>
                   <img src={blc} alt="blc" /><br />
                   <span>合约</span>
                 </Link>
               </Col>
               <Col span={6}>
-                <Link to='/Advanced'>
+                <Link to='/advanced'>
                   <img src={blc} alt="blc" /><br />
                   <span>高级</span>
                 </Link>

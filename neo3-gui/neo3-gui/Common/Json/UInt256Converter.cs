@@ -13,7 +13,11 @@ namespace Neo.Common.Json
         public override UInt256 Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var data = reader.GetString();
-            return UInt256.Parse(data);
+            if (UInt256.TryParse(data, out var hash))
+            {
+                return hash;
+            }
+            throw new ArgumentException($"invalid uint256 string:{data}");
         }
 
         public override void Write(Utf8JsonWriter writer, UInt256 value, JsonSerializerOptions options)
