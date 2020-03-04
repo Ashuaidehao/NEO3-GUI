@@ -4,7 +4,7 @@ import React from 'react';
 import axios from 'axios';
 import { Layout, Icon, Row, Col, Modal,List, Button,Typography, message } from 'antd';
 import Sync from '../sync';
-import Intitle from '../Common/intitle'
+import Intitle from '../Common/intitle';
 import '../../static/css/wallet.css';
 
 const { confirm } = Modal;

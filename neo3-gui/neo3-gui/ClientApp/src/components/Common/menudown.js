@@ -1,6 +1,7 @@
 /* eslint-disable */ 
 import React from 'react';
 import 'antd/dist/antd.css';
+import { Redirect } from 'react-router-dom';
 import { message,  Icon } from 'antd';
 import axios from 'axios';
 
@@ -9,7 +10,8 @@ class menuDown extends React.Component{
         super(props);
         this.state = {
             showOut:false,
-            showPass:false
+            showPass:false,
+            isOut:false
         };
     }
     componentDidMount () {
@@ -47,10 +49,10 @@ class menuDown extends React.Component{
           "method": "CloseWallet"
         })
         .then(function () {
+          message.success("钱包退出成功",2);
           _this.setState({
-            showOut:false
+            isOut:true
           })
-          message.success("钱包退出成功",2)
         })
         .catch(function (error) {
           console.log(error);
@@ -58,6 +60,9 @@ class menuDown extends React.Component{
         });
     }
     render(){
+        if(this.state.isOut){
+            return (<Redirect to="/" />);
+        }
         return (
             <div className="menu-down" id="Menu">
                 <ul>
@@ -73,7 +78,7 @@ class menuDown extends React.Component{
                     <li>
                         <a>
                         <Icon type="key" />
-                        <span>修改密码{this.props.aaa}</span>
+                        <span>修改密码</span>
                         </a>
                     </li>
                     ):null}

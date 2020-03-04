@@ -3,6 +3,7 @@ import React from 'react';
 import 'antd/dist/antd.css';
 import axios from 'axios';
 import { Input, Button, message } from 'antd';
+import { Redirect} from 'react-router-dom';
 
 class Walletopen extends React.Component{
   constructor(props){
@@ -10,7 +11,34 @@ class Walletopen extends React.Component{
     this.state = {
       iconLoading:false,
       path:'',
+      islogin:false
     };
+  }
+  componentDidMount(){
+  //   let _this = this;
+  //   axios.post('http://localhost:8081', {
+  //     "id" : "1",
+  //     "method" : "OpenWallet",
+  //     "params" : {
+  //       "path" : "C:\\Users\\18605\\Desktop\\1.neo3.json",
+  //       "password" : '123456'
+  //     }
+  //   })
+  //   .then(function (res) {
+  //     let _data = res.data;
+  //     if(_data.msgType == 3){
+  //       message.success("钱包文件已打开",2);
+  //       _this.setState({
+  //         islogin:true
+  //       })
+  //     }else{
+  //       message.info("钱包文件或密码错误，请检查后重试",2);
+  //     }
+  //   })
+  //  .catch(function (error) {
+  //     console.log(error);
+  //     console.log("error");
+  //   });
   }
   setpath = () =>{
     var file = document.getElementById("file").files[0];
@@ -35,15 +63,12 @@ class Walletopen extends React.Component{
   openWallet = () => {
     var _this = this;
     var pass = document.getElementById("opass").value;
-    console.log(pass);
-    console.log(_this.state.path);
     axios.post('http://localhost:8081', {
       "id" : "1",
       "method" : "OpenWallet",
       "params" : {
         "path" : _this.state.path,
-        // "password" : pass
-        "password" : "123456"
+        "password" : pass
       }
     })
     .then(function (res) {
@@ -64,9 +89,11 @@ class Walletopen extends React.Component{
     });
   }
   render(){
+    if(this.state.islogin){
+      return (<Redirect to="/wallet/walletlist" />);
+    }
     return (
       <div>
-        <img></img>
         <input type="file" id="file" onChange={this.setpath} />
         <Input.Password id="opass" placeholder="input password" maxLength="50" onChange={this.checkinput} onPressEnter={this.openWallet}/>
         <Button onClick={this.verifi} loading={this.state.iconLoading}>确认</Button>
