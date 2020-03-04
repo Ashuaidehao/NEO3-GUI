@@ -1,6 +1,6 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
-import { Layout,Row, Col,Icon , Typography, Modal} from 'antd';
+import { Link } from 'react-router-dom';
+import { Layout, Row, Col, Icon, Typography, Modal } from 'antd';
 import Sync from './components/sync';
 import Walletopen from './components/Wallet/open';
 import './static/css/site.css';
@@ -8,7 +8,7 @@ import img from './static/images/globe.png';
 import blc from './static/images/blockchain.svg';
 
 const { Text } = Typography;
-const { Content } = Layout;
+const { Content, Footer } = Layout;
 
 class App extends React.Component {
   state = {
@@ -44,10 +44,10 @@ class App extends React.Component {
     });
   };
 
-  render(){
+  render() {
     const { visible, confirmLoading, ModalText } = this.state;
     return (
-    <div>
+      <div>
         <Layout>
           <Content>
             <img src={img} className="App-logo" alt="img" />
@@ -91,7 +91,7 @@ class App extends React.Component {
             </Row>
           </Content>
         </Layout>
-        
+        <Footer style={{ textAlign: 'center', color: '#CCCCCC' }}>Copyright © Neo Team 2014-2019</Footer>
         <Modal
           title="Title"
           visible={visible}
@@ -102,7 +102,7 @@ class App extends React.Component {
           <p>{ModalText}</p>
           <Walletopen />
         </Modal>
-    </div>
+      </div>
     );
   }
 }
