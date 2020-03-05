@@ -11,6 +11,8 @@ import Walletlayout from './walletlayout'
 import Intitle from '../Common/intitle'
 import '../../static/css/wallet.css'
 
+import Topath from '../Common/topath';
+
 const { Sider, Content } = Layout;
 
 class Walletlist extends React.Component{
@@ -132,6 +134,9 @@ class Walletlist extends React.Component{
       if(_data.msgType == -1){
         console.log("需要先打开钱包再进入页面");
         return;
+      }else {
+        message.info("地址创建成功",2)
+        location.pathname = "/wallet/walletlist";
       }
     })
     .catch(function (error) {
@@ -190,7 +195,7 @@ class Walletlist extends React.Component{
       <Layout className="wa-container">
         <Sync />
         <Content className="mt3">
-          <Row gutter={[30, 0]} type="flex" style={{ 'min-height': 'calc( 100vh - 120px )'}}>
+          <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
             <Col span={13} className="bg-white pv4">
               <Intitle content="账户列表" show="true"/>
               <List
@@ -215,7 +220,7 @@ class Walletlist extends React.Component{
               <List
                 className="asset-list"
                 itemLayout="horizontal"
-                style={{ 'min-height': 'calc( 100% - 135px )'}}
+                style={{ 'minHeight': 'calc( 100% - 135px )'}}
                 dataSource={assetlist}
                 renderItem={item => (
                   <List.Item>

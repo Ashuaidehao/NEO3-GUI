@@ -3,9 +3,9 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
-import { Layout, List, Typography,Tag } from 'antd';
-import Transfer from '../Transaction/transfer';
-import AddressBook from '../Transaction/addressbook';
+import { Layout, Icon, Row, Col, Modal,List, Button,Typography, message,Tag } from 'antd';
+import Intitle from '../Common/intitle';
+
 import {
   HomeOutlined
 } from '@ant-design/icons';
@@ -22,17 +22,30 @@ class Transaction extends React.Component{
     };
   }
   componentDidMount() {
-    var _this = this;
+    console.log(this.props.info);
+    this.getAlltrans(this.props.info?this.props.info:null);
+  }
+  getAlltrans = (info) =>{
+    var _this = this,add = {};
+    info = info || ["GetMyTransactions"];
+    if(info.length>1){
+      add = {
+        "limit":100,
+        "address":info[1]
+      };
+    }
+    console.log(info[1]);
+    console.log(add);
     axios.post('http://localhost:8081', {
-        "id":"51",
-        "method": "GetMyTransactions",
-        "params":{
-        }
+      "id":"51",
+      "method": "GetMyTransactions",
+      "params": add
     })
     .then(function (response) {
       var _data = response.data;
+      console.log(_data)
       if(_data.msgType == -1){
-        console.log(_data);
+        message.error("查询失败");
         return;
       }
       _this.setState({
@@ -56,89 +69,74 @@ class Transaction extends React.Component{
     const {translist} = this.state;
     return (
       <div>
-        <h1>待确认交易</h1>
-        <Layout>
-          {/* {demo.map((item,index)=>{
-            console.log(item);
-            return(
-              <div key={index}>
-                {item.time}<br />
-                {item.hash}<br />
-                {item.transfers[0].from}
-                -->
-                {item.transfers[0].to}<br />
-                {item.transfers[0].amount}<br />
-                {item.transfers[0].symbol}<br />
-              </div>
-            )
-          })} */}
-          <List
-            dataSource={translist}
-            size="large"
-            renderItem={item => (
-              <List.Item>
-                <List.Item.Meta
-                  title={
-                  <div>
-                    <Tag>{item.time}</Tag>
-                    <a className="w400 ellipsis" title={item.txId}>{item.txId}</a>
-                    {/* <a onClick={this.copyHash(item.hash)}><Icon type="copy" /></a> */}
-                  </div>}
-                  description={
-                  <div>
-                    <span className="w200 ellipsis">{item.transfers[0].fromAddress}</span>
-                     -> 
-                    <span className="w200 ellipsis" >{item.transfers[0].toAddress}</span>
-                    <b className="upcase">&nbsp;{item.transfers[0].amount} {item.transfers[0].symbol}</b>
-                  </div>}
-                />
-              </List.Item>
-            )}
-          />
-        </Layout>
-        <h1>最新交易</h1>
-        <Layout>
-          {/* {demo.map((item,index)=>{
-            console.log(item);
-            return(
-              <div key={index}>
-                {item.time}<br />
-                {item.hash}<br />
-                {item.transfers[0].from}
-                -->
-                {item.transfers[0].to}<br />
-                {item.transfers[0].amount}<br />
-                {item.transfers[0].symbol}<br />
-              </div>
-            )
-          })} */}
-          <List
-            dataSource={translist}
-            size="large"
-            renderItem={item => (
-              <List.Item>
-                
-                <List.Item.Meta
-                  title={
-                  <div>
-                    <Tag color="#87d068">{item.time}</Tag>
-                    <a className="w400 ellipsis" title={item.hash}>{item.hash}</a>
-                    {/* <a onClick={this.copyHash(item.hash)}><Icon type="copy" /></a> */}
-                  </div>}
-                  description={
-                  <div>
-                    <span className="w200 ellipsis">{item.transfers[0].from}</span>
-                     -> 
-                    <span className="w200 ellipsis" >{item.transfers[0].to}</span>
-                    <b className="upcase">&nbsp;{item.transfers[0].amount} {item.transfers[0].symbol}</b>
-                  </div>}
-                />
-              </List.Item>
-            )}
-          />
-        </Layout>
-        <Transfer/>
-        <AddressBook />
+        {/* <Content className="mt3">
+          <Row gutter={[30, 0]} type="flex">
+              <Col span={24} className="bg-white pv4">
+              <Intitle content="待确认交易"/>
+              <List
+                  header={<div><span>交易hash</span><span className="float-r wa-amount">数量</span><span className="float-r">时间</span></div>}
+                  footer={<span></span>}
+                  itemLayout="horizontal"
+                  dataSource={translist}
+                  className="font-s"
+                  renderItem={item => (
+                  <List.Item>
+                      <List.Item.Meta
+                      title={
+                      <div>
+                          <a className="w400 ellipsis" title={item.txId}>{item.txId}</a>
+                      </div>}
+                      description={
+                      <div className="font-s">
+                          From：<span className="w300 ellipsis">{item.transfers[0].fromAddress?item.transfers[0].fromAddress:"--"}</span><br></br>
+                          To：<span className="w300 ellipsis" >{item.transfers[0].toAddress?item.transfers[0].toAddress:"--"}</span>
+                      </div>}
+                      />
+                      <Typography>{item.blockTime}</Typography>
+                      <Typography className="wa-amount upcase">{item.transfers[0].amount} {item.transfers[0].symbol}</Typography>
+                  </List.Item>
+                  )}
+              />
+              </Col>
+              <div className="pv1"></div>
+          </Row>
+        </Content> */}
+        <Content className="mt3">
+        <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
+              <Col span={24} className="bg-white pv4">
+              <Intitle content={this.props.content||"最新交易"}/>
+              <List
+                  header={<div><span>交易hash</span><span className="float-r wa-amount">数量</span><span className="float-r">时间</span></div>}
+                  footer={<span></span>}
+                  itemLayout="horizontal"
+                  dataSource={translist}
+                  className="font-s"
+                  renderItem={item => (
+                  <List.Item>
+                      <List.Item.Meta
+                      title={
+                      <div>
+                          <a className="w400 ellipsis" title={item.txId}>{item.txId}</a>
+                          {/* <a onClick={this.copyHash(item.hash)}><Icon type="copy" /></a> */}
+                      </div>}
+                      description={
+                      <div className="font-s">
+                          From：<span className="w300 ellipsis">{item.transfers[0].fromAddress?item.transfers[0].fromAddress:"--"}</span><br></br>
+                          To：<span className="w300 ellipsis" >{item.transfers[0].toAddress?item.transfers[0].toAddress:"--"}</span>
+                      </div>}
+                      />
+                      <Typography>{item.blockTime}</Typography>
+                      <Typography className="wa-amount upcase">{item.transfers[0].amount} {item.transfers[0].symbol}</Typography>
+                  </List.Item>
+                  )}
+              />
+              {/* <div className="mb4" >
+                  <Button type="primary">加载更多</Button>
+              </div> */}
+              </Col>
+              <div className="pv1"></div>
+          </Row>
+        </Content>
       </div>
     );
   }

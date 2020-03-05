@@ -80,14 +80,14 @@ class menuDown extends React.Component{
                         </a>
                     </li>
                     ):null}
-                    {this.state.showOut&&this.state.showPass?(
+                    {/* {this.state.showOut&&this.state.showPass?(
                     <li>
                         <a>
                         <KeyOutlined />
                         <span>修改密码</span>
                         </a>
                     </li>
-                    ):null}
+                    ):null} */}
                     <li>
                         <a>
                         <SettingOutlined />

@@ -5,13 +5,16 @@ import axios from 'axios';
 import { Layout, Row, Col, Modal,List, Button,Typography, message } from 'antd';
 import Sync from '../sync';
 import Intitle from '../Common/intitle';
+import Transaction from '../Transaction/transaction';
 import '../../static/css/wallet.css';
 import {
-  HomeOutlined
+  CloseCircleOutlined 
 } from '@ant-design/icons';
 
 const { confirm } = Modal;
 const { Content } = Layout;
+
+const info = ["GetMyTransactions"];
 
 class Walletdetail extends React.Component{
   constructor(props){
@@ -21,18 +24,22 @@ class Walletdetail extends React.Component{
         address:"",
         assetlist:[],
         iconLoading:false,
+        info : ["GetMyTransactions"],
         gas:0,
     };
   }
   componentDidMount() {
+    console.log("test");
     this.checkAddress();
     this.getBalances();
+    console.log(this.state.address);
   }
   checkAddress = () =>{
     let _add = location.pathname.split(":")[1];
     this.setState({
         address:_add
     })
+    info.length>1?info[1]=_add:info.push(_add);
   }
   getBalances = () =>{
     var _this = this;
@@ -164,7 +171,7 @@ class Walletdetail extends React.Component{
 
             <Content className="mt3">
             <Row gutter={[30, 0]}>
-                <Col span={28} className="bg-white pv4">
+                <Col span={24} className="bg-white pv4">
                 {/* <Intitle content="账户列表" show="false"/> */}
                 <Intitle content="账户列表"/>
                 <List
@@ -187,29 +194,7 @@ class Walletdetail extends React.Component{
                 </div>
                 </Col>
             </Row>
-            <Row gutter={[30, 0]} className="mt3">
-                <Col span={28} className="bg-white pv4">
-                <Intitle content="交易记录"/>
-                <List
-                    header={<div>Header</div>}
-                    footer={<div>Footer</div>}
-                    itemLayout="horizontal"
-                    dataSource={assetlist}
-                    renderItem={item => (
-                    <List.Item>
-                        <List.Item.Meta
-                        title={<a href={"~/walletlist:"+item.address} title="查看详情">{item.address}</a>}
-                        description={
-                        <span className="f-xs">
-                            <span className="mr2">NEO {item.neo}</span>
-                            <span>GAS {item.gas}</span>
-                        </span>}
-                        />
-                    </List.Item>
-                    )}
-                />
-                </Col>
-            </Row>
+            <Transaction info={info} content="交易列表"/>
             </Content>
         </Layout>
     );

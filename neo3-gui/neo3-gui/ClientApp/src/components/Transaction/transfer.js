@@ -141,7 +141,7 @@ class Transfer extends React.Component{
     return (
       <Layout className="wa-container">
         <Content className="mt3">
-          <Row gutter={[30, 0]}  className="bg-white pv4" style={{ 'min-height': 'calc( 100vh - 120px )'}}>
+          <Row gutter={[30, 0]}  className="bg-white pv4" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
             <Col span={28}>
               <Intitle content="转账"/>
               <div className="w600 wa-trans">
