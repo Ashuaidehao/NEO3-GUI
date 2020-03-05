@@ -6,6 +6,7 @@ import { Alert , Input,
     Tooltip,
     Icon,
     Cascader,
+    Modal,
     Select,
     Row,
     Col,
@@ -27,66 +28,12 @@ const {dialog} = window.remote;
 
 const { MonthPicker, RangePicker } = DatePicker;
 
-const formItemLayout = {
-  labelCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 8,
-    },
-  },
-  wrapperCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 16,
-    },
-  },
-};
-const config = {
-  rules: [
-    {
-      type: 'object',
-      required: true,
-      message: 'Please select time!',
-    },
-  ],
-};
-const rangeConfig = {
-  rules: [
-    {
-      type: 'array',
-      required: true,
-      message: 'Please select time!',
-    },
-  ],
-};
-const onFinish = fieldsValue => {
-  // Should format date value before submit.
-  const rangeValue = fieldsValue['range-picker'];
-  const rangeTimeValue = fieldsValue['range-time-picker'];
-  const values = {
-    ...fieldsValue,
-    'date-picker': fieldsValue['date-picker'].format('YYYY-MM-DD'),
-    'date-time-picker': fieldsValue['date-time-picker'].format('YYYY-MM-DD HH:mm:ss'),
-    'month-picker': fieldsValue['month-picker'].format('YYYY-MM'),
-    'range-picker': [rangeValue[0].format('YYYY-MM-DD'), rangeValue[1].format('YYYY-MM-DD')],
-    'range-time-picker': [
-      rangeTimeValue[0].format('YYYY-MM-DD HH:mm:ss'),
-      rangeTimeValue[1].format('YYYY-MM-DD HH:mm:ss'),
-    ],
-    'time-picker': fieldsValue['time-picker'].format('HH:mm:ss'),
-  };
-  console.log('Received values of form: ', values);
-};
-
 class Transfer extends React.Component{
   constructor(props){
     super(props);
     this.state = {
         size: 'default',
+        iconLoading:false,
         accountlist: [],
         selectadd:0
     };
@@ -127,25 +74,66 @@ class Transfer extends React.Component{
       neo:_data.result.accounts
     })
   }
-  verifyInput = () =>{
-    
+  transfer = fieldsValue =>{
+    let _sender = this.state.accountlist[fieldsValue.sender].address;
+    let _this = this;
+    axios.post('http://localhost:8081', {
+      "id":"5",
+      "method": "SendToAddress",
+      "params": {
+        "sender":_sender,
+        "receiver":fieldsValue.receiver,
+        "amount":fieldsValue.amount,
+        "asset":fieldsValue.asset
+       }
+    })
+    .then(function (response) {
+      var _data = response.data;
+      console.log(_data)
+      if(_data.msgType == -1){
+        message.error("交易失败");
+        message.error("这里需要给几个error code：资金不够、手续费不够、地址错误、其他");
+        return;
+      }else{
+        Modal.info({
+          title: '交易成功',
+          content: (
+            <div className="show-pri">
+              <p>交易哈希：{_data.result.txId}</p>
+            </div>
+          ),
+          okText:"确认"
+        });
+        _this.setState({ iconLoading: false });
+      }
+      console.log(_data);
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
-  transfer = () =>{
-    console.log();
-  }
-
-
   render() {
     const {size,accountlist,selectadd} = this.state;
     
     return (
       <Layout className="wa-container">
         <Content className="mt3">
+        <Form name="time_related_controls" className="trans-form" onFinish={this.transfer}>
           <Row gutter={[30, 0]}  className="bg-white pv4" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
-            <Col span={28}>
+            <Col span={24}>
               <Intitle content="转账"/>
-              <div className="w600 wa-trans">
-                <div className="mt3 mb5 bolder">付款地址</div>
+              <div className="w400 mt2">
+                <Form.Item
+                  name="sender"
+                  label="付款地址"
+                  rules={[
+                    {
+                      required: true,
+                      message: '请选择要转出的地址',
+                    },
+                  ]}
+                >
                 <Select
                   size={size}
                   defaultValue={"请选择要转出的地址"}
@@ -157,96 +145,72 @@ class Transfer extends React.Component{
                     )
                   })}
                 </Select>
+              </Form.Item>
+              <Form.Item
+                name="receiver"
+                label="收款地址"
+                rules={[
+                  {
+                    required: true,
+                    message: '请填写需要转入的 NEO3 地址',
+                  },
+                ]}
+              >          
+                <Input placeholder="请输入要转到 NEO3 地址" />
+              </Form.Item>
+              <Row>
+                <Col span={16}>
+                  <Form.Item
+                    name="amount"
+                    label="转账金额"
+                    rules={[
+                      {
+                        required: true,
+                        message: '请填写正确的转账金额',
+                      },
+                    ]}>
 
-                <div className="mt3 mb5 bolder">收款地址</div>
-                <Input placeholder="请输入要转到 NEO3 地址"/>
-
-                <Row>
-                  <Col span={16} className="bg-white pv4">
-                    <div className="mt3 mb5 bolder">转账金额</div>
-                      <Input
-                        type="text"
-                        placeholder="请输入转账金额" 
-                        style={{ width: 250, marginRight: 20 }}
-                      />
-                  </Col>
-                  <Col span={8} className="bg-white pv4">
-                    <div className="mt3 mb5 bolder">发送资产</div>
+                    <Input placeholder="请输入转账金额"/>
+                  </Form.Item>
+                </Col>
+                <Col span={8}>
+                  <Form.Item
+                    name="asset"
+                    label="发送资产"
+                    rules={[
+                      {
+                        required: true,
+                        message: '必填项',
+                      },
+                    ]}>
                     <Select
-                        defaultValue="选择" 
-                        style={{ width: '100%' }}
-                        >
-                        <Option value="neo">NEO <small>{selectadd.neo}</small></Option>
-                        <Option value="gas">GAS <small>{selectadd.gas}</small></Option>
-                      </Select>
-                  </Col>
-                </Row>
-                {/* <Input
-                    style={{ width: 250 }}
-                    placeholder="手续费(GAS)"
-                    suffix={
-                    <Tooltip title="在网络拥堵时加快交易速度">
-                    <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
-                    </Tooltip>}
-                  /> */}
-                  <div className="mt2 text-c lighter">
-                    <small>预计到账时间：20s</small>
-                    <Button type="primary" onClick={this.transfer}>发送</Button> 
-                  </div>
+                      defaultValue="选择" 
+                      style={{ width: '100%' }}
+                      >
+                      <Option value="neo">NEO <small>{selectadd.neo}</small></Option>
+                      <Option value="gas">GAS <small>{selectadd.gas}</small></Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+                <div className="text-c lighter">
+                  <small>预计到账时间：20s  &nbsp;&nbsp;<i> (手续费 1 GAS)</i></small>
                 </div>
-                <Alert 
+                <Form.Item>
+                  <Button type="primary" htmlType="submit" loading={this.state.iconLoading}>
+                    发送
+                  </Button>
+                </Form.Item>
+              </div>
+              <Alert 
                   className="mt2 mb4"
                   showIcon
                   type="info"
                   message="安全提示：请勿轻易向陌生人转账。请仔细确认收款账户、转账金额、资产类型。请仔细辨别相同资产名称的资产，避免被骗。请勿向其它区块链的收款账户（地址）转账。"
                   />
-
-    <Form name="time_related_controls" {...formItemLayout} onFinish={onFinish}>
-    <Form.Item
-        {...formItemLayout}
-        name="username"
-        label="Name"
-        rules={[
-          {
-            required: true,
-            message: 'Please input your name',
-          },
-        ]}
-      >
-        <Input placeholder="Please input your name" />
-      </Form.Item>
-      <Form.Item name="date-picker" label="DatePicker" {...config}>
-        <DatePicker />
-      </Form.Item>
-      <Form.Item name="date-time-picker" label="DatePicker[showTime]" {...config}>
-        <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
-      </Form.Item>
-      <Form.Item name="month-picker" label="MonthPicker" {...config}>
-        <MonthPicker />
-      </Form.Item>
-      <Form.Item name="range-picker" label="RangePicker" {...rangeConfig}>
-        <RangePicker />
-      </Form.Item>
-      <Form.Item name="range-time-picker" label="RangePicker[showTime]" {...rangeConfig}>
-        <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />
-      </Form.Item>
-      <Form.Item name="time-picker" label="TimePicker" {...config}>
-        <TimePicker />
-      </Form.Item>
-      <Form.Item
-        wrapperCol={{
-          xs: { span: 24, offset: 0 },
-          sm: { span: 16, offset: 8 },
-        }}
-      >
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
-              </Col>
-
-            </Row>
+            </Col>
+          </Row>
+        </Form>
         </Content>
       </Layout>
     );

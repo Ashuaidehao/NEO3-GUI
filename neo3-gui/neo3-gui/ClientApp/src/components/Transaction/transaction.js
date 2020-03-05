@@ -22,7 +22,6 @@ class Transaction extends React.Component{
     };
   }
   componentDidMount() {
-    console.log(this.props.info);
     this.getAlltrans(this.props.info?this.props.info:null);
   }
   getAlltrans = (info) =>{
@@ -34,14 +33,13 @@ class Transaction extends React.Component{
         "address":info[1]
       };
     }
-    console.log(info[1]);
-    console.log(add);
     axios.post('http://localhost:8081', {
       "id":"51",
       "method": "GetMyTransactions",
       "params": add
     })
     .then(function (response) {
+      console.log(add);
       var _data = response.data;
       console.log(_data)
       if(_data.msgType == -1){
@@ -69,38 +67,6 @@ class Transaction extends React.Component{
     const {translist} = this.state;
     return (
       <div>
-        {/* <Content className="mt3">
-          <Row gutter={[30, 0]} type="flex">
-              <Col span={24} className="bg-white pv4">
-              <Intitle content="待确认交易"/>
-              <List
-                  header={<div><span>交易hash</span><span className="float-r wa-amount">数量</span><span className="float-r">时间</span></div>}
-                  footer={<span></span>}
-                  itemLayout="horizontal"
-                  dataSource={translist}
-                  className="font-s"
-                  renderItem={item => (
-                  <List.Item>
-                      <List.Item.Meta
-                      title={
-                      <div>
-                          <a className="w400 ellipsis" title={item.txId}>{item.txId}</a>
-                      </div>}
-                      description={
-                      <div className="font-s">
-                          From：<span className="w300 ellipsis">{item.transfers[0].fromAddress?item.transfers[0].fromAddress:"--"}</span><br></br>
-                          To：<span className="w300 ellipsis" >{item.transfers[0].toAddress?item.transfers[0].toAddress:"--"}</span>
-                      </div>}
-                      />
-                      <Typography>{item.blockTime}</Typography>
-                      <Typography className="wa-amount upcase">{item.transfers[0].amount} {item.transfers[0].symbol}</Typography>
-                  </List.Item>
-                  )}
-              />
-              </Col>
-              <div className="pv1"></div>
-          </Row>
-        </Content> */}
         <Content className="mt3">
         <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
               <Col span={24} className="bg-white pv4">

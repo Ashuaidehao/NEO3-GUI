@@ -24,22 +24,19 @@ class Walletdetail extends React.Component{
         address:"",
         assetlist:[],
         iconLoading:false,
-        info : ["GetMyTransactions"],
         gas:0,
     };
   }
   componentDidMount() {
-    console.log("test");
     this.checkAddress();
     this.getBalances();
-    console.log(this.state.address);
   }
   checkAddress = () =>{
     let _add = location.pathname.split(":")[1];
     this.setState({
         address:_add
     })
-    info.length>1?info[1]=_add:info.push(_add);
+    info.push(_add);
   }
   getBalances = () =>{
     var _this = this;
@@ -171,7 +168,7 @@ class Walletdetail extends React.Component{
 
             <Content className="mt3">
             <Row gutter={[30, 0]}>
-                <Col span={24} className="bg-white pv4">
+              <Col span={24} className="bg-white pv4">
                 {/* <Intitle content="账户列表" show="false"/> */}
                 <Intitle content="账户列表"/>
                 <List
@@ -188,11 +185,11 @@ class Walletdetail extends React.Component{
                     </List.Item>
                     )}
                 />
-                <div className="mb4 text-r" >
+                <div className="mb4 text-r">
                     <Button type="primary" onClick={this.showPrivate}>显示私钥</Button>
                     <Button className="ml3" onClick={this.deleteConfirm}>删除地址</Button>
                 </div>
-                </Col>
+              </Col>
             </Row>
             <Transaction info={info} content="交易列表"/>
             </Content>
