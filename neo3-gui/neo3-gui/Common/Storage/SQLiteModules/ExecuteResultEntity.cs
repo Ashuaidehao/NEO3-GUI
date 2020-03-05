@@ -18,31 +18,14 @@ namespace Neo.Common.Storage.SQLiteModules
         /// </summary>
         public string TxId { get; set; }
 
-        public TriggerType Trigger { get; internal set; }
-        public VMState VMState { get; internal set; }
-        public long GasConsumed { get; internal set; }
+        public TriggerType Trigger { get; set; }
+        public VMState VMState { get; set; }
+        public long GasConsumed { get; set; }
 
         /// <summary>
         /// execute result json array
         /// </summary>
-        public string ResultStack { get; internal set; }
-        public List<NotifyEventEntity> Notifications { get; internal set; }
-    }
-
-    [Table("NotifyEvent")]
-    public class NotifyEventEntity
-    {
-        [Key]
-        public long Id { get; set; }
-
-        /// <summary>
-        /// executing contract,bin-endian hex string without "0x"
-        /// </summary>
-        public string Contract { get; set; }
-
-        /// <summary>
-        /// notify json array
-        /// </summary>
-        public string State { get; set; }
+        public string ResultStack { get; set; }
+        public List<NotifyEventEntity> Notifications { get; set; }
     }
 }
