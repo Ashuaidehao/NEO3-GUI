@@ -9,7 +9,8 @@ import { Layout, Menu, message } from 'antd';
 import MenuDown from '../Common/menudown';
 import Topath from '../Common/topath';
 import {
-  HomeOutlined
+  HomeOutlined,
+  WalletOutlined
 } from '@ant-design/icons';
 
 
@@ -75,7 +76,7 @@ class Walletlayout extends React.Component{
                 key="sub1"
                 title={
                   <span>
-                    <HomeOutlined />
+                    <WalletOutlined />
                     <span>钱包</span>
                   </span>
                 }
@@ -97,7 +98,7 @@ class Walletlayout extends React.Component{
                 key="sub1"
                 title={
                   <span>
-                    {/* <Icon type="radius-setting" /> */}
+                    <WalletOutlined />
                     <span>钱包</span>
                   </span>
                 }

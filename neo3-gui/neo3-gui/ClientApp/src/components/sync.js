@@ -66,7 +66,7 @@ class Sync extends WsMessageComponent {
       <div>
         <p className="ml3 mb0">
           <Text className="t-normal bold"> {this.state.syncHeight} / {this.state.height} 区块同步中</Text>
-          <SyncOutlined className="ml3" spin twoToneColor="#52c41a" />
+          <SyncOutlined className="ml3" spin color="#52c41a" />
         </p>
       </div>
     );

@@ -80,7 +80,7 @@ class App extends React.Component {
                 </Button> */}
               </Col>
               <Col span={6}>
-                <Link to='/pages'>
+                <Link to='/consensus'>
                   <img src={blc} alt="blc" /><br />
                   <span>合约</span>
                 </Link>

@@ -54,8 +54,8 @@ class Wallettrans extends React.Component{
     return (
       <Layout className="wa-container">
         <Content className="mt3">
-          <Row gutter={[30, 0]}>
-              <Col span={28} className="bg-white pv4">
+          <Row gutter={[30, 0]} type="flex" style={{ 'min-height': 'calc( 100vh - 120px )'}}>
+              <Col span={24} className="bg-white pv4">
               {/* <Intitle content="账户列表" show="false"/> */}
               <Intitle content="最新交易"/>
               <List
