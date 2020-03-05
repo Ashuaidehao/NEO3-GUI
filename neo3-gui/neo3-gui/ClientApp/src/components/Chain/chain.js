@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Row, Col,Icon,Input  } from 'antd';
+import { Layout, Row, Col,Input  } from 'antd';
 import {Link} from 'react-router-dom';
 
 const { Content } = Layout;
@@ -19,9 +19,8 @@ class Chain extends React.Component{
   };
   render(){
     return (
-
           <Layout>
-                      {/* <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
+            {/* <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
             <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
               <Menu.Item key="1">
                 <Icon type="radius-setting" />
@@ -44,9 +43,9 @@ class Chain extends React.Component{
             <Content style={{ margin: '12px 15px 0', overflow: 'initial' }}>
               <Row>
                 <Col span={6}>
-                  <Icon className="trigger"
+                  {/* <Icon className="trigger"
                     type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
-                    onClick={this.toggle} />
+                    onClick={this.toggle} /> */}
                 </Col>
                 <Col span={18} className='text-r'>
                   <Search

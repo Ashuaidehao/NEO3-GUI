@@ -2,6 +2,9 @@
 import React from 'react';
 import { Icon , Typography } from 'antd';
 import 'antd/dist/antd.css';
+import {
+  HomeOutlined
+} from '@ant-design/icons';
 
 const { Text } = Typography;
 
@@ -56,7 +59,7 @@ class Savewallet extends React.Component{
     return (
       <div>
         <p>
-          <Icon type="sync" spin/> 
+          {/* <Icon type="sync" spin/>  */}
           <Text type="secondary"> {this.state.syncHeight} / {this.state.height} </Text>
           <Text>区块同步中</Text>
         </p>

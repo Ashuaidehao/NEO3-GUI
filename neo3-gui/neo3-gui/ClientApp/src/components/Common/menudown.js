@@ -2,8 +2,11 @@
 import React from 'react';
 import 'antd/dist/antd.css';
 import { Redirect } from 'react-router-dom';
-import { message,  Icon } from 'antd';
+import { message } from 'antd';
 import axios from 'axios';
+import {
+    HomeOutlined
+  } from '@ant-design/icons';
 
 class menuDown extends React.Component{
     constructor (props){
@@ -70,7 +73,7 @@ class menuDown extends React.Component{
                     {this.state.showOut?(
                     <li>
                         <a onClick={this.logout}>
-                        <Icon type="logout" />
+                        {/* <Icon type="logout" /> */}
                         <span>登出钱包</span>
                         </a>
                     </li>
@@ -78,14 +81,14 @@ class menuDown extends React.Component{
                     {this.state.showOut&&this.state.showPass?(
                     <li>
                         <a>
-                        <Icon type="key" />
+                        {/* <Icon type="key" /> */}
                         <span>修改密码</span>
                         </a>
                     </li>
                     ):null}
                     <li>
                         <a>
-                        <Icon type="setting" />
+                        {/* <Icon type="setting" /> */}
                         <span>设置</span>
                         </a>
                     </li>

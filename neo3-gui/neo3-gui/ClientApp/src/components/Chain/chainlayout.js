@@ -6,6 +6,10 @@ import '../../static/css/wallet.css'
 import {  Layout, Menu, Icon } from 'antd';
 import {Link} from 'react-router-dom';
 import MenuDown from '../Common/menudown'
+import {
+  HomeOutlined
+} from '@ant-design/icons';
+
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
@@ -34,13 +38,13 @@ class Chainlayout extends React.Component{
               mode="inline"
             >
               <Menu.Item>
-                <Link to="/"><Icon type="home" />主页</Link>
+                <Link to="/"><HomeOutlined />主页</Link>
               </Menu.Item>
               <SubMenu
                 key="sub1"
                 title={
                   <span>
-                    <Icon type="radius-setting" />
+                    {/* <Icon type="radius-setting" /> */}
                     <span>区块链</span>
                   </span>
                 }

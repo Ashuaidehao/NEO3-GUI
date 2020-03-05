@@ -4,12 +4,18 @@ import 'antd/dist/antd.css';
 import '../../static/css/menu.css'
 import '../../static/css/wallet.css'
 import {Link} from 'react-router-dom';
-import {  Layout,Row, Col ,message, Button, Icon,Tabs,Divider } from 'antd';
+import {  Layout,Row, Col ,message, Button,Tabs,Divider } from 'antd';
 import axios from 'axios';
 import Walletopen from './open'
 import Walletcreate from './create'
 import Walletprivate from './private'
 import Sync from '../sync';
+
+import {
+  ArrowLeftOutlined,
+  CloseOutlined
+} from '@ant-design/icons';
+
 
 const { TabPane } = Tabs;
 const { Footer } = Layout;
@@ -40,8 +46,8 @@ class Wallet extends React.Component{
         <div className="wa-content mt1">
           <div className="wa-link">
             {/* 设置一个显示值及返回路径 */}
-            <a className="back" href="/home"><Icon type="arrow-left" /></a>
-            <a className="close" href="/home"><Icon type="close" /></a>
+            <a className="back" href="/home"><ArrowLeftOutlined /></a>
+            <a className="close" href="/home"><CloseOutlined /></a>
           </div>
           <div className="logo mt5"></div>
           <div className="wa-open mt1">

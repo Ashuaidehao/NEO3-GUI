@@ -5,9 +5,13 @@ import '../../static/css/menu.css'
 import '../../static/css/wallet.css'
 import {Link} from 'react-router-dom';
 import axios from 'axios';
-import { Layout, Menu, Icon, message } from 'antd';
+import { Layout, Menu, message } from 'antd';
 import MenuDown from '../Common/menudown';
 import Topath from '../Common/topath';
+import {
+  HomeOutlined
+} from '@ant-design/icons';
+
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
@@ -63,15 +67,15 @@ class Walletlayout extends React.Component{
             mode="inline"
           >
             <Menu.Item>
-              <Link to="/"><Icon type="home" />主页</Link>
+              <Link to="/"><HomeOutlined />主页</Link>
             </Menu.Item>
-            
+
             {!this.state.isopen?(
               <SubMenu
                 key="sub1"
                 title={
                   <span>
-                    <Icon type="radius-setting" />
+                    <HomeOutlined />
                     <span>钱包</span>
                   </span>
                 }
@@ -93,7 +97,7 @@ class Walletlayout extends React.Component{
                 key="sub1"
                 title={
                   <span>
-                    <Icon type="radius-setting" />
+                    {/* <Icon type="radius-setting" /> */}
                     <span>钱包</span>
                   </span>
                 }

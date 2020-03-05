@@ -2,10 +2,13 @@
 //just test replace wallet//
 import React from 'react';
 import axios from 'axios';
-import { Layout, Icon, Row, Col, Modal,List, Button,Typography, message } from 'antd';
+import { Layout, Row, Col, Modal,List, Button,Typography, message } from 'antd';
 import Sync from '../sync';
 import Intitle from '../Common/intitle';
 import '../../static/css/wallet.css';
+import {
+  HomeOutlined
+} from '@ant-design/icons';
 
 const { confirm } = Modal;
 const { Content } = Layout;
@@ -86,7 +89,7 @@ class Walletdetail extends React.Component{
     console.log(this);
     confirm({
       title: '该地址删除后无法恢复，是否确认删除？',
-      icon: <Icon type="close-circle" />,
+      icon: <CloseCircleOutlined />,
       okText: '确认删除',
       cancelText: '取消',
       onOk() {

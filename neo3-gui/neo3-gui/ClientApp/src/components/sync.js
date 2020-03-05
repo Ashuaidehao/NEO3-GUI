@@ -1,8 +1,11 @@
 
 import React from 'react';
-import { Icon, Typography } from 'antd';
+import { Typography } from 'antd';
 import 'antd/dist/antd.css';
 import WsMessageComponent from './Websocket/WsMessageComponent';
+import {
+  SyncOutlined
+} from '@ant-design/icons';
 
 const { Text } = Typography;
 
@@ -63,7 +66,7 @@ class Sync extends WsMessageComponent {
       <div>
         <p className="ml3 mb0">
           <Text className="t-normal bold"> {this.state.syncHeight} / {this.state.height} 区块同步中</Text>
-          <Icon className="ml3" type="sync" spin/> 
+          <SyncOutlined className="ml3" spin twoToneColor="#52c41a" />
         </p>
       </div>
     );

@@ -3,9 +3,12 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
-import { Layout, Icon, List, Typography,Tag } from 'antd';
+import { Layout, List, Typography,Tag } from 'antd';
 import Transfer from '../Transaction/transfer';
 import AddressBook from '../Transaction/addressbook';
+import {
+  HomeOutlined
+} from '@ant-design/icons';
 
 
 const { Sider, Content } = Layout;
@@ -79,7 +82,7 @@ class Transaction extends React.Component{
                   <div>
                     <Tag>{item.time}</Tag>
                     <a className="w400 ellipsis" title={item.txId}>{item.txId}</a>
-                    <a onClick={this.copyHash(item.hash)}><Icon type="copy" /></a>
+                    {/* <a onClick={this.copyHash(item.hash)}><Icon type="copy" /></a> */}
                   </div>}
                   description={
                   <div>
@@ -120,7 +123,7 @@ class Transaction extends React.Component{
                   <div>
                     <Tag color="#87d068">{item.time}</Tag>
                     <a className="w400 ellipsis" title={item.hash}>{item.hash}</a>
-                    <a onClick={this.copyHash(item.hash)}><Icon type="copy" /></a>
+                    {/* <a onClick={this.copyHash(item.hash)}><Icon type="copy" /></a> */}
                   </div>}
                   description={
                   <div>

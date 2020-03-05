@@ -27,9 +27,44 @@ const {dialog} = window.remote;
 
 const { MonthPicker, RangePicker } = DatePicker;
 
+const formItemLayout = {
+  labelCol: {
+    xs: {
+      span: 24,
+    },
+    sm: {
+      span: 8,
+    },
+  },
+  wrapperCol: {
+    xs: {
+      span: 24,
+    },
+    sm: {
+      span: 16,
+    },
+  },
+};
+const config = {
+  rules: [
+    {
+      type: 'object',
+      required: true,
+      message: 'Please select time!',
+    },
+  ],
+};
+const rangeConfig = {
+  rules: [
+    {
+      type: 'array',
+      required: true,
+      message: 'Please select time!',
+    },
+  ],
+};
 const onFinish = fieldsValue => {
   // Should format date value before submit.
-  console.log("aaaa");
   const rangeValue = fieldsValue['range-picker'];
   const rangeTimeValue = fieldsValue['range-time-picker'];
   const values = {
@@ -166,8 +201,9 @@ class Transfer extends React.Component{
                   message="安全提示：请勿轻易向陌生人转账。请仔细确认收款账户、转账金额、资产类型。请仔细辨别相同资产名称的资产，避免被骗。请勿向其它区块链的收款账户（地址）转账。"
                   />
 
-    <Form name="time_related_controls" onFinish={onFinish}>
-      <Form.Item
+    <Form name="time_related_controls" {...formItemLayout} onFinish={onFinish}>
+    <Form.Item
+        {...formItemLayout}
         name="username"
         label="Name"
         rules={[
@@ -178,6 +214,24 @@ class Transfer extends React.Component{
         ]}
       >
         <Input placeholder="Please input your name" />
+      </Form.Item>
+      <Form.Item name="date-picker" label="DatePicker" {...config}>
+        <DatePicker />
+      </Form.Item>
+      <Form.Item name="date-time-picker" label="DatePicker[showTime]" {...config}>
+        <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+      </Form.Item>
+      <Form.Item name="month-picker" label="MonthPicker" {...config}>
+        <MonthPicker />
+      </Form.Item>
+      <Form.Item name="range-picker" label="RangePicker" {...rangeConfig}>
+        <RangePicker />
+      </Form.Item>
+      <Form.Item name="range-time-picker" label="RangePicker[showTime]" {...rangeConfig}>
+        <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+      </Form.Item>
+      <Form.Item name="time-picker" label="TimePicker" {...config}>
+        <TimePicker />
       </Form.Item>
       <Form.Item
         wrapperCol={{
