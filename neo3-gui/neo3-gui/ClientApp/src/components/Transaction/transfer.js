@@ -17,12 +17,35 @@ import { Alert , Input,
 import {  Layout } from 'antd';
 import Intitle from '../Common/intitle'
 import '../../static/css/wallet.css'
+import { Form, DatePicker, TimePicker } from 'antd';
 
 const { Option } = Select;
 const { Sider, Content } = Layout;
 const AutoCompleteOption = AutoComplete.Option;
 
 const {dialog} = window.remote;
+
+const { MonthPicker, RangePicker } = DatePicker;
+
+const onFinish = fieldsValue => {
+  // Should format date value before submit.
+  console.log("aaaa");
+  const rangeValue = fieldsValue['range-picker'];
+  const rangeTimeValue = fieldsValue['range-time-picker'];
+  const values = {
+    ...fieldsValue,
+    'date-picker': fieldsValue['date-picker'].format('YYYY-MM-DD'),
+    'date-time-picker': fieldsValue['date-time-picker'].format('YYYY-MM-DD HH:mm:ss'),
+    'month-picker': fieldsValue['month-picker'].format('YYYY-MM'),
+    'range-picker': [rangeValue[0].format('YYYY-MM-DD'), rangeValue[1].format('YYYY-MM-DD')],
+    'range-time-picker': [
+      rangeTimeValue[0].format('YYYY-MM-DD HH:mm:ss'),
+      rangeTimeValue[1].format('YYYY-MM-DD HH:mm:ss'),
+    ],
+    'time-picker': fieldsValue['time-picker'].format('HH:mm:ss'),
+  };
+  console.log('Received values of form: ', values);
+};
 
 class Transfer extends React.Component{
   constructor(props){
@@ -73,8 +96,10 @@ class Transfer extends React.Component{
     
   }
   transfer = () =>{
-
+    console.log();
   }
+
+
   render() {
     const {size,accountlist,selectadd} = this.state;
     
@@ -135,11 +160,36 @@ class Transfer extends React.Component{
                   </div>
                 </div>
                 <Alert 
-                  className="mt2"
+                  className="mt2 mb4"
                   showIcon
                   type="info"
                   message="安全提示：请勿轻易向陌生人转账。请仔细确认收款账户、转账金额、资产类型。请仔细辨别相同资产名称的资产，避免被骗。请勿向其它区块链的收款账户（地址）转账。"
                   />
+
+    <Form name="time_related_controls" onFinish={onFinish}>
+      <Form.Item
+        name="username"
+        label="Name"
+        rules={[
+          {
+            required: true,
+            message: 'Please input your name',
+          },
+        ]}
+      >
+        <Input placeholder="Please input your name" />
+      </Form.Item>
+      <Form.Item
+        wrapperCol={{
+          xs: { span: 24, offset: 0 },
+          sm: { span: 16, offset: 8 },
+        }}
+      >
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form.Item>
+    </Form>
               </Col>
 
             </Row>

@@ -17,8 +17,8 @@ class Walletlayout extends React.Component{
     super(props);
     this.state = {
         size: 'default',
-        // isopen: false
-        isopen: true
+        isopen: false
+        // isopen: true
     };
   }
   componentDidMount = () =>{
@@ -35,6 +35,7 @@ class Walletlayout extends React.Component{
       var _data = response.data;
       if(_data.msgType == -1){
         message.info("请先打开钱包",2);
+        _this.setState({topath:"/wallet"});
         return;
       }
       _this.setState({isopen:true});
@@ -64,7 +65,7 @@ class Walletlayout extends React.Component{
             <Menu.Item>
               <Link to="/"><Icon type="home" />主页</Link>
             </Menu.Item>
-
+            
             {!this.state.isopen?(
               <SubMenu
                 key="sub1"

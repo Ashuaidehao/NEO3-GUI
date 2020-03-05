@@ -11,7 +11,8 @@ class Walletopen extends React.Component{
     this.state = {
       iconLoading:false,
       path:'',
-      islogin:false
+      islogin:false,
+      maxLength:30
     };
   }
   setpath = () =>{
@@ -66,7 +67,7 @@ class Walletopen extends React.Component{
       <div>
         <Topath topath={this.state.topath}></Topath>
         <input type="file" id="file" onChange={this.setpath} />
-        <Input.Password id="opass" placeholder="input password" maxLength="50" onChange={this.checkinput} onPressEnter={this.openWallet}/>
+        <Input.Password id="opass" placeholder="input password" maxLength={this.state.maxLength} onChange={this.checkinput} onPressEnter={this.openWallet}/>
         <Button onClick={this.verifi} loading={this.state.iconLoading}>确认</Button>
       </div>
     );
