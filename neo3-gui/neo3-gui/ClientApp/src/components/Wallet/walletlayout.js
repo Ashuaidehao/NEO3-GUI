@@ -28,7 +28,6 @@ class Walletlayout extends React.Component{
   }
   componentDidMount = () =>{
     this.getGas()
-    console.log("dakailoyout");
   }
   getGas = () =>{
     var _this = this;
@@ -44,7 +43,7 @@ class Walletlayout extends React.Component{
         return;
       }
       _this.setState({isopen:true});
-      _this.setState({topath:"/wallet/walletlist"});
+      // _this.setState({topath:"/wallet/walletlist"});
     })
     .catch(function (error) {
       console.log(error);
@@ -70,7 +69,6 @@ class Walletlayout extends React.Component{
             <Menu.Item>
               <Link to="/"><HomeOutlined />主页</Link>
             </Menu.Item>
-
             {!this.state.isopen?(
               <SubMenu
                 key="sub1"
@@ -80,7 +78,6 @@ class Walletlayout extends React.Component{
                     <span>钱包</span>
                   </span>
                 }
-                onClick={this.test}
               >
                 <Menu.Item key="1">
                   <Link to="/wallet" onClick={this.hint}>账户列表</Link>
@@ -107,7 +104,7 @@ class Walletlayout extends React.Component{
                   <Link to="/wallet/walletlist">账户列表</Link>
                 </Menu.Item>
                 <Menu.Item key="2">
-                  <Link to="/wallet/trans">交易列表</Link>
+                  <Link to="/wallet/transaction">交易列表</Link>
                 </Menu.Item>
                 <Menu.Item key="3">
                   <Link to="/wallet/transfer">转账</Link>
@@ -119,10 +116,6 @@ class Walletlayout extends React.Component{
         </Sider>
       </div>
     );
-  }
-
-  test() {
-    console.log(window.location.pathname)
   }
 } 
 

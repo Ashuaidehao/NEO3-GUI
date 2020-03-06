@@ -18,11 +18,47 @@ class Transaction extends React.Component{
     super(props);
     this.state = {
         size: 'default',
-        translist:[]
+        translist:[],
+        loacl:""
     };
   }
   componentDidMount() {
+    this.setState({
+      loacl:location.pathname
+    })
     this.getAlltrans(this.props.info?this.props.info:null);
+  }
+  getUnconfirmtrans = (info) =>{
+    var _this = this,add = {};
+    info = info || ["GetMyUnconfirmedTransactions"];
+    if(info.length>1){
+      add = {
+        "limit":100,
+        "address":info[1]
+      };
+    }
+    axios.post('http://localhost:8081', {
+      "id":"51",
+      "method": "GetMyTransactions",
+      "params": add
+    })
+    .then(function (response) {
+      console.log(add);
+      var _data = response.data;
+      console.log(_data)
+      if(_data.msgType == -1){
+        message.error("查询失败");
+        return;
+      }
+      _this.setState({
+        translist:_data.result
+      })
+      console.log(_data);
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   getAlltrans = (info) =>{
     var _this = this,add = {};
@@ -80,11 +116,7 @@ class Transaction extends React.Component{
                   renderItem={item => (
                   <List.Item>
                       <List.Item.Meta
-                      title={
-                      <div>
-                          <a className="w400 ellipsis" title={item.txId}>{item.txId}</a>
-                          {/* <a onClick={this.copyHash(item.hash)}><Icon type="copy" /></a> */}
-                      </div>}
+                      title={<Link to={this.state.loacl+":"+item.txId} title="查看详情">{item.txId}</Link>}
                       description={
                       <div className="font-s">
                           From：<span className="w300 ellipsis">{item.transfers[0].fromAddress?item.transfers[0].fromAddress:"--"}</span><br></br>

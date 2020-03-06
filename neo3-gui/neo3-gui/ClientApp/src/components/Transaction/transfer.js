@@ -10,7 +10,7 @@ import { Alert , Input,
     Select,
     Row,
     Col,
-    Checkbox,
+    message,
     Button,
     AutoComplete,
   } from 'antd';
@@ -117,7 +117,7 @@ class Transfer extends React.Component{
     const {size,accountlist,selectadd} = this.state;
     
     return (
-      <Layout className="wa-container">
+      <Layout className="gui-container">
         <Content className="mt3">
         <Form name="time_related_controls" className="trans-form" onFinish={this.transfer}>
           <Row gutter={[30, 0]}  className="bg-white pv4" style={{ 'minHeight': 'calc( 100vh - 150px )'}}>

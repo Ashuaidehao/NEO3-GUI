@@ -55,7 +55,7 @@ class Wallet extends React.Component{
     const props = this.props;
 
     return (
-      <Layout className="wa-container">
+      <Layout className="gui-container">
         <Sync />
         <div className="wa-content mt2">
           <div className="wa-link">

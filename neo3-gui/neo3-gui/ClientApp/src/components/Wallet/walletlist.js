@@ -162,7 +162,7 @@ class Walletlist extends React.Component{
   render = () =>{
     const { accountlist,assetlist } = this.state;
     return (
-      <Layout className="wa-container">
+      <Layout className="gui-container">
         <Sync />
         <Content className="mt3">
           <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
