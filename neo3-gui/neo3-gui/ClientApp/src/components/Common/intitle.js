@@ -1,5 +1,7 @@
 import React from 'react';
-import { Icon } from 'antd';
+import {
+    PlusCircleOutlined
+} from '@ant-design/icons';
 
 class InTitle extends React.Component{
     constructor (props){
@@ -13,7 +15,7 @@ class InTitle extends React.Component{
                     <h2 className="mb0">
                         {this.props.content}
                         {this.props.show?(
-                            <Icon className="float-r small" type="plus-circle" onClick={this.props.openProps}></Icon>
+                            <PlusCircleOutlined className="float-r small" onClick={this.props.openProps}/>
                         ):null}
                     </h2>
                 </div>

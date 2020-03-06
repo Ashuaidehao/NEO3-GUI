@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col,Typography,Switch,Icon,Skeleton } from 'antd';
+import { Row, Col,Typography,Switch,Skeleton } from 'antd';
 import {Link} from 'react-router-dom';
 
 const { Title } = Typography;
@@ -31,15 +31,15 @@ class Advanced extends React.Component {
                         <Col span={6}>
                             <span>选举</span>
                             <Switch defaultChecked className="Candidate"
-                                checkedChildren={<Icon type="check" />}
-                                unCheckedChildren={<Icon type="close" />}
+                                // checkedChildren={<Icon type="check" />}
+                                // unCheckedChildren={<Icon type="close" />}
                                 onChange={this.onChange}/>
                         </Col>
                         <Col span={6}>
                             <span>投票</span>
                             <Switch defaultChecked className="Candidate"
-                                checkedChildren={<Icon type="check" />}
-                                unCheckedChildren={<Icon type="close" />}
+                                // checkedChildren={<Icon type="check" />}
+                                // unCheckedChildren={<Icon type="close" />}
                                 onChange={this.onChange}/>
                         </Col>
                     </Row>
@@ -49,29 +49,29 @@ class Advanced extends React.Component {
                         <Col span={6}>
                             <span>交易签名</span>
                             <Switch defaultChecked className="Candidate"
-                                checkedChildren={<Icon type="check" />}
-                                unCheckedChildren={<Icon type="close" />}
+                                // checkedChildren={<Icon type="check" />}
+                                // unCheckedChildren={<Icon type="close" />}
                                 onChange={this.onChange}/>
                         </Col>
                         <Col span={6}>
                             <span>文本签名</span>
                             <Switch defaultChecked className="Candidate"
-                                checkedChildren={<Icon type="check" />}
-                                unCheckedChildren={<Icon type="close" />}
+                                // checkedChildren={<Icon type="check" />}
+                                // unCheckedChildren={<Icon type="close" />}
                                 onChange={this.onChange}/>
                         </Col>
                         <Col span={6}>
                             <span>构造交易</span>
                             <Switch defaultChecked className="Candidate"
-                                checkedChildren={<Icon type="check" />}
-                                unCheckedChildren={<Icon type="close" />}
+                                // checkedChildren={<Icon type="check" />}
+                                // unCheckedChildren={<Icon type="close" />}
                                 onChange={this.onChange}/>
                         </Col>
                         <Col span={6}>
                             <span>广播交易</span>
                             <Switch defaultChecked className="Candidate"
-                                checkedChildren={<Icon type="check" />}
-                                unCheckedChildren={<Icon type="close" />}
+                                // checkedChildren={<Icon type="check" />}
+                                // unCheckedChildren={<Icon type="close" />}
                                 onChange={this.onChange}/>
                         </Col>
                     </Row>
@@ -79,8 +79,8 @@ class Advanced extends React.Component {
                         <Col span={6}>
                             <span>数据转换</span>
                             <Switch defaultChecked className="Candidate"
-                                checkedChildren={<Icon type="check" />}
-                                unCheckedChildren={<Icon type="close" />}
+                                // checkedChildren={<Icon type="check" />}
+                                // unCheckedChildren={<Icon type="close" />}
                                 onChange={this.onChange}/>
                         </Col>
                         <Col span={6}>

@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import { Layout, Row, Col, Icon, Typography, Modal } from 'antd';
+import { Layout, Row, Col, Typography, Modal } from 'antd';
+import Icon from '@ant-design/icons';
+
 import Sync from '../components/sync';
 import Walletopen from '../components/Wallet/open';
 import '../static/css/site.css';

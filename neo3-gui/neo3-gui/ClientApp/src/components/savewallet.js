@@ -1,6 +1,9 @@
 import React from 'react';
 import { Icon , Typography } from 'antd';
 import 'antd/dist/antd.css';
+import {
+  HomeOutlined
+} from '@ant-design/icons';
 import { observer, inject } from "mobx-react";
 
 

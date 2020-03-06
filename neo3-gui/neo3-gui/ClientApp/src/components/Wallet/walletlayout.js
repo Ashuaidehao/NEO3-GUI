@@ -5,9 +5,14 @@ import '../../static/css/menu.css'
 import '../../static/css/wallet.css'
 import {Link} from 'react-router-dom';
 import axios from 'axios';
-import { Layout, Menu, Icon, message } from 'antd';
+import { Layout, Menu, message } from 'antd';
 import MenuDown from '../Common/menudown';
 import Topath from '../Common/topath';
+import {
+  HomeOutlined,
+  WalletOutlined
+} from '@ant-design/icons';
+
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
@@ -17,8 +22,8 @@ class Walletlayout extends React.Component{
     super(props);
     this.state = {
         size: 'default',
-        // isopen: false
-        isopen: true
+        isopen: false
+        // isopen: true
     };
   }
   componentDidMount = () =>{
@@ -34,7 +39,8 @@ class Walletlayout extends React.Component{
     .then(function (response) {
       var _data = response.data;
       if(_data.msgType == -1){
-        message.info("请先打开钱包",2);
+        message.info("请打开钱包",2);
+        _this.setState({topath:"/wallet"});
         return;
       }
       _this.setState({isopen:true});
@@ -62,7 +68,7 @@ class Walletlayout extends React.Component{
             mode="inline"
           >
             <Menu.Item>
-              <Link to="/"><Icon type="home" />主页</Link>
+              <Link to="/"><HomeOutlined />主页</Link>
             </Menu.Item>
 
             {!this.state.isopen?(
@@ -70,7 +76,7 @@ class Walletlayout extends React.Component{
                 key="sub1"
                 title={
                   <span>
-                    <Icon type="radius-setting" />
+                    <WalletOutlined />
                     <span>钱包</span>
                   </span>
                 }
@@ -92,7 +98,7 @@ class Walletlayout extends React.Component{
                 key="sub1"
                 title={
                   <span>
-                    <Icon type="radius-setting" />
+                    <WalletOutlined />
                     <span>钱包</span>
                   </span>
                 }

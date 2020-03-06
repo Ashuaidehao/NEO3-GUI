@@ -136,7 +136,7 @@ small,.small{
     margin-left: auto;
 }
 .w600{
-    max-width: 400px;
+    max-width: 650px;
     width: 100%;
     margin-right: auto;
     margin-left: auto;
@@ -158,6 +158,11 @@ small,.small{
 .m-auto{
     margin-left:auto;
     margin-right:auto;
+}
+
+.posi-b{
+    position: absolute;
+    bottom: 0;
 }
 
 .mt0{margin-top: 0px!important;}

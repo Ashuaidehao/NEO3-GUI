@@ -16,6 +16,9 @@ import Wallettrans from '../components/Wallet/trans';
 
 import Transfer from '../components/Transaction/transfer';
 
+import Consensus from '../components/Consensus/consensus';
+import Consensuslayout from '../components/Consensus/consensuslayout';
+
 import { Layout } from 'antd';
 
 
@@ -42,7 +45,13 @@ const BasicRoute = () => (
                     <Route exact path="/wallet/transfer" component={Transfer} />
                 </Layout>
             </Route>
-            <Redirect from="*" to="/home" />
+            <Route path="/consensus">
+                <Layout style={{ height: 'calc( 100vh )'}}>
+                    <Route component={Consensuslayout} />
+                    <Route exact path="/consensus" component={Consensus} />
+                </Layout>
+            </Route>
+            <Redirect from="*" to="/" />
         </Switch>
     </BrowserRouter>
 );

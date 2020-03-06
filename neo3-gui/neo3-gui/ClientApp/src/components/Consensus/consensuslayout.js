@@ -8,14 +8,14 @@ import {Link} from 'react-router-dom';
 import MenuDown from '../Common/menudown'
 import {
   HomeOutlined,
-  RadiusUpleftOutlined
+  FileSyncOutlined
 } from '@ant-design/icons';
 
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
-class Chainlayout extends React.Component{
+class Consensuslayout extends React.Component{
   constructor(props){
     super(props);
     this.state = {
@@ -45,14 +45,14 @@ class Chainlayout extends React.Component{
                 key="sub1"
                 title={
                   <span>
-                    <RadiusUpleftOutlined />
-                    <span>区块链</span>
+                    <FileSyncOutlined />
+                    <span>合约</span>
                   </span>
                 }
               >
-                <Menu.Item key="1" onClick={this.toPage}>区块</Menu.Item>
-                <Menu.Item key="2" onClick={this.toPage}>交易记录</Menu.Item>
-                <Menu.Item key="3" onClick={this.toPage}>资产</Menu.Item>
+                <Menu.Item key="1" onClick={this.toPage}>搜索合约</Menu.Item>
+                <Menu.Item key="2" onClick={this.toPage}>部署合约</Menu.Item>
+                <Menu.Item key="3" onClick={this.toPage}>调用合约</Menu.Item>
               </SubMenu>
             </Menu>
             <MenuDown />
@@ -62,4 +62,4 @@ class Chainlayout extends React.Component{
   }
 } 
 
-export default Chainlayout;
+export default Consensuslayout;

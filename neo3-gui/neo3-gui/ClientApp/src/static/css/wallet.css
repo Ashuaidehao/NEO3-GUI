@@ -6,7 +6,6 @@
 .wa-content{
     position: relative;
     display: block;
-    min-height: 400px;
     background: #FFFFFF;
     box-shadow: 0 4px 12px #AAAAAA;
     padding: 28px;
@@ -18,9 +17,10 @@
 }
 .wa-open{
     padding: 0 90px;
-    max-width: 650px;
+    max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+    min-height: 280px;
 }
 
 /* 路径 */
@@ -50,10 +50,8 @@
 /* 按钮 */
 .wa-open .ant-btn{
     width: 100%;
-}
-.wa-open .ant-btn{
-    font-size: 16px;
-    padding:8px 0;
+    font-size: 14px;
+    padding:6px 0;
     text-align:center;
     border: 1px solid #00AF92;
     color: #00AF92;
@@ -72,7 +70,33 @@
 .wa-open .ant-btn-sm{
     font-size: 12px;
 }
+.wa-open input{
+    padding-top: 6px;
+    padding-bottom: 6px;
+    border-radius: 0;
+}
 
+.wa-open .ant-input:hover,
+.wa-open .ant-input:focus,
+.wa-open .ant-input:active{
+    border:1px solid #00AF92;
+    box-shadow: 0 0 0 2px rgba(3, 212, 178, 0.2);
+}
+.wa-open .ant-input-password:hover,
+.wa-open .ant-input-password:focus,
+.wa-open .ant-input-password:active{
+    border:1px solid #00AF92;
+    box-shadow: 0 0 0 2px rgba(3, 212, 178, 0.2);
+}
+.wa-open .ant-input-affix-wrapper > input.ant-input{
+    padding: 0;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+
+/* list */
 .ant-list-item.wa-half{
     width: 49%;
     display: inline-block;
@@ -145,4 +169,49 @@
 }
 .wa-trans button {
     width: 100%;
+}
+
+.trans-form{
+
+}
+.trans-form .ant-row{
+    margin-bottom: 12px;
+}
+.trans-form .ant-form-item-control{
+    width: 100%;
+    padding: 2px 10px;
+}
+.trans-form .ant-form-item-label > label{
+    font-weight:600;
+    height: auto;
+    padding: 0 10px;
+}
+.trans-form .ant-btn-primary{
+    padding-top: 6px;
+    padding-bottom: 6px;
+    width: 100%;
+}
+
+.trans-form .ant-select:not(.ant-select-disabled):hover .ant-select-selector,
+.trans-form .ant-input:hover {
+    border-color: #00AF92;
+}
+
+.trans-form .ant-select-focused.ant-select-single:not(.ant-select-customize-input) .ant-select-selector,
+.trans-form .ant-input:focus, .ant-input-focused{
+    border-color: rgb(0, 175, 146);
+    box-shadow: 0 0 0 2px rgba(3, 212, 178, 0.2);
+}
+
+
+/* upload */
+input.wa-upload{
+    background: #00AF92;
+}
+.wa-upload input{
+    background: #00AF92;
+}
+button,input{
+    border-radius: 0;
+    background: transparent;
 }

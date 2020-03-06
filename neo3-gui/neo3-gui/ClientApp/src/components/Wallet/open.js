@@ -2,31 +2,24 @@
 import React from 'react';
 import 'antd/dist/antd.css';
 import axios from 'axios';
-import { Input, Button, message } from 'antd';
+import { message, Input, Row, Col, Button } from 'antd';
 import Topath from '../Common/topath';
+
+const {dialog} = window.remote;
 
 class Walletopen extends React.Component{
   constructor(props){
     super(props);
     this.state = {
       iconLoading:false,
-      path:'',
-      islogin:false
+      islogin:false,
+      path:"",
+      maxLength:30
     };
   }
-  setpath = () =>{
-    var file = document.getElementById("file").files[0];
-    // var _path = file?(file.path).replace(/\\/g,"\\\\"):"";
-    var _path = file.path;
-    if(file){
-      this.setState({path :_path})
-    }else{
-      message.info("钱包选择失败，请选择正确的文件格式",2);
-    }
-  }
   verifi = () => {
-    var path = this.state.path;
-    var pass = document.getElementById("opass").value;
+    var path = this.refs.path.input.value;
+    var pass = this.refs.pass.input.value;
     if(!path||!pass){
       message.error("请选择文件及输入密码",3);
       return;
@@ -36,7 +29,7 @@ class Walletopen extends React.Component{
   }
   openWallet = () => {
     var _this = this;
-    var pass = document.getElementById("opass").value;
+    var pass = this.refs.pass.input.value;
     axios.post('http://localhost:8081', {
       "id" : "1",
       "method" : "OpenWallet",
@@ -61,13 +54,37 @@ class Walletopen extends React.Component{
       console.log("error");
     });
   }
+  opendialog = () => {
+    var _this = this;
+    dialog.showOpenDialog({
+      title: '打开钱包文件',
+      defaultPath: '/',
+      filters: [
+          {
+              name: 'JSON',
+              extensions: ['json']
+          }
+      ]
+    }).then(function (res) {
+      _this.setState({ path: res.filePaths[0] });
+    }).catch(function (error){
+      console.log(error);
+    })
+  }
   render(){
     return (
-      <div>
+      <div className="open">
         <Topath topath={this.state.topath}></Topath>
-        <input type="file" id="file" onChange={this.setpath} />
-        <Input.Password id="opass" placeholder="input password" maxLength="50" onChange={this.checkinput} onPressEnter={this.openWallet}/>
-        <Button onClick={this.verifi} loading={this.state.iconLoading}>确认</Button>
+        <Row>
+          <Col span={18}>
+            <Input placeholder="请选择文件存储位置" ref="path" disabled value={this.state.path}/>
+          </Col>
+          <Col span={6}>
+            <Button type="primary" onClick={this.opendialog}>选择路径</Button>
+          </Col>
+        </Row>
+        <Input.Password placeholder="input password" ref="pass" maxLength={this.state.maxLength} onChange={this.checkinput} onPressEnter={this.openWallet}/>
+        <Button className="mt3 mb2" type="primary" onClick={this.verifi} loading={this.state.iconLoading}>确认</Button>
       </div>
     );
   }

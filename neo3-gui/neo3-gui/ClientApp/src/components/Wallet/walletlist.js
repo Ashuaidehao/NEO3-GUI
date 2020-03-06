@@ -3,11 +3,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { Layout, message, Row, Col, Icon, List, Avatar, Button, Typography } from 'antd';
+import { Layout, message, Row, Col, List, Input, Avatar, Button, Typography } from 'antd';
 import Sync from '../sync';
-import logo from '../../static/images/logo.svg';
-import Transaction from '../Transaction/transaction';
-import Walletlayout from './walletlayout'
 import Intitle from '../Common/intitle'
 import '../../static/css/wallet.css'
 import { observer, inject } from "mobx-react";
@@ -28,7 +25,6 @@ class Walletlist extends React.Component {
       gas: 0
     };
   }
-
   componentDidMount() {
     this.getAddress();
     this.getAllasset();
@@ -172,11 +168,10 @@ class Walletlist extends React.Component {
     axios.post('http://localhost:8081', {
       "id": "20",
       "method": "ImportWif",
-      "params": ["L5EiKcecQfapmWKNatnZo1Zi6732kyDUNAZr618mdBAbPVS3M6cL"]
+      "params": [pass]
     })
       .then(function (res) {
         let _data = res.data;
-        console.log(_data);
         if (_data.msgType == 3) {
           message.success("私钥打开成功", 2);
         } else {
@@ -188,15 +183,16 @@ class Walletlist extends React.Component {
         console.log("error");
       });
   }
+  refresh = () => {
+    location.href = location.origin + "/wallet/walletlist";
+  }
   render = () => {
     const { accountlist, assetlist } = this.state;
-    const a = this.props.walletAddressStore.accountlist;
-    console.log("walletlist rendering:"+JSON.stringify(a));
     return (
       <Layout className="wa-container">
         <Sync />
         <Content className="mt3">
-          <Row gutter={[30, 0]} type="flex" style={{ 'min-height': 'calc( 100vh - 120px )' }}>
+          <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
             <Col span={13} className="bg-white pv4">
               <Intitle content="账户列表" show="true" />
               <List
@@ -221,8 +217,9 @@ class Walletlist extends React.Component {
               <List
                 className="asset-list"
                 itemLayout="horizontal"
-                style={{ 'min-height': 'calc( 100% - 135px )' }}
+                style={{ 'minHeight': 'calc( 100% - 135px )' }}
                 dataSource={assetlist}
+                header={<div><span>资产 <small>hash</small></span><span className="float-r wa-amount">余额</span></div>}
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
@@ -241,13 +238,14 @@ class Walletlist extends React.Component {
               </div>
             </Col>
           </Row>
+
           <div className="mt1 pv3">
-            <Link to='/'>回首页</Link><br />
             <Link to='/Wallet'>去钱包打开页面</Link>
           </div>
-          <Button onClick={this.addAddress}>创建新地址</Button>
-          <Button onClick={this.showPrivate}>查看私钥</Button>
-          <Button onClick={this.exitWallet}>退出钱包</Button>
+          <Button type="primary" className="mr2" onClick={this.refresh}>刷新界面</Button>
+          <Button type="primary" onClick={this.addAddress}>创建新地址</Button>
+          <br /><br />
+          <Input type="text" ref="private" placeholder="请输入WIF格式的私钥" />
           <Button onClick={this.importPrivate} className="mb1">导入私钥</Button>
         </Content>
       </Layout>

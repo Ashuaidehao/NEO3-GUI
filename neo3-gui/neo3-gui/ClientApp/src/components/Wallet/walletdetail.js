@@ -2,13 +2,19 @@
 //just test replace wallet//
 import React from 'react';
 import axios from 'axios';
-import { Layout, Icon, Row, Col, Modal,List, Button,Typography, message } from 'antd';
+import { Layout, Row, Col, Modal,List, Button,Typography, message } from 'antd';
 import Sync from '../sync';
 import Intitle from '../Common/intitle';
+import Transaction from '../Transaction/transaction';
 import '../../static/css/wallet.css';
+import {
+  CloseCircleOutlined 
+} from '@ant-design/icons';
 
 const { confirm } = Modal;
 const { Content } = Layout;
+
+const info = ["GetMyTransactions"];
 
 class Walletdetail extends React.Component{
   constructor(props){
@@ -30,6 +36,7 @@ class Walletdetail extends React.Component{
     this.setState({
         address:_add
     })
+    info.push(_add);
   }
   getBalances = () =>{
     var _this = this;
@@ -86,7 +93,7 @@ class Walletdetail extends React.Component{
     console.log(this);
     confirm({
       title: '该地址删除后无法恢复，是否确认删除？',
-      icon: <Icon type="close-circle" />,
+      icon: <CloseCircleOutlined />,
       okText: '确认删除',
       cancelText: '取消',
       onOk() {
@@ -161,7 +168,7 @@ class Walletdetail extends React.Component{
 
             <Content className="mt3">
             <Row gutter={[30, 0]}>
-                <Col span={28} className="bg-white pv4">
+              <Col span={24} className="bg-white pv4">
                 {/* <Intitle content="账户列表" show="false"/> */}
                 <Intitle content="账户列表"/>
                 <List
@@ -178,35 +185,13 @@ class Walletdetail extends React.Component{
                     </List.Item>
                     )}
                 />
-                <div className="mb4 text-r" >
+                <div className="mb4 text-r">
                     <Button type="primary" onClick={this.showPrivate}>显示私钥</Button>
                     <Button className="ml3" onClick={this.deleteConfirm}>删除地址</Button>
                 </div>
-                </Col>
+              </Col>
             </Row>
-            <Row gutter={[30, 0]} className="mt3">
-                <Col span={28} className="bg-white pv4">
-                <Intitle content="交易记录"/>
-                <List
-                    header={<div>Header</div>}
-                    footer={<div>Footer</div>}
-                    itemLayout="horizontal"
-                    dataSource={assetlist}
-                    renderItem={item => (
-                    <List.Item>
-                        <List.Item.Meta
-                        title={<a href={"~/walletlist:"+item.address} title="查看详情">{item.address}</a>}
-                        description={
-                        <span className="f-xs">
-                            <span className="mr2">NEO {item.neo}</span>
-                            <span>GAS {item.gas}</span>
-                        </span>}
-                        />
-                    </List.Item>
-                    )}
-                />
-                </Col>
-            </Row>
+            <Transaction info={info} content="交易列表"/>
             </Content>
         </Layout>
     );

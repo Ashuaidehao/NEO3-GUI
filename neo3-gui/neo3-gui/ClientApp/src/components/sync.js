@@ -1,7 +1,10 @@
 
 import React from 'react';
-import { Icon, Typography } from 'antd';
+import { Typography } from 'antd';
 import 'antd/dist/antd.css';
+import {
+  SyncOutlined
+} from '@ant-design/icons';
 import { observer, inject } from "mobx-react";
 
 const { Text } = Typography;
@@ -18,7 +21,7 @@ class Sync extends React.Component {
       <div>
         <p className="ml3 mb0">
           <Text className="t-normal bold"> {this.props.blockSyncStore.syncHeight} / {this.props.blockSyncStore.headerHeight} 区块同步中</Text>
-          <Icon className="ml3" type="sync" spin/> 
+          <SyncOutlined className="ml3" type="sync" spin/> 
         </p>
       </div>
     );
