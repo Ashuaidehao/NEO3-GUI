@@ -1,6 +1,6 @@
 import React from 'react';
 import {BrowserRouter, Route, Switch,Redirect} from 'react-router-dom';
-import Home from '../App';
+import Home from '../pages/home'
 import Sync from '../components/sync';
 
 import Chain from '../components/Chain/chain';
