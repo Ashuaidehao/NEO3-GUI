@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo;
+using Neo.Common.Storage;
 using Neo.Models;
 using Neo.SmartContract.Native;
-using Neo.Storage;
 
 namespace neo3_gui.tests.Storage
 {

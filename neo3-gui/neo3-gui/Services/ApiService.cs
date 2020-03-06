@@ -1,11 +1,11 @@
 ﻿using System.Threading;
+using Neo.Common;
 using Neo.Models;
 
-namespace Neo.Common
+namespace Neo.Services
 {
-    public interface IInvoker { }
-
-    public abstract class Invoker : IInvoker
+    public interface IApiService { }
+    public abstract class ApiService : IApiService
     {
         private readonly AsyncLocal<IWebSocketConnection> _asyncClient = new AsyncLocal<IWebSocketConnection>();
 

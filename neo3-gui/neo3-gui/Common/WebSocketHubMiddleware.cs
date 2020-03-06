@@ -17,7 +17,6 @@ namespace Neo.Common
     {
 
         private readonly IServiceProvider _provider;
-        private readonly ILogger _logger;
 
         public WebSocketHubMiddleware(IServiceProvider provider)
         {
@@ -40,7 +39,7 @@ namespace Neo.Common
                     return;
                 }
 
- 
+
                 //push loop
                 var _ = Task.Run(async () =>
                   {
@@ -94,8 +93,7 @@ namespace Neo.Common
             var result = await connection.ReceiveStringAsync();
             while (!result.CloseStatus.HasValue)
             {
-                Task.Run(() => Excute(connection, result.Message));
-
+                var task = Task.Run(() => Excute(connection, result.Message));
                 result = await connection.ReceiveStringAsync();
             }
             await connection.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription);
@@ -140,12 +138,12 @@ namespace Neo.Common
             catch (Exception e)
             {
                 message.MsgType = WsMessageType.Error;
-                message.Error =new WsError()
+                message.Error = new WsError()
                 {
                     Code = -1,
                     Message = e.ToString(),
                 };
-               
+
             }
             finally
             {

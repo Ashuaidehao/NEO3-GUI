@@ -13,9 +13,6 @@ const { Text } = Typography;
 @inject("blockSyncStore")
 @observer
 class Sync extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   render() {
     return (

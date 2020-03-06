@@ -7,13 +7,13 @@ using Akka.Actor;
 using Microsoft.Extensions.Configuration;
 using Neo.CLI;
 using Neo.Common;
+using Neo.Common.Utility;
 using Neo.Ledger;
 using Neo.Network.P2P.Payloads;
-using Neo.Tools;
 
 namespace Neo
 {
-    public class GuiService : MainService
+    public class GuiStarter : MainService
     {
 
         protected override void OnStart(string[] args)

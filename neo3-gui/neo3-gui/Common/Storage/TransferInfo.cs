@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using Neo.Models;
 
-namespace Neo.Storage
+namespace Neo.Common.Storage
 {
     public class TransferInfo
     {

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Neo.Storage.SQLiteModules
+namespace Neo.Common.Storage.SQLiteModules
 {
     [Table("Address")]
     public class AddressEntity

@@ -16,16 +16,18 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Neo.Common;
 using Neo.Common.Json;
+using Neo.Common.Storage;
+using Neo.Common.Utility;
 using Neo.IO;
 using Neo.IO.Json;
 using Neo.Ledger;
 using Neo.Models;
 using Neo.Models.Transactions;
+using Neo.Models.Wallets;
 using Neo.Persistence;
+using Neo.Services;
 using Neo.SmartContract;
 using Neo.SmartContract.Native;
-using Neo.Storage;
-using Neo.Tools;
 using Neo.VM;
 using Neo.VM.Types;
 using Neo.Wallets;
@@ -34,7 +36,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Neo
 {
-    public static class Extensions
+    public static class Helpers
     {
 
         public static readonly JsonSerializerOptions SerializeOptions = new JsonSerializerOptions
@@ -139,7 +141,7 @@ namespace Neo
             services.AddSingleton<WebSocketHubMiddleware>();
             services.AddSingleton<WebSocketSession>();
             services.AddSingleton<WebSocketExecutor>();
-            var interfaceType = typeof(IInvoker);
+            var interfaceType = typeof(IApiService);
             var assembly = interfaceType.Assembly;
             foreach (var type in assembly.GetExportedTypes()
                 .Where(t => !t.IsAbstract && interfaceType.IsAssignableFrom(t)))
@@ -246,6 +248,32 @@ namespace Neo
         public static bool NotEmpty<T>(this IEnumerable<T> source)
         {
             return !source.IsEmpty();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="snapshot"></param>
+        /// <returns></returns>
+        public static AccountType GetAccountType(this WalletAccount account, SnapshotView snapshot)
+        {
+            if (account.Contract != null)
+            {
+                if (account.Contract.Script.IsMultiSigContract(out _, out int _))
+                {
+                    return AccountType.MultiSignature;
+                }
+                if (account.Contract.Script.IsSignatureContract())
+                {
+                    return AccountType.Standard;
+                }
+                if (snapshot.Contracts.TryGet(account.Contract.ScriptHash) != null)
+                {
+                    return AccountType.DeployedContract;
+                }
+            }
+            return AccountType.NonStandard;
         }
 
         /// <summary>

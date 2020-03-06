@@ -1,7 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-namespace Neo.Storage.SQLiteModules
+namespace Neo.Common.Storage.SQLiteModules
 {
     public class SQLiteContext : DbContext
     {

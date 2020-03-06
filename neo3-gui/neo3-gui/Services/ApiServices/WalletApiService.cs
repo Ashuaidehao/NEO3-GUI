@@ -4,34 +4,32 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
+using Akka.Actor;
 using Neo.Common;
+using Neo.Common.Storage;
+using Neo.Common.Utility;
 using Neo.Ledger;
 using Neo.Models;
+using Neo.Models.Transactions;
 using Neo.Models.Wallets;
+using Neo.Network.P2P;
+using Neo.Network.P2P.Payloads;
 using Neo.Persistence;
 using Neo.SmartContract;
 using Neo.SmartContract.Native;
-using Neo.Tools;
-using Neo.VM;
 using Neo.Wallets;
 using Neo.Wallets.NEP6;
 using Neo.Wallets.SQLite;
-using Neo.Network.P2P;
-using Neo.Network.P2P.Payloads;
-using Akka.Actor;
-using Neo.Models.Transactions;
-using Neo.Storage;
 using ECCurve = Neo.Cryptography.ECC.ECCurve;
 using ECPoint = Neo.Cryptography.ECC.ECPoint;
 
 
-namespace Neo.Invokers
+namespace Neo.Services.ApiServices
 {
-    public class WalletInvoker : Invoker
+    public class WalletApiService : ApiService
     {
-        protected Wallet CurrentWallet => Program.Service.CurrentWallet;
+        protected Wallet CurrentWallet => Program.Starter.CurrentWallet;
 
 
         /// <summary>
@@ -48,7 +46,7 @@ namespace Neo.Invokers
             }
             try
             {
-                Program.Service.OpenWallet(path, password);
+                Program.Starter.OpenWallet(path, password);
             }
             catch (CryptographicException e)
             {
@@ -69,7 +67,7 @@ namespace Neo.Invokers
         /// <returns></returns>
         public async Task<bool> CloseWallet()
         {
-            Program.Service.CloseWallet();
+            Program.Starter.CloseWallet();
             return true;
         }
 
@@ -164,7 +162,7 @@ namespace Neo.Invokers
             {
                 return Error(ErrorCode.WalletNotOpen);
             }
-            var points = publicKeys.Select(p => ECPoint.DecodePoint(p.HexToBytes(), ECCurve.Secp256r1)).ToArray();
+            var points = publicKeys.Select(p => ECPoint.DecodePoint(Helper.HexToBytes(p), ECCurve.Secp256r1)).ToArray();
             Contract contract = Contract.CreateMultiSigContract(limit, points);
             if (contract == null)
             {
@@ -404,23 +402,32 @@ namespace Neo.Invokers
                 Value = t,
                 ScriptHash = addresses[index],
             }).ToArray();
-
-            Transaction tx = CurrentWallet.MakeTransaction(outputs);
-            if (tx == null)
+            try
             {
-                return Error(ErrorCode.ClaimGasFail);
+                Transaction tx = CurrentWallet.MakeTransaction(outputs);
+                if (tx == null)
+                {
+                    return Error(ErrorCode.ClaimGasFail);
+                }
+                ContractParametersContext context = new ContractParametersContext(tx);
+                CurrentWallet.Sign(context);
+                if (!context.Completed)
+                {
+                    return Error(ErrorCode.SignFail, $"SignatureContext:{context}");
+                }
+                tx.Witnesses = context.GetWitnesses();
+                Program.Starter.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+                var task = Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
+                return new TransactionModel(tx);
             }
-
-            ContractParametersContext context = new ContractParametersContext(tx);
-            CurrentWallet.Sign(context);
-            if (!context.Completed)
+            catch (Exception ex)
             {
-                return Error(ErrorCode.SignFail, $"SignatureContext:{context}");
+                if (ex.Message.Contains("Insufficient GAS"))
+                {
+                    return Error(ErrorCode.GasNotEnough);
+                }
+                return Error(ErrorCode.ClaimGasFail, ex.Message);
             }
-            tx.Witnesses = context.GetWitnesses();
-            Program.Service.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
-            Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
-            return new TransactionModel(tx);
         }
 
 
@@ -433,7 +440,7 @@ namespace Neo.Invokers
         /// <param name="amount"></param>
         /// <param name="asset"></param>
         /// <returns></returns>
-        public async Task<object> SendToAddress(UInt160 sender, UInt160 receiver, string amount, string asset = "neo")
+        public async Task<object> SendToAddress(UInt160 receiver, string amount, string asset = "neo", UInt160 sender = null)
         {
             if (CurrentWallet == null)
             {
@@ -471,31 +478,44 @@ namespace Neo.Invokers
                     return Error(ErrorCode.BalanceNotEnough);
                 }
             }
-            Transaction tx = CurrentWallet.MakeTransaction(new[]
+
+            try
             {
-                new TransferOutput
+                Transaction tx = CurrentWallet.MakeTransaction(new[]
                 {
-                    AssetId = assetHash,
-                    Value = sendAmount,
-                    ScriptHash = receiver
+                    new TransferOutput
+                    {
+                        AssetId = assetHash,
+                        Value = sendAmount,
+                        ScriptHash = receiver
+                    }
+                }, sender);
+
+                if (tx == null)
+                {
+                    return Error(ErrorCode.BalanceNotEnough, "Insufficient funds");
                 }
-            }, sender);
 
-            if (tx == null)
-            {
-                return Error(ErrorCode.BalanceNotEnough, "Insufficient funds");
-            }
+                ContractParametersContext context = new ContractParametersContext(tx);
+                CurrentWallet.Sign(context);
+                if (!context.Completed)
+                {
+                    return Error(ErrorCode.SignFail, $"SignatureContext:{context}");
+                }
+                tx.Witnesses = context.GetWitnesses();
+                Program.Starter.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+                var task = Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
+                return new TransactionModel(tx);
 
-            ContractParametersContext context = new ContractParametersContext(tx);
-            CurrentWallet.Sign(context);
-            if (!context.Completed)
-            {
-                return Error(ErrorCode.SignFail, $"SignatureContext:{context}");
             }
-            tx.Witnesses = context.GetWitnesses();
-            Program.Service.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
-            Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
-            return new TransactionModel(tx);
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("Insufficient GAS"))
+                {
+                    return Error(ErrorCode.GasNotEnough);
+                }
+                return Error(ErrorCode.TransferError, ex.Message);
+            }
         }
 
 
@@ -506,7 +526,7 @@ namespace Neo.Invokers
         /// <param name="receivers"></param>
         /// <param name="asset"></param>
         /// <returns></returns>
-        public async Task<object> SendToMultiAddress(UInt160 sender, MultiReceiverRequest[] receivers, string asset = "neo")
+        public async Task<object> SendToMultiAddress(MultiReceiverRequest[] receivers, string asset = "neo", UInt160 sender = null)
         {
             if (CurrentWallet == null)
             {
@@ -552,22 +572,33 @@ namespace Neo.Invokers
                 ScriptHash = t.scriptHash,
             }).ToArray();
 
-            Transaction tx = CurrentWallet.MakeTransaction(outputs, sender);
-            if (tx == null)
+            try
             {
-                return Error(ErrorCode.BalanceNotEnough, "Insufficient funds");
-            }
+                Transaction tx = CurrentWallet.MakeTransaction(outputs, sender);
+                if (tx == null)
+                {
+                    return Error(ErrorCode.BalanceNotEnough, "Insufficient funds");
+                }
 
-            ContractParametersContext context = new ContractParametersContext(tx);
-            CurrentWallet.Sign(context);
-            if (!context.Completed)
-            {
-                return Error(ErrorCode.SignFail, $"SignatureContext:{context}");
+                ContractParametersContext context = new ContractParametersContext(tx);
+                CurrentWallet.Sign(context);
+                if (!context.Completed)
+                {
+                    return Error(ErrorCode.SignFail, $"SignatureContext:{context}");
+                }
+                tx.Witnesses = context.GetWitnesses();
+                Program.Starter.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+                var task = Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
+                return new TransactionModel(tx);
             }
-            tx.Witnesses = context.GetWitnesses();
-            Program.Service.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
-            Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
-            return new TransactionModel(tx);
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("Insufficient GAS"))
+                {
+                    return Error(ErrorCode.GasNotEnough);
+                }
+                return Error(ErrorCode.TransferError, ex.Message);
+            }
         }
 
 
@@ -741,7 +772,7 @@ namespace Neo.Invokers
                     ScriptHash = account.ScriptHash,
                     Address = account.Address,
                     WatchOnly = account.WatchOnly,
-                    AccountType = GetAccountType(account, snapshot),
+                    AccountType = account.GetAccountType(snapshot),
                 }));
             }
             GetNeoAndGas(result.Accounts);
@@ -749,25 +780,7 @@ namespace Neo.Invokers
         }
 
 
-        private AccountType GetAccountType(WalletAccount account, SnapshotView snapshot)
-        {
-            if (account.Contract != null)
-            {
-                if (account.Contract.Script.IsMultiSigContract(out _, out _))
-                {
-                    return AccountType.MultiSignature;
-                }
-                if (account.Contract.Script.IsSignatureContract())
-                {
-                    return AccountType.Standard;
-                }
-                if (snapshot.Contracts.TryGet(account.Contract.ScriptHash) != null)
-                {
-                    return AccountType.DeployedContract;
-                }
-            }
-            return AccountType.NonStandard;
-        }
+
 
         private List<AccountModel> GetNeoAndGas(IEnumerable<AccountModel> accounts)
         {
