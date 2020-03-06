@@ -772,7 +772,7 @@ namespace Neo.Services.ApiServices
                     ScriptHash = account.ScriptHash,
                     Address = account.Address,
                     WatchOnly = account.WatchOnly,
-                    AccountType = GetAccountType(account, snapshot),
+                    AccountType = account.GetAccountType(snapshot),
                 }));
             }
             GetNeoAndGas(result.Accounts);
@@ -780,25 +780,7 @@ namespace Neo.Services.ApiServices
         }
 
 
-        private AccountType GetAccountType(WalletAccount account, SnapshotView snapshot)
-        {
-            if (account.Contract != null)
-            {
-                if (account.Contract.Script.IsMultiSigContract(out _, out int _))
-                {
-                    return AccountType.MultiSignature;
-                }
-                if (account.Contract.Script.IsSignatureContract())
-                {
-                    return AccountType.Standard;
-                }
-                if (snapshot.Contracts.TryGet(account.Contract.ScriptHash) != null)
-                {
-                    return AccountType.DeployedContract;
-                }
-            }
-            return AccountType.NonStandard;
-        }
+
 
         private List<AccountModel> GetNeoAndGas(IEnumerable<AccountModel> accounts)
         {
