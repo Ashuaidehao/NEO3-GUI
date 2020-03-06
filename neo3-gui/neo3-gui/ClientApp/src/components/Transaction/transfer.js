@@ -21,7 +21,7 @@ import '../../static/css/wallet.css'
 import { Form, DatePicker, TimePicker } from 'antd';
 
 const { Option } = Select;
-const { Sider, Content } = Layout;
+const { Content } = Layout;
 const AutoCompleteOption = AutoComplete.Option;
 
 const {dialog} = window.remote;

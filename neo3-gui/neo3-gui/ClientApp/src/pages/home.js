@@ -55,7 +55,6 @@ class Home extends Component {
                 <img src={img} className="App-logo" alt="img" />
                 <Content className="text-r">
                   <p>
-                    <Icon type="info-circle" theme="twoTone" twoToneColor="#52c41a" />
                     <Text type="secondary"> 版本 v3.0.1</Text>
                   </p>
                   <Sync></Sync>

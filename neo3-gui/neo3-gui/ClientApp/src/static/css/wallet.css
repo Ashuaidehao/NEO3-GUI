@@ -125,8 +125,13 @@
 }
 
 .wa-amount{
-    min-width: 100px;
+    width: 60px;
     text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: bottom;
 }
 
 .asset-list{
@@ -210,4 +215,11 @@ input.wa-upload{
 button,input{
     border-radius: 0;
     background: transparent;
+}
+
+.ant-list-item-meta-title{
+    max-width: 480px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
