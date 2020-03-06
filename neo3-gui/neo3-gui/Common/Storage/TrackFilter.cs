@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Neo.Storage
+namespace Neo.Common.Storage
 {
     public class TrackFilter
     {

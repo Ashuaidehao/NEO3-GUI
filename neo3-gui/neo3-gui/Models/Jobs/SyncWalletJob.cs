@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Neo.Ledger;
+using Neo.Models.Wallets;
 using Neo.SmartContract.Native;
 
 namespace Neo.Models.Jobs
@@ -15,21 +17,23 @@ namespace Neo.Models.Jobs
         }
         public override async Task<WsMessage> Invoke()
         {
-            if (Program.Service.CurrentWallet != null)
+            if (Program.Starter.CurrentWallet != null)
             {
-                var accounts = Program.Service.CurrentWallet.GetAccounts().ToList();
+                var accounts = Program.Starter.CurrentWallet.GetAccounts().ToList();
 
-                var neoBalances = accounts.Select(a => a.ScriptHash).GetBalanceOf(NativeContract.NEO.Hash);
-                var gasBalances = accounts.Select(a => a.ScriptHash).GetBalanceOf(NativeContract.GAS.Hash);
+                using var snapshot = Blockchain.Singleton.GetSnapshot();
+                var neoBalances = accounts.Select(a => a.ScriptHash).GetBalanceOf(NativeContract.NEO.Hash, snapshot);
+                var gasBalances = accounts.Select(a => a.ScriptHash).GetBalanceOf(NativeContract.GAS.Hash, snapshot);
 
-
-
-                var model = accounts.Select((a, i) => new
+                var model = accounts.Select((a, i) => new AccountModel
                 {
-                    address = a.Address,
-                    neo = neoBalances[i].ToString(),
-                    gas = gasBalances[i].ToString(),
-                });
+                    ScriptHash = a.ScriptHash,
+                    Address = a.Address,
+                    WatchOnly = a.WatchOnly,
+                    AccountType = a.GetAccountType(snapshot),
+                    Neo = neoBalances[i].ToString(),
+                    Gas = gasBalances[i].ToString(),
+                }).ToList();
 
                 return new WsMessage()
                 {
@@ -37,7 +41,6 @@ namespace Neo.Models.Jobs
                     Method = "getWalletBalance",
                     Result = model,
                 };
-
             }
 
             return null;

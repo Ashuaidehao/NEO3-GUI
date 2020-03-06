@@ -4,17 +4,20 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using Microsoft.EntityFrameworkCore;
+using Neo.Common.Storage.SQLiteModules;
 using Neo.IO;
 using Neo.Models;
-using Neo.Storage.SQLiteModules;
 
-namespace Neo.Storage
+namespace Neo.Common.Storage
 {
     public class TrackDB : IDisposable
     {
 
         private SQLiteContext _db;
         private uint _magic;
+        private DateTime _createTime = DateTime.Now;
+
+        public TimeSpan LiveTime => DateTime.Now - _createTime;
         public TrackDB()
         {
             _magic = ProtocolSettings.Default.Magic;
@@ -128,7 +131,7 @@ namespace Neo.Storage
             }
         }
 
-      
+
 
 
         /// <summary>

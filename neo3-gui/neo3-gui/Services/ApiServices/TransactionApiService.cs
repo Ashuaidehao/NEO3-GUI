@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Neo.Common;
-using Neo.IO.Json;
+using Neo.Common.Storage;
+using Neo.Common.Utility;
 using Neo.Ledger;
 using Neo.Models;
 using Neo.Models.Transactions;
 using Neo.Network.P2P.Payloads;
-using Neo.Storage;
-using Neo.Tools;
 
-namespace Neo.Invokers
+namespace Neo.Services.ApiServices
 {
-    public class TransactionInvoker : Invoker
+    public class TransactionApiService : ApiService
     {
 
 
@@ -32,8 +28,6 @@ namespace Neo.Invokers
                 return Error(ErrorCode.TxIdNotFound);
             }
 
-
-
             var transactionModel = new TransactionModel(transaction);
 
             TransactionState txState = Blockchain.Singleton.View.Transactions.TryGet(txId);
@@ -46,7 +40,7 @@ namespace Neo.Invokers
             }
             using var db = new TrackDB();
             var trans = db.FindTransfer(new TrackFilter() { TxIds = new List<UInt256>() { txId } }).List;
-            transactionModel.Transfers = trans.Select(tx => tx.ToTransferModel()).ToList();
+            transactionModel.Transfers = trans.Select(tx => Helpers.ToTransferModel((TransferInfo) tx)).ToList();
             var notifies = db.GetNotifyEventsByTxId(txId);
             if (notifies.NotEmpty())
             {
