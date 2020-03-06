@@ -28,38 +28,6 @@ class Transaction extends React.Component{
     })
     this.getAlltrans(this.props.info?this.props.info:null);
   }
-  getUnconfirmtrans = (info) =>{
-    var _this = this,add = {};
-    info = info || ["GetMyUnconfirmedTransactions"];
-    if(info.length>1){
-      add = {
-        "limit":100,
-        "address":info[1]
-      };
-    }
-    axios.post('http://localhost:8081', {
-      "id":"51",
-      "method": "GetMyTransactions",
-      "params": add
-    })
-    .then(function (response) {
-      console.log(add);
-      var _data = response.data;
-      console.log(_data)
-      if(_data.msgType == -1){
-        message.error("查询失败");
-        return;
-      }
-      _this.setState({
-        translist:_data.result
-      })
-      console.log(_data);
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error");
-    });
-  }
   getAlltrans = (info) =>{
     var _this = this,add = {};
     info = info || ["GetMyTransactions"];
@@ -78,6 +46,7 @@ class Transaction extends React.Component{
       var _data = response.data;
       if(_data.msgType == -1){
         message.error("查询失败");
+        console.log(_data)
         return;
       }
       _this.setState({
