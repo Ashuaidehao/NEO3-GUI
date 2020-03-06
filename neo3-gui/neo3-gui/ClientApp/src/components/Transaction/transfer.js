@@ -120,10 +120,10 @@ class Transfer extends React.Component{
       <Layout className="wa-container">
         <Content className="mt3">
         <Form name="time_related_controls" className="trans-form" onFinish={this.transfer}>
-          <Row gutter={[30, 0]}  className="bg-white pv4" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
+          <Row gutter={[30, 0]}  className="bg-white pv4" style={{ 'minHeight': 'calc( 100vh - 150px )'}}>
             <Col span={24}>
               <Intitle content="转账"/>
-              <div className="w400 mt2">
+              <div className="w400 mt2" style={{ 'minHeight': 'calc( 100vh - 350px )'}}>
                 <Form.Item
                   name="sender"
                   label="付款地址"

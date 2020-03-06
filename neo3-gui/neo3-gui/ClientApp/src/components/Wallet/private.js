@@ -119,12 +119,7 @@ class Walletprivate extends React.Component{
           {this.state.showElem?(
             <div>
                 <Divider>钱包保存</Divider>
-                {/* <Input placeholder="请选择文件存储位置" disabled value={this.state.path}/> */}
-                {/* <Button onClick={this.savedialog}>选择路径</Button> */}
                 <Walletcreate priclass="pri-class" cname="pri-pass" private={this.state.private}/>
-                {/* <Button onClick={this.changeTab}>上一步</Button> */}
-                {/* <Button onClick={this.savePrivate} loading={this.state.iconLoading}>保存钱包</Button> */}
-                <p><small>因钱包较为隐私，在选择已有文件的情况下，不会进行覆盖操作。<br />如需要删除原始钱包文件，请手动删除。</small></p>
             </div>
           ):null}
       </div>

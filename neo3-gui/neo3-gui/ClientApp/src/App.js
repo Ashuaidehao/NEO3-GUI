@@ -6,9 +6,6 @@ import Walletopen from './components/Wallet/open';
 import './static/css/site.css';
 import img from './static/images/globe.png';
 import blc from './static/images/blockchain.svg';
-import {
-  SyncOutlined
-} from '@ant-design/icons';
 
 const { Text } = Typography;
 const { Content, Footer } = Layout;
@@ -54,12 +51,11 @@ class App extends React.Component {
         <Layout>
           <Content>
             <img src={img} className="App-logo" alt="img" />
+            <Sync></Sync>
             <Content className="text-r">
               <p>
-                <SyncOutlined spin twoToneColor="#52c41a" />
                 <Text type="secondary"> 版本 v3.0.1</Text>
               </p>
-              <Sync></Sync>
             </Content>
           </Content>
           <Content className="home-icon">

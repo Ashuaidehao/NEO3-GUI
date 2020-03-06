@@ -160,6 +160,11 @@ small,.small{
     margin-right:auto;
 }
 
+.posi-b{
+    position: absolute;
+    bottom: 0;
+}
+
 .mt0{margin-top: 0px!important;}
 .mb0{margin-bottom: 0!important;}
 .pr0{padding-right: 0!important;}
