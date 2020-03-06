@@ -1,15 +1,8 @@
-/* eslint-disable */ 
-//just test replace wallet//
 import React from 'react';
-import axios from 'axios';
-import { Layout, Icon, Row, Col, Modal,List, Button,Typography, message } from 'antd';
+import { Layout } from 'antd';
 import Transaction from '../Transaction/transaction';
-import Intitle from '../Common/intitle';
-
-
-const { Sider, Content } = Layout;
-
-const info = ["GetMyTransactions"];
+import Untransaction from '../Transaction/untransaction';
+const info = ["GetUnMyTransactions"];
 
 class Wallettrans extends React.Component{
   constructor(props){
@@ -19,19 +12,11 @@ class Wallettrans extends React.Component{
         translist:[],
     };
   }
-  componentDidMount() {
-  }
-  copyHash = (str) => {
-    return ()=>{
-      str.select();
-      document.execCommand('copy');
-      console.log('复制成功');
-    }
-  }
   render = () =>{
     return (
-      <Layout className="wa-container">
-        <Transaction info={info} />
+      <Layout className="gui-container">
+        <Untransaction info={info}/>
+        <Transaction info={info}/>
       </Layout>
     );
   }

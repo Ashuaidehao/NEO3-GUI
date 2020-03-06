@@ -313,3 +313,10 @@ small,.small{
     color: #00AF92;
     text-shadow: none!important;
 }
+
+
+.gui-container{
+    background: #F9FAFA;
+    padding: 25px 60px;
+    min-height: calc( 100vh );
+}

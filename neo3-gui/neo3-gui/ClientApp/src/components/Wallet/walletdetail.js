@@ -163,7 +163,7 @@ class Walletdetail extends React.Component{
   render = () =>{
     const { assetlist,address } = this.state;
     return (
-        <Layout className="wa-container wa-detail">
+        <Layout className="gui-container wa-detail">
             <Sync />
 
             <Content className="mt3">
