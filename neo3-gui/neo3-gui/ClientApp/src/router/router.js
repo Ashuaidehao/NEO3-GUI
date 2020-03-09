@@ -36,8 +36,8 @@ const BasicRoute = () => (
                     <Route component={Chainlayout} />
                     <Route exact path="/chain" component={Chain} />
                     <Route exact path="/chain:height" component={Chain} />
-                    {/* <Route exact path="/chain/transaction" component={Chain} />
-                    <Route exact path="/chain/transaction:hash" component={Chain} /> */}
+                    <Route exact path="/chain/transaction" component={Transaction} />
+                    <Route exact path="/chain/transaction:hash" component={Chain} />
                 </Layout>
             </Route>
             <Route path="/wallet">
