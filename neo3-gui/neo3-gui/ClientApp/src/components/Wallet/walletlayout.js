@@ -104,7 +104,7 @@ class Walletlayout extends React.Component{
                   <Link to="/wallet/walletlist">账户列表</Link>
                 </Menu.Item>
                 <Menu.Item key="2">
-                  <Link to="/wallet/transaction">交易列表</Link>
+                  <Link to="/wallet/transaction">交易记录</Link>
                 </Menu.Item>
                 <Menu.Item key="3">
                   <Link to="/wallet/transfer">转账</Link>

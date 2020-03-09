@@ -51,7 +51,7 @@ class Chainlayout extends React.Component{
                 }
               >
                 <Menu.Item key="1" onClick={this.toPage}><Link to="/chain">区块</Link></Menu.Item>
-                <Menu.Item key="2" onClick={this.toPage}><Link to="/chain/transaction">交易记录(暂无)</Link></Menu.Item>
+                <Menu.Item key="2" onClick={this.toPage}><Link to="/chain/transaction">全部交易(暂无)</Link></Menu.Item>
                 <Menu.Item key="3" onClick={this.toPage}><Link to="/chain">资产(暂无)</Link></Menu.Item>
               </SubMenu>
             </Menu>

@@ -50,9 +50,9 @@ class Chain extends React.Component{
         <Content className="mt3">
           <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
             <Col span={24} className="bg-white pv4">
-            <Intitle content={this.props.content||"最新交易"}/>
+            <Intitle content="区块列表"/>
             <List
-                header={<div><span>交易hash</span><span className="float-r ml4"><span className="wa-amount"></span>数量</span><span className="float-r">时间</span></div>}
+                header={<div><span>区块信息</span><span className="float-r ml4"><span className="wa-amount"></span>数量</span><span className="float-r">更新时间</span></div>}
                 footer={<span></span>}
                 itemLayout="horizontal"
                 dataSource={blocklist}
@@ -60,12 +60,10 @@ class Chain extends React.Component{
                 renderItem={item => (
                 <List.Item>
                     <List.Item.Meta
-                    title={<Link to={"./transaction:"+item.blockHash} title="查看详情">{item.blockHeight}</Link>}
+                    title={<Link to={"/chain/detail:"+item.blockHeight} title="查看详情">{item.blockHeight}</Link>}
                     description={<div className="font-s">{item.blockHash}</div>}
                     />
-                    <Typography>{item.blockHeight}</Typography>
                     <Typography>{item.blockTime}</Typography>
-                    <Typography>{item.size}</Typography>
                     <Typography className="upcase ml4"><span className="wa-amount">{item.transactionCount}</span></Typography>
                 </List.Item>
                 )}
