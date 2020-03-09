@@ -49,7 +49,7 @@ class Transfer extends React.Component{
     })
     .then(function (response) {
       var _data = response.data;
-      if(_data.msgType == -1){
+      if(_data.msgType === -1){
         console.log("需要先打开钱包再进入页面");
         return;
       }
@@ -90,7 +90,7 @@ class Transfer extends React.Component{
     .then(function (response) {
       var _data = response.data;
       console.log(_data)
-      if(_data.msgType == -1){
+      if(_data.msgType === -1){
         message.error("交易失败");
         message.error("这里需要给几个error code：资金不够、手续费不够、地址错误、其他");
         return;

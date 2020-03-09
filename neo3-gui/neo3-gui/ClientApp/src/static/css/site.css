@@ -15,20 +15,6 @@ a{
     min-height: 60px;
 }
 
-.home-icon{
-    border-top: 1px solid #DDDDDD;
-    padding-top: 30px;
-}
-.home-icon img{
-    height: 80px;
-    width: 80px;
-}
-.home-icon span{
-    display: inline-block;
-    font-size: 18px;
-    font-weight: 600;
-    margin-top: 5px;
-}
 .ant-layout-footer{
     background: transparent;
     text-align: center;

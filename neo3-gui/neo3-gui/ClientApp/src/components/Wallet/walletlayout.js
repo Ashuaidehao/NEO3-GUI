@@ -37,7 +37,7 @@ class Walletlayout extends React.Component{
     })
     .then(function (response) {
       var _data = response.data;
-      if(_data.msgType == -1){
+      if(_data.msgType === -1){
         message.info("请打开钱包",2);
         _this.setState({topath:"/wallet"});
         return;

@@ -36,7 +36,7 @@ class menuDown extends React.Component{
         })
         .then(function (response) {
             var _data = response.data;
-            if(_data.msgType == -1){
+            if(_data.msgType === -1){
                 _this.setState({showOut:false})
             }else{
                 _this.setState({showOut:true})

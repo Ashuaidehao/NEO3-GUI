@@ -5,6 +5,7 @@ import Sync from '../components/sync';
 
 import Chain from '../components/Chain/chain';
 import Chainlayout from '../components/Chain/chainlayout';
+import Chaintrans from '../components/Chain/trans';
 
 import Advanced from '../pages/advanced';
 
@@ -21,8 +22,7 @@ import Consensus from '../components/Consensus/consensus';
 import Consensuslayout from '../components/Consensus/consensuslayout';
 
 import { Layout } from 'antd';
-import Transaction from '../components/Transaction/transaction';
-
+// import Transaction from '../components/Transaction/transaction';
 
 
 const BasicRoute = () => (
@@ -36,7 +36,7 @@ const BasicRoute = () => (
                     <Route component={Chainlayout} />
                     <Route exact path="/chain" component={Chain} />
                     <Route exact path="/chain:height" component={Chain} />
-                    <Route exact path="/chain/transaction" component={Transaction} />
+                    <Route exact path="/chain/transaction" component={Chaintrans} />
                     <Route exact path="/chain/transaction:hash" component={Chain} />
                 </Layout>
             </Route>

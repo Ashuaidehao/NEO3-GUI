@@ -41,7 +41,7 @@ class Walletopen extends React.Component{
     .then(function (res) {
       let _data = res.data;
       _this.setState({ iconLoading: false });
-      if(_data.msgType == 3){
+      if(_data.msgType === 3){
         message.success("钱包文件已打开",3);
         _this.setState({ topath: "/wallet/walletlist" });
       }else{

@@ -75,7 +75,7 @@ class Walletcreate extends React.Component{
       if(_data.msgType === 3){
         message.success("钱包已创建",2);
       }else{
-        message.info("钱包文件选择错误，请检查后重试",2);
+        message.info("钱包创建失败，请检查后重试",2);
       }
     })
     .catch(function (error) {

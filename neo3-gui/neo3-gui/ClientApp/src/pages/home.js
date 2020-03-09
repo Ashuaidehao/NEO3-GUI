@@ -1,15 +1,15 @@
+/* eslint-disable */ 
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import { Layout, Row, Col, Typography, Modal } from 'antd';
+import { Layout, Row, Col, Typography } from 'antd';
 
 import Sync from '../components/sync';
-import Walletopen from '../components/Wallet/open';
 import '../static/css/site.css';
-import img from '../static/images/globe.png';
-import blc from '../static/images/blockchain.svg';
+import '../static/css/home.css';
+import img from '../static/images/logo.svg';
 
 const { Text } = Typography;
-const { Content, Footer } = Layout;
+const { Content } = Layout;
 
 class Home extends Component {
     state = {
@@ -49,59 +49,50 @@ class Home extends Component {
         const { visible, confirmLoading, ModalText } = this.state;
         return (
           <div>
-            <Layout>
+            <Layout className="home-content">
               <Content>
-                <img src={img} className="App-logo" alt="img" />
+                <Sync></Sync>
+                <div className="w600 text-c">
+                  <img src={img} className="App-logo" alt="img" />
+                </div>
                 <Content className="text-r">
-                  <p>
-                    <Text type="secondary"> 版本 v3.0.1</Text>
-                  </p>
-                  <Sync></Sync>
+                  <Text type="secondary"> 版本 v3.0.1</Text>
                 </Content>
               </Content>
+
               <Content className="home-icon">
-                <Row>
+                <Row gutter={32}>
                   <Col span={6}>
                     <Link to='/chain'>
-                      <img src={blc} alt="blc" /><br />
-                      <span>区块链</span>
+                      <div className="home-link">
+                        <span>区块链</span>
+                      </div>
                     </Link>
                   </Col>
                   <Col span={6}>
                     <Link to='/wallet'>
-                      <img src={blc} alt="blc" /><br />
-                      <span>钱包</span>
+                      <div className="home-link">
+                        <span>钱包</span>
+                      </div>
                     </Link>
-                    {/* <Button type="primary" onClick={this.showModal}>
-                      Open Modal with async logic
-                    </Button> */}
                   </Col>
                   <Col span={6}>
                     <Link to='/pages'>
-                      <img src={blc} alt="blc" /><br />
-                      <span>合约</span>
+                      <div className="home-link">
+                        <span>合约</span>
+                      </div>
                     </Link>
                   </Col>
                   <Col span={6}>
                     <Link to='/advanced'>
-                      <img src={blc} alt="blc" /><br />
-                      <span>高级</span>
+                      <div className="home-link">
+                        <span>高级</span>
+                      </div>
                     </Link>
                   </Col>
                 </Row>
               </Content>
             </Layout>
-            <Footer style={{ textAlign: 'center', color: '#CCCCCC' }}>Copyright © Neo Team 2014-2019</Footer>
-            <Modal
-              title="Title"
-              visible={visible}
-              onOk={this.handleOk}
-              confirmLoading={confirmLoading}
-              onCancel={this.handleCancel}
-            >
-              <p>{ModalText}</p>
-              <Walletopen />
-            </Modal>
           </div>
         );
       }
