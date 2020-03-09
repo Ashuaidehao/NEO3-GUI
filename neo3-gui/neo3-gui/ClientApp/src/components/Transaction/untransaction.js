@@ -39,7 +39,6 @@ class Untransaction extends React.Component{
     })
     .then(function (response) {
       var _data = response.data;
-      console.log(_data)
       if(_data.msgType == -1){
         message.error("未确认交易查询失败");
         return;
@@ -47,7 +46,6 @@ class Untransaction extends React.Component{
       _this.setState({
         untranslist:_data.result
       })
-      console.log(_data);
     })
     .catch(function (error) {
       console.log(error);

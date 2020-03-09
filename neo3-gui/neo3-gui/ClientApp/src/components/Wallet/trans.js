@@ -1,8 +1,7 @@
 import React from 'react';
 import { Layout } from 'antd';
 import Transaction from '../Transaction/transaction';
-import Untransaction from '../Transaction/untransaction';
-const info = ["GetUnMyTransactions"];
+// import Untransaction from '../Transaction/untransaction';
 
 class Wallettrans extends React.Component{
   constructor(props){
@@ -15,8 +14,8 @@ class Wallettrans extends React.Component{
   render = () =>{
     return (
       <Layout className="gui-container">
-        <Untransaction info={info}/>
-        <Transaction info={info}/>
+        {/* <Untransaction */}
+        <Transaction />
       </Layout>
     );
   }

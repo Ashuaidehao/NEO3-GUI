@@ -118,7 +118,7 @@ class Walletprivate extends React.Component{
           ):null}
           {this.state.showElem?(
             <div>
-                <Divider>钱包保存</Divider>
+                <Divider>保存钱包</Divider>
                 <Walletcreate priclass="pri-class" cname="pri-pass" private={this.state.private}/>
             </div>
           ):null}

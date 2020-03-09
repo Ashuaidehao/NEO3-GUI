@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
 import { Layout, Row, Col, Typography, Modal } from 'antd';
-import Icon from '@ant-design/icons';
 
 import Sync from '../components/sync';
 import Walletopen from '../components/Wallet/open';
@@ -55,7 +54,6 @@ class Home extends Component {
                 <img src={img} className="App-logo" alt="img" />
                 <Content className="text-r">
                   <p>
-                    <Icon type="info-circle" theme="twoTone" twoToneColor="#52c41a" />
                     <Text type="secondary"> 版本 v3.0.1</Text>
                   </p>
                   <Sync></Sync>
