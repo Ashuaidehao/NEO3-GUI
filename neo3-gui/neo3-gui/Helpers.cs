@@ -57,7 +57,30 @@ namespace Neo
             }
         };
 
+        public static string GetVersion(this Assembly assembly)
+        {
+            CustomAttributeData attribute = assembly.CustomAttributes.FirstOrDefault(p => p.AttributeType == typeof(AssemblyInformationalVersionAttribute));
+            if (attribute == null) return assembly.GetName().Version.ToString(3);
+            return (string)attribute.ConstructorArguments[0].Value;
+        }
 
+        public static bool ToBool(this string input)
+        {
+            if (input == null) return false;
+
+            input = input.ToLowerInvariant();
+
+            return input == "true" || input == "yes" || input == "1";
+        }
+
+        public static bool IsYes(this string input)
+        {
+            if (input == null) return false;
+
+            input = input.ToLowerInvariant();
+
+            return input == "yes" || input == "y";
+        }
 
         /// <summary>
         /// 
