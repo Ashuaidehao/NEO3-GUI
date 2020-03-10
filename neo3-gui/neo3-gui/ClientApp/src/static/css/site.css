@@ -7,6 +7,9 @@ body{
 a{
     color: #333333;
 }
+a:hover{
+    color: #00AF92;
+}
 
 .ant-layout-content{
     padding-bottom: 10px;
@@ -15,20 +18,6 @@ a{
     min-height: 60px;
 }
 
-.home-icon{
-    border-top: 1px solid #DDDDDD;
-    padding-top: 30px;
-}
-.home-icon img{
-    height: 80px;
-    width: 80px;
-}
-.home-icon span{
-    display: inline-block;
-    font-size: 18px;
-    font-weight: 600;
-    margin-top: 5px;
-}
 .ant-layout-footer{
     background: transparent;
     text-align: center;
@@ -193,15 +182,39 @@ small,.small{
 .ml4{margin-left: 8px;}
 
 
-.pv1{padding: 20px 0;}
-.pv2{padding: 16px 0;}
-.pv3{padding: 12px 0;}
-.pv4{padding: 8px 0;}
+.pv1{
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.pv2{
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+.pv3{
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+.pv4{
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
 
-.pa1{padding: 0 20px;}
-.pa2{padding: 0 16px;}
-.pa3{padding: 0 12px;}
-.pa4{padding: 0 8px;}
+.pa1{
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.pa2{
+    padding-left: 16px;
+    padding-right: 16px;
+}
+.pa3{
+    padding-left: 12px;
+    padding-right: 12px;
+}
+.pa4{
+    padding-left: 8px;
+    padding-right: 8px;
+}
 
 .ant-btn{
     border-radius: 0;
@@ -319,4 +332,23 @@ small,.small{
     background: #F9FAFA;
     padding: 25px 60px;
     min-height: calc( 100vh );
+}
+
+.info-detail{
+
+}
+.info-detail a{}
+.detail-ul{
+    list-style: none;
+    font-size: 12px;
+    line-height: 22px;
+    padding-left: 0;
+}
+.detail-ul li{
+    margin-top: 8px;
+}
+.detail-ul li span{
+    display: inline-block;
+    min-width: 70px;
+    color: #222222;
 }

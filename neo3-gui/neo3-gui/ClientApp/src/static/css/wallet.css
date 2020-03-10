@@ -9,11 +9,11 @@
 .wa-content .logo{
     background: url(../images/logo.svg) no-repeat;
     background-position: center;
-    height: 45px;
+    height: 80px;
 }
 .wa-open{
     padding: 0 90px;
-    max-width: 600px;
+    max-width: 580px;
     margin-left: auto;
     margin-right: auto;
     min-height: 280px;

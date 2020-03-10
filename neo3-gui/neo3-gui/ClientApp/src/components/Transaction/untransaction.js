@@ -39,7 +39,7 @@ class Untransaction extends React.Component{
     })
     .then(function (response) {
       var _data = response.data;
-      if(_data.msgType == -1){
+      if(_data.msgType === -1){
         message.error("未确认交易查询失败");
         return;
       }

@@ -1,9 +1,8 @@
 import React from 'react';
 import { Layout } from 'antd';
 import Transaction from '../Transaction/transaction';
-// import Untransaction from '../Transaction/untransaction';
 
-class Wallettrans extends React.Component{
+class Blocktrans extends React.Component{
   constructor(props){
     super(props);
     this.state = {
@@ -14,11 +13,10 @@ class Wallettrans extends React.Component{
   render = () =>{
     return (
       <Layout className="gui-container">
-        {/* <Untransaction */}
-        <Transaction  content={"交易记录"}/>
+        <Transaction content="交易列表"/>
       </Layout>
     );
   }
 } 
 
-export default Wallettrans;
+export default Blocktrans;
