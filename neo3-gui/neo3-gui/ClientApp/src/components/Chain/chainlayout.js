@@ -33,7 +33,7 @@ class Chainlayout extends React.Component{
           <Sider style={{ height: '100%'}} >
             <Menu
               className="menu-scroll"
-              theme="dark"
+              theme="light"
               defaultSelectedKeys={['1']}
               defaultOpenKeys={['sub1']}
               mode="inline"

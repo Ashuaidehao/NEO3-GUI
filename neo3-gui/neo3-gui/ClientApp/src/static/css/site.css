@@ -230,7 +230,7 @@ small,.small{
     line-height: 34px;
     padding: 0 16px;
     vertical-align: middle;
-    color:rgba(255, 255, 255, 0.65);
+    color: #000;
 }
 .menu-down li a:hover{
     color: #FFFFFF;

@@ -31,3 +31,6 @@ _ReSharper*/
 #Nuget packages folder
 packages/
 Data_*/
+*.ldb
+*.old
+neo3-gui/neo3-gui/ApplicationLogs_000D9038/
