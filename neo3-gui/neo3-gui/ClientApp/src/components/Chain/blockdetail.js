@@ -2,27 +2,30 @@
 //just test replace wallet//
 import React from 'react';
 import {Link} from 'react-router-dom';
-import { Layout, Icon, Row, Col, Modal,List, Input,Typography, message,Tag } from 'antd';
+import { Layout, Row, Col, message } from 'antd';
 import axios from 'axios';
 import Intitle from '../Common/intitle';
+import Transaction from '../Transaction/transaction';
 
-const { Sider, Content } = Layout;
+const { Content } = Layout;
 
 class Blockdetail extends React.Component{
   constructor(props){
     super(props);
     this.state = {
       blockdetail: {},
-      height:0
+      height:0,
+      witness:"",
+      nonce:0
     };
   }
   componentDidMount(){
-    this.getAllblock();
+    let _h = Number(location.pathname.split(":")[1])
+    this.setHeight(_h)();
   }
   getAllblock = () =>{
-    let _height = Number(location.pathname.split(":")[1]);
-    console.log(_height)
     var _this = this;
+    let _height = this.state.height;
     axios.post('http://localhost:8081', {
         "id":"1111",
         "method": "GetBlock",
@@ -40,44 +43,59 @@ class Blockdetail extends React.Component{
       _this.setState({
         blockdetail:_data.result
       })
+      _this.setState({
+        witness:_data.result.witness.scriptHash
+      })
+      _this.setState({
+        nonce:_data.result.consensusData.nonce
+      })
     })
     .catch(function (error) {
       console.log(error);
       console.log("error");
     });
   }
+  setHeight = (h) => {
+    return () =>{
+        this.setState({
+            height: h
+        },() => this.getAllblock());
+    }
+  }
   render(){
-    const {blockdetail} = this.state;
+    const {blockdetail,witness,nonce} = this.state;
     return (
       <Layout className="gui-container">
           <Content className="mt3">
-          <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
+          <Row gutter={[30, 0]} type="flex">
             <Col span={24} className="bg-white pv4">
-                <Intitle content="区块信息"/>
-                <Link to>Hash: {blockdetail.blockHash}</Link>
+              <Intitle className="mb2" content="区块信息"/>
+              <div className="info-detail pa3 pv3">
+                <Link to={"/chain/detail:" + blockdetail.blockHeight}><span>Hash: &nbsp;&nbsp;&nbsp;</span>{blockdetail.blockHash}</Link>
                 <Row>
                     <Col span={12}>
-                        <ul>
+                        <ul className="detail-ul">
                             <li><span>高度：</span>{blockdetail.blockHeight}</li>
-                            <li><span>时间戳：</span>{blockdetail.blockHash}</li>
-                            <li><span>网络费：</span>{blockdetail.blockHash}</li>
-                            <li><span>确认数：</span>{blockdetail.blockHash}</li>
-                            <li><span>上一区块：</span><Link>{blockdetail.blockHeight}</Link></li>
+                            <li><span>时间戳：</span>{blockdetail.blockTime}</li>
+                            <li><span>网络费：</span>{blockdetail.networkFee?blockdetail.networkFee:'--'}</li>
+                            <li><span>确认数：</span>{blockdetail.confirmations}</li>
+                            <li><span>上一区块：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight-1)} onClick={this.setHeight(blockdetail.blockHeight-1)}>{blockdetail.blockHeight-1}</Link></li>
                         </ul>
                     </Col>
                     <Col span={12}>
-                        <ul>
-                            <li><span></span>{blockdetail.blockHash}</li>
-                            <li><span></span>{blockdetail.blockHash}</li>
-                            <li><span></span>{blockdetail.blockHash}</li>
-                            <li><span></span>{blockdetail.blockHash}</li>
-                            <li><span></span>{blockdetail.blockHash}</li>
+                        <ul className="detail-ul">
+                            <li><span>大小：</span>{blockdetail.blockHeight}</li>
+                            <li><span>随机数：</span>{nonce}</li>
+                            <li><span>系统费：</span>{blockdetail.networkFee?blockdetail.networkFee:'--'}</li>
+                            <li><span>见证人：</span>{witness}</li>
+                            <li><span>下一区块：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight+1)} onClick={this.setHeight(blockdetail.blockHeight+1)}>{blockdetail.blockHeight+1}</Link></li>
                         </ul>
                     </Col>
                 </Row>
-              <div className="pv1"></div>
+              </div>
             </Col>
           </Row>
+          <Transaction content="交易列表" />
         </Content>
       </Layout>
     );

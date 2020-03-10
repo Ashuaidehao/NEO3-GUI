@@ -131,7 +131,7 @@ class Walletcreate extends React.Component{
             />
           </Col>
         </Row>
-        <Button className="mt3" type="primary" onClick={this.createWallet} loading={this.state.iconLoading} ref="create">创建钱包</Button>
+        <Button type="primary" onClick={this.createWallet} loading={this.state.iconLoading} ref="create">创建钱包</Button>
         <p className="mt3 mb2">
           <small>因钱包较为私密，在选择已有文件的情况下，不会进行覆盖操作。<br />
           如需要删除原始钱包文件，请手动删除。</small>

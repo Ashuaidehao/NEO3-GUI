@@ -52,7 +52,7 @@ class Chain extends React.Component{
             <Col span={24} className="bg-white pv4">
             <Intitle content="区块列表"/>
             <List
-                header={<div><span>区块信息</span><span className="float-r ml4"><span className="wa-amount"></span>数量</span><span className="float-r">更新时间</span></div>}
+                header={<div><span>区块信息</span><span className="float-r ml4"><span className="wa-amount">数量</span></span><span className="float-r">更新时间</span></div>}
                 footer={<span></span>}
                 itemLayout="horizontal"
                 dataSource={blocklist}

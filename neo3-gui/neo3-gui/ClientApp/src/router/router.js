@@ -38,7 +38,7 @@ const BasicRoute = () => (
                     <Route exact path="/chain" component={Chain} />
                     <Route exact path="/chain/detail:height" component={Blockdetail} />
                     <Route exact path="/chain/transaction" component={Chaintrans} />
-                    <Route exact path="/chain/transaction:hash" component={Blockdetail} />
+                    <Route exact path="/chain/transaction:hash" component={Chain} />
                 </Layout>
             </Route>
             <Route path="/wallet">
