@@ -43,7 +43,7 @@ class Walletlayout extends React.Component{
         return;
       }
       _this.setState({isopen:true});
-      _this.setState({topath:"/wallet/walletlist"});
+      // _this.setState({topath:"/wallet/walletlist"});
     })
     .catch(function (error) {
       console.log(error);

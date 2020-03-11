@@ -2,7 +2,7 @@
 //just test replace wallet//
 import React from 'react';
 import {Link} from 'react-router-dom';
-import { Layout, Row, Col, message,List } from 'antd';
+import { Layout, Row, Col, message,List,Typography } from 'antd';
 import axios from 'axios';
 import Intitle from '../Common/intitle';
 import Transaction from '../Transaction/transaction';
@@ -16,12 +16,16 @@ class Blockdetail extends React.Component{
       blockdetail: {},
       height:0,
       witness:"",
-      nonce:0
+      nonce:0,
     };
   }
   componentDidMount(){
     let _h = Number(location.pathname.split(":")[1])
     this.setHeight(_h)();
+    this.setState({
+      local:location.pathname
+    })
+
   }
   getAllblock = () =>{
     var _this = this;
@@ -66,7 +70,7 @@ class Blockdetail extends React.Component{
     }
   }
   render(){
-    const {blockdetail,witness,nonce,translist} = this.state;
+    const {blockdetail,witness,nonce,translist,local} = this.state;
     return (
       <Layout className="gui-container">
           <Content className="mt3">
@@ -98,7 +102,7 @@ class Blockdetail extends React.Component{
               </div>
             </Col>
           </Row>
-          <Row className="mt3" gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
+          <Row className="mt3 mb1" gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
             <Col span={24} className="bg-white pv4">
             <Intitle content="交易"/>
             <List
@@ -110,7 +114,7 @@ class Blockdetail extends React.Component{
               renderItem={item => (
               <List.Item>
                   <List.Item.Meta
-                  title={<Link to={loacl+":"+item.txId} title="查看详情">{item.txId}</Link>}
+                  title={<Link to={"/chain/transaction:"+item.txId} title="查看详情">{item.txId}</Link>}
                   description={
                   <div className="font-s">
                       From：<span className="w300 ellipsis">{item.transfers[0].fromAddress?item.transfers[0].fromAddress:"--"}</span><br></br>
@@ -123,7 +127,6 @@ class Blockdetail extends React.Component{
               )}
             />
             </Col>
-            <div className="pv1"></div>
           </Row>
         </Content>
       </Layout>

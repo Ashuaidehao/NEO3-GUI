@@ -49,6 +49,7 @@ class Transaction extends React.Component{
         console.log(_data)
         return;
       }
+      console.log(_data)
       _this.setState({
         translist:_data.result
       })
@@ -69,7 +70,7 @@ class Transaction extends React.Component{
     const {translist,loacl} = this.state;
     return (
       <div>
-        <Content className="mt3">
+        <Content className="mt3 mb4">
         <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
               <Col span={24} className="bg-white pv4">
               <Intitle content={this.props.content||"最新交易"}/>

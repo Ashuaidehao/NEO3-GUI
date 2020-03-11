@@ -2,6 +2,7 @@ body,html{
     background: #F9FAFA;
     width: auto;
     height: auto;
+    overflow: hidden;
 }
 .ant-layout.home-content{
     background: #F9FAFA;

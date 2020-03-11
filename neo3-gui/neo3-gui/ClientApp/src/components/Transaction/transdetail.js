@@ -1,38 +1,71 @@
 /* eslint-disable */ 
 import React from 'react';
 import axios from 'axios';
-import { Layout, Row, Col,List,Typography, message,Button } from 'antd';
+import '../../static/css/trans.css';
+import {Link} from 'react-router-dom';
+import { Layout, Row, Col, Drawer, Typography, message, Button, Divider } from 'antd';
 import Intitle from '../Common/intitle';
+import Datatrans from '../Common/datatrans';
+
+import {ArrowRightOutlined,SwapOutlined} from '@ant-design/icons';
 
 const { Content } = Layout;
+
 
 class Transdetail extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-        size: 'default'
+        size: 'default',
+        visible: false,
+        hashdetail: [],
+        transfers: [],
+        witnesses:[],
+        attributes:[],
+        notifies:[]
     };
   }
   componentDidMount(){
+    this.getTransdetail(res => {
+      this.setState({
+        hashdetail: res,
+        transfers: res.transfers,
+        witnesses: res.witnesses,
+        attributes: res.attributes,
+        notifies: res.notifies
+      });
+    });
   }
-  getTransdetail (){
+  showDrawer = () => {
+    this.setState({
+      visible: true,
+    });
+  };
+  onClose = () => {
+    this.setState({
+      visible: false,
+    });
+  };
+  getTransdetail = callback => {
+    let _hash = location.pathname.split(":")[1];
+
     axios.post('http://localhost:8081', {
         "id":"51",
-        "method": "GetMyTransactions",
-        "params": add
+        "method": "GetTransaction",
+        "params": {
+          "txId":_hash
+      }
     })
     .then(function (response) {
-    console.log(add);
-    var _data = response.data;
-    console.log(_data)
-    if(_data.msgType === -1){
-        message.error("查询失败");
-        return;
-    }
-    _this.setState({
-        translist:_data.result
-    })
-    console.log(_data);
+      var _data = response.data;
+      if(_data.msgType === -1){
+          message.error("查询失败");
+          console.log(_data);
+          return;
+      }else{
+          callback(_data.result);
+      }
+      console.log(_data)
     })
     .catch(function (error) {
     console.log(error);
@@ -40,37 +73,95 @@ class Transdetail extends React.Component{
     });
   }
   render = () =>{
+    const {hashdetail,transfers,witnesses,attributes} = this.state;
     return (
-      <div>
-        <Layout className="gui-container">
-            <Content className="mt3">
-                <Row gutter={[30, 0]}>
-                    <Col span={24} className="bg-white pv4">
-                    <Intitle content="交易详情"/>
-                    {/* <List
-                        header={<div>{address}</div>}
-                        footer={<span></span>}
-                        itemLayout="horizontal"
-                        dataSource={assetlist}
-                        renderItem={item => (
-                        <List.Item className="wa-half">
-                            <Typography.Text className="font-s">
-                                <span className="upcase">{item.symbol}</span>
-                                <span>{item.balance}</span>
-                            </Typography.Text>
-                        </List.Item>
-                        )}
-                    /> */}
-                        <div className="mb4 text-r">
-                            <Button type="primary" onClick={this.showPrivate}>显示私钥</Button>
-                            <Button className="ml3" onClick={this.deleteConfirm}>删除地址</Button>
-                        </div>
-                    </Col>
-                </Row>
-            </Content>
-        </Layout>
-        
-      </div>
+      <Layout className="gui-container">
+          <Content className="mt3">
+              <Row gutter={[30, 0]} className="mb1">
+                  <Col span={24} className="bg-white pv4">
+                  <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
+                  <Intitle className="mb2" content="交易"/>
+                  <div className="info-detail pa3 pv3">
+                    <div className="f-1 mt5 mb4"><span>Hash: &nbsp;&nbsp;&nbsp;</span>{hashdetail.blockHash}</div>
+                    <Row>
+                        <Col span={12}>
+                            <ul className="detail-ul">
+                                <li><span>区块：</span><Link to={"/chain/detail:"+hashdetail.blockHeight}>{hashdetail.blockHeight}</Link></li>
+                                <li><span>时间戳：</span>{hashdetail.timestamp}</li>
+                                <li><span>网络费：</span>{hashdetail.networkFee?hashdetail.networkFee:'--'} GAS</li>
+                                <li><span>确认数：</span>{hashdetail.confirmations}</li>
+                            </ul>
+                        </Col>
+                        <Col span={12}>
+                            <ul className="detail-ul">
+                                <li><span>大小：</span>{hashdetail.size} 字节</li>
+                                <li><span>时间：</span>{hashdetail.blockTime}</li>
+                                <li><span>系统费：</span>{hashdetail.networkFee} GAS</li>
+                                <li><span>随机数：</span>{hashdetail.nonce}</li>
+                            </ul>
+                        </Col>
+                    </Row>
+                  </div>
+                  <Divider></Divider>
+                  <div className="info-detail pa3 pv3">
+                    <Row>
+                      <Col span={24}>
+                        <ul className="detail-ul">
+                        {transfers.map((item,index)=>{
+                        return(
+                          <li key={index}>
+                            <span className="detail-add">{item.fromAddress?item.fromAddress:"--"}</span>
+                            <ArrowRightOutlined/>
+                            <span className="detail-add">{item.toAddress?item.toAddress:"--"}</span>
+                            <span className="detail-amount text-r">{item.amount} {item.symbol}</span>
+                          </li>
+                        )
+                        })}
+                        </ul>
+                      </Col>
+                    </Row>
+                  </div>
+                  <Divider></Divider>
+                  <div className="info-detail pa3 pv3">
+                    <Row>
+                        <Col span={24}>
+                            <ul className="detail-ul ul-invo">
+                                <li><p><span className="font-n">attributes: </span>{attributes.data?attributes.data:"--"}</p></li>
+                                {witnesses.map((item,index)=>{
+                                return(
+                                  <li key={index}>
+                                    <p><span className="font-n">invocation: </span>{item.invocationScript}</p>
+                                    <p><span className="font-n">verification: </span>{item.verificationScript}</p>
+                                  </li>
+                                )
+                                })}
+                            </ul>
+                        </Col>
+                    </Row>
+                  </div>
+                  <Divider></Divider>
+                  <div className="info-detail pa3 pv3">
+                    <Row>
+                        <Col span={24}>
+                            {/* <ul className="detail-ul ul-invo">
+                              <li><p><span className="font-n">attributes: </span>{attributes.data?attributes.data:"--"}</p></li>
+                              {witnesses.map((item,index)=>{
+                              return(
+                                <li key={index}>
+                                  <p><span className="font-n">invocation: </span>{item.invocationScript}</p>
+                                  <p><span className="font-n">verification: </span>{item.verificationScript}</p>
+                                </li>
+                              )
+                              })}
+                            </ul> */}
+                        </Col>
+                    </Row>
+                  </div>
+                </Col>
+            </Row>
+            <Datatrans visible={this.state.visible} onClose={this.onClose} />
+        </Content>
+    </Layout>
     );
   }
 } 
