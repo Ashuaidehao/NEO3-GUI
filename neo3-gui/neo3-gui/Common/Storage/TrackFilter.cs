@@ -18,7 +18,7 @@ namespace Neo.Common.Storage
         /// <summary>
         /// start from 1,paged result only if this is not null
         /// </summary>
-        public int? PageIndex { get; set; }
+        public int PageIndex { get; set; }
         public int PageSize { get; set; }
     }
 }

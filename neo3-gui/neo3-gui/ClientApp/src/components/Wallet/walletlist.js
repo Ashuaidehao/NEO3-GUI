@@ -27,9 +27,7 @@ class Walletlist extends React.Component {
     this.getAllasset();
     this.getGas();
   }
-  componentWillUpdate(){
-    console.log("walletlist wil update!!!")
-  }
+
   getAllasset = () => {
     var _this = this;
     axios.post('http://localhost:8081', {

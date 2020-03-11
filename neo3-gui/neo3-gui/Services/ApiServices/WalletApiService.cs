@@ -622,7 +622,7 @@ namespace Neo.Services.ApiServices
         /// query relate my wallet transactions(on chain)
         /// </summary>
         /// <returns></returns>
-        public async Task<object> GetMyTransactions(int limit = 100, UInt160 address = null)
+        public async Task<object> GetMyTransactions(int pageIndex = 1, int limit = 100, UInt160 address = null)
         {
             if (CurrentWallet == null)
             {
@@ -631,8 +631,15 @@ namespace Neo.Services.ApiServices
 
             var addresses = address != null ? new List<UInt160>() { address } : CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
             using var db = new TrackDB();
-            var trans = db.FindTransactions(new TrackFilter() { FromOrTo = addresses, PageIndex = 1, PageSize = limit }).List;
-            return trans.ToTransactionPreviewModel();
+            var trans = db.FindTransactions(new TrackFilter() { FromOrTo = addresses, PageIndex = pageIndex, PageSize = limit });
+            var result = new PageList<TransactionPreviewModel>
+            {
+                TotalCount = trans.TotalCount,
+                PageSize = trans.PageSize,
+                PageIndex = pageIndex,
+                List = trans.List?.ToTransactionPreviewModel(),
+            };
+            return result;
         }
 
         /// <summary>

@@ -83,7 +83,7 @@ class Transaction extends React.Component{
         return;
       }
       _this.setState({
-        translist:_data.result
+        translist:_data.result.list
       })
       console.log(_data);
     })

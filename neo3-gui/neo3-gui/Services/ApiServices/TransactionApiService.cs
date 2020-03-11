@@ -40,7 +40,7 @@ namespace Neo.Services.ApiServices
             }
             using var db = new TrackDB();
             var trans = db.FindTransfer(new TrackFilter() { TxIds = new List<UInt256>() { txId } }).List;
-            transactionModel.Transfers = trans.Select(tx => Helpers.ToTransferModel((TransferInfo) tx)).ToList();
+            transactionModel.Transfers = trans.Select(tx => Helpers.ToTransferModel((TransferInfo)tx)).ToList();
             var notifies = db.GetNotifyEventsByTxId(txId);
             if (notifies.NotEmpty())
             {
@@ -64,10 +64,29 @@ namespace Neo.Services.ApiServices
         }
 
         /// <summary>
+        /// query all transactions(on chain)
+        /// </summary>
+        /// <returns></returns>
+        public async Task<object> QueryTransactions(int pageIndex = 1, int limit = 100, UInt160 address = null, UInt160 asset = null, uint? blockheight = null)
+        {
+            var addresses = address != null ? new List<UInt160>() { address } : new List<UInt160>();
+            using var db = new TrackDB();
+            var trans = db.FindTransactions(new TrackFilter() { FromOrTo = addresses, Asset = asset, BlockHeight = blockheight, PageIndex = pageIndex, PageSize = limit });
+            var result = new PageList<TransactionPreviewModel>
+            {
+                TotalCount = trans.TotalCount,
+                PageSize = trans.PageSize,
+                PageIndex = pageIndex,
+                List = trans.List?.ToTransactionPreviewModel(),
+            };
+            return result;
+        }
+
+        /// <summary>
         /// query transaction info
         /// </summary>
         /// <returns></returns>
-        public async Task<PageList<TransferInfo>> QueryTransaction(TrackFilter filter)
+        public async Task<PageList<TransferInfo>> QueryTransfers(TrackFilter filter)
         {
             using var db = new TrackDB();
             var result = db.FindTransfer(filter) as PageList<TransferInfo>;
