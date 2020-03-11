@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Neo.Common;
 using Neo.Common.Storage;
@@ -81,6 +82,7 @@ namespace Neo.Services.ApiServices
                 Decimals = a.Decimals,
                 Name = a.Name,
                 Symbol = a.Symbol,
+                TotalSupply = new BigInteger(a.TotalSupply),
             });
         }
 

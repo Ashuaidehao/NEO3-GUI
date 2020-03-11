@@ -51,6 +51,7 @@ namespace Neo
                 new UInt256Converter(),
                 new NumToStringConverter(),
                 new BigDecimalConverter(),
+                new BigIntegerConverter(),
                 new DatetimeJsonConverter(),
                 new ByteArrayConverter(),
                 new JObjectConverter(),
