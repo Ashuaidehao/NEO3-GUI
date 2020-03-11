@@ -7,6 +7,7 @@ import Chain from '../components/Chain/chain';
 import Chainlayout from '../components/Chain/chainlayout';
 import Blockdetail from '../components/Chain/blockdetail';
 import Chaintrans from '../components/Chain/trans';
+import Chainasset from '../components/Chain/asset';
 
 import Advanced from '../pages/advanced';
 
@@ -39,6 +40,8 @@ const BasicRoute = () => (
                     <Route exact path="/chain/detail:height" component={Blockdetail} />
                     <Route exact path="/chain/transaction" component={Chaintrans} />
                     <Route exact path="/chain/transaction:hash" component={Chain} />
+                    <Route exact path="/chain/asset" component={Chainasset} />
+                    <Route exact path="/chain/asset:hash" component={Chainasset} />
                 </Layout>
             </Route>
             <Route path="/wallet">

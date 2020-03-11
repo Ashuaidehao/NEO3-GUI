@@ -2,7 +2,7 @@
 //just test replace wallet//
 import React from 'react';
 import {Link} from 'react-router-dom';
-import { Layout, Row, Col, message } from 'antd';
+import { Layout, Row, Col, message,List } from 'antd';
 import axios from 'axios';
 import Intitle from '../Common/intitle';
 import Transaction from '../Transaction/transaction';
@@ -49,6 +49,9 @@ class Blockdetail extends React.Component{
       _this.setState({
         nonce:_data.result.consensusData.nonce
       })
+      _this.setState({
+        translist:_data.result.transactions
+      })
     })
     .catch(function (error) {
       console.log(error);
@@ -63,7 +66,7 @@ class Blockdetail extends React.Component{
     }
   }
   render(){
-    const {blockdetail,witness,nonce} = this.state;
+    const {blockdetail,witness,nonce,translist} = this.state;
     return (
       <Layout className="gui-container">
           <Content className="mt3">
@@ -95,7 +98,33 @@ class Blockdetail extends React.Component{
               </div>
             </Col>
           </Row>
-          <Transaction content="交易列表" />
+          <Row className="mt3" gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
+            <Col span={24} className="bg-white pv4">
+            <Intitle content="交易"/>
+            <List
+              header={<div><span>交易hash</span><span className="float-r ml4"><span className="wa-amount"></span>数量</span><span className="float-r">时间</span></div>}
+              footer={<span></span>}
+              itemLayout="horizontal"
+              dataSource={translist}
+              className="font-s"
+              renderItem={item => (
+              <List.Item>
+                  <List.Item.Meta
+                  title={<Link to={loacl+":"+item.txId} title="查看详情">{item.txId}</Link>}
+                  description={
+                  <div className="font-s">
+                      From：<span className="w300 ellipsis">{item.transfers[0].fromAddress?item.transfers[0].fromAddress:"--"}</span><br></br>
+                      To：<span className="w300 ellipsis" >{item.transfers[0].toAddress?item.transfers[0].toAddress:"--"}</span>
+                  </div>}
+                  />
+                  <Typography>{item.blockTime}</Typography>
+                  <Typography className="upcase ml4"><span className="wa-amount">{item.transfers[0].amount}</span>{item.transfers[0].symbol}</Typography>
+              </List.Item>
+              )}
+            />
+            </Col>
+            <div className="pv1"></div>
+          </Row>
         </Content>
       </Layout>
     );
