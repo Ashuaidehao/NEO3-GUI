@@ -93,7 +93,7 @@ namespace Neo.Services.ApiServices
                 Addresses = addresses,
                 Assets = assets,
             });
-            return balances.Select(b=>new AddressBalanceModel(b));
+            return balances.ToLookup(b=>b.Address).ToAddressBalanceModels();
         }
 
 

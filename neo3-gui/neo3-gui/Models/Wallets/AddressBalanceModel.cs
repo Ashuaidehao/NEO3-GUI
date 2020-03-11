@@ -10,19 +10,9 @@ namespace Neo.Models.Wallets
 {
     public class AddressBalanceModel
     {
-        public AddressBalanceModel(BalanceInfo balance)
-        {
-            AddressHash = balance.Address;
-            Address = balance.Address.ToAddress();
-            Asset = balance.Asset;
-            Symbol = balance.AssetSymbol;
-            Balance = new BigDecimal(balance.Balance, balance.AssetDecimals);
-        }
-
         public UInt160 AddressHash { get; set; }
-        public string Address { get; set; }
-        public UInt160 Asset { get; set; }
-        public string Symbol { get; set; }
-        public BigDecimal Balance { get; set; }
+        public string Address => AddressHash?.ToAddress();
+
+        public List<AssetBalanceModel> Balances { get; set; } = new List<AssetBalanceModel>();
     }
 }
