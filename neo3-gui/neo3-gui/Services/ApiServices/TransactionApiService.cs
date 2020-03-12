@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Neo.Common;
 using Neo.Common.Storage;
 using Neo.Common.Utility;
+using Neo.IO.Json;
 using Neo.Ledger;
 using Neo.Models;
 using Neo.Models.Transactions;
@@ -40,11 +41,11 @@ namespace Neo.Services.ApiServices
             }
             using var db = new TrackDB();
             var trans = db.FindTransfer(new TrackFilter() { TxIds = new List<UInt256>() { txId } }).List;
-            transactionModel.Transfers = trans.Select(tx => Helpers.ToTransferModel((TransferInfo)tx)).ToList();
+            transactionModel.Transfers = trans.Select(tx => tx.ToTransferModel()).ToList();
             var notifies = db.GetNotifyEventsByTxId(txId);
             if (notifies.NotEmpty())
             {
-                transactionModel.Notifies.AddRange(notifies.Select(n => n.State.DeserializeJson<NotifyModel>()));
+                transactionModel.Notifies.AddRange(notifies.Select(n => JStackItem.FromJson(n.State.DeserializeJson<JObject>())));
             }
             return transactionModel;
         }

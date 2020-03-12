@@ -58,6 +58,7 @@ namespace Neo.Models.Transactions
         public List<TranAttributeModel> Attributes { get; set; }
         public List<WitnessModel> Witnesses { get; set; }
 
-        public List<NotifyModel> Notifies { get; set; }=new List<NotifyModel>();
+        public List<JStackItem> Notifies { get; set; } = new List<JStackItem>();
+
     }
 }

@@ -187,6 +187,20 @@ namespace Neo
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static string TryToAddress(this byte[] bytes)
+        {
+            if (bytes?.Length == 20)
+            {
+                return new UInt160(bytes).ToAddress();
+            }
+            return null;
+        }
+
 
         /// <summary>
         /// convert private key string(wif or hex) to bytes
