@@ -62,28 +62,7 @@ namespace Neo
         };
 
 
-        /// <summary>
-        /// broadcast transaction and cache
-        /// </summary>
-        /// <param name="tx"></param>
-        /// <returns></returns>
-        public static async Task Broadcast(this Transaction tx)
-        {
-            Program.Starter.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
-            var task = Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
-        }
-
-
-
-        /// <summary>
-        /// safe serialize signContext to avoid encoding issues
-        /// </summary>
-        /// <param name="signContext"></param>
-        /// <returns></returns>
-        public static string SafeSerialize(this ContractParametersContext signContext)
-        {
-            return signContext.ToJson().SerializeJson();
-        }
+        
         public static string GetVersion(this Assembly assembly)
         {
             CustomAttributeData attribute = assembly.CustomAttributes.FirstOrDefault(p => p.AttributeType == typeof(AssemblyInformationalVersionAttribute));
@@ -108,6 +87,31 @@ namespace Neo
 
             return input == "yes" || input == "y";
         }
+
+
+        /// <summary>
+        /// broadcast transaction and cache
+        /// </summary>
+        /// <param name="tx"></param>
+        /// <returns></returns>
+        public static async Task Broadcast(this Transaction tx)
+        {
+            Program.Starter.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+            var task = Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
+        }
+
+
+
+        /// <summary>
+        /// safe serialize signContext to avoid encoding issues
+        /// </summary>
+        /// <param name="signContext"></param>
+        /// <returns></returns>
+        public static string SafeSerialize(this ContractParametersContext signContext)
+        {
+            return signContext.ToJson().SerializeJson();
+        }
+
 
         /// <summary>
         /// append sign to signContext
