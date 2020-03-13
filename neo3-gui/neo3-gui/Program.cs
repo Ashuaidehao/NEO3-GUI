@@ -9,23 +9,23 @@ namespace Neo
 {
     class Program
     {
-        public static GuiService Service=new GuiService();
+        public static GuiStarter Starter = new GuiStarter();
 
         static void Main(string[] args)
         {
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
 
-            CreateWebHostBuilder(args).Build().Start();
 
-            Service.Run(args);
-            Service.Stop();
+            CreateWebHostBuilder(args).Build().Start();
+            Starter.Run(args);
+            Starter.Stop();
 
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return WebHost.CreateDefaultBuilder(args)
-                .UseKestrel(k=>k.Listen(IPAddress.Parse("127.0.0.1"),8081))
+                .UseUrls("http://127.0.0.1:8081")
                 .UseStartup<Startup>();
         }
 

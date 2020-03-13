@@ -9,6 +9,10 @@
 
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;1998;</NoWarn>
+  </PropertyGroup>
+
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
@@ -42,12 +46,13 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.0" />
-    <PackageReference Include="Neo.LevelDb.Dev" Version="3.0.0-pre3" />
+    <PackageReference Include="Neo.LevelDb.Dev" Version="3.0.0-pre4" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.6.0" />
   </ItemGroup>
 
 
   <ItemGroup>
-    <ProjectReference Include="..\..\neo-cli\neo-cli\neo-cli.csproj" />
+    <ProjectReference Include="..\..\neo\src\neo\neo.csproj" />
   </ItemGroup>
 
 
@@ -83,4 +88,5 @@
       </ResolvedFileToPublish>
     </ItemGroup>
   </Target>
+  <ProjectExtensions><VisualStudio><UserProperties clientapp_4package_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 </Project>

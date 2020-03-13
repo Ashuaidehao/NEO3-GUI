@@ -17,7 +17,6 @@ namespace Neo.Common
     {
 
         private readonly IServiceProvider _provider;
-        private readonly ILogger _logger;
 
         public WebSocketHubMiddleware(IServiceProvider provider)
         {
@@ -40,7 +39,7 @@ namespace Neo.Common
                     return;
                 }
 
- 
+
                 //push loop
                 var _ = Task.Run(async () =>
                   {
@@ -64,24 +63,24 @@ namespace Neo.Common
 
 
 
-        /// <summary>
-        /// push message to client, must be single thead
-        /// </summary>
-        /// <param name="connection"></param>
-        /// <param name="hub"></param>
-        /// <returns></returns>
-        private async Task PushLoop(WebSocketConnection connection, WebSocketHub hub)
-        {
-            try
-            {
-                await connection.PushLoop();
-            }
-            catch (WebSocketException e)
-            {
-                Console.WriteLine(e);
-                hub.Remove(connection);
-            }
-        }
+        ///// <summary>
+        ///// push message to client, must be single thead
+        ///// </summary>
+        ///// <param name="connection"></param>
+        ///// <param name="hub"></param>
+        ///// <returns></returns>
+        //private async Task PushLoop(WebSocketConnection connection, WebSocketHub hub)
+        //{
+        //    try
+        //    {
+        //        await connection.PushLoop();
+        //    }
+        //    catch (WebSocketException e)
+        //    {
+        //        Console.WriteLine(e);
+        //        hub.Remove(connection);
+        //    }
+        //}
 
 
         /// <summary>
@@ -94,8 +93,7 @@ namespace Neo.Common
             var result = await connection.ReceiveStringAsync();
             while (!result.CloseStatus.HasValue)
             {
-                Task.Run(() => Excute(connection, result.Message));
-
+                var task = Task.Run(() => Excute(connection, result.Message));
                 result = await connection.ReceiveStringAsync();
             }
             await connection.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription);
@@ -108,7 +106,7 @@ namespace Neo.Common
             try
             {
                 var request = requestString.DeserializeJson<WsRequest>();
-                message.Type = WsMessageType.Result;
+                message.MsgType = WsMessageType.Result;
                 message.Id = request.Id;
                 message.Method = request.Method;
 
@@ -118,16 +116,34 @@ namespace Neo.Common
 
                 var executor = _provider.GetService<WebSocketExecutor>();
                 var result = await executor.Excute(request);
-                message.Result = result;
+                if (result is WsError error)
+                {
+                    message.MsgType = WsMessageType.Error;
+                    message.Error = error;
+                }
+                else
+                {
+                    message.Result = result;
+                }
             }
-            catch (InvokerException invokerException)
+            catch (ArgumentException ex)
             {
-                message.Result = invokerException.Message;
+                message.MsgType = WsMessageType.Error;
+                message.Error = new WsError()
+                {
+                    Code = (int)ErrorCode.InvalidPara,
+                    Message = ex.Message,
+                };
             }
             catch (Exception e)
             {
-                message.Type = WsMessageType.Error;
-                message.Result = e.ToString();
+                message.MsgType = WsMessageType.Error;
+                message.Error = new WsError()
+                {
+                    Code = -1,
+                    Message = e.ToString(),
+                };
+
             }
             finally
             {

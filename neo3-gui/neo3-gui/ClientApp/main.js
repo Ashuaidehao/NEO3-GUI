@@ -1,6 +1,14 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
+const {
+    app,
+    shell,
+    Menu,
+    BrowserWindow,
+    globalShortcut,
+    session,
+  } = require('electron') // eslint-disable-line import/no-extraneous-dependencies
 const path = require('path')
+const url = require('url')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -9,12 +17,16 @@ let mainWindow
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1100,
+        height: 700,
+        minWidth: 1100,
+        minHeight: 700,
         webPreferences: {
-            // preload: path.join(__dirname, 'preload.js'),
-            webSecurity: false
-
+            javascript: true,
+            plugins: true,
+            nodeIntegration: false,
+            webSecurity: false,
+            preload: path.join(__dirname, './preload.js')
         }
     })
 

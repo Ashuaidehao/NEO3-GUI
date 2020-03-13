@@ -1,0 +1,63 @@
+body,html{
+    background: #F9FAFA;
+    width: auto;
+    height: auto;
+    overflow: hidden;
+}
+.ant-layout.home-content{
+    background: #F9FAFA;
+    max-width: 880px;
+    margin: 32px auto;
+}
+
+.App-logo{
+    max-width: 500px;
+}
+
+.home-icon{
+    padding-top: 30px;
+}
+.home-icon img{
+    height: 80px;
+    width: 80px;
+}
+.home-icon span{
+    display: inline-block;
+    font-size: 20px;
+    font-weight: 500;
+    margin-top: 5px;
+    letter-spacing: 8px;
+}
+.home-icon a{
+    color: #000000;
+}
+.home-icon .home-link{
+    padding: 20px;
+    min-height: 240px;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 4px 6px 2px rgba(50,64,77,0.1);
+    filter: grayscale(1);
+    opacity: 1;
+    transition: opacity 2s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.home-icon .home-link{
+    background: url(../images/blockchain.svg),#FFFFFF;
+    background-size: 65%;
+    background-repeat: no-repeat;
+    background-position: right center;
+    translate: all 1s;
+}
+.home-icon a:hover .home-link{
+    animation: scale-ani .3s forwards cubic-bezier(0.165, 0.84, 0.44, 1);
+    
+}
+@keyframes scale-ani{
+    0%{
+        box-shadow:0px 4px 6px 2px rgba(50,64,77,0.1);
+        transform: scale3d(1, 1, 1);
+    }
+    100%{
+        box-shadow: 0 6px 16px 0 rgba(50,64,77, 0.15), 0 4px 15px 0 rgba(50,64,77, 0.1);
+        transform: scale3d(1.05, 1.05, 1);
+    }
+}

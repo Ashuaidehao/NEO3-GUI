@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Neo.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Neo.Services;
 
 
 namespace Neo.Common
@@ -24,7 +25,7 @@ namespace Neo.Common
         public WebSocketExecutor(IServiceProvider provider)
         {
             _provider = provider;
-            var invokerType = typeof(IInvoker);
+            var invokerType = typeof(IApiService);
             foreach (var type in invokerType.Assembly.GetExportedTypes().Where(t => !t.IsAbstract && t != invokerType && invokerType.IsAssignableFrom(t)))
             {
                 foreach (var methodInfo in type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
@@ -48,17 +49,21 @@ namespace Neo.Common
 
         public async Task<object> Excute(WsRequest request)
         {
+            if (request.Method.IsNull())
+            {
+                return ErrorCode.MethodNotFound.ToError();
+            }
             if (_methods.TryGetValue(request.Method, out var method))
             {
                 var instance = _provider.GetService(method.DeclaringType);
-                if (instance is Invoker invoker)
+                if (instance is ApiService invoker)
                 {
                     invoker.Client = _provider.GetService<WebSocketSession>().Connection;
                 }
                 return await method.Invoke(instance, request);
 
             }
-            return $"method [{request.Method}] not found!";
+            return new WsError() { Code = (int)ErrorCode.MethodNotFound, Message = $"method [{request.Method}] not found!" };
         }
 
 
