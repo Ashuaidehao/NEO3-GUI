@@ -39,7 +39,7 @@ const BasicRoute = () => (
                     <Route exact path="/chain" component={Chain} />
                     <Route exact path="/chain/detail:height" component={Blockdetail} />
                     <Route exact path="/chain/transaction" component={Chaintrans} />
-                    <Route exact path="/chain/transaction:hash" component={Chain} />
+                    <Route exact path="/chain/transaction:hash" component={Transdetail} />
                     <Route exact path="/chain/asset" component={Chainasset} />
                     <Route exact path="/chain/asset:hash" component={Chainasset} />
                 </Layout>

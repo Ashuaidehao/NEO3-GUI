@@ -136,7 +136,7 @@ class Transfer extends React.Component{
                 >
                 <Select
                   size={size}
-                  defaultValue={"请选择要转出的地址"}
+                  placeholder={"选择账户"}
                   style={{ width: '100%'}}
                   onChange={this.setAddress}>
                   {accountlist.map((item,index)=>{
@@ -156,7 +156,7 @@ class Transfer extends React.Component{
                   },
                 ]}
               >          
-                <Input placeholder="请输入要转到 NEO3 地址" />
+                <Input placeholder="输入账户" />
               </Form.Item>
               <Row>
                 <Col span={16}>

@@ -102,19 +102,19 @@ class Walletlist extends React.Component {
       "id": 51,
       "method": "ClaimGas"
     })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          console.log("需要先打开钱包再进入页面");
-          return;
-        } else if (_data.msgType = 3) {
-          message.success("GAS 提取成功，请稍后刷新页面查看", 3);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        console.log("需要先打开钱包再进入页面");
+        return;
+      } else if (_data.msgType = 3) {
+        message.success("GAS 提取成功，请稍后刷新页面查看", 3);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   addAddress = () => {
     var _this = this;
@@ -146,7 +146,6 @@ class Walletlist extends React.Component {
     })
       .then(function (response) {
         var _data = response.data;
-        console.log(_data);
         if (_data.msgType === -1) {
           console.log("需要先打开钱包再进入页面");
           return;
@@ -182,7 +181,6 @@ class Walletlist extends React.Component {
   refresh = () => {
     location.href = location.origin + "/wallet/walletlist";
   }
-
   render() {
     const accounts = this.props.walletStore.accountlist;
     const { assetlist } = this.state;

@@ -58,6 +58,7 @@ class Transdetail extends React.Component{
     })
     .then(function (response) {
       var _data = response.data;
+      console.log(_data)
       if(_data.msgType === -1){
           message.error("查询失败");
           console.log(_data);

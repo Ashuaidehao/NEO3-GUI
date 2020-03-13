@@ -11,8 +11,6 @@ import {
 } from '@ant-design/icons';
 import { withRouter } from "react-router-dom";
 
-
-
 @inject("walletStore")
 @observer
 @withRouter
@@ -22,7 +20,6 @@ class menuDown extends React.Component {
         this.state = {
             showPass: false
         };
-
     }
     componentDidMount() {
         this.showPass();
@@ -56,19 +53,18 @@ class menuDown extends React.Component {
           "id": "1234",
           "method": "CloseWallet"
         })
-            .then(()=> {
-                message.success("钱包退出成功", 2);
-                this.props.walletStore.logout();
-                this.props.history.push('/');
-            })
-            .catch(function (error) {
-                console.log(error);
-                console.log("error");
-            });
+        .then(()=> {
+            message.success("钱包退出成功", 2);
+            this.props.walletStore.logout();
+            this.props.history.push('/');
+        })
+        .catch(function (error) {
+            console.log(error);
+            console.log("error");
+        });
     }
     render() {
         const walletOpen = this.props.walletStore.isOpen;
-
         return (
             <div className="menu-down">
                 <ul>
@@ -80,6 +76,12 @@ class menuDown extends React.Component {
                             </a>
                         </li>
                     ) : null}
+                    <li>
+                        <a onClick={this.logout}>
+                            <LogoutOutlined />
+                            <span>登出钱包</span>
+                        </a>
+                    </li>
                     {/* {this.state.showOut&&this.state.showPass?(
                     <li>
                         <a>
