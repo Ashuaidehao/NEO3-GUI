@@ -51,7 +51,7 @@ class Walletdetail extends React.Component{
     .then(function (response) {
       var _data = response.data;
       console.log(_data);
-      if(_data.msgType == -1){
+      if(_data.msgType === -1){
         console.log("需要先打开钱包再进入页面");
         return;
       }else{
@@ -77,7 +77,7 @@ class Walletdetail extends React.Component{
     .then(function (response) {
       var _data = response.data;
       console.log(_data);
-      if(_data.msgType == -1){
+      if(_data.msgType === -1){
         console.log("需要先打开钱包再进入页面");
         return;
       }
@@ -115,7 +115,7 @@ class Walletdetail extends React.Component{
     })
     .then(function (response) {
         var _data = response.data;
-        if(_data.msgType == -1){
+        if(_data.msgType === -1){
             console.log("需要先打开钱包再进入页面");
             return;
         }else{
@@ -140,7 +140,7 @@ class Walletdetail extends React.Component{
     .then(function (response) {
       var _data = response.data.result;
       console.log(_data);
-      if(_data.msgType == -1){
+      if(_data.msgType === -1){
         console.log("需要先打开钱包再进入页面");
         return;
       }else{

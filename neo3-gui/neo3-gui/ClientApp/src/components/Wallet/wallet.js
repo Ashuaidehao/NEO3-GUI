@@ -51,16 +51,15 @@ class Wallet extends React.Component{
     }
   }
   render = () =>{
-    const { size } = this.state;
-    const props = this.props;
-
     return (
       <Layout className="gui-container">
         <Sync />
         <div className="wa-content mt2">
           <div className="wa-link">
             {/* 设置一个显示值及返回路径 */}
-            <a className="back" onClick={this.getInset(-1)} key="1"><ArrowLeftOutlined /></a>
+            {!this.state.showElem?(
+              <a className="back" onClick={this.getInset(-1)} key="1"><ArrowLeftOutlined /></a>
+            ):null}
             <a className="close" href="/home"><CloseOutlined /></a>
           </div>
           <div className="logo mt5"></div>

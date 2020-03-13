@@ -25,7 +25,7 @@ namespace Neo
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return WebHost.CreateDefaultBuilder(args)
-                .UseKestrel(k => k.Listen(IPAddress.Parse("127.0.0.1"), 8081))
+                .UseUrls("http://127.0.0.1:8081")
                 .UseStartup<Startup>();
         }
 

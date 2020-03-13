@@ -37,8 +37,8 @@ class Walletlist extends React.Component {
     })
       .then(function (response) {
         var _data = response.data;
-        // console.log(_data);
-        if (_data.msgType == -1) {
+        console.log(_data);
+        if (_data.msgType === -1) {
           console.log("需要先打开钱包再进入页面");
           return;
         }
@@ -63,7 +63,7 @@ class Walletlist extends React.Component {
       .then(function (response) {
         var _data = response.data;
         console.log(_data);
-        if (_data.msgType == -1) {
+        if (_data.msgType === -1) {
           console.log("需要先打开钱包再进入页面");
           return;
         }
@@ -82,7 +82,7 @@ class Walletlist extends React.Component {
     })
       .then(function (response) {
         var _data = response.data;
-        // console.log(_data);
+        console.log(_data);
         if (_data.msgType == -1) {
           console.log("需要先打开钱包再进入页面");
           return;
@@ -104,7 +104,7 @@ class Walletlist extends React.Component {
     })
       .then(function (response) {
         var _data = response.data;
-        if (_data.msgType == -1) {
+        if (_data.msgType === -1) {
           console.log("需要先打开钱包再进入页面");
           return;
         } else if (_data.msgType = 3) {
@@ -124,7 +124,7 @@ class Walletlist extends React.Component {
     })
       .then(function (response) {
         var _data = response.data;
-        if (_data.msgType == -1) {
+        if (_data.msgType === -1) {
           console.log("需要先打开钱包再进入页面");
           return;
         }
@@ -147,7 +147,7 @@ class Walletlist extends React.Component {
       .then(function (response) {
         var _data = response.data;
         console.log(_data);
-        if (_data.msgType == -1) {
+        if (_data.msgType === -1) {
           console.log("需要先打开钱包再进入页面");
           return;
         }
@@ -168,7 +168,7 @@ class Walletlist extends React.Component {
     })
       .then(function (res) {
         let _data = res.data;
-        if (_data.msgType == 3) {
+        if (_data.msgType === 3) {
           message.success("私钥打开成功", 2);
         } else {
           message.info("私钥输入错误", 2);

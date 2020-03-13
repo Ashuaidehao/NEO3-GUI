@@ -1,4 +1,5 @@
 
+/* eslint-disable */
 import React from 'react';
 import { Typography } from 'antd';
 import 'antd/dist/antd.css';
@@ -15,11 +16,9 @@ class Sync extends React.Component {
 
   render() {
     return (
-      <div>
-        <p className="ml3 mb0">
-          <Text className="t-normal bold"> {this.props.blockSyncStore.syncHeight} / {this.props.blockSyncStore.headerHeight} 区块同步中</Text>
-          <SyncOutlined className="ml3" type="sync" spin/> 
-        </p>
+      <div className="ml3 mb0">
+        <Text className="t-normal bold"> {this.props.blockSyncStore.syncHeight} / {this.props.blockSyncStore.headerHeight} 区块同步中</Text>
+        <SyncOutlined className="ml3" type="sync" spin/> 
       </div>
     );
   }

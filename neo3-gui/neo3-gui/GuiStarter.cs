@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Microsoft.Extensions.Configuration;
-using Neo.CLI;
 using Neo.Common;
+using Neo.Common.Consoles;
 using Neo.Common.Utility;
 using Neo.Ledger;
 using Neo.Network.P2P.Payloads;
@@ -16,7 +16,7 @@ namespace Neo
     public class GuiStarter : MainService
     {
 
-        protected override void OnStart(string[] args)
+        public override void OnStart(string[] args)
         {
             base.OnStart(args);
             UnconfirmedTransactionCache.RegisterBlockPersistEvent();

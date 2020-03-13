@@ -9,11 +9,11 @@
 .wa-content .logo{
     background: url(../images/logo.svg) no-repeat;
     background-position: center;
-    height: 45px;
+    height: 80px;
 }
 .wa-open{
     padding: 0 90px;
-    max-width: 600px;
+    max-width: 580px;
     margin-left: auto;
     margin-right: auto;
     min-height: 280px;
@@ -125,8 +125,13 @@
 }
 
 .wa-amount{
-    min-width: 100px;
+    width: 60px;
     text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: bottom;
 }
 
 .asset-list{
@@ -167,9 +172,6 @@
     width: 100%;
 }
 
-.trans-form{
-
-}
 .trans-form .ant-row{
     margin-bottom: 12px;
 }
@@ -210,4 +212,11 @@ input.wa-upload{
 button,input{
     border-radius: 0;
     background: transparent;
+}
+
+.ant-list-item-meta-title{
+    max-width: 480px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }

@@ -55,7 +55,8 @@ class Walletcreate extends React.Component{
     })
   }
   createWallet = () => {
-    if(!this.notNull()) return;
+    if(!this.onVerify())return;
+
     var _this = this,_pass = this.refs.sPass.input.value;
     this.setState({ iconLoading: true });
     if(!_pass) return;
@@ -74,7 +75,7 @@ class Walletcreate extends React.Component{
       if(_data.msgType === 3){
         message.success("钱包已创建",2);
       }else{
-        message.info("钱包文件选择错误，请检查后重试",2);
+        message.info("钱包创建失败，请检查后重试",2);
       }
     })
     .catch(function (error) {
@@ -89,7 +90,9 @@ class Walletcreate extends React.Component{
 
     if(_fpass !== _spass){
         message.info('两次输入不一致，请确认后输入',2);
+        return false;
     }
+    return true;
   }
   render = () =>{
     return (
@@ -110,7 +113,7 @@ class Walletcreate extends React.Component{
               placeholder="输入密码"
               data-value="输入密码"
               onKeyUp={this.toTrim} 
-              onBlur={this.notNull} 
+              onBlur={this.onVerify} 
               ref="fPass"
             />
           </Col>
@@ -128,8 +131,11 @@ class Walletcreate extends React.Component{
             />
           </Col>
         </Row>
-        <Button className="mt3" type="primary" onClick={this.createWallet} loading={this.state.iconLoading} ref="create">创建钱包</Button>
-        <p className="mt3 mb2"><small>因钱包较为隐私，在选择已有文件的情况下，不会进行覆盖操作。<br />如需要删除原始钱包文件，请手动删除。</small></p>
+        <Button type="primary" onClick={this.createWallet} loading={this.state.iconLoading} ref="create">创建钱包</Button>
+        <p className="mt3 mb2">
+          <small>因钱包较为私密，在选择已有文件的情况下，不会进行覆盖操作。<br />
+          如需要删除原始钱包文件，请手动删除。</small>
+        </p>
       </div>
     )
   }

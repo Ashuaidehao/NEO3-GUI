@@ -37,13 +37,13 @@ class Walletlayout extends React.Component{
     })
     .then(function (response) {
       var _data = response.data;
-      if(_data.msgType == -1){
+      if(_data.msgType === -1){
         message.info("请打开钱包",2);
         _this.setState({topath:"/wallet"});
         return;
       }
       _this.setState({isopen:true});
-      // _this.setState({topath:"/wallet/walletlist"});
+      _this.setState({topath:"/wallet/walletlist"});
     })
     .catch(function (error) {
       console.log(error);
@@ -61,7 +61,7 @@ class Walletlayout extends React.Component{
         <Sider style={{ height: '100%'}} >
           <Menu
             className="menu-scroll"
-            theme="dark"
+            theme="light"
             defaultSelectedKeys={['1']}
             defaultOpenKeys={['sub1']}
             mode="inline"
@@ -104,7 +104,7 @@ class Walletlayout extends React.Component{
                   <Link to="/wallet/walletlist">账户列表</Link>
                 </Menu.Item>
                 <Menu.Item key="2">
-                  <Link to="/wallet/transaction">交易列表</Link>
+                  <Link to="/wallet/transaction">交易记录</Link>
                 </Menu.Item>
                 <Menu.Item key="3">
                   <Link to="/wallet/transfer">转账</Link>

@@ -33,7 +33,7 @@ class Chainlayout extends React.Component{
           <Sider style={{ height: '100%'}} >
             <Menu
               className="menu-scroll"
-              theme="dark"
+              theme="light"
               defaultSelectedKeys={['1']}
               defaultOpenKeys={['sub1']}
               mode="inline"
@@ -50,9 +50,9 @@ class Chainlayout extends React.Component{
                   </span>
                 }
               >
-                <Menu.Item key="1" onClick={this.toPage}>区块</Menu.Item>
-                <Menu.Item key="2" onClick={this.toPage}>交易记录</Menu.Item>
-                <Menu.Item key="3" onClick={this.toPage}>资产</Menu.Item>
+                <Menu.Item key="1" onClick={this.toPage}><Link to="/chain">区块</Link></Menu.Item>
+                <Menu.Item key="2" onClick={this.toPage}><Link to="/chain/transaction">交易</Link></Menu.Item>
+                <Menu.Item key="3" onClick={this.toPage}><Link to="/chain/asset">资产</Link></Menu.Item>
               </SubMenu>
             </Menu>
             <MenuDown />

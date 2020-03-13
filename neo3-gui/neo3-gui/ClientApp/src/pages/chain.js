@@ -23,7 +23,7 @@ class Chain extends React.Component{
       <div>
         <Layout style={{ minHeight: 'calc( 100vh - 35px )' }}>
           <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
-            <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
+            <Menu theme="light" mode="inline" defaultSelectedKeys={['1']}>
               <Menu.Item key="1">
                 <Icon type="radius-setting" />
                 <span>区块</span>

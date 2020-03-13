@@ -34,8 +34,27 @@ class menuDown extends React.Component {
     }    
     logout = () => {
         axios.post('http://localhost:8081', {
-            "id": "1234",
-            "method": "CloseWallet"
+            "id": "1",
+            "method": "ShowGas"
+        })
+        .then(function (response) {
+            var _data = response.data;
+            if(_data.msgType === -1){
+                _this.setState({showOut:false})
+            }else{
+                _this.setState({showOut:true})
+            }
+        })
+        .catch(function (error) {
+            console.log(error);
+            console.log("error");
+        });
+    }
+    logout = () =>{
+        var _this = this;
+        axios.post('http://localhost:8081', {
+          "id": "1234",
+          "method": "CloseWallet"
         })
             .then(()=> {
                 message.success("钱包退出成功", 2);

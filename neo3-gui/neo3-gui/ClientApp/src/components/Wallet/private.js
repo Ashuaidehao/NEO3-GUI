@@ -113,12 +113,13 @@ class Walletprivate extends React.Component{
           <Input id="privateKey" value="L5EiKcecQfapmWKNatnZo1Zi6732kyDUNAZr618mdBAbPVS3M6cL" disabled={this.state.showElem} placeholder="导入HEX/WIF格式私钥" onKeyUp={this.toTrim} data-value="私钥"/>
           {!this.state.showElem?(
             <div>
-              <Button onClick={this.veriPrivate}>下一步</Button>
+              <Button className="mt3" onClick={this.veriPrivate}>下一步</Button>
             </div>
           ):null}
           {this.state.showElem?(
             <div>
-                <Divider>钱包保存</Divider>
+                <Button className="mt3" onClick={this.changeTab}>上一步</Button>
+                <Divider>保存钱包</Divider>
                 <Walletcreate priclass="pri-class" cname="pri-pass" private={this.state.private}/>
             </div>
           ):null}
