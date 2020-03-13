@@ -15,3 +15,39 @@
     background:rgba(0, 0, 0, 0.1);
     border-radius: 10px;
 }
+.trans-ul{
+    list-style: none;
+    padding-left: 0;
+}
+.trans-ul li{
+    border-top: 1px dotted #EEEEEE;
+}
+.trans-ul li:first-child{
+    border-top: none;
+}
+.trans-title{
+    font-size: 14px;
+    color: #333333;
+    padding-top: 8px;
+    margin-bottom: 10px;
+}
+.trans-area{
+    margin-top: 5px;
+}
+.trans-area label{
+    display: inline-block;
+    width: 120px;
+}
+.trans-area input{
+    width: 320px;
+    margin-bottom: 5px;
+}
+.trans-text{
+    word-break: break-all;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 400;
+}
+.trans-ul button{
+    padding: 3px 0px;
+}
