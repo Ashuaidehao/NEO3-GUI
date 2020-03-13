@@ -141,28 +141,20 @@ namespace Neo.Common.Storage
         /// <returns></returns>
         public PageList<TransferInfo> FindTransactions(TrackFilter filter)
         {
-            if (filter.PageIndex.HasValue)
+            var query = BuildQuery(filter);
+            var pageList = new PageList<TransferInfo>();
+            var pageIndex = filter.PageIndex <= 0 ? 0 : filter.PageIndex - 1;
+            pageList.TotalCount = query.GroupBy(q => q.TxId).Count();
+            pageList.PageIndex = pageIndex + 1;
+            pageList.PageSize = filter.PageSize;
+            if (filter.PageSize > 0)
             {
-                var query = BuildQuery(filter);
-                var pageList = new PageList<TransferInfo>();
-                var pageIndex = filter.PageIndex <= 0 ? 0 : filter.PageIndex.Value - 1;
-                pageList.TotalCount = query.GroupBy(q => q.TxId).Count();
-                pageList.PageIndex = pageIndex + 1;
-                pageList.PageSize = filter.PageSize;
-                if (filter.PageSize > 0)
-                {
-                    var txIds = query.OrderByDescending(q => q.Time).GroupBy(q => q.TxId).Select(g => g.Key)
-                        .Skip(pageIndex * filter.PageSize)
-                        .Take(filter.PageSize).ToList();
-                    pageList.List.AddRange(query.Where(q => txIds.Contains(q.TxId)).OrderByDescending(r => r.Time).ToList().Select(ToNep5TransferInfo));
-                }
-
-                return pageList;
+                var txIds = query.OrderByDescending(q => q.Time).GroupBy(q => q.TxId).Select(g => g.Key)
+                    .Skip(pageIndex * filter.PageSize)
+                    .Take(filter.PageSize).ToList();
+                pageList.List.AddRange(query.Where(q => txIds.Contains(q.TxId)).OrderByDescending(r => r.Time).ToList().Select(ToNep5TransferInfo));
             }
-            else
-            {
-                return FindTransfer(filter);
-            }
+            return pageList;
         }
 
 
@@ -175,22 +167,14 @@ namespace Neo.Common.Storage
         {
             var query = BuildQuery(filter);
             var pageList = new PageList<TransferInfo>();
-            if (filter.PageIndex.HasValue)
+            var pageIndex = filter.PageIndex <= 0 ? 0 : filter.PageIndex - 1;
+            pageList.TotalCount = query.Count();
+            pageList.PageIndex = pageIndex + 1;
+            pageList.PageSize = filter.PageSize;
+            if (filter.PageSize > 0)
             {
-                var pageIndex = filter.PageIndex <= 0 ? 0 : filter.PageIndex.Value - 1;
-                pageList.TotalCount = query.Count();
-                pageList.PageIndex = pageIndex + 1;
-                pageList.PageSize = filter.PageSize;
-                if (filter.PageSize > 0)
-                {
-                    pageList.List.AddRange(query.OrderByDescending(r => r.Time).Skip(pageIndex * filter.PageSize)
-                        .Take(filter.PageSize).ToList().Select(ToNep5TransferInfo));
-                }
-            }
-            else
-            {
-                pageList.List.AddRange(query.OrderByDescending(r => r.Time).ToList().Select(ToNep5TransferInfo));
-                pageList.TotalCount = pageList.List.Count;
+                pageList.List.AddRange(query.OrderByDescending(r => r.Time).Skip(pageIndex * filter.PageSize)
+                    .Take(filter.PageSize).ToList().Select(ToNep5TransferInfo));
             }
             return pageList;
         }

@@ -516,7 +516,7 @@ namespace Neo
 
 
 
-        public static TransferNotifyItem GetTransferNotify(this VmArray notifyArray,UInt160 asset)
+        public static TransferNotifyItem GetTransferNotify(this VmArray notifyArray, UInt160 asset)
         {
             if (notifyArray.Count < 4) return null;
             // Event name should be encoded as a byte array.
@@ -547,7 +547,7 @@ namespace Neo
             var amountItem = notifyArray[3];
             if (amountItem.NotVmByteArray() && amountItem.NotVmInt()) return null;
 
-            var transfer=new TransferNotifyItem()
+            var transfer = new TransferNotifyItem()
             {
                 Asset = asset,
                 From = fromBytes == null ? null : new UInt160(fromBytes),
@@ -662,6 +662,25 @@ namespace Neo
             return tran;
         }
 
+        /// <summary>
+        /// convert to AddressBalanceModel list
+        /// </summary>
+        /// <param name="balances"></param>
+        /// <returns></returns>
+        public static List<AddressBalanceModel> ToAddressBalanceModels(this ILookup<UInt160, BalanceInfo> balances)
+        {
+            return balances.Select(b => new AddressBalanceModel()
+            {
+                AddressHash = b.Key,
+                Balances = b.Select(assetBalance => new AssetBalanceModel()
+                {
+                    Asset = assetBalance.Asset,
+                    Symbol = assetBalance.AssetSymbol,
+                    Balance = new BigDecimal(assetBalance.Balance, assetBalance.AssetDecimals),
+                }).ToList(),
+            }).ToList();
+        }
+
 
         public static BigDecimal ToNeo(this BigInteger amount)
         {
@@ -670,7 +689,7 @@ namespace Neo
 
         public static BigDecimal ToGas(this BigInteger amount)
         {
-            return new BigDecimal(amount,NativeContract.GAS.Decimals);
+            return new BigDecimal(amount, NativeContract.GAS.Decimals);
         }
 
 

@@ -7,38 +7,57 @@ import stores from "./store/stores";
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.initWebSocket();
+
+  }
+
+
+  initWebSocket = () => {
+    console.log("connecting");
     this.ws = new WebSocket('ws://127.0.0.1:8081');
 
     this.ws.onopen = () => {
       console.log('opened');
     };
 
-    this.ws.onclose = function (e) {
-      console.log(e);
-      console.log("closed");
+    this.ws.onclose = (e) => {
+      console.log("closed:", e);
+      this.reconnectWebSocket();
     }
 
-    this.ws.onerror = function (e) {
-      console.log("error" + e);
+    this.ws.onerror = (e) => {
+      console.log("error:", e);
     }
 
-    this.ws.onmessage = (message) => {
-      var msg = JSON.parse(message.data);
-      switch (msg.method) {
-        case "getSyncHeight":
-          stores.blockSyncStore.setHeight(msg.result);
-          break;
-        case "getWalletBalance":
-          stores.walletAddressStore.setAccounts(msg.result);
-          break;
-        default:
-          break;
-      }
-      // var myEvent = new CustomEvent('wsMessage', {
-      //     detail: JSON.parse(message.data),
-      // });
-      // window.dispatchEvent(myEvent);
-    };
+    this.ws.onmessage = this.processMessage;
+  };
+
+
+  reconnectWebSocket = () => {
+    let self = this;
+    if (self.lock) {
+      return;
+    }
+    self.lock = true;
+    setTimeout(() => {
+      self.initWebSocket();
+      self.lock = false;
+    }, 3000);
+  }
+
+
+  processMessage = (message) => {
+    var msg = JSON.parse(message.data);
+    switch (msg.method) {
+      case "getSyncHeight":
+        stores.blockSyncStore.setHeight(msg.result);
+        break;
+      case "getWalletBalance":
+        stores.walletStore.setAccounts(msg.result);
+        break;
+      default:
+        break;
+    }
   }
 
   render() {
@@ -51,5 +70,6 @@ class App extends React.Component {
     );
   }
 }
+
 
 export default App;
