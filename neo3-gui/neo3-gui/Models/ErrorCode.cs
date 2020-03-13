@@ -4,45 +4,59 @@ namespace Neo.Models
 {
     public enum ErrorCode
     {
-        [Description("invalid parameter")]
+        [Description("Invalid parameter.")]
         InvalidPara = 20000,
-        [Description("Wallet file is not exist!")]
+        [Description("Wallet file is not exist.")]
         WalletFileNotFound = 20001,
         [Description("Wrong password")]
         WrongPassword = 20002,
-        [Description("failed to open the wallet")]
+        [Description("Failed to open the wallet.")]
         FailToOpenWallet = 20003,
-        [Description("wallet should be open first!")]
+        [Description("Wallet should be open first.")]
         WalletNotOpen = 20004,
-        [Description("method not found!")]
+        [Description("Method not found.")]
         MethodNotFound = 20005,
-        [Description("parameter cannot be empty!")]
+        [Description("Parameter cannot be empty.")]
         ParameterIsNull = 20006,
-        [Description("invalid private key!")]
+        [Description("Invalid private key.")]
         InvalidPrivateKey = 20007,
-        [Description("transaction is not exist!")]
+        [Description("Transaction is not exist.")]
         TxIdNotFound = 20008,
-        [Description("address is not exist!")]
+        [Description("Address is not exist.")]
         AddressNotFound = 20009,
-        [Description("address's private key is not exist here!")]
+        [Description("Address's private key is not exist here.")]
         AddressNotFoundPrivateKey = 20010,
-        [Description("the block height is invalid")]
+        [Description("The block height is invalid.")]
         BlockHeightInvalid = 20011,
-        [Description("the block hash is invalid")]
+        [Description("The block hash is invalid.")]
         BlockHashInvalid = 20012,
-        [Description("balance is not enough")]
+        [Description("Balance is not enough.")]
         BalanceNotEnough = 20013,
-        [Description("sign fail")]
+        [Description("Sign fail.")]
         SignFail = 20014,
-        [Description("create multi address fail!")]
+        [Description("Create multi address fail.")]
         CreateMultiContractFail = 20015,
-        [Description("create contract address fail!")]
+        [Description("Create contract address fail.")]
         CreateContractAddressFail = 20016,
-        [Description("cliam gas fail!")]
+        [Description("Cliam gas fail.")]
         ClaimGasFail = 20017,
-        [Description("Insufficient GAS")]
+        [Description("Insufficient GAS.")]
         GasNotEnough = 20018,
-        [Description("Transfer Error")]
-        TransferError =20019,
+        [Description("Transfer Error.")]
+        TransferError = 20019,
+        [Description("File does not exist.")]
+        FileNotExist = 20020,
+        [Description("Transaction exceed MaxTransactionSize.")]
+        ExceedMaxTransactionSize = 20021,
+        [Description("Invalid opcode.")]
+        InvalidOpCode = 20022,
+        [Description("Invalid ContractScript.")]
+        InvalidContractScript = 20023,
+        [Description("Manifest file is invalid Json file.")]
+        InvalidManifestFile = 20024,
+        [Description("Nef file is invalid file.")]
+        InvalidNefFile = 20025,
+        [Description("Engine faulted.")]
+        EngineFault = 20026,
     }
 }

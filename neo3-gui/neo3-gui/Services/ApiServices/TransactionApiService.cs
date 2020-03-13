@@ -37,10 +37,11 @@ namespace Neo.Services.ApiServices
                 Header header = Blockchain.Singleton.GetHeader(txState.BlockIndex);
                 transactionModel.BlockHash = header.Hash;
                 transactionModel.BlockHeight = txState.BlockIndex;
+                transactionModel.Timestamp = header.Timestamp;
                 transactionModel.Confirmations = Blockchain.Singleton.Height - header.Index + 1;
             }
             using var db = new TrackDB();
-            var trans = db.FindTransfer(new TrackFilter() { TxIds = new List<UInt256>() { txId } }).List;
+            var trans = db.FindTransfer(new TrackFilter() { TxIds = new List<UInt256>() { txId }, PageSize = int.MaxValue }).List;
             transactionModel.Transfers = trans.Select(tx => tx.ToTransferModel()).ToList();
             var notifies = db.GetNotifyEventsByTxId(txId);
             if (notifies.NotEmpty())

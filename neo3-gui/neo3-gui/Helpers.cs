@@ -12,6 +12,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Akka.Actor;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Neo.Common;
@@ -24,6 +25,8 @@ using Neo.Ledger;
 using Neo.Models;
 using Neo.Models.Transactions;
 using Neo.Models.Wallets;
+using Neo.Network.P2P;
+using Neo.Network.P2P.Payloads;
 using Neo.Persistence;
 using Neo.Services;
 using Neo.SmartContract;
@@ -58,6 +61,59 @@ namespace Neo
             }
         };
 
+
+        /// <summary>
+        /// broadcast transaction and cache
+        /// </summary>
+        /// <param name="tx"></param>
+        /// <returns></returns>
+        public static async Task Broadcast(this Transaction tx)
+        {
+            Program.Starter.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+            var task = Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
+        }
+
+
+
+        /// <summary>
+        /// safe serialize signContext to avoid encoding issues
+        /// </summary>
+        /// <param name="signContext"></param>
+        /// <returns></returns>
+        public static string SafeSerialize(this ContractParametersContext signContext)
+        {
+            return signContext.ToJson().SerializeJson();
+        }
+
+
+        /// <summary>
+        /// append sign to signContext
+        /// </summary>
+        /// <param name="wallet"></param>
+        /// <param name="signContext"></param>
+        /// <returns></returns>
+        public static bool SignContext(this Wallet wallet, ContractParametersContext signContext)
+        {
+            wallet.Sign(signContext);
+            return signContext.Completed;
+        }
+
+        /// <summary>
+        /// sign transaction
+        /// </summary>
+        /// <param name="wallet"></param>
+        /// <param name="tx"></param>
+        /// <returns></returns>
+        public static (bool, ContractParametersContext) TrySignTx(this Wallet wallet, Transaction tx)
+        {
+            var context = new ContractParametersContext(tx);
+            var signResult = wallet.SignContext(context);
+            if (signResult)
+            {
+                tx.Witnesses = context.GetWitnesses();
+            }
+            return (signResult, context);
+        }
 
 
         /// <summary>

@@ -9,6 +9,7 @@ using Akka.Actor;
 using Neo.Common;
 using Neo.Common.Storage;
 using Neo.Common.Utility;
+using Neo.IO.Json;
 using Neo.Ledger;
 using Neo.Models;
 using Neo.Models.Transactions;
@@ -409,15 +410,12 @@ namespace Neo.Services.ApiServices
                 {
                     return Error(ErrorCode.ClaimGasFail);
                 }
-                ContractParametersContext context = new ContractParametersContext(tx);
-                CurrentWallet.Sign(context);
-                if (!context.Completed)
+                var (signSuccess, context) = CurrentWallet.TrySignTx(tx);
+                if (!signSuccess)
                 {
-                    return Error(ErrorCode.SignFail, $"SignatureContext:{context}");
+                    return Error(ErrorCode.SignFail, context.SafeSerialize());
                 }
-                tx.Witnesses = context.GetWitnesses();
-                Program.Starter.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
-                var task = Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
+                await tx.Broadcast();
                 return new TransactionModel(tx);
             }
             catch (Exception ex)
@@ -496,17 +494,13 @@ namespace Neo.Services.ApiServices
                     return Error(ErrorCode.BalanceNotEnough, "Insufficient funds");
                 }
 
-                ContractParametersContext context = new ContractParametersContext(tx);
-                CurrentWallet.Sign(context);
-                if (!context.Completed)
+                var (signSuccess, context) = CurrentWallet.TrySignTx(tx);
+                if (!signSuccess)
                 {
-                    return Error(ErrorCode.SignFail, $"SignatureContext:{context}");
+                    return Error(ErrorCode.SignFail, context.SafeSerialize());
                 }
-                tx.Witnesses = context.GetWitnesses();
-                Program.Starter.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
-                var task = Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
+                await tx.Broadcast();
                 return new TransactionModel(tx);
-
             }
             catch (Exception ex)
             {
@@ -580,15 +574,12 @@ namespace Neo.Services.ApiServices
                     return Error(ErrorCode.BalanceNotEnough, "Insufficient funds");
                 }
 
-                ContractParametersContext context = new ContractParametersContext(tx);
-                CurrentWallet.Sign(context);
-                if (!context.Completed)
+                var (signSuccess, context) = CurrentWallet.TrySignTx(tx);
+                if (!signSuccess)
                 {
-                    return Error(ErrorCode.SignFail, $"SignatureContext:{context}");
+                    return Error(ErrorCode.SignFail, context.SafeSerialize());
                 }
-                tx.Witnesses = context.GetWitnesses();
-                Program.Starter.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
-                var task = Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
+                await tx.Broadcast();
                 return new TransactionModel(tx);
             }
             catch (Exception ex)
@@ -601,6 +592,35 @@ namespace Neo.Services.ApiServices
             }
         }
 
+
+        /// <summary>
+        /// append signature for multi address tx
+        /// </summary>
+        /// <param name="signContext"></param>
+        /// <returns></returns>
+        public async Task<object> AppendSignature(string signContext)
+        {
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+
+            ContractParametersContext context;
+            try
+            {
+                context = ContractParametersContext.FromJson(signContext.DeserializeJson<JObject>());
+            }
+            catch (Exception e)
+            {
+                return Error(ErrorCode.InvalidPara);
+            }
+
+            if (CurrentWallet.SignContext(context))
+            {
+                return context.SafeSerialize();
+            }
+            return Error(ErrorCode.SignFail, context.SafeSerialize());
+        }
 
         /// <summary>
         /// get my unconfirmed transactions
@@ -667,7 +687,10 @@ namespace Neo.Services.ApiServices
             var balances = db.FindAssetBalance(new BalanceFilter() { Addresses = addresses, Assets = assets });
 
             var result = balances.ToLookup(b => b.Address).ToAddressBalanceModels();
-            AppendDefaultNeoAndGas(result, addresses);
+            if (assets.IsEmpty())
+            {
+                AppendDefaultNeoAndGas(result, addresses);
+            }
             return result;
         }
 
@@ -695,7 +718,10 @@ namespace Neo.Services.ApiServices
                 Symbol = g.Key.AssetSymbol,
                 Balance = new BigDecimal(g.Select(b => b.Balance).Sum(), g.Key.AssetDecimals)
             }).ToList();
-            AppendDefaultNeoAndGas(result);
+            if (assets.IsEmpty())
+            {
+                AppendDefaultNeoAndGas(result);
+            }
             return result;
         }
 

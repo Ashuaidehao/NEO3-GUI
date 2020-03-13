@@ -135,6 +135,15 @@ namespace Neo.Common
                     Message = ex.Message,
                 };
             }
+            catch (WsException wsEx)
+            {
+                message.MsgType = WsMessageType.Error;
+                message.Error = new WsError()
+                {
+                    Code = wsEx.Code,
+                    Message = wsEx.Message,
+                };
+            }
             catch (Exception e)
             {
                 message.MsgType = WsMessageType.Error;
@@ -143,7 +152,6 @@ namespace Neo.Common
                     Code = -1,
                     Message = e.ToString(),
                 };
-
             }
             finally
             {
