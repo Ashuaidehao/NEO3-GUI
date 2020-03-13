@@ -1,35 +1,38 @@
-/* eslint-disable */ 
+/* eslint-disable */
 import React from 'react';
+import { observer, inject } from "mobx-react";
 import 'antd/dist/antd.css';
-import { Redirect } from 'react-router-dom';
 import { message } from 'antd';
 import axios from 'axios';
 import {
     LogoutOutlined,
     KeyOutlined,
     SettingOutlined
-  } from '@ant-design/icons';
+} from '@ant-design/icons';
+import { withRouter } from "react-router-dom";
 
-class menuDown extends React.Component{
-    constructor (props){
+
+
+@inject("walletStore")
+@observer
+@withRouter
+class menuDown extends React.Component {
+    constructor(props) {
         super(props);
         this.state = {
-            showOut:false,
-            showPass:false,
-            isOut:false
+            showPass: false
         };
+
     }
-    componentDidMount () {
-        this.checkWallet();
+    componentDidMount() {
         this.showPass();
     }
-    showPass = () =>{
+    showPass = () => {
         let _path = location.href.search(/wallet/g);
-        if(_path <= -1) return;
-        this.setState({showPass:true});
-    }
-    checkWallet = () =>{
-        var _this = this;
+        if (_path <= -1) return;
+        this.setState({ showPass: true });
+    }    
+    logout = () => {
         axios.post('http://localhost:8081', {
             "id": "1",
             "method": "ShowGas"
@@ -53,33 +56,30 @@ class menuDown extends React.Component{
           "id": "1234",
           "method": "CloseWallet"
         })
-        .then(function () {
-          message.success("钱包退出成功",2);
-          _this.setState({
-            isOut:true
-          })
-        })
-        .catch(function (error) {
-          console.log(error);
-          console.log("error");
-        });
+            .then(()=> {
+                message.success("钱包退出成功", 2);
+                this.props.walletStore.logout();
+                this.props.history.push('/');
+            })
+            .catch(function (error) {
+                console.log(error);
+                console.log("error");
+            });
     }
-    render(){
-        if(this.state.isOut){
-            return (<Redirect to="/" />);
-        }
+    render() {
+        const walletOpen = this.props.walletStore.isOpen;
+
         return (
             <div className="menu-down">
                 <ul>
-                    {this.props.isl === true?this.state.showOut=true:null}
-                    {this.state.showOut?(
-                    <li>
-                        <a onClick={this.logout}>
-                        <LogoutOutlined />
-                        <span>登出钱包</span>
-                        </a>
-                    </li>
-                    ):null}
+                    {walletOpen ? (
+                        <li>
+                            <a onClick={this.logout}>
+                                <LogoutOutlined />
+                                <span>登出钱包</span>
+                            </a>
+                        </li>
+                    ) : null}
                     {/* {this.state.showOut&&this.state.showPass?(
                     <li>
                         <a>
@@ -90,14 +90,14 @@ class menuDown extends React.Component{
                     ):null} */}
                     <li>
                         <a>
-                        <SettingOutlined />
-                        <span>设置</span>
+                            <SettingOutlined />
+                            <span>设置</span>
                         </a>
                     </li>
                 </ul>
             </div>
         )
     }
-} 
+}
 
 export default menuDown;

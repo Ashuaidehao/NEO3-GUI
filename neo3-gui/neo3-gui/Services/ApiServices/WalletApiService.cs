@@ -622,7 +622,7 @@ namespace Neo.Services.ApiServices
         /// query relate my wallet transactions(on chain)
         /// </summary>
         /// <returns></returns>
-        public async Task<object> GetMyTransactions(int limit = 100, UInt160 address = null)
+        public async Task<object> GetMyTransactions(int pageIndex = 1, int limit = 100, UInt160 address = null)
         {
             if (CurrentWallet == null)
             {
@@ -631,8 +631,15 @@ namespace Neo.Services.ApiServices
 
             var addresses = address != null ? new List<UInt160>() { address } : CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
             using var db = new TrackDB();
-            var trans = db.FindTransactions(new TrackFilter() { FromOrTo = addresses, PageIndex = 1, PageSize = limit }).List;
-            return trans.ToTransactionPreviewModel();
+            var trans = db.FindTransactions(new TrackFilter() { FromOrTo = addresses, PageIndex = pageIndex, PageSize = limit });
+            var result = new PageList<TransactionPreviewModel>
+            {
+                TotalCount = trans.TotalCount,
+                PageSize = trans.PageSize,
+                PageIndex = pageIndex,
+                List = trans.List?.ToTransactionPreviewModel(),
+            };
+            return result;
         }
 
         /// <summary>
@@ -659,8 +666,12 @@ namespace Neo.Services.ApiServices
             using var db = new TrackDB();
             var balances = db.FindAssetBalance(new BalanceFilter() { Addresses = addresses, Assets = assets });
 
-            return balances.OrderByDescending(b => b.Balance).Select(b => new AddressBalanceModel(b));
+            var result = balances.ToLookup(b => b.Address).ToAddressBalanceModels();
+            AppendDefaultNeoAndGas(result, addresses);
+            return result;
         }
+
+
 
         /// <summary>
         /// query relate my wallet balances
@@ -678,36 +689,94 @@ namespace Neo.Services.ApiServices
             using var db = new TrackDB();
             var balances = db.FindAssetBalance(new BalanceFilter() { Addresses = addresses, Assets = assets });
 
-            return balances.GroupBy(b => new { b.Asset, b.AssetDecimals, b.AssetSymbol }).Select(g => new AssetBalanceModel
+            var result = balances.GroupBy(b => new { b.Asset, b.AssetDecimals, b.AssetSymbol }).Select(g => new AssetBalanceModel
             {
                 Asset = g.Key.Asset,
                 Symbol = g.Key.AssetSymbol,
                 Balance = new BigDecimal(g.Select(b => b.Balance).Sum(), g.Key.AssetDecimals)
-            });
+            }).ToList();
+            AppendDefaultNeoAndGas(result);
+            return result;
         }
-
 
 
 
         #region Private
 
-        //private List<TransactionPreviewModel> ConvertToTransactionPreviewModel(IEnumerable<TransferInfo> trans)
-        //{
-        //    return trans.ToLookup(x => x.TxId).Select(ToTransactionPreviewModel).ToList();
-        //}
 
-        //private TransactionPreviewModel ToTransactionPreviewModel(IGrouping<UInt256, TransferInfo> lookup)
-        //{
-        //    var item = lookup.FirstOrDefault();
-        //    var model = new TransactionPreviewModel()
-        //    {
-        //        TxId = lookup.Key,
-        //        Timestamp = item.TimeStamp,
-        //        BlockHeight = item.BlockHeight,
-        //        Transfers = lookup.Select(x => x.ToTransferModel()).ToList(),
-        //    };
-        //    return model;
-        //}
+        /// <summary>
+        /// add neo or gas balance if not found
+        /// </summary>
+        /// <param name="list"></param>
+        private void AppendDefaultNeoAndGas(IList<AssetBalanceModel> list)
+        {
+            bool hasNeo = false;
+            bool hasGas = false;
+            foreach (var assetBalanceModel in list)
+            {
+                hasNeo ^= assetBalanceModel.Asset == NativeContract.NEO.Hash;
+                hasGas ^= assetBalanceModel.Asset == NativeContract.GAS.Hash;
+                if (hasNeo && hasGas)
+                {
+                    break;
+                }
+            }
+
+            if (!hasGas)
+            {
+                list.Insert(0, _defaultGasBalance);
+            }
+
+            if (!hasNeo)
+            {
+                list.Insert(0, _defaultNeoBalance);
+            }
+        }
+
+
+        /// <summary>
+        /// add neo or gas balance if not found
+        /// </summary>
+        /// <param name="list"></param>
+        private void AppendDefaultNeoAndGas(List<AddressBalanceModel> list, List<UInt160> addresses)
+        {
+            var lookup = list.ToLookup(l => l.AddressHash);
+            var unfoundAddreses = addresses.Except(lookup.Select(l => l.Key)).ToList();
+            foreach (var address in unfoundAddreses)
+            {
+                list.Add(new AddressBalanceModel()
+                {
+                    AddressHash = address,
+                    Balances = new List<AssetBalanceModel>() { _defaultNeoBalance, _defaultGasBalance }
+                });
+            }
+            foreach (var addressBalanceModel in list)
+            {
+                if (addressBalanceModel.Balances.All(b => b.Asset != NativeContract.NEO.Hash))
+                {
+                    addressBalanceModel.Balances.Add(_defaultNeoBalance);
+                }
+                if (addressBalanceModel.Balances.All(b => b.Asset != NativeContract.GAS.Hash))
+                {
+                    addressBalanceModel.Balances.Add(_defaultGasBalance);
+                }
+            }
+        }
+
+        private AssetBalanceModel _defaultNeoBalance = new AssetBalanceModel()
+        {
+            Asset = NativeContract.NEO.Hash,
+            Symbol = NativeContract.NEO.Symbol,
+            Balance = new BigInteger(0).ToNeo()
+        };
+
+        private AssetBalanceModel _defaultGasBalance = new AssetBalanceModel()
+        {
+            Asset = NativeContract.GAS.Hash,
+            Symbol = NativeContract.GAS.Symbol,
+            Balance = new BigInteger(0).ToGas()
+        };
+
 
 
         /// <summary>

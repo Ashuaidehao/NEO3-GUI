@@ -1,12 +1,13 @@
 import BlockSyncStore from "./blockSyncStore";
-import WalletAddressStore from "./walletAddressStore";
+import WalletStore from "./walletStore";
 
 let blockSyncStore = new BlockSyncStore();
-let walletAddressStore=new WalletAddressStore();
+let walletStore = new WalletStore();
 
 const Stores = {
-    blockSyncStore,
-    walletAddressStore
+    walletStore,
+    blockSyncStore
 };
 
+export { blockSyncStore, walletStore }
 export default Stores;

@@ -1,25 +1,22 @@
 /* eslint-disable */
-//just test replace wallet//
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { observer, inject } from "mobx-react";
 import axios from 'axios';
 import { Layout, message, Row, Col, List, Input, Avatar, Button, Typography } from 'antd';
+import '../../static/css/wallet.css'
 import Sync from '../sync';
 import Intitle from '../Common/intitle'
-import '../../static/css/wallet.css'
-import { observer, inject } from "mobx-react";
-
 
 const { Sider, Content } = Layout;
 
-@inject("walletAddressStore")
+@inject("walletStore")
 @observer
 class Walletlist extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       size: 'default',
-      accountlist: [],
       assetlist: [],
       iconLoading: false,
       gas: 0
@@ -30,6 +27,7 @@ class Walletlist extends React.Component {
     this.getAllasset();
     this.getGas();
   }
+
   getAllasset = () => {
     var _this = this;
     axios.post('http://localhost:8081', {
@@ -69,10 +67,7 @@ class Walletlist extends React.Component {
           console.log("需要先打开钱包再进入页面");
           return;
         }
-        _this.props.walletAddressStore.setAccounts(_data.result.accounts);
-        // _this.setState({
-        //   accountlist: _data.result.accounts
-        // })
+        _this.props.walletStore.setAccounts(_data.result.accounts);
       })
       .catch(function (error) {
         console.log(error);
@@ -88,7 +83,7 @@ class Walletlist extends React.Component {
       .then(function (response) {
         var _data = response.data;
         console.log(_data);
-        if (_data.msgType === -1) {
+        if (_data.msgType == -1) {
           console.log("需要先打开钱包再进入页面");
           return;
         }
@@ -133,6 +128,7 @@ class Walletlist extends React.Component {
           console.log("需要先打开钱包再进入页面");
           return;
         }
+        _this.props.walletStore.addAccount(_data.result);
       })
       .catch(function (error) {
         console.log(error);
@@ -186,8 +182,10 @@ class Walletlist extends React.Component {
   refresh = () => {
     location.href = location.origin + "/wallet/walletlist";
   }
-  render = () => {
-    const { accountlist, assetlist } = this.state;
+
+  render() {
+    const accounts = this.props.walletStore.accountlist;
+    const { assetlist } = this.state;
     return (
       <Layout className="gui-container">
         <Sync />
@@ -197,7 +195,7 @@ class Walletlist extends React.Component {
               <Intitle content="账户列表" show="true" />
               <List
                 itemLayout="horizontal"
-                dataSource={this.props.walletAddressStore.accountlist}
+                dataSource={accounts}
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
@@ -240,7 +238,7 @@ class Walletlist extends React.Component {
           </Row>
 
           <div className="mt1 pv3">
-            <Link to='/Wallet'>去钱包打开页面</Link>
+            <Link to='/Wallet'>去钱包打开页面</Link>           
           </div>
           <Button type="primary" className="mr2" onClick={this.refresh}>刷新界面</Button>
           <Button type="primary" onClick={this.addAddress}>创建新地址</Button>

@@ -8,7 +8,7 @@
 
         public bool WatchOnly { get; set; }
 
-        public string Neo { get; set; }
-        public string Gas { get; set; }
+        public string Neo { get; set; } = "0";
+        public string Gas { get; set; } = "0";
     }
 }

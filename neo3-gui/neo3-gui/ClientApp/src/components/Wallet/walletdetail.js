@@ -55,9 +55,11 @@ class Walletdetail extends React.Component{
         console.log("需要先打开钱包再进入页面");
         return;
       }else{
+        if(_data.result.length>0){
           _this.setState({
-            assetlist:_data.result
+            assetlist:_data.result[0]
           })
+        }         
       }
       console.log(_this.state)
     })
@@ -175,7 +177,7 @@ class Walletdetail extends React.Component{
                     header={<div>{address}</div>}
                     footer={<span></span>}
                     itemLayout="horizontal"
-                    dataSource={assetlist}
+                    dataSource={assetlist.balances}
                     renderItem={item => (
                     <List.Item className="wa-half">
                         <Typography.Text className="font-s">

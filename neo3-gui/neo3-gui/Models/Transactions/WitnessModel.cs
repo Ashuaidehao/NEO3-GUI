@@ -1,4 +1,5 @@
 ﻿using Neo.Network.P2P.Payloads;
+using Neo.Wallets;
 
 namespace Neo.Models.Transactions
 {
@@ -17,5 +18,7 @@ namespace Neo.Models.Transactions
         public byte[] VerificationScript { get; set; }
 
         public UInt160 ScriptHash { get; set; }
+
+        public string Address => ScriptHash?.ToAddress();
     }
 }
