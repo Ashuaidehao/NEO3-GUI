@@ -45,12 +45,12 @@ class Transaction extends React.Component{
     })
   }
   selTrans = (info) =>{
-    var _this = this,add = {};
+    // var _this = this,add = {};
     
-    let _hash = location.pathname.split(":")[1];
-    if(_hash){
-      console.log(111)
-    }
+    // let _hash = location.pathname.split(":")[1];
+    // if(_hash){
+    //   console.log(111)
+    // }
     info = info || ["GetMyTransactions"];
     if((this.state.translist.length+this.state.limit) >= this.state.allcount){
       this.setState({showEle:false})
