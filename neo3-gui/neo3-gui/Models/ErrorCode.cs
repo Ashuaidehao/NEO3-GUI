@@ -58,5 +58,9 @@ namespace Neo.Models
         InvalidNefFile = 20025,
         [Description("Engine faulted.")]
         EngineFault = 20026,
+        [Description("Failed execution contract.")]
+        ExecuteContractFail = 20027,
+        [Description("Unknown contract. ")]
+        UnknownContract = 20028,
     }
 }
