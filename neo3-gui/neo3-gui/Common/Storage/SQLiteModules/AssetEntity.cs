@@ -22,6 +22,8 @@ namespace Neo.Common.Storage.SQLiteModules
         public string Name { get; set; }
         public string Symbol { get; set; }
         public byte Decimals { get; set; }
+
+        public byte[] TotalSupply { get; set; }
      
     }
 }

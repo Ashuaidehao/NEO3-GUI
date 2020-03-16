@@ -85,7 +85,7 @@ namespace Neo.Common.Storage
             var old = _db.Assets.FirstOrDefault(a => a.Asset == assetScriptHash);
             if (old == null)
             {
-                old = new AssetEntity() { Hash = asset.Asset.ToArray(), Asset = assetScriptHash, Name = asset.Name, Symbol = asset.Symbol, Decimals = asset.Decimals };
+                old = new AssetEntity() { Hash = asset.Asset.ToArray(), Asset = assetScriptHash, Name = asset.Name, Symbol = asset.Symbol, Decimals = asset.Decimals,TotalSupply = asset.TotalSupply.ToByteArray()};
                 _db.Assets.Add(old);
                 _db.SaveChanges();
             }
