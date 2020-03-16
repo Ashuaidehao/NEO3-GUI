@@ -3,9 +3,6 @@ import '../../static/css/trans.css';
 import { Divider } from 'antd';
 
 class Translog extends React.Component{
-  constructor(props){
-    super(props);
-  }
   render = () =>{
     const {notifies,hash} = this.props;
     return (
