@@ -32,7 +32,10 @@ class Transcon extends React.Component{
     this.getTransdetail(res => {
       this.setState({
         hashdetail: res,
-        notifies: res.notifies
+        transfers: res.transfers,
+        witnesses:res.witnesses,
+        attributes:res.attributes,
+        notifies: res.notifies,
       });
     });
   }
@@ -91,7 +94,7 @@ class Transcon extends React.Component{
                       <Witlist witnesses={witnesses}/>
                     </TabPane>
                     <TabPane tab="交易日志" key="2">
-                      <Translog notifies={this.state.notifies} hash={hashdetail.blockHash}/>
+                      <Translog notifies={this.state.notifies} hash={hashdetail.txId}/>
                     </TabPane>
                   </Tabs>
                 </Col>
@@ -107,71 +110,81 @@ export default Transcon;
 
 
 const Detail = ({ hashdetail }) => (
-<Row>
+  <Row>
+    <div className="hash-title pa3"><span>Hash: &nbsp;&nbsp;&nbsp;</span>{hashdetail.txId}</div>
     {console.log(hashdetail)}
-    <div className="f-1 pa3 mt5 mb4"><span>Hash: &nbsp;&nbsp;&nbsp;</span>{hashdetail.blockHash}</div>
     <Col span={12}>
         <ul className="detail-ul">
-            <li><span>区块：</span><Link to={"/chain/detail:"+hashdetail.blockHeight}>{hashdetail.blockHeight}</Link></li>
-            <li><span>时间戳：</span>{hashdetail.timestamp}</li>
-            <li><span>网络费：</span>{hashdetail.networkFee?hashdetail.networkFee:'--'} GAS</li>
-            <li><span>确认数：</span>{hashdetail.confirmations}</li>
+            <li><span className="hint">区块：</span><Link to={"/chain/detail:"+hashdetail.blockHeight}>{hashdetail.blockHeight}</Link></li>
+            <li><span className="hint">时间戳：</span>{hashdetail.timestamp}</li>
+            <li><span className="hint">网络费：</span>{hashdetail.networkFee?hashdetail.networkFee:'--'} GAS</li>
+            <li><span className="hint">确认数：</span>{hashdetail.confirmations}</li>
         </ul>
     </Col>
     <Col span={12}>
         <ul className="detail-ul">
-            <li><span>大小：</span>{hashdetail.size} 字节</li>
-            <li><span>时间：</span>{hashdetail.blockTime}</li>
-            <li><span>系统费：</span>{hashdetail.networkFee} GAS</li>
-            <li><span>随机数：</span>{hashdetail.nonce}</li>
+            <li><span className="hint">大小：</span>{hashdetail.size} 字节</li>
+            <li><span className="hint">时间：</span>{hashdetail.blockTime}</li>
+            <li><span className="hint">系统费：</span>{hashdetail.networkFee} GAS</li>
+            <li><span className="hint">随机数：</span>{hashdetail.nonce}</li>
         </ul>
     </Col>
+    <div className="hash-title pv3"></div>
     <Divider></Divider>
 </Row>
 );
 const Translist = ({ transfers }) => (
     <Row>
-    {console.log(transfers)}
-        <Col span={24}>
-        <ul className="detail-ul">
+      <Col span={24}>
+        <div className="hash-title pa3 mt4 mb3">转账记录</div>
         {transfers.map((item,index)=>{
         return(
-            <li key={index}>
-            <span className="detail-add">{item.fromAddress?item.fromAddress:"--"}</span>
-            <ArrowRightOutlined/>
-            <span className="detail-add">{item.toAddress?item.toAddress:"--"}</span>
-            <span className="detail-amount text-r">{item.amount} {item.symbol}</span>
-            </li>
+          <ul className="detail-ul border-under" key={index}>
+            <li><span className="gray">转出</span><span className="detail-add">{item.fromAddress?item.fromAddress:"--"}</span></li>
+            <li><span className="gray">转入</span><span className="detail-add">{item.toAddress?item.toAddress:"--"}</span></li>
+            <li><span className="gray">金额</span><span className="detail-amount">{item.amount} {item.symbol}</span></li>
+          </ul>
         )
         })}
-        </ul>
         </Col>
     </Row>
 );
 const Attrlist = ({ attributes }) => (
-    <Row>
+  <Row>
     {console.log(attributes)}
-        <Col span={24}>
-            <ul className="detail-ul ul-invo">
-                <li><p><span className="font-n">attributes: </span>{attributes.data?attributes.data:"--"}</p></li>
-            </ul>
-        </Col>
-    </Row>
+    <Col span={24}>
+      <div className="hash-title pa3 mt4 mb4">属性</div>
+      <ul className="detail-ul ul-invo">
+        <li><p><span className="font-n">attributes: </span>{attributes.data?attributes.data:"--"}</p></li>
+      </ul>
+    </Col>
+    <Divider></Divider>
+  </Row>
 );
 const Witlist = ({ witnesses }) => (
-    <Row>
-    {console.log(witnesses)}
-        <Col span={24}>
-            <ul className="detail-ul ul-invo">
-                {witnesses.map((item,index)=>{
-                return(
-                    <li key={index}>
-                    <p><span className="font-n">invocation: </span>{item.invocationScript}</p>
-                    <p><span className="font-n">verification: </span>{item.verificationScript}</p>
-                    </li>
-                )
-                })}
-            </ul>
-        </Col>
+  <Row>
+      <Col span={24}>
+        <div className="hash-title pa3 mt4 mb4">见证人</div>
+        {witnesses.map((item,index)=>{
+          return(
+          <ul className="detail-ul border-under" key={index}>
+            <li>
+              <p>调用脚本</p>
+              <p className="trans-table">
+                <span><span className="trans-type">HEX</span></span>
+                <span>{item.invocationScript}</span>
+              </p>
+            </li>
+            <li>
+              <p>验证脚本</p>
+              <p className="trans-table">
+                <span><span className="trans-type">HEX</span></span>
+                <span>{item.verificationScript}</span>
+              </p>
+            </li>
+          </ul>
+        )
+        })}
+      </Col>
     </Row>
 );

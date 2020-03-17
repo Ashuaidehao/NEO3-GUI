@@ -71,24 +71,24 @@ class Blockdetail extends React.Component{
             <Col span={24} className="bg-white pv4">
               <Intitle className="mb2" content="区块信息"/>
               <div className="info-detail pv3">
-                <div className="pa3"><span>Hash: &nbsp;&nbsp;&nbsp;</span>{blockdetail.blockHash}</div>
+                <div className="f-1 pa3"><span>Hash: &nbsp;&nbsp;&nbsp;</span>{blockdetail.blockHash}</div>
                 <Row>
                     <Col span={12}>
                         <ul className="detail-ul">
-                            <li><span>高度：</span>{blockdetail.blockHeight}</li>
-                            <li><span>时间戳：</span>{blockdetail.blockTime}</li>
-                            <li><span>网络费：</span>{blockdetail.networkFee?blockdetail.networkFee:'--'}</li>
-                            <li><span>确认数：</span>{blockdetail.confirmations}</li>
-                            <li><span>上一区块：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight-1)} onClick={this.setHeight(blockdetail.blockHeight-1)}>{blockdetail.blockHeight-1}</Link></li>
+                            <li><span className="hint">高度：</span>{blockdetail.blockHeight}</li>
+                            <li><span className="hint">时间戳：</span>{blockdetail.blockTime}</li>
+                            <li><span className="hint">网络费：</span>{blockdetail.networkFee?blockdetail.networkFee:'--'}</li>
+                            <li><span className="hint">确认数：</span>{blockdetail.confirmations}</li>
+                            <li><span className="hint">上一区块：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight-1)} onClick={this.setHeight(blockdetail.blockHeight-1)}>{blockdetail.blockHeight-1}</Link></li>
                         </ul>
                     </Col>
                     <Col span={12}>
                         <ul className="detail-ul">
-                            <li><span>大小：</span>{blockdetail.blockHeight}</li>
-                            <li><span>随机数：</span>{nonce}</li>
-                            <li><span>系统费：</span>{blockdetail.networkFee?blockdetail.networkFee:'--'}</li>
-                            <li><span>见证人：</span>{witness}</li>
-                            <li><span>下一区块：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight+1)} onClick={this.setHeight(blockdetail.blockHeight+1)}>{blockdetail.blockHeight+1}</Link></li>
+                            <li><span className="hint">大小：</span>{blockdetail.blockHeight}</li>
+                            <li><span className="hint">随机数：</span>{nonce}</li>
+                            <li><span className="hint">系统费：</span>{blockdetail.networkFee?blockdetail.networkFee:'--'}</li>
+                            <li><span className="hint">见证人：</span>{witness}</li>
+                            <li><span className="hint">下一区块：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight+1)} onClick={this.setHeight(blockdetail.blockHeight+1)}>{blockdetail.blockHeight+1}</Link></li>
                         </ul>
                     </Col>
                 </Row>

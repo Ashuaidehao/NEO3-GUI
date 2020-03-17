@@ -23,12 +23,14 @@
     font-size: 12px;
     line-height: 24px;
     color: rgba(0,0,0,0.65);
-    margin-bottom: 8px;
-}
-.trans-ul li:first-child{
+    margin-top: 8px;
+    word-break: break-all;
 }
 .trans-ul .ant-divider-horizontal{
     margin-top: 12px;
+}
+.trans-ul button{
+    padding: 3px 0px;
 }
 .trans-title{
     font-size: 14px!important;
@@ -60,9 +62,6 @@
     line-height: 16px;
     font-weight: 400;
 }
-.trans-ul button{
-    padding: 3px 0px;
-}
 
 .tran-title{
     /* background: #333333; */
@@ -87,4 +86,32 @@
 .detail-ul li{
     padding-left: 12px;
     padding-right: 12px;
+    word-break: break-all;
+}
+.border-under{
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 12px;
+}
+
+.hash-title{
+    width: 100%;
+    color: rgba(0,0,0,0.85);
+    line-height: 22px;
+    letter-spacing: .05em;
+    margin-bottom: 7px;
+}
+.detail-ul li > p{
+    margin-bottom:4px;
+}
+
+.detail-ul .trans-table{
+    display: table-row;
+}
+.detail-ul .trans-table > span{
+    display: table-cell;
+    vertical-align: top;
+}
+.detail-ul .trans-table .trans-type{
+    margin-right: 12px;
+    min-width: 96px;
 }

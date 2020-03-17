@@ -84,6 +84,14 @@ class Transaction extends React.Component{
   };
   getAlltrans = callback => {
     var _this = this;
+    console.log({
+      "id":"51",
+      "method": "QueryTransactions",
+      "params":{
+        "pageIndex":_this.state.page,
+        "limit":_this.state.limit
+      }
+    })
     axios.post('http://localhost:8081', {
       "id":"51",
       "method": "QueryTransactions",
