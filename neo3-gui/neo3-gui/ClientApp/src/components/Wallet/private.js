@@ -110,7 +110,7 @@ class Walletprivate extends React.Component{
   render = () =>{
     return (
       <div>
-          <Input id="privateKey" value="L5EiKcecQfapmWKNatnZo1Zi6732kyDUNAZr618mdBAbPVS3M6cL" disabled={this.state.showElem} placeholder="导入HEX/WIF格式私钥" onKeyUp={this.toTrim} data-value="私钥"/>
+          <Input id="privateKey" disabled={this.state.showElem} placeholder="导入HEX/WIF格式私钥" onKeyUp={this.toTrim} data-value="私钥"/>
           {!this.state.showElem?(
             <div>
               <Button className="mt3" onClick={this.veriPrivate}>下一步</Button>

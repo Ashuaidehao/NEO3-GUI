@@ -23,6 +23,7 @@ import Transcon from '../components/Transaction/transcon';
 
 import Consensus from '../components/Consensus/consensus';
 import Consensuslayout from '../components/Consensus/consensuslayout';
+import Consensusdeploy from '../components/Consensus/deploy';
 
 import { Layout } from 'antd';
 
@@ -60,6 +61,7 @@ const BasicRoute = () => (
                 <Layout style={{ height: 'calc( 100vh )'}}>
                     <Route component={Consensuslayout} />
                     <Route exact path="/consensus" component={Consensus} />
+                    <Route exact path="/consensus/deploy" component={Consensusdeploy} />
                 </Layout>
             </Route>
             <Redirect from="*" to="/" />

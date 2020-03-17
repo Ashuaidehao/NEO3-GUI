@@ -8,7 +8,7 @@ import Translog from './translog';
 import Transdetail from './transdetail';
 import Intitle from '../Common/intitle';
 import Datatrans from '../Common/datatrans';
-
+import Sync from '../sync';
 import {ArrowRightOutlined,SwapOutlined} from '@ant-design/icons';
 
 const { Content } = Layout;
@@ -81,6 +81,7 @@ class Transcon extends React.Component{
     console.log(hashdetail);
     return (
       <Layout className="gui-container">
+        <Sync/>
           <Content className="mt3">
               <Row gutter={[30, 0]} className="mb1">
                   <Col span={24} className="bg-white pv4">
@@ -153,7 +154,7 @@ const Attrlist = ({ attributes }) => (
   <Row>
     {console.log(attributes)}
     <Col span={24}>
-      <div className="hash-title pa3 mt4 mb4">属性</div>
+      <div className="hash-title pa3 mt5 mb4">属性</div>
       <ul className="detail-ul ul-invo">
         <li><p><span className="font-n">attributes: </span>{attributes.data?attributes.data:"--"}</p></li>
       </ul>

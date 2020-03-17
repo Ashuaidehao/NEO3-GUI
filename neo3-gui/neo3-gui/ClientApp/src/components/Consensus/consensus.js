@@ -23,7 +23,6 @@ class Consensus extends React.Component{
     };
   }
   toHome = () =>{
-    location.href=location.origin;
   }
   toPage = (e) =>{
   }

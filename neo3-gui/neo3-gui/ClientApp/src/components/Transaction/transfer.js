@@ -19,6 +19,7 @@ import {  Layout } from 'antd';
 import Intitle from '../Common/intitle'
 import '../../static/css/wallet.css'
 import { Form, DatePicker, TimePicker } from 'antd';
+import Sync from '../sync';
 
 const { Option } = Select;
 const { Content } = Layout;
@@ -118,6 +119,7 @@ class Transfer extends React.Component{
     
     return (
       <Layout className="gui-container">
+        <Sync />
         <Content className="mt3">
         <Form name="time_related_controls" className="trans-form" onFinish={this.transfer}>
           <Row gutter={[30, 0]}  className="bg-white pv4" style={{ 'minHeight': 'calc( 100vh - 150px )'}}>
