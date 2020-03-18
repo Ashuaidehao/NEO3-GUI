@@ -51,11 +51,17 @@ namespace Neo.Services.ApiServices
             return transactionModel;
         }
 
-
-        public async Task<object> GetUnconfirmTransactions()
+        /// <summary>
+        /// get all unconfirmed transactions
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        public async Task<object> GetUnconfirmTransactions(int pageIndex = 1, int limit = 100)
         {
-            var tempTransactions = UnconfirmedTransactionCache.GetUnconfirmedTransactions();
-            return tempTransactions.Select(t => t.ToTransactionPreviewModel());
+            var tempTransactions = UnconfirmedTransactionCache.GetUnconfirmedTransactions(null, pageIndex, limit);
+            var result = tempTransactions.Project(t => t.ToTransactionPreviewModel());
+            return result;
         }
 
 
