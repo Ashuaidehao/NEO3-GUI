@@ -149,9 +149,9 @@ namespace Neo.Common.Storage
             pageList.PageSize = filter.PageSize;
             if (filter.PageSize > 0)
             {
-                var txIds = query.OrderByDescending(q => q.Time).GroupBy(q => q.TxId).Select(g => g.Key)
+                var txIds = query.GroupBy(q => new { q.TxId, q.Time }).OrderByDescending(g => g.Key.Time).Select(g => g.Key)
                     .Skip(pageIndex * filter.PageSize)
-                    .Take(filter.PageSize).ToList();
+                    .Take(filter.PageSize).Select(g => g.TxId).ToList();
                 pageList.List.AddRange(query.Where(q => txIds.Contains(q.TxId)).OrderByDescending(r => r.Time).ToList().Select(ToNep5TransferInfo));
             }
             return pageList;

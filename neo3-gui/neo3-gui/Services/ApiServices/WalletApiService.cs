@@ -623,10 +623,10 @@ namespace Neo.Services.ApiServices
         }
 
         /// <summary>
-        /// get my unconfirmed transactions
+        /// get my wallet unconfirmed transactions
         /// </summary>
         /// <returns></returns>
-        public async Task<object> GetMyUnconfirmedTransactions()
+        public async Task<object> GetMyUnconfirmedTransactions(int pageIndex = 1, int limit = 100)
         {
             if (CurrentWallet == null)
             {
@@ -634,8 +634,9 @@ namespace Neo.Services.ApiServices
             }
 
             var addresses = CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
-            var tempTransactions = UnconfirmedTransactionCache.GetUnconfirmedTransactions(addresses);
-            return tempTransactions.Select(t => t.ToTransactionPreviewModel());
+            var tempTransactions = UnconfirmedTransactionCache.GetUnconfirmedTransactions(addresses, pageIndex, limit);
+            var result = tempTransactions.Project(t => t.ToTransactionPreviewModel());
+            return result;
         }
 
         /// <summary>
