@@ -1,7 +1,8 @@
 /* eslint-disable */ 
 //just test replace wallet//
 import React from 'react';
-import {Link} from 'react-router-dom';
+import { observer, inject } from "mobx-react";
+import { withRouter, Link} from 'react-router-dom';
 import axios from 'axios';
 import { Layout, Icon, Row, Col, Modal,List, Button,Typography, message,Tag } from 'antd';
 import Intitle from '../Common/intitle';
@@ -14,6 +15,9 @@ const { Sider, Content } = Layout;
 
 const count = 5;
 
+@inject("walletStore")
+@observer
+@withRouter
 class Transaction extends React.Component{
   constructor(props){
     super(props);
@@ -21,6 +25,7 @@ class Transaction extends React.Component{
         page: 1,
         allpage:1,
         limit:15,
+        params:{},
         translist:[],
         loading: false,
         initLoading: true,
@@ -31,41 +36,76 @@ class Transaction extends React.Component{
   }
   componentDidMount() {
     this.setState({
-      loacl:location.pathname
+      loacl:location.pathname.split("/")[1]
     })
+    console.log(location.pathname.split("/")[1])
+    console.log(this.props.walletStore)
     // this.getAltrans(this.props.info?this.props.info:null);
-    this.getAlltrans(res => {
-      this.setState({
-        initLoading: false,
-        data: res.result.list,
-        translist: res.result.list,
-        page:this.state.page+1,
-        allcount: res.result.totalCount
-      },()=>{});
-    })
+
+    this.selTrans()
   }
-  selTrans = (info) =>{
-    // var _this = this,add = {};
-    
-    // let _hash = location.pathname.split(":")[1];
-    // if(_hash){
-    //   console.log(111)
-    // }
-    info = info || ["GetMyTransactions"];
-    if((this.state.translist.length+this.state.limit) >= this.state.allcount){
-      this.setState({showEle:false})
+  selTrans = () =>{
+    let _hash = location.pathname.split(":")[1]
+    let page = this.props.info?this.props.info:"all";
+    var _params;
+
+    if(page === "all"){
+      _params ={
+        "pageIndex":this.state.page,
+        "limit": this.state.limit
+      };
+      this.getAlltrans(_params,res => {
+        this.setState({
+          initLoading: false,
+          data: res.result.list,
+          translist: res.result.list,
+          page:this.state.page+1,
+          allcount: res.result.totalCount
+        },()=>{});
+      })
+    }else if(page === "blockdetail"){
+      _params ={
+        "pageIndex":this.state.page,
+        "limit": this.state.limit
+      };
+      _params.blockHeight = Number(_hash);
+      this.getAlltrans(_params,res => {
+        this.setState({
+          initLoading: false,
+          data: res.result.list,
+          translist: res.result.list,
+          page:this.state.page+1,
+          allcount: res.result.totalCount
+        },()=>{console.log(this.state.params)});
+      })
+    }else if(page === "walletdetail"){
+      _params ={
+        "pageIndex":this.state.page,
+        "limit": this.state.limit
+      };
+      _params.address = _hash;
+      this.getMytrans(_params,res => {
+        this.setState({
+          initLoading: false,
+          data: res.result.list,
+          translist: res.result.list,
+          page:this.state.page+1,
+          allcount: res.result.totalCount
+        },()=>{console.log(this.state.params)});
+      })
     }
 
+    this.setState({
+      params:_params
+    })
+    console.log(!!_hash)
   }
-  getMytrans = callback => {
+  getMytrans = (params,callback) => {
     var _this = this;
     axios.post('http://localhost:8081', {
       "id":"51",
       "method": "GetMyTransactions",
-      "params":{
-        "pageIndex":_this.state.page,
-        "limit": _this.state.limit
-      }
+      "params": params
     })
     .then(function (response) {
       var _data = response.data;
@@ -82,23 +122,12 @@ class Transaction extends React.Component{
       console.log("error");
     });
   };
-  getAlltrans = callback => {
+  getAlltrans = (params,callback) => {
     var _this = this;
-    console.log({
-      "id":"51",
-      "method": "QueryTransactions",
-      "params":{
-        "pageIndex":_this.state.page,
-        "limit":_this.state.limit
-      }
-    })
     axios.post('http://localhost:8081', {
       "id":"51",
       "method": "QueryTransactions",
-      "params":{
-        "pageIndex":_this.state.page,
-        "limit":_this.state.limit
-      }
+      "params": params
     })
     .then(function (response) {
       var _data = response.data;
@@ -115,12 +144,74 @@ class Transaction extends React.Component{
       console.log("error");
     });
   };
+  // getAlltrans = (num,callback) => {
+  //   console.log(num)
+  //   var _this = this;
+  //   console.log({
+  //     "id":"51",
+  //     "method": "QueryTransactions",
+  //     "params":{
+  //       "pageIndex":_this.state.page,
+  //       "limit":_this.state.limit
+  //     }
+  //   })
+  //   axios.post('http://localhost:8081', {
+  //     "id":"51",
+  //     "method": "QueryTransactions",
+  //     "params":{
+  //       "pageIndex":_this.state.page,
+  //       "limit":_this.state.limit
+  //     }
+  //   })
+  //   .then(function (response) {
+  //     var _data = response.data;
+  //     console.log(_data)
+  //     if(_data.msgType === -1){
+  //       message.error("查询失败");
+  //       return;
+  //     }else{
+  //       callback(_data);
+  //     }
+  //   })
+  //   .catch(function (error) {
+  //     console.log(error);
+  //     console.log("error");
+  //   });
+  // };
+  // loadMore = () =>{
+  //   this.selTrans();
+  //   this.setState({
+  //     loading: true,
+  //   });
+  //   this.getMytrans(res => {
+  //     const data = this.state.data.concat(res.result.list);
+  //     const _page = this.state.page + 1;
+  //     this.setState(
+  //       {
+  //         data:data,
+  //         translist: data,
+  //         loading: false,
+  //         page: _page
+  //       },
+  //       () => {
+  //         window.dispatchEvent(new Event('resize'));
+  //         console.log(this.state);
+  //       },
+  //     );
+  //   });
+  // }
+  madeParams = () =>{
+    return {
+      "pageIndex":this.state.page,
+      "limit": this.state.limit
+    };
+  }
   loadMore = () =>{
-    this.selTrans();
     this.setState({
       loading: true,
     });
-    this.getAlltrans(res => {
+    var _params = this.madeParams();
+    this.getAlltrans(_params,res => {
       const data = this.state.data.concat(res.result.list);
       const _page = this.state.page + 1;
       this.setState(
@@ -141,13 +232,14 @@ class Transaction extends React.Component{
     const {translist,loacl,initLoading,loading,showEle} = this.state;
     const loadMore = !initLoading && !loading && showEle ? (
       <div className="text-c mb3">
+        {/* <Button type="primary" onClick={this.loadMyMore}>加载更多</Button> */}
         <Button type="primary" onClick={this.loadMore}>加载更多</Button>
       </div>
     ) : null;
     return (
       <div>
         <Content className="mt3 mb4">
-        <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
+        <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': '120px'}}>
               <Col span={24} className="bg-white pv4">
               <Intitle content={this.props.content||"最新交易"}/>
               <List
@@ -161,7 +253,7 @@ class Transaction extends React.Component{
                 renderItem={item => (
                 <List.Item>
                     <List.Item.Meta
-                    title={<Link to={loacl+":"+item.txId} title="查看详情">{item.txId}</Link>}
+                    title={<Link to={"/"+loacl+"/transaction:"+item.txId} title="查看详情">{item.txId}</Link>}
                     description={
                     <div className="font-s">
                         From：<span className="w300 ellipsis">{item.transfers[0].fromAddress?item.transfers[0].fromAddress:"--"}</span><br></br>

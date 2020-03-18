@@ -16,8 +16,6 @@ import {
 const { confirm } = Modal;
 const { Content } = Layout;
 
-const info = ["GetMyTransactions"];
-
 class Walletdetail extends React.Component{
   constructor(props){
     super(props);
@@ -35,10 +33,7 @@ class Walletdetail extends React.Component{
   }
   checkAddress = () =>{
     let _add = location.pathname.split(":")[1];
-    this.setState({
-        address:_add
-    })
-    info.push(_add);
+    this.setState({address:_add})
   }
   getBalances = () =>{
     var _this = this;
@@ -192,7 +187,7 @@ class Walletdetail extends React.Component{
                 </div>
               </Col>
             </Row>
-            <Transaction info={info} content="交易列表"/>
+            <Transaction info="walletdetail"content="交易列表"/>
             </Content>
         </Layout>
     );

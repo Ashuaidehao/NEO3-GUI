@@ -13,7 +13,7 @@ class Blocktrans extends React.Component{
   render = () =>{
     return (
       <Layout className="gui-container">
-        <Transaction content="交易列表"/>
+        <Transaction content="交易列表" info="all" />
       </Layout>
     );
   }

@@ -9,6 +9,8 @@ import Transaction from '../Transaction/transaction';
 
 const { Content } = Layout;
 
+var info = ["blockdetail"]
+
 class Blockdetail extends React.Component{
   constructor(props){
     super(props);
@@ -63,7 +65,7 @@ class Blockdetail extends React.Component{
     }
   }
   render(){
-    const {blockdetail,witness,nonce,translist,local} = this.state;
+    const {blockdetail,witness,nonce} = this.state;
     return (
       <Layout className="gui-container">
           <Content className="mt3">
@@ -95,30 +97,9 @@ class Blockdetail extends React.Component{
               </div>
             </Col>
           </Row>
-          <Row className="mt3 mb1" gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
+          <Row className="mt3 mb1" gutter={[30, 0]} type="flex">
             <Col span={24} className="bg-white pv4">
-            <Intitle content="交易"/>
-            <List
-              header={<div><span>交易hash</span><span className="float-r ml4"><span className="wa-amount"></span>数量</span><span className="float-r">时间</span></div>}
-              footer={<span></span>}
-              itemLayout="horizontal"
-              dataSource={translist}
-              className="font-s"
-              renderItem={item => (
-              <List.Item>
-                  <List.Item.Meta
-                  title={<Link to={"/chain/transaction:"+item.txId} title="查看详情">{item.txId}</Link>}
-                  description={
-                  <div className="font-s">
-                      From：<span className="w300 ellipsis">{item.transfers[0].fromAddress?item.transfers[0].fromAddress:"--"}</span><br></br>
-                      To：<span className="w300 ellipsis" >{item.transfers[0].toAddress?item.transfers[0].toAddress:"--"}</span>
-                  </div>}
-                  />
-                  <Typography>{item.blockTime}</Typography>
-                  <Typography className="upcase ml4"><span className="wa-amount">{item.transfers[0].amount}</span>{item.transfers[0].symbol}</Typography>
-              </List.Item>
-              )}
-            />
+              <Transaction info="blockdetail"/>
             </Col>
           </Row>
         </Content>

@@ -6,7 +6,6 @@ import { message } from 'antd';
 import axios from 'axios';
 import {
     LogoutOutlined,
-    KeyOutlined,
     SettingOutlined
 } from '@ant-design/icons';
 import { withRouter } from "react-router-dom";

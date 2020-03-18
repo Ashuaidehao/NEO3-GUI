@@ -68,7 +68,6 @@ class Transfer extends React.Component{
     this.setState({
       selectadd:_this.state.accountlist[target]
     })
-
   }
   getAsset = () =>{
     this.setState({
