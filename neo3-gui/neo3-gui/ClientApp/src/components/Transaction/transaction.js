@@ -24,12 +24,12 @@ class Transaction extends React.Component{
     this.state = {
         page: 1,
         allpage:1,
-        limit:15,
+        limit:1,
         params:{},
         translist:[],
         loading: false,
         initLoading: true,
-        showEle:true,
+        showEle:false,
         data: [],
         loacl:"",
     };
@@ -93,12 +93,24 @@ class Transaction extends React.Component{
           allcount: res.result.totalCount
         },()=>{console.log(this.state.params)});
       })
+    }else if( page === "wallettrans"){
+      _params ={
+        "pageIndex":this.state.page,
+        "limit": this.state.limit
+      };
+      this.getMytrans(_params,res => {
+        this.setState({
+          initLoading: false,
+          data: res.result.list,
+          translist: res.result.list,
+          page:this.state.page+1,
+          allcount: res.result.totalCount
+        },()=>{console.log(this.state.params)});
+      })
     }
 
-    this.setState({
-      params:_params
-    })
-    console.log(!!_hash)
+    var last = this.state.allcount - (this.state.page * this.state.limit);
+    console.log(last);
   }
   getMytrans = (params,callback) => {
     var _this = this;
