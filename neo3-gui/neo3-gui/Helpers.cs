@@ -62,7 +62,7 @@ namespace Neo
         };
 
 
-        
+
         public static string GetVersion(this Assembly assembly)
         {
             CustomAttributeData attribute = assembly.CustomAttributes.FirstOrDefault(p => p.AttributeType == typeof(AssemblyInformationalVersionAttribute));
@@ -687,35 +687,29 @@ namespace Neo
         /// </summary>
         /// <param name="privateKey"></param>
         /// <returns></returns>
-        public static string TryGetPrivateKey(this string privateKey)
+        public static byte[] TryGetPrivateKey(this string privateKey)
         {
             if (privateKey.IsNull())
             {
                 return null;
             }
-
-            byte[] prikey = null;
             try
             {
-                prikey = Wallet.GetPrivateKeyFromWIF(privateKey);
-                return prikey.ToHexString();
+                return Wallet.GetPrivateKeyFromWIF(privateKey); 
             }
             catch (FormatException)
             {
             }
-
             if (privateKey.Length == 64)
             {
                 try
                 {
-                    prikey = privateKey.HexToBytes();
-                    return privateKey;
+                    return privateKey.HexToBytes();
                 }
                 catch (Exception e)
                 {
                 }
             }
-
             return null;
         }
 
