@@ -92,7 +92,7 @@ namespace Neo.Services.ApiServices
                     case ".db3":
                         {
                             UserWallet wallet = UserWallet.Create(path, password);
-                            var account = hexPrivateKey.NotNull() ? wallet.CreateAccount(hexPrivateKey.HexToBytes()) : wallet.CreateAccount();
+                            var account = hexPrivateKey.NotEmpty() ? wallet.CreateAccount(hexPrivateKey) : wallet.CreateAccount();
                             result.Accounts.Add(new AccountModel()
                             {
                                 AccountType = AccountType.Standard,
@@ -106,7 +106,7 @@ namespace Neo.Services.ApiServices
                         {
                             NEP6Wallet wallet = new NEP6Wallet(path);
                             wallet.Unlock(password);
-                            var account = hexPrivateKey.NotNull() ? wallet.CreateAccount(hexPrivateKey.HexToBytes()) : wallet.CreateAccount();
+                            var account = hexPrivateKey.NotEmpty() ? wallet.CreateAccount(hexPrivateKey) : wallet.CreateAccount();
                             wallet.Save();
                             result.Accounts.Add(new AccountModel()
                             {
@@ -296,28 +296,31 @@ namespace Neo.Services.ApiServices
         }
 
         /// <summary>
-        /// import wif private keys
+        /// import wif or hex private keys
         /// </summary>
-        /// <param name="wifs"></param>
+        /// <param name="keys"></param>
         /// <returns></returns>
-        public async Task<object> ImportWif(string[] wifs)
+        public async Task<object> ImportAccounts(string[] keys)
         {
             if (CurrentWallet == null)
             {
                 return Error(ErrorCode.WalletNotOpen);
             }
-            foreach (var wif in wifs)
+
+            var importKeys = new List<byte[]>();
+            foreach (var key in keys)
             {
-                var priKey = wif.TryGetPrivateKey();
-                if (priKey.IsNull())
+                var priKey = key.TryGetPrivateKey();
+                if (priKey.IsEmpty())
                 {
                     return Error(ErrorCode.InvalidPrivateKey);
                 }
+                importKeys.Add(priKey);
             }
             var importedAccounts = new List<AccountModel>();
-            foreach (var wif in wifs)
+            foreach (var privateKey in importKeys)
             {
-                var account = CurrentWallet.Import(wif);
+                var account = CurrentWallet.CreateAccount(privateKey);
                 importedAccounts.Add(new AccountModel
                 {
                     Address = account.Address,
