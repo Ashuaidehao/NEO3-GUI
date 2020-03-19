@@ -24,7 +24,7 @@ class Transaction extends React.Component{
     this.state = {
         page: 1,
         allpage:1,
-        limit:1,
+        limit:15,
         params:{},
         translist:[],
         loading: false,
