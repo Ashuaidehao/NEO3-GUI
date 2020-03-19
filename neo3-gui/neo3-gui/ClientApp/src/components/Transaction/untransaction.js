@@ -21,16 +21,17 @@ class Untransaction extends React.Component{
     this.setState({
       loacl:location.pathname
     })
-    this.getUnconfirmtrans(this.props.info?this.props.info:null);
+    this.getUnconfirmtrans(this.props.page?this.props.page:null);
   }
   getUnconfirmtrans = (info) =>{
     var _this = this,add = {};
     info = ["GetMyUnconfirmedTransactions"];
     axios.post('http://localhost:8081', {
       "id":"51",
-      "method": "GetMyUnconfirmedTransactions",
+      "method": "GetUnconfirmTransactions",
       "params": {
-        "limit":100
+        "pageIndex":1,
+        "limit":2
       }
     })
     .then(function (response) {
@@ -39,9 +40,9 @@ class Untransaction extends React.Component{
         message.error("未确认交易查询失败");
         return;
       }
-      _this.setState({
-        untranslist:_data.result
-      })
+      // _this.setState({
+      //   untranslist:_data.result
+      // })
     })
     .catch(function (error) {
       console.log(error);

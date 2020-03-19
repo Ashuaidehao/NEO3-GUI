@@ -6,6 +6,7 @@ import { Layout, Row, Col, message,List,Typography } from 'antd';
 import axios from 'axios';
 import Intitle from '../Common/intitle';
 import Transaction from '../Transaction/transaction';
+import Sync from '../sync';
 
 const { Content } = Layout;
 
@@ -32,12 +33,12 @@ class Blockdetail extends React.Component{
     var _this = this;
     let _height = this.state.height;
     axios.post('http://localhost:8081', {
-        "id":"1111",
+      "id":"1111",
         "method": "GetBlock",
         "params": {
-            "index": _height
+          "index": _height
         }
-    })
+      })
     .then(function (response) {
       var _data = response.data;
       console.log(_data);
@@ -68,6 +69,7 @@ class Blockdetail extends React.Component{
     const {blockdetail,witness,nonce} = this.state;
     return (
       <Layout className="gui-container">
+          <Sync/>
           <Content className="mt3">
           <Row gutter={[30, 0]} type="flex">
             <Col span={24} className="bg-white pv4">

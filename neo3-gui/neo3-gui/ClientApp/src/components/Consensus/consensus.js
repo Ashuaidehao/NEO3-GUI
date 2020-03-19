@@ -6,6 +6,7 @@ import '../../static/css/wallet.css'
 import {  Layout, Menu, Icon } from 'antd';
 import {Link} from 'react-router-dom';
 import MenuDown from '../Common/menudown'
+import Sync from '../sync';
 import {
   HomeOutlined,
   FileSyncOutlined
@@ -28,9 +29,10 @@ class Consensus extends React.Component{
   }
   render = () =>{
     return (
-      <div>
-          test
-      </div>
+      <Layout>
+        <Sync/>
+
+      </Layout>
     );
   }
 } 

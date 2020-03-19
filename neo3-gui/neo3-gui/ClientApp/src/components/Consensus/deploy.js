@@ -18,6 +18,7 @@ import { Input,
 import {  Layout } from 'antd';
 import Intitle from '../Common/intitle'
 import '../../static/css/wallet.css'
+import Sync from '../sync'
 
 const { Content } = Layout;
 const {dialog} = window.remote;
@@ -27,50 +28,50 @@ class Consensusdeploy extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-        size: 'default',
+      size: 'default',
         path:"",
         disabled:false
-    };
-  }
-  toHome = () =>{
-    location.href=location.origin;
-  }
-  toPage = (e) =>{
-  }
-  selectNef = () =>{
-    this.opendialog( res =>{
-      this.setState({ path: res.filePaths }
-      ,()=>{
-        console.log(res)
-        console.log(this.state)
-      });
-    })
-  }
-  opendialog = callback => {
-    var _this = this;
-    dialog.showOpenDialog({
-      title: '保存钱包文件',
-      defaultPath: '/',
-      filters: [
+      };
+    }
+    toHome = () =>{
+      location.href=location.origin;
+    }
+    toPage = (e) =>{
+    }
+    selectNef = () =>{
+      this.opendialog( res =>{
+        this.setState({ path: res.filePaths }
+        ,()=>{
+          console.log(res)
+          console.log(this.state)
+        });
+      })
+    }
+    opendialog = callback => {
+      var _this = this;
+      dialog.showOpenDialog({
+        title: '保存钱包文件',
+        defaultPath: '/',
+        filters: [
           {
-              name: 'JSON',
-              extensions: ['json']
+            name: 'JSON',
+            extensions: ['json']
           }
-      ]
-    }).then(function (res) {
-      callback(res);
-    }).catch(function (error){
-      console.log(error);
-    })
-  }
-  out = fieldsValue =>{
-    console.log(fieldsValue)
-  }
-  render = () =>{
-    
+        ]
+      }).then(function (res) {
+        callback(res);
+      }).catch(function (error){
+        console.log(error);
+      })
+    }
+    out = fieldsValue =>{
+      console.log(fieldsValue)
+    }
+    render = () =>{
     const {path} = this.state;
     return (
-    <Layout className="gui-container">
+      <Layout className="gui-container">
+      <Sync />
       <Content className="mt3">
       <Row gutter={[30, 0]}>
         <Col span={24} className="bg-white pv4">
@@ -88,13 +89,13 @@ class Consensusdeploy extends React.Component{
             {path}
             {/*             
             <Row>
-              <Col span={24}>
+            <Col span={24}>
                 <Input placeholder="选择文件" ref="file" readOnly onClick={this.selectNef} value={this.state.path}/>
-              </Col>
+                </Col>
             </Row>
             <Row>
-              <Col span={24}>
-                <Input placeholder="选择文件" ref="file" readOnly onClick={this.selectNef} value={this.state.path}/>
+            <Col span={24}>
+            <Input placeholder="选择文件" ref="file" readOnly onClick={this.selectNef} value={this.state.path}/>
               </Col>
             </Row> */}
             <a  onClick={this.selectNef} >s</a>

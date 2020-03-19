@@ -5,6 +5,7 @@ import {Link} from 'react-router-dom';
 import { Layout, Row, Col, List, Typography, message,Button } from 'antd';
 import axios from 'axios';
 import Intitle from '../Common/intitle';
+import Sync from '../sync'
 
 const { Content } = Layout;
 
@@ -88,6 +89,7 @@ class Chain extends React.Component{
       ) : null;
     return (
       <Layout className="gui-container">
+        <Sync />
         <Content className="mt3">
           <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
             <Col span={24} className="bg-white pv4">

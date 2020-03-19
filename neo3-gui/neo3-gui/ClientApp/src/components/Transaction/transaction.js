@@ -42,7 +42,7 @@ class Transaction extends React.Component{
   }
   selTrans = () =>{
     let _hash = location.pathname.split(":")[1]
-    let page = this.props.info?this.props.info:"all";
+    let page = this.props.page?this.props.page:"all";
     var _params = this.madeParams();
     if(page === "all"){
       this.allset(_params);

@@ -5,6 +5,7 @@ import {Link} from 'react-router-dom';
 import { Layout, Row, Col, List, Typography, message } from 'antd';
 import axios from 'axios';
 import Intitle from '../Common/intitle';
+import Sync from '../sync';
 
 const { Content } = Layout;
 
@@ -21,9 +22,9 @@ class Chainasset extends React.Component{
   getAllblock = (info) =>{
     var _this = this;
     axios.post('http://localhost:8081', {
-        "id":"1111",
-        "method": "GetAllAssets",
-        "params": {}
+      "id":"1111",
+      "method": "GetAllAssets",
+      "params": {}
     })
     .then(function (response) {
       var _data = response.data;
@@ -45,6 +46,7 @@ class Chainasset extends React.Component{
     const {assetlist} = this.state;
     return (
       <Layout className="gui-container">
+        <Sync />
         <Content className="mt3">
           <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
             <Col span={24} className="bg-white pv4">
