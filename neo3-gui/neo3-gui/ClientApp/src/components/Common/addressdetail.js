@@ -187,7 +187,7 @@ class Addressdetail extends React.Component{
                 </div>
               </Col>
             </Row>
-            <Transaction info="walletdetail"content="交易列表"/>
+            <Transaction page="walletdetail"content="交易列表"/>
             </Content>
         </Layout>
     );

@@ -151,16 +151,29 @@ const Translist = ({ transfers }) => (
     </Row>
 );
 const Attrlist = ({ attributes }) => (
-  <Row>
-    {console.log(attributes)}
-    <Col span={24}>
-      <div className="hash-title pa3 mt5 mb4">属性</div>
-      <ul className="detail-ul ul-invo">
-        <li><p><span className="font-n">attributes: </span>{attributes.data?attributes.data:"--"}</p></li>
-      </ul>
-    </Col>
+<div>
+    {attributes.length>0?(
+    <Row>
+        <Col span={24}>
+        <div className="hash-title pa3 mt5 mb4">属性</div>
+        <ul className="detail-ul">
+        {attributes.map((item,index)=>{
+          return(
+              <li key={index}>
+                  <p>Url</p>
+                  <p className="trans-table">
+                      <span><span className="trans-type">{item.type?item.type:"--"}</span></span>
+                      <span>{item.data?item.data:"--"}</span>
+                  </p>
+              </li>
+          )
+          })}
+        </ul>
+      </Col>
     <Divider></Divider>
   </Row>
+  ):null}
+</div>
 );
 const Witlist = ({ witnesses }) => (
   <Row>
