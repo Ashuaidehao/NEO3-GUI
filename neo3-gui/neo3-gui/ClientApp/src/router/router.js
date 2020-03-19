@@ -10,7 +10,7 @@ import Blockhashdetail from '../components/Chain/hashdetail';
 import Chaintrans from '../components/Chain/trans';
 import Chainasset from '../components/Chain/asset';
 
-import Advanced from '../pages/advanced';
+import Advanced from '../components/Advanced/advanced';
 
 import Wallet from '../components/Wallet/wallet';
 import Walletlayout from '../components/Wallet/walletlayout';
@@ -44,6 +44,7 @@ const BasicRoute = () => (
                     <Route exact path="/chain/transaction:hash" component={Transcon} />
                     <Route exact path="/chain/asset" component={Chainasset} />
                     <Route exact path="/chain/asset:hash" component={Chainasset} />
+                    <Route exact path="/chain/address:address" component={Walletdetail} />
                 </Layout>
             </Route>
             <Route path="/wallet">
@@ -52,6 +53,7 @@ const BasicRoute = () => (
                     <Route exact path="/wallet" component={Wallet} />
                     <Route exact path="/wallet/walletlist" component={Walletlist} />
                     <Route exact path="/wallet/walletlist:address" component={Walletdetail} />
+                    <Route exact path="/wallet/address:address" component={Walletdetail} />
                     <Route exact path="/wallet/transaction" component={Wallettrans} />
                     <Route exact path="/wallet/transaction:hash" component={Transcon} />
                     <Route exact path="/wallet/transfer" component={Transfer} />

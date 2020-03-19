@@ -27,24 +27,6 @@ class menuDown extends React.Component {
         let _path = location.href.search(/wallet/g);
         if (_path <= -1) return;
         this.setState({ showPass: true });
-    }    
-    logout = () => {
-        axios.post('http://localhost:8081', {
-            "id": "1",
-            "method": "ShowGas"
-        })
-        .then(function (response) {
-            var _data = response.data;
-            if(_data.msgType === -1){
-                _this.setState({showOut:false})
-            }else{
-                _this.setState({showOut:true})
-            }
-        })
-        .catch(function (error) {
-            console.log(error);
-            console.log("error");
-        });
     }
     logout = () =>{
         var _this = this;

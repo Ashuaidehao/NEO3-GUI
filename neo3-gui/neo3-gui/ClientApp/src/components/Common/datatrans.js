@@ -4,23 +4,11 @@ import 'antd/dist/antd.css';
 import {Link} from 'react-router-dom';
 import '../../static/css/trans.css';
 import '../../static/js/bundledemo.js';
-import axios from 'axios';
-import { Alert , Input,
-    Tooltip,
-    Icon,
-    Cascader,
-    Modal,
+import {Input,
     Drawer,
-    Select,
-    Row,
-    Col,
     message,
     Button,
-    AutoComplete,
   } from 'antd';
-  
-import {  Layout } from 'antd';
-import Intitle from '../Common/intitle'
 import '../../static/css/wallet.css'
 
 

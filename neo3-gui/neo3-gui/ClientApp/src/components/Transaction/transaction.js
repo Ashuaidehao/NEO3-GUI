@@ -24,12 +24,11 @@ class Transaction extends React.Component{
     this.state = {
         page: 1,
         allpage:1,
-        limit:15,
+        limit:100,
         params:{},
         translist:[],
-        loading: false,
-        initLoading: true,
-        showEle:false,
+        loading: true,
+        showEle:true,
         data: [],
         loacl:"",
     };
@@ -38,79 +37,57 @@ class Transaction extends React.Component{
     this.setState({
       loacl:location.pathname.split("/")[1]
     })
-    console.log(location.pathname.split("/")[1])
-    console.log(this.props.walletStore)
-    // this.getAltrans(this.props.info?this.props.info:null);
 
     this.selTrans()
   }
   selTrans = () =>{
     let _hash = location.pathname.split(":")[1]
     let page = this.props.info?this.props.info:"all";
-    var _params;
-
+    var _params = this.madeParams();
     if(page === "all"){
-      _params ={
-        "pageIndex":this.state.page,
-        "limit": this.state.limit
-      };
-      this.getAlltrans(_params,res => {
-        this.setState({
-          initLoading: false,
-          data: res.result.list,
-          translist: res.result.list,
-          page:this.state.page+1,
-          allcount: res.result.totalCount
-        },()=>{});
-      })
+      this.allset(_params);
     }else if(page === "blockdetail"){
-      _params ={
-        "pageIndex":this.state.page,
-        "limit": this.state.limit
-      };
       _params.blockHeight = Number(_hash);
-      this.getAlltrans(_params,res => {
-        this.setState({
-          initLoading: false,
-          data: res.result.list,
-          translist: res.result.list,
-          page:this.state.page+1,
-          allcount: res.result.totalCount
-        },()=>{console.log(this.state.params)});
-      })
-    }else if(page === "walletdetail"){
-      _params ={
-        "pageIndex":this.state.page,
-        "limit": this.state.limit
-      };
-      _params.address = _hash;
-      this.getMytrans(_params,res => {
-        this.setState({
-          initLoading: false,
-          data: res.result.list,
-          translist: res.result.list,
-          page:this.state.page+1,
-          allcount: res.result.totalCount
-        },()=>{console.log(this.state.params)});
-      })
+      this.allset(_params);
     }else if( page === "wallettrans"){
-      _params ={
-        "pageIndex":this.state.page,
-        "limit": this.state.limit
-      };
-      this.getMytrans(_params,res => {
-        this.setState({
-          initLoading: false,
-          data: res.result.list,
-          translist: res.result.list,
-          page:this.state.page+1,
-          allcount: res.result.totalCount
-        },()=>{console.log(this.state.params)});
-      })
+      this.walletset(_params);
+    }else if(page === "walletdetail"){
+      _params.address = _hash;
+      this.walletset(_params);
+    }else {
+      this.allset(_params);
     }
-
-    var last = this.state.allcount - (this.state.page * this.state.limit);
-    console.log(last);
+  }
+  madeParams = () =>{
+    return {
+      "pageIndex":this.state.page,
+      "limit": this.state.limit
+    };
+  }
+  allset = params =>{
+    this.getAlltrans(params,res => {
+      this.setState({
+        loading: false,
+        data: res.result.list,
+        translist: res.result.list,
+        page:this.state.page+1,
+        allcount: res.result.totalCount,
+        showEle: res.result.totalCount - (this.state.page * this.state.limit)
+      },()=>{ 
+        console.log(this.state.showEle)
+      });
+    })
+  }
+  walletset = params =>{
+    this.getMytrans(params,res => {
+      this.setState({
+        loading: false,
+        data: res.result.list,
+        translist: res.result.list,
+        page:this.state.page+1,
+        allcount: res.result.totalCount
+      },()=>{console.log(this.state.params)});
+    })
   }
   getMytrans = (params,callback) => {
     var _this = this;
@@ -156,68 +133,6 @@ class Transaction extends React.Component{
       console.log("error");
     });
   };
-  // getAlltrans = (num,callback) => {
-  //   console.log(num)
-  //   var _this = this;
-  //   console.log({
-  //     "id":"51",
-  //     "method": "QueryTransactions",
-  //     "params":{
-  //       "pageIndex":_this.state.page,
-  //       "limit":_this.state.limit
-  //     }
-  //   })
-  //   axios.post('http://localhost:8081', {
-  //     "id":"51",
-  //     "method": "QueryTransactions",
-  //     "params":{
-  //       "pageIndex":_this.state.page,
-  //       "limit":_this.state.limit
-  //     }
-  //   })
-  //   .then(function (response) {
-  //     var _data = response.data;
-  //     console.log(_data)
-  //     if(_data.msgType === -1){
-  //       message.error("查询失败");
-  //       return;
-  //     }else{
-  //       callback(_data);
-  //     }
-  //   })
-  //   .catch(function (error) {
-  //     console.log(error);
-  //     console.log("error");
-  //   });
-  // };
-  // loadMore = () =>{
-  //   this.selTrans();
-  //   this.setState({
-  //     loading: true,
-  //   });
-  //   this.getMytrans(res => {
-  //     const data = this.state.data.concat(res.result.list);
-  //     const _page = this.state.page + 1;
-  //     this.setState(
-  //       {
-  //         data:data,
-  //         translist: data,
-  //         loading: false,
-  //         page: _page
-  //       },
-  //       () => {
-  //         window.dispatchEvent(new Event('resize'));
-  //         console.log(this.state);
-  //       },
-  //     );
-  //   });
-  // }
-  madeParams = () =>{
-    return {
-      "pageIndex":this.state.page,
-      "limit": this.state.limit
-    };
-  }
   loadMore = () =>{
     this.setState({
       loading: true,
@@ -240,12 +155,34 @@ class Transaction extends React.Component{
       );
     });
   }
+  loadMyMore = () =>{
+    this.setState({
+      loading: true,
+    });
+    var _params = this.madeParams();
+    this.getMytrans(_params,res => {
+      const data = this.state.data.concat(res.result.list);
+      const _page = this.state.page + 1;
+      this.setState(
+        {
+          data:data,
+          translist: data,
+          loading: false,
+          page: _page
+        },
+        () => {
+          window.dispatchEvent(new Event('resize'));
+          console.log(this.state);
+        },
+      );
+    });
+  }
   render = () =>{
-    const {translist,loacl,initLoading,loading,showEle} = this.state;
-    const loadMore = !initLoading && !loading && showEle ? (
+    const {translist,loacl,loading,showEle} = this.state;
+    const loadMore = !loading && showEle ? (
       <div className="text-c mb3">
-        {/* <Button type="primary" onClick={this.loadMyMore}>加载更多</Button> */}
-        <Button type="primary" onClick={this.loadMore}>加载更多</Button>
+        <Button type="primary" onClick={this.loadMyMore}>加载更多</Button>
+        {/* <Button type="primary" onClick={this.loadMore}>加载更多</Button> */}
       </div>
     ) : null;
     return (
@@ -258,7 +195,7 @@ class Transaction extends React.Component{
                 header={<div><span>交易hash</span><span className="float-r ml4"><span className="wa-amount"></span>数量</span><span className="float-r">时间</span></div>}
                 footer={<span></span>}
                 itemLayout="horizontal"
-                loading={initLoading}
+                loading={loading}
                 loadMore={loadMore}
                 dataSource={translist}
                 className="font-s"
