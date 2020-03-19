@@ -19,7 +19,7 @@ import Walletdetail from '../components/Wallet/walletdetail';
 import Wallettrans from '../components/Wallet/trans';
 
 import Transfer from '../components/Transaction/transfer';
-import Transcon from '../components/Transaction/transcon';
+import Transdetail from '../components/Transaction/transdetail';
 
 import Consensus from '../components/Consensus/consensus';
 import Consensuslayout from '../components/Consensus/consensuslayout';
@@ -41,7 +41,7 @@ const BasicRoute = () => (
                     <Route exact path="/chain/detail:height" component={Blockdetail} />
                     <Route exact path="/chain/hashdetail:height" component={Blockhashdetail} />
                     <Route exact path="/chain/transaction" component={Chaintrans} />
-                    <Route exact path="/chain/transaction:hash" component={Transcon} />
+                    <Route exact path="/chain/transaction:hash" component={Transdetail} />
                     <Route exact path="/chain/asset" component={Chainasset} />
                     <Route exact path="/chain/asset:hash" component={Chainasset} />
                     <Route exact path="/chain/address:address" component={Walletdetail} />
@@ -55,7 +55,7 @@ const BasicRoute = () => (
                     <Route exact path="/wallet/walletlist:address" component={Walletdetail} />
                     <Route exact path="/wallet/address:address" component={Walletdetail} />
                     <Route exact path="/wallet/transaction" component={Wallettrans} />
-                    <Route exact path="/wallet/transaction:hash" component={Transcon} />
+                    <Route exact path="/wallet/transaction:hash" component={Transdetail} />
                     <Route exact path="/wallet/transfer" component={Transfer} />
                 </Layout>
             </Route>
