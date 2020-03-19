@@ -16,7 +16,7 @@ class Wallettrans extends React.Component{
     return (
       <Layout className="gui-container">
         <Sync />
-        {/* <Untransaction /> */}
+        <Untransaction />
         <Transaction  content={"交易记录"} page="wallettrans"/>
       </Layout>
     );

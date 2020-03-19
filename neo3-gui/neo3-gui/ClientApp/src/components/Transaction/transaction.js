@@ -24,11 +24,12 @@ class Transaction extends React.Component{
     this.state = {
         page: 1,
         allpage:1,
-        limit:15,
+        limit:30,
         params:{},
         translist:[],
         loading: true,
         showEle:true,
+        iswa:false,
         data: [],
         loacl:"",
     };
@@ -44,6 +45,7 @@ class Transaction extends React.Component{
     let _hash = location.pathname.split(":")[1]
     let page = this.props.page?this.props.page:"all";
     var _params = this.madeParams();
+    console.log(_hash)
     if(page === "all"){
       this.allset(_params);
     }else if(page === "blockdetail"){
@@ -85,6 +87,7 @@ class Transaction extends React.Component{
         data: res.result.list,
         translist: res.result.list,
         page:this.state.page+1,
+        iswa:true,
         allcount: res.result.totalCount
       },()=>{console.log(this.state.params)});
     })
@@ -178,11 +181,11 @@ class Transaction extends React.Component{
     });
   }
   render = () =>{
-    const {translist,loacl,loading,showEle} = this.state;
+    const {translist,loacl,loading,showEle,iswa} = this.state;
     const loadMore = !loading && showEle ? (
       <div className="text-c mb3">
-        <Button type="primary" onClick={this.loadMyMore}>加载更多</Button>
-        {/* <Button type="primary" onClick={this.loadMore}>加载更多</Button> */}
+        {iswa?(<Button type="primary" onClick={this.loadMyMore}>加载更多(wallet)</Button> )
+        :(<Button type="primary" onClick={this.loadMore}>加载更多</Button>)}
       </div>
     ) : null;
     return (
