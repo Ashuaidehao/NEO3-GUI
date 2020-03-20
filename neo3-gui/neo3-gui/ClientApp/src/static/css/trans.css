@@ -20,16 +20,30 @@
     padding-left: 0;
 }
 .trans-ul li{
-    border-top: 1px dotted #EEEEEE;
+    font-size: 12px;
+    line-height: 24px;
+    color: rgba(0,0,0,0.65);
+    margin-top: 8px;
+    word-break: break-all;
 }
-.trans-ul li:first-child{
-    border-top: none;
+.trans-ul .ant-divider-horizontal{
+    margin-top: 12px;
+}
+.trans-ul button{
+    padding: 3px 0px;
 }
 .trans-title{
-    font-size: 14px;
-    color: #333333;
-    padding-top: 8px;
+    font-size: 14px!important;
+    color: rgba(0,0,0,0.85)!important;
+    margin-top: 8px;
     margin-bottom: 10px;
+}
+.trans-type{
+    display: inline-block;
+    min-width: 96px;
+    border:1px solid #DDD;
+    padding-left: 11px;
+    margin-right: 12px;
 }
 .trans-area{
     margin-top: 5px;
@@ -48,6 +62,56 @@
     line-height: 16px;
     font-weight: 400;
 }
-.trans-ul button{
-    padding: 3px 0px;
+
+.tran-title{
+    /* background: #333333; */
+}
+
+.tran-title .ant-tabs-tab{
+    font-size: 20px;
+    line-height: 22px;
+    color: rgba(0, 0, 0, 0.45);
+    padding:12px;
+}
+
+.tran-title .ant-tabs-tab-active,
+.ant-tabs-nav .ant-tabs-tab:hover{
+    color: #00AF92;
+}
+
+.tran-title .ant-tabs-ink-bar {
+    background-color:#00AF92;
+}
+
+.detail-ul li{
+    padding-left: 12px;
+    padding-right: 12px;
+    word-break: break-all;
+}
+.border-under{
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 12px;
+}
+
+.hash-title{
+    width: 100%;
+    color: rgba(0,0,0,0.85);
+    line-height: 22px;
+    letter-spacing: .05em;
+    margin-bottom: 7px;
+}
+.detail-ul li > p{
+    margin-bottom:4px;
+}
+
+.detail-ul .trans-table{
+    display: table-row;
+}
+.detail-ul .trans-table > span{
+    display: table-cell;
+    vertical-align: top;
+}
+.detail-ul .trans-table .trans-type{
+    margin-right: 12px;
+    min-width: 96px;
 }

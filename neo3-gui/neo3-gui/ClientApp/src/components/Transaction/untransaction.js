@@ -25,17 +25,13 @@ class Untransaction extends React.Component{
   }
   getUnconfirmtrans = (info) =>{
     var _this = this,add = {};
-    info = info || ["GetMyUnconfirmedTransactions"];
-    if(info.length>1){
-      add = {
-        "limit":100,
-        "address":info[1]
-      };
-    }
+    info = ["GetMyUnconfirmedTransactions"];
     axios.post('http://localhost:8081', {
       "id":"51",
       "method": "GetMyUnconfirmedTransactions",
-      "params": add
+      "params": {
+        "limit":100
+      }
     })
     .then(function (response) {
       var _data = response.data;
@@ -60,8 +56,8 @@ class Untransaction extends React.Component{
           <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100px )'}}>
             <Col span={24} className="bg-white pv4">
             <Intitle content={this.props.content||"未确认交易"}/>
-            <List
-                header={<div><span>交易hash</span><span className="float-r wa-amount">数量</span><span className="float-r">时间</span></div>}
+              <List
+                header={<div><span>交易hash</span><span className="float-r ml4"><span className="wa-amount"></span>数量</span><span className="float-r">时间</span></div>}
                 footer={<span></span>}
                 itemLayout="horizontal"
                 dataSource={untranslist}
@@ -69,19 +65,21 @@ class Untransaction extends React.Component{
                 renderItem={item => (
                 <List.Item>
                     <List.Item.Meta
-                        title={<Link to={this.state.loacl+":"+item.txId} title="查看详情">{item.txId}</Link>}
-                        description={
-                        <div className="font-s">
-                            From：<span className="w300 ellipsis">{item.transfers[0].fromAddress?item.transfers[0].fromAddress:"--"}</span><br></br>
-                            To：<span className="w300 ellipsis" >{item.transfers[0].toAddress?item.transfers[0].toAddress:"--"}</span>
-                        </div>}
-                        />
-                        <Typography>{item.blockTime}</Typography>
-                        <Typography className="wa-amount upcase">{item.transfers[0].amount} {item.transfers[0].symbol}</Typography>
-                    </List.Item>
-                    )}/>
-                </Col>
-                <div className="pv1"></div>
+                    title={<Link to={loacl+":"+item.txId} title="查看详情">{item.txId}</Link>}
+                    description={
+                    <div className="font-s">
+                        From：<span className="w300 ellipsis">{item.transfers[0].fromAddress?item.transfers[0].fromAddress:"--"}</span><br></br>
+                        To：<span className="w300 ellipsis" >{item.transfers[0].toAddress?item.transfers[0].toAddress:"--"}</span>
+                    </div>
+                    }
+                    />
+                    <Typography>{item.blockTime}</Typography>
+                    <Typography className="upcase ml4"><span className="wa-amount">{item.transfers[0].amount}</span>{item.transfers[0].symbol}</Typography>
+                </List.Item>
+                )}
+              />
+              </Col>
+              <div className="pv1"></div>
             </Row>
         </Content>
       </div>

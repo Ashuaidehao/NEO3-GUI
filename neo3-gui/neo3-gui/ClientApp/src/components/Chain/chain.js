@@ -65,7 +65,6 @@ class Chain extends React.Component{
     });
     this.getBlock(res => {
       const data = this.state.data.concat(res.result);
-      console.log(data);
       this.setState(
         {
           data,
@@ -77,28 +76,6 @@ class Chain extends React.Component{
           window.dispatchEvent(new Event('resize'));
         },
       );
-    });
-  }
-  getAll(){
-    var _this = this;
-    axios.post('http://localhost:8081', {
-      "id":"51",
-      "method": "GetLastBlocks",
-      "params": {
-        "limit": 3
-      }
-    })
-    .then(function (response) {
-      var _data = response.data;
-      console.log(_data)
-      if(_data.msgType === -1){
-        message.error("查询失败");
-        return;
-      }
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error");
     });
   }
   render(){

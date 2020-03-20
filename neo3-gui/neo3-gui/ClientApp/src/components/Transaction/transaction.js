@@ -10,64 +10,140 @@ import {
   HomeOutlined
 } from '@ant-design/icons';
 
-
 const { Sider, Content } = Layout;
+
+const count = 5;
 
 class Transaction extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-        size: 'default',
+        page: 1,
+        allpage:1,
+        limit:15,
         translist:[],
-        loacl:""
+        loading: false,
+        initLoading: true,
+        showEle:true,
+        data: [],
+        loacl:"",
     };
   }
   componentDidMount() {
     this.setState({
       loacl:location.pathname
     })
-    this.getAlltrans(this.props.info?this.props.info:null);
+    // this.getAltrans(this.props.info?this.props.info:null);
+    this.getAlltrans(res => {
+      this.setState({
+        initLoading: false,
+        data: res.result.list,
+        translist: res.result.list,
+        page:this.state.page+1,
+        allcount: res.result.totalCount
+      },()=>{});
+    })
   }
-  getAlltrans = (info) =>{
-    var _this = this,add = {};
+  selTrans = (info) =>{
+    // var _this = this,add = {};
+    
+    // let _hash = location.pathname.split(":")[1];
+    // if(_hash){
+    //   console.log(111)
+    // }
     info = info || ["GetMyTransactions"];
-    if(info.length>1){
-      add = {
-        "limit":100,
-        "address":info[1]
-      };
+    if((this.state.translist.length+this.state.limit) >= this.state.allcount){
+      this.setState({showEle:false})
     }
+
+  }
+  getMytrans = callback => {
+    var _this = this;
     axios.post('http://localhost:8081', {
       "id":"51",
       "method": "GetMyTransactions",
-      "params": add
+      "params":{
+        "pageIndex":_this.state.page,
+        "limit": _this.state.limit
+      }
     })
     .then(function (response) {
       var _data = response.data;
+      console.log(_data)
       if(_data.msgType === -1){
         message.error("查询失败");
-        console.log(_data)
         return;
+      }else{
+        callback(_data);
       }
-      console.log(_data)
-      _this.setState({
-        translist:_data.result.list
-      })
     })
     .catch(function (error) {
       console.log(error);
       console.log("error");
     });
-  }
-  copyHash = (str) => {
-    return ()=>{
-      str.select();
-      document.execCommand('copy');
-      console.log('复制成功');
-    }
+  };
+  getAlltrans = callback => {
+    var _this = this;
+    console.log({
+      "id":"51",
+      "method": "QueryTransactions",
+      "params":{
+        "pageIndex":_this.state.page,
+        "limit":_this.state.limit
+      }
+    })
+    axios.post('http://localhost:8081', {
+      "id":"51",
+      "method": "QueryTransactions",
+      "params":{
+        "pageIndex":_this.state.page,
+        "limit":_this.state.limit
+      }
+    })
+    .then(function (response) {
+      var _data = response.data;
+      console.log(_data)
+      if(_data.msgType === -1){
+        message.error("查询失败");
+        return;
+      }else{
+        callback(_data);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
+  };
+  loadMore = () =>{
+    this.selTrans();
+    this.setState({
+      loading: true,
+    });
+    this.getAlltrans(res => {
+      const data = this.state.data.concat(res.result.list);
+      const _page = this.state.page + 1;
+      this.setState(
+        {
+          data:data,
+          translist: data,
+          loading: false,
+          page: _page
+        },
+        () => {
+          window.dispatchEvent(new Event('resize'));
+          console.log(this.state);
+        },
+      );
+    });
   }
   render = () =>{
-    const {translist,loacl} = this.state;
+    const {translist,loacl,initLoading,loading,showEle} = this.state;
+    const loadMore = !initLoading && !loading && showEle ? (
+      <div className="text-c mb3">
+        <Button type="primary" onClick={this.loadMore}>加载更多</Button>
+      </div>
+    ) : null;
     return (
       <div>
         <Content className="mt3 mb4">
@@ -78,6 +154,8 @@ class Transaction extends React.Component{
                 header={<div><span>交易hash</span><span className="float-r ml4"><span className="wa-amount"></span>数量</span><span className="float-r">时间</span></div>}
                 footer={<span></span>}
                 itemLayout="horizontal"
+                loading={initLoading}
+                loadMore={loadMore}
                 dataSource={translist}
                 className="font-s"
                 renderItem={item => (
@@ -88,16 +166,14 @@ class Transaction extends React.Component{
                     <div className="font-s">
                         From：<span className="w300 ellipsis">{item.transfers[0].fromAddress?item.transfers[0].fromAddress:"--"}</span><br></br>
                         To：<span className="w300 ellipsis" >{item.transfers[0].toAddress?item.transfers[0].toAddress:"--"}</span>
-                    </div>}
+                    </div>
+                    }
                     />
                     <Typography>{item.blockTime}</Typography>
                     <Typography className="upcase ml4"><span className="wa-amount">{item.transfers[0].amount}</span>{item.transfers[0].symbol}</Typography>
                 </List.Item>
                 )}
               />
-              {/* <div className="mb4" >
-                  <Button type="primary">加载更多</Button>
-              /div> */}
               </Col>
               <div className="pv1"></div>
           </Row>

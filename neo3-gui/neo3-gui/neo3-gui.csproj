@@ -56,6 +56,13 @@
   </ItemGroup>
 
 
+  <ItemGroup>
+    <None Update="Plugins\LevelDBStore.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+
 
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
@@ -73,12 +80,12 @@
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm build" />
 
   </Target>-->
-  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
-    <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
+  <!--<Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+    --><!-- As part of publishing, ensure the JS resources are freshly built in production mode --><!--
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-    <!--<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />-->
+    --><!--<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />--><!--
 
-    <!-- Include the newly-built files in the publish output -->
+    --><!-- Include the newly-built files in the publish output --><!--
     <ItemGroup>
       <DistFiles Include="$(SpaRoot)\**" />
       <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
@@ -87,6 +94,6 @@
         <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       </ResolvedFileToPublish>
     </ItemGroup>
-  </Target>
+  </Target>-->
   <ProjectExtensions><VisualStudio><UserProperties clientapp_4package_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 </Project>

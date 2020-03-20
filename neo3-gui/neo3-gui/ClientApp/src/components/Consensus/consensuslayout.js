@@ -50,9 +50,11 @@ class Consensuslayout extends React.Component{
                   </span>
                 }
               >
-                <Menu.Item key="1" onClick={this.toPage}>搜索合约</Menu.Item>
-                <Menu.Item key="2" onClick={this.toPage}>部署合约</Menu.Item>
-                <Menu.Item key="3" onClick={this.toPage}>调用合约</Menu.Item>
+                {/* <Menu.Item key="1" onClick={this.toPage}>搜索合约</Menu.Item> */}
+                <Menu.Item key="2" onClick={this.toPage}>
+                  <Link to="/consensus/deploy">部署合约</Link>
+                </Menu.Item>
+                {/* <Menu.Item key="3" onClick={this.toPage}>调用合约</Menu.Item> */}
               </SubMenu>
             </Menu>
             <MenuDown />

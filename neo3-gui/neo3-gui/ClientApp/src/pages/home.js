@@ -77,14 +77,19 @@ class Home extends Component {
                     </Link>
                   </Col>
                   <Col span={6}>
-                    <Link to='/pages'>
+                    <Link to='/consensus'>
                       <div className="home-link">
                         <span>合约</span>
                       </div>
                     </Link>
                   </Col>
                   <Col span={6}>
-                    <Link to='/advanced'>
+                    {/* <Link to='/advanced'>
+                      <div className="home-link">
+                        <span>高级</span>
+                      </div>
+                    </Link> */}
+                    <Link to='/pages'>
                       <div className="home-link">
                         <span>高级</span>
                       </div>

@@ -2,11 +2,13 @@
 //just test replace wallet//
 import React from 'react';
 import axios from 'axios';
+import {Link} from 'react-router-dom';
 import { Layout, Row, Col, Modal,List, Button,Typography, message } from 'antd';
 import Sync from '../sync';
 import Intitle from '../Common/intitle';
 import Transaction from '../Transaction/transaction';
 import '../../static/css/wallet.css';
+import Topath from '../Common/topath';
 import {
   CloseCircleOutlined 
 } from '@ant-design/icons';
@@ -50,7 +52,6 @@ class Walletdetail extends React.Component{
     })
     .then(function (response) {
       var _data = response.data;
-      console.log(_data);
       if(_data.msgType === -1){
         console.log("需要先打开钱包再进入页面");
         return;
@@ -76,7 +77,6 @@ class Walletdetail extends React.Component{
     })
     .then(function (response) {
       var _data = response.data;
-      console.log(_data);
       if(_data.msgType === -1){
         console.log("需要先打开钱包再进入页面");
         return;
@@ -92,11 +92,10 @@ class Walletdetail extends React.Component{
   }
   deleteConfirm = () =>{
     let _this = this;
-    console.log(this);
     confirm({
       title: '该地址删除后无法恢复，是否确认删除？',
       icon: <CloseCircleOutlined />,
-      okText: '确认删除',
+      okText: '删除',
       cancelText: '取消',
       onOk() {
         _this.delAddress();
@@ -120,7 +119,7 @@ class Walletdetail extends React.Component{
             return;
         }else{
             message.success("删除成功",2)
-            location.href = location.origin+"/wallet/walletlist";
+            _this.setState({topath:"/wallet/walletlist"});
         }
     })
     .catch(function (error) {
@@ -139,7 +138,6 @@ class Walletdetail extends React.Component{
     })
     .then(function (response) {
       var _data = response.data.result;
-      console.log(_data);
       if(_data.msgType === -1){
         console.log("需要先打开钱包再进入页面");
         return;
@@ -166,12 +164,13 @@ class Walletdetail extends React.Component{
     const { assetlist,address } = this.state;
     return (
         <Layout className="gui-container wa-detail">
+          
+            <Topath topath={this.state.topath}></Topath>
             <Sync />
 
             <Content className="mt3">
             <Row gutter={[30, 0]}>
               <Col span={24} className="bg-white pv4">
-                {/* <Intitle content="账户列表" show="false"/> */}
                 <Intitle content="账户列表"/>
                 <List
                     header={<div>{address}</div>}

@@ -3,9 +3,8 @@
     "version": "0.1.0",
     "private": true,
     "main": "main.js",
+    "homepage": "./",
     "dependencies": {
-        "@babel/plugin-proposal-decorators": "^7.8.3",
-        "@babel/polyfill": "^7.8.7",
         "@testing-library/jest-dom": "^4.2.4",
         "@testing-library/react": "^9.3.2",
         "@testing-library/user-event": "^7.1.2",
@@ -13,23 +12,55 @@
         "axios": "^0.19.1",
         "bs58check": "^2.1.2",
         "customize-cra": "^0.9.1",
-        "electron": "^7.1.4",
+        "import": "0.0.6",
         "mobx": "^5.15.4",
         "mobx-react": "^6.1.8",
-        "import": "0.0.6",
         "react": "^16.12.0",
         "react-app-rewired": "^2.1.5",
         "react-dom": "^16.12.0",
         "react-intl": "^3.9.3",
         "react-router-dom": "^5.1.2",
-        "react-scripts": "3.3.0"
+        "react-scripts": "3.3.0",
         "reconnecting-websocket": "^4.2.0"
     },
     "scripts": {
-        "start": "react-app-rewired start",
+        "start": "cross-env BROWSER=none react-app-rewired start",
         "build": "react-app-rewired build",
         "test": "react-app-rewired test",
-        "eject": "react-app-rewired eject"
+        "eject": "react-app-rewired eject",
+        "build-electron": "electron-builder",
+        "start-electron": "cross-env NODE_ENV=development electron .",
+        "start-electron-prod": "electron .",
+        "publish": "npm run build && npm run build-electron",
+        "dev": "npm run start | npm run start-electron",
+        "prod": "npm run build && npm run start-electron-prod"
+    },
+    "build": {
+        "appId": "neo.ngd",
+        "productName": "neo-gui-demo",
+        "extends": null,
+        "directories": {
+            "output": "build-electron"
+        },
+        "files": [
+            "./build/**/*",
+            "./main.js",
+            "./preload.js",
+            "./node-manager.js",
+            "./package.json"
+        ],
+        "extraResources": {
+            "from": "./build-neo-node/",
+            "to": "./build-neo-node/"
+        },
+        "win": {
+            "target": "nsis",
+            "icon": "public/logo512.png"
+        },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true
+        }
     },
     "eslintConfig": {
         "extends": "eslint:recommended"
@@ -49,6 +80,10 @@
     "devDependencies": {
         "@babel/cli": "^7.8.4",
         "@babel/core": "^7.8.7",
-        "@babel/preset-env": "^7.8.7"
+        "@babel/plugin-proposal-decorators": "^7.8.3",
+        "@babel/preset-env": "^7.8.7",
+        "cross-env": "^7.0.2",
+        "electron": "^7.1.14",
+        "electron-builder": "^22.4.1"
     }
 }
