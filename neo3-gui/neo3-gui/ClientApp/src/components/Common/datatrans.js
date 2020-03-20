@@ -1,11 +1,12 @@
-/* eslint-disable */ 
+/* eslint-disable */
 import React from 'react';
 import 'antd/dist/antd.css';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import '../../static/css/trans.css';
 import '../../static/js/bundledemo.js';
 import axios from 'axios';
-import { Alert , Input,
+import {
+    Alert, Input,
     Tooltip,
     Icon,
     Cascader,
@@ -17,28 +18,32 @@ import { Alert , Input,
     message,
     Button,
     AutoComplete,
-  } from 'antd';
-  
-import {  Layout } from 'antd';
+} from 'antd';
+
+import { Layout } from 'antd';
 import Intitle from '../Common/intitle'
 import '../../static/css/wallet.css'
-
+import DataConvert from "./dataConverter";
 
 import { SwapOutlined } from '@ant-design/icons';
+import { constants } from 'fs';
 
 
-class Datatrans extends React.Component{
-    constructor (props){
+class Datatrans extends React.Component {
+    constructor(props) {
         super(props);
         this.state = {
-            outstr:"",
-            outhexstr:"",
-            outhash:"",
-            outbighash:"",
-            outbigadd:""
+            outstr: "",
+            outhexstr: "",
+            outhash: "",
+            outbighash: "",
+            outbigadd: ""
         };
+        this.convert=new DataConvert();
+        let address= this.convert.toAddress("0xf9df308b7bb380469354062f6b73f9cb0124317b");
+        console.log(address);
     }
-    componentDidMount(){
+    componentDidMount() {
     }
     hexToString = (hex) => {
         var trimhex = hex.trim();
@@ -65,12 +70,12 @@ class Datatrans extends React.Component{
         }
         return hexChar;
     }
-    stringTrans = () =>{
+    stringTrans = () => {
         let instr = document.getElementById("inString").value;
         if (instr) {
             var _outStr = this.hexToString(instr);
             this.setState({
-                outstr:_outStr
+                outstr: _outStr
             })
         }
         let inhexstr = document.getElementById("inHexString").value;
@@ -81,34 +86,33 @@ class Datatrans extends React.Component{
             })
         }
     }
-    endianTrans = () =>{
+    endianTrans = () => {
         let inhash = document.getElementById("inHash").value.replace(/(^\s*)|(\s*$)/g, "");
-        if(inhash.length!==40&&inhash.length!==42){
+        if (inhash.length !== 40 && inhash.length !== 42) {
             message.error("输入格式错误，请检查后再次输入！");
             return;
         }
-        
-        var result=[],num;
-        if(inhash.indexOf("0x")==0){
+
+        var result = [], num;
+        if (inhash.indexOf("0x") == 0) {
             inhash = inhash.slice(2);
-        }else if(inhash){
+        } else if (inhash) {
             result = ['0x'];
         }
 
         var hashArray = inhash.hexToBytes().reverse();
         for (var i = 0; i < hashArray.length; i++) {
             num = hashArray[i];
-            if (num<16) {
+            if (num < 16) {
                 num = hashArray[i].toString(16);
-                num="0"+num;
-            }else {num = hashArray[i].toString(16);}
+                num = "0" + num;
+            } else { num = hashArray[i].toString(16); }
             result.push(num);
         }
-        let _outhash =  result.join("");
+        let _outhash = result.join("");
         this.setState({
-            outhash:_outhash
+            outhash: _outhash
         })
-        
     }
     // bigTrans = () =>{
     //     var _this = this;
@@ -133,7 +137,9 @@ class Datatrans extends React.Component{
     //         });
     //     }
     // }
-    render(){
+
+
+    render() {
         return (
             <Drawer
                 title="Data Transform"
@@ -147,13 +153,13 @@ class Datatrans extends React.Component{
             >
                 <ul className="trans-ul">
                     <li>
-                        <p className="trans-title">String <SwapOutlined className="small"/> Hex String</p>
+                        <p className="trans-title">String <SwapOutlined className="small" /> Hex String</p>
                         <p className="trans-area">
-                            <label>Hex String:</label><Input id="inString" type="text" placeholder="7472616e73666572"/>
+                            <label>Hex String:</label><Input id="inString" type="text" placeholder="7472616e73666572" />
                             <label>String:</label><span id="outString" className="trans-text">{this.state.outstr}</span><br />
                         </p>
                         <p className="trans-area">
-                            <label>String:</label><Input id="inHexString" type="text" placeholder="transfer"/>
+                            <label>String:</label><Input id="inHexString" type="text" placeholder="transfer" />
                             <label>Hex String:</label><span id="outHexString" className="trans-text">{this.state.outhexstr}</span><br />
                         </p>
                         <p className="text-r">
@@ -161,9 +167,9 @@ class Datatrans extends React.Component{
                         </p>
                     </li>
                     <li>
-                        <p className="trans-title">Script Hash (Big-endian <SwapOutlined className="small"/> Little-endian)</p>
+                        <p className="trans-title">Script Hash (Big-endian <SwapOutlined className="small" /> Little-endian)</p>
                         <p className="trans-area">
-                            <label>Big / Little:</label><Input id="inHash" type="text" placeholder="0xbc99b2a477e28581b2fd04249ba27599ebd736d3"/>
+                            <label>Big / Little:</label><Input id="inHash" type="text" placeholder="0xbc99b2a477e28581b2fd04249ba27599ebd736d3" />
                             <label>Result:</label><span className="trans-text">{this.state.outhash}</span><br />
                         </p>
                         <p className="text-r">
@@ -216,6 +222,6 @@ class Datatrans extends React.Component{
             </Drawer>
         )
     }
-} 
+}
 
 export default Datatrans;

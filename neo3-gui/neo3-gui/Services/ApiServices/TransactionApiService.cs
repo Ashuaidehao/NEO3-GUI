@@ -46,7 +46,11 @@ namespace Neo.Services.ApiServices
             var notifies = db.GetNotifyEventsByTxId(txId);
             if (notifies.NotEmpty())
             {
-                transactionModel.Notifies.AddRange(notifies.Select(n => JStackItem.FromJson(n.State.DeserializeJson<JObject>())));
+                transactionModel.Notifies.AddRange(notifies.Select(n => new NotifyModel()
+                {
+                    Contract = UInt160.Parse(n.Contract),
+                    State = JStackItem.FromJson(n.State.DeserializeJson<JObject>())
+                }));
             }
             return transactionModel;
         }
