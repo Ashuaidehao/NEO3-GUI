@@ -36,8 +36,7 @@ class Transfer extends React.Component{
         size: 'default',
         iconLoading:false,
         accountlist: [],
-        selectadd:0,
-        // selectadd:[]
+        selectadd:[]
     };
   }
   componentDidMount() {
@@ -64,34 +63,28 @@ class Transfer extends React.Component{
       console.log("error2");
     });
   }
-  setAddress = (target) =>{
+  setAddress = () =>{
     var _this = this;
-    this.setState({
-      selectadd:_this.state.accountlist[target]
+    axios.post('http://localhost:8081', {
+      "id": "1234",
+      "method": "GetMyTotalBalance",
+      "params": {}
     })
+    .then(function (response) {
+      var _data = response.data;
+      if(_data.msgType === -1){
+        console.log("需要先打开钱包再进入页面");
+        return;
+      }
+      _this.setState({
+        selectadd:_data.result
+      })
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error2");
+    });
   }
-  // setAddress = () =>{
-  //   var _this = this;
-  //   axios.post('http://localhost:8081', {
-  //     "id": "1234",
-  //     "method": "GetMyTotalBalance",
-  //     "params": {}
-  //   })
-  //   .then(function (response) {
-  //     var _data = response.data;
-  //     if(_data.msgType === -1){
-  //       console.log("需要先打开钱包再进入页面");
-  //       return;
-  //     }
-  //     _this.setState({
-  //       selectadd:_data.result
-  //     })
-  //   })
-  //   .catch(function (error) {
-  //     console.log(error);
-  //     console.log("error2");
-  //   });
-  // }
   getAsset = () =>{
     this.setState({
       neo:_data.result.accounts
@@ -211,20 +204,12 @@ class Transfer extends React.Component{
                       defaultValue="选择" 
                       style={{ width: '100%' }}
                       >
-                      <Option value="neo">NEO <small>{selectadd.neo}</small></Option>
-                      <Option value="gas">GAS <small>{selectadd.gas}</small></Option>
-                    </Select>
-                      
-                    {/* <Select
-                      defaultValue="选择" 
-                      style={{ width: '100%' }}
-                      >
                       {selectadd.map((item,index)=>{
                       return(
-                        <Option key={index} value={item.symbol}>{item.symbol} <small>{item.balance}</small></Option>
+                        <Option key={index} value={item.asset}>{item.symbol} <small>{item.balance}</small></Option>
                       )
                       })}
-                    </Select> */}
+                    </Select>
                   </Form.Item>
                 </Col>
               </Row>
