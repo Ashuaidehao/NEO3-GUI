@@ -6,6 +6,7 @@ import { Layout, Row, Col, message,List,Typography } from 'antd';
 import axios from 'axios';
 import Intitle from '../Common/intitle';
 import Transaction from '../Transaction/transaction';
+import Sync from '../sync';
 
 const { Content } = Layout;
 
@@ -30,11 +31,11 @@ class Blockdetail extends React.Component{
     var _this = this;
     let _hash = this.state.hash;
     axios.post('http://localhost:8081', {
-        "id":"1111",
+      "id":"1111",
         "method": "GetBlockByHash",
         "params": {
             "hash": _hash
-        }
+          }
     })
     .then(function (response) {
       var _data = response.data;
@@ -59,13 +60,14 @@ class Blockdetail extends React.Component{
     return () =>{
         this.setState({
             hash: h
-        },() => this.getAllblock());
-    }
-  }
-  render(){
-    const {blockdetail,witness,nonce,translist,local} = this.state;
-    return (
-      <Layout className="gui-container">
+          },() => this.getAllblock());
+        }
+      }
+    render(){
+      const {blockdetail,witness,nonce,translist,local} = this.state;
+      return (
+        <Layout className="gui-container">
+          <Sync/> 
           <Content className="mt3">
           <Row gutter={[30, 0]} type="flex">
             <Col span={24} className="bg-white pv4">

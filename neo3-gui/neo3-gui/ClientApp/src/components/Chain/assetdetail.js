@@ -10,9 +10,7 @@ import Sync from '../sync';
 
 const { Content } = Layout;
 
-var info = ["blockdetail"]
-
-class Blockdetail extends React.Component{
+class Assetdetail extends React.Component{
   constructor(props){
     super(props);
     this.state = {
@@ -24,45 +22,46 @@ class Blockdetail extends React.Component{
   }
   componentDidMount(){
     let _h = Number(location.pathname.split(":")[1])
-    this.setHeight(_h)();
+    this.setHash(_h)();
     this.setState({
       local:location.pathname
     })
   }
-  getAllblock = () =>{
-    var _this = this;
-    let _height = this.state.height;
-    axios.post('http://localhost:8081', {
-      "id":"1111",
-        "method": "GetBlock",
-        "params": {
-          "index": _height
-        }
-      })
-    .then(function (response) {
-      var _data = response.data;
-      console.log(_data);
-      if(_data.msgType === -1){
-        message.info("查询失败,该高度错误");
-        return;
-      }
-      _this.setState({
-        blockdetail:_data.result,
-        witness:_data.result.witness.scriptHash,
-        nonce:_data.result.consensusData.nonce,
-        translist:_data.result.transactions
-      })
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error");
-    });
+  getAsset = () =>{
+      console.log("数据暂无")
+    // var _this = this;
+    // let _height = this.state.height;
+    // axios.post('http://localhost:8081', {
+    //   "id":"1111",
+    //     "method": "GetBlock",
+    //     "params": {
+    //       "index": _height
+    //     }
+    //   })
+    // .then(function (response) {
+    //   var _data = response.data;
+    //   console.log(_data);
+    //   if(_data.msgType === -1){
+    //     message.info("查询失败,该高度错误");
+    //     return;
+    //   }
+    //   _this.setState({
+    //     blockdetail:_data.result,
+    //     witness:_data.result.witness.scriptHash,
+    //     nonce:_data.result.consensusData.nonce,
+    //     translist:_data.result.transactions
+    //   })
+    // })
+    // .catch(function (error) {
+    //   console.log(error);
+    //   console.log("error");
+    // });
   }
-  setHeight = (h) => {
+  setHash = (h) => {
     return () =>{
         this.setState({
-            height: h
-        },() => this.getAllblock());
+            hash: h
+        },() => this.getAsset());
     }
   }
   render(){
@@ -71,7 +70,7 @@ class Blockdetail extends React.Component{
       <Layout className="gui-container">
           <Sync/>
           <Content className="mt3">
-          <Row gutter={[30, 0]} type="flex">
+          {/* <Row gutter={[30, 0]} type="flex">
             <Col span={24} className="bg-white pv4">
               <Intitle className="mb2" content="区块信息"/>
               <div className="info-detail pv3">
@@ -98,12 +97,12 @@ class Blockdetail extends React.Component{
                 </Row>
               </div>
             </Col>
-          </Row>          
-          <Transaction page="blockdetail" content="交易列表"/>
+          </Row> */}
+          <Transaction content="交易列表" page="assetdetail"/>
         </Content>
       </Layout>
     );
   }
 } 
 
-export default Blockdetail;
+export default Assetdetail;

@@ -1,11 +1,11 @@
 body,html{
-    background: #F9FAFA;
+    background: #F0F0F0;
     width: auto;
     height: auto;
     overflow: hidden;
 }
 .ant-layout.home-content{
-    background: #F9FAFA;
+    background: #F0F0F0;
     max-width: 880px;
     margin: 32px auto;
 }

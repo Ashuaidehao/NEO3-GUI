@@ -2,6 +2,7 @@ import React from 'react';
 import {BrowserRouter, Route, Switch,Redirect} from 'react-router-dom';
 import Home from '../pages/home'
 import Sync from '../components/sync';
+import Addressdetail from '../components/Common/addressdetail';
 
 import Chain from '../components/Chain/chain';
 import Chainlayout from '../components/Chain/chainlayout';
@@ -9,8 +10,9 @@ import Blockdetail from '../components/Chain/blockdetail';
 import Blockhashdetail from '../components/Chain/hashdetail';
 import Chaintrans from '../components/Chain/trans';
 import Chainasset from '../components/Chain/asset';
+import Assetdetail from '../components/Chain/assetdetail';
 
-import Advanced from '../pages/advanced';
+import Advanced from '../components/Advanced/advanced';
 
 import Wallet from '../components/Wallet/wallet';
 import Walletlayout from '../components/Wallet/walletlayout';
@@ -19,7 +21,7 @@ import Walletdetail from '../components/Wallet/walletdetail';
 import Wallettrans from '../components/Wallet/trans';
 
 import Transfer from '../components/Transaction/transfer';
-import Transcon from '../components/Transaction/transcon';
+import Transdetail from '../components/Transaction/transdetail';
 
 import Consensus from '../components/Consensus/consensus';
 import Consensuslayout from '../components/Consensus/consensuslayout';
@@ -41,9 +43,10 @@ const BasicRoute = () => (
                     <Route exact path="/chain/detail:height" component={Blockdetail} />
                     <Route exact path="/chain/hashdetail:height" component={Blockhashdetail} />
                     <Route exact path="/chain/transaction" component={Chaintrans} />
-                    <Route exact path="/chain/transaction:hash" component={Transcon} />
+                    <Route exact path="/chain/transaction:hash" component={Transdetail} />
                     <Route exact path="/chain/asset" component={Chainasset} />
-                    <Route exact path="/chain/asset:hash" component={Chainasset} />
+                    <Route exact path="/chain/asset:hash" component={Assetdetail} />
+                    <Route exact path="/chain/address:address" component={Addressdetail} />
                 </Layout>
             </Route>
             <Route path="/wallet">
@@ -52,8 +55,9 @@ const BasicRoute = () => (
                     <Route exact path="/wallet" component={Wallet} />
                     <Route exact path="/wallet/walletlist" component={Walletlist} />
                     <Route exact path="/wallet/walletlist:address" component={Walletdetail} />
+                    <Route exact path="/wallet/address:address" component={Walletdetail} />
                     <Route exact path="/wallet/transaction" component={Wallettrans} />
-                    <Route exact path="/wallet/transaction:hash" component={Transcon} />
+                    <Route exact path="/wallet/transaction:hash" component={Transdetail} />
                     <Route exact path="/wallet/transfer" component={Transfer} />
                 </Layout>
             </Route>

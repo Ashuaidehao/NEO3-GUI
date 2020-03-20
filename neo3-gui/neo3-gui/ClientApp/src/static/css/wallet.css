@@ -97,12 +97,17 @@
     width: 49%;
     display: inline-block;
 }
-.ant-list-item.wa-half:nth-child(2){
+.ant-list-item.wa-half:nth-child(2n){
     margin-left: 2%;
     display: inline-block;
 }
 .ant-list-item.wa-half .upcase{
-    margin-right:120px ;
+    width: 120px;
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: text-top;
+    text-overflow: ellipsis;
+    margin-right: 10px;
 }
 
 .show-pri{
@@ -179,6 +184,9 @@
     width: 100%;
     padding: 2px 10px;
 }
+.trans-form .ant-input-number{
+    width: 100%;
+}
 .trans-form .ant-form-item-label > label{
     font-weight:600;
     height: auto;
@@ -191,16 +199,26 @@
 }
 
 .trans-form .ant-select:not(.ant-select-disabled):hover .ant-select-selector,
-.trans-form .ant-input:hover {
+.trans-form .ant-input:hover,.ant-input-number:hover {
     border-color: #00AF92;
 }
 
 .trans-form .ant-select-focused.ant-select-single:not(.ant-select-customize-input) .ant-select-selector,
-.trans-form .ant-input:focus, .ant-input-focused{
+.trans-form .ant-input:focus,.ant-input-number-focused, .ant-input-focused{
     border-color: rgb(0, 175, 146);
     box-shadow: 0 0 0 2px rgba(3, 212, 178, 0.2);
 }
-
+.trans-form .ant-input-number .anticon,
+.trans-form .ant-input-number .anticon{
+    color:rgb(1, 150, 125)!important;
+}
+.trans-symbol{
+    display: inline-block;
+    width: 50px;
+    overflow: hidden;
+    vertical-align: bottom;
+    text-overflow: ellipsis;
+}
 
 /* upload */
 input.wa-upload{

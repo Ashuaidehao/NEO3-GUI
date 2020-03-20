@@ -323,9 +323,12 @@ small,.small{
 .ant-list-item:hover .ant-list-item-meta-description{
     color:#222222;
 }
-.ant-list-item-meta-title a{
+.ant-list-item-meta-title a,
+.ant-list-item-meta-title .link-style{
     color: #222222;
     transition: all 0.15s;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 .ant-list-item-meta-title a:hover{
     color: #00AF92;
@@ -334,7 +337,7 @@ small,.small{
 
 
 .gui-container{
-    background: #F9FAFA;
+    background: #F0F0F0;
     padding: 25px 50px;
     min-height: calc( 100vh );
 }
@@ -402,7 +405,7 @@ small,.small{
 }
 .fix-btn{
     position: fixed;
-    background: #F9FAFA88;
+    background: #F0F0F088;
     z-index: 3;
     right: 60px;
     bottom: 60px;
