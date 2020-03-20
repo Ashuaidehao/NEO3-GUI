@@ -30,16 +30,22 @@ namespace Neo
         public Startup(IConfiguration configuration, IHostEnvironment env)
         {
             Configuration = configuration;
+
+#if DEBUG
             var root = env.ContentRootPath;
             ContentRootPath = Path.Combine(root, "ClientApp");
 
-            CommandLineTool.Run("set BROWSER=none&&npm start", ContentRootPath, output =>
+            if (Directory.Exists(ContentRootPath))
             {
-                if (output.Contains("localhost:3000"))
+                CommandLineTool.Run("npm start", ContentRootPath, output =>
                 {
-                    CommandLineTool.Run("electron .", ContentRootPath);
-                }
-            });
+                    if (output.Contains("development server"))
+                    {
+                        CommandLineTool.Run("npm run start-electron", ContentRootPath);
+                    }
+                });
+            }
+#endif
         }
 
 
@@ -51,7 +57,7 @@ namespace Neo
             services.AddSingleton<JsonRpcMiddleware>();
             services.AddWebSockets(option =>
             {
-                
+
             });
         }
 

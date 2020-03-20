@@ -7,8 +7,12 @@ import stores from "./store/stores";
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.initWebSocket();
 
+    console.log(window.location.href);
+    if (process.env.NODE_ENV !== "development") {
+      stores.nodeStore.start({ NEO_NETWORK: "private" });
+    }
+    this.initWebSocket();
   }
 
 
