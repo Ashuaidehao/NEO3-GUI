@@ -15,7 +15,7 @@ class Blocktrans extends React.Component{
     return (
       <Layout className="gui-container">
         <Sync />
-        <Transaction content="交易列表" page="all" />
+        <Transaction content="最新交易" page="all" />
       </Layout>
     );
   }

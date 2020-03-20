@@ -2,6 +2,7 @@ import React from 'react';
 import {BrowserRouter, Route, Switch,Redirect} from 'react-router-dom';
 import Home from '../pages/home'
 import Sync from '../components/sync';
+import Addressdetail from '../components/Common/addressdetail';
 
 import Chain from '../components/Chain/chain';
 import Chainlayout from '../components/Chain/chainlayout';
@@ -9,6 +10,7 @@ import Blockdetail from '../components/Chain/blockdetail';
 import Blockhashdetail from '../components/Chain/hashdetail';
 import Chaintrans from '../components/Chain/trans';
 import Chainasset from '../components/Chain/asset';
+import Assetdetail from '../components/Chain/assetdetail';
 
 import Advanced from '../components/Advanced/advanced';
 
@@ -43,8 +45,8 @@ const BasicRoute = () => (
                     <Route exact path="/chain/transaction" component={Chaintrans} />
                     <Route exact path="/chain/transaction:hash" component={Transdetail} />
                     <Route exact path="/chain/asset" component={Chainasset} />
-                    <Route exact path="/chain/asset:hash" component={Chainasset} />
-                    <Route exact path="/chain/address:address" component={Walletdetail} />
+                    <Route exact path="/chain/asset:hash" component={Assetdetail} />
+                    <Route exact path="/chain/address:address" component={Addressdetail} />
                 </Layout>
             </Route>
             <Route path="/wallet">

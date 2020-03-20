@@ -4,16 +4,10 @@ import React from 'react';
 import { observer, inject } from "mobx-react";
 import { withRouter, Link} from 'react-router-dom';
 import axios from 'axios';
-import { Layout, Icon, Row, Col, Modal,List, Button,Typography, message,Tag } from 'antd';
+import { Layout, Row, Col,List, Button,Typography, message } from 'antd';
 import Intitle from '../Common/intitle';
 
-import {
-  HomeOutlined
-} from '@ant-design/icons';
-
-const { Sider, Content } = Layout;
-
-const count = 5;
+const { Content } = Layout;
 
 @inject("walletStore")
 @observer
@@ -22,34 +16,34 @@ class Transaction extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-        page: 1,
-        allpage:1,
-        limit:30,
-        params:{},
-        translist:[],
-        loading: true,
-        showEle:true,
-        iswa:false,
-        data: [],
-        loacl:"",
+      loacl:"",
+      allpage:0,
+      page: 1,
+      limit:30,
+      params:{},
+      data: [],
+      translist:[],
+      loading: true,
+      iswa:false,
     };
   }
   componentDidMount() {
     this.setState({
       loacl:location.pathname.split("/")[1]
     })
-
     this.selTrans()
   }
   selTrans = () =>{
     let _hash = location.pathname.split(":")[1]
     let page = this.props.page?this.props.page:"all";
     var _params = this.madeParams();
-    console.log(_hash)
     if(page === "all"){
       this.allset(_params);
     }else if(page === "blockdetail"){
       _params.blockHeight = Number(_hash);
+      this.allset(_params);
+    }else if(page === "assetdetail"){
+      _params.asset = _hash;
       this.allset(_params);
     }else if( page === "wallettrans"){
       this.walletset(_params);
@@ -73,10 +67,7 @@ class Transaction extends React.Component{
         data: res.result.list,
         translist: res.result.list,
         page:this.state.page+1,
-        allcount: res.result.totalCount,
-        showEle: res.result.totalCount - (this.state.page * this.state.limit)
-      },()=>{ 
-        console.log(this.state.showEle)
+        allpage: Math.ceil(res.result.totalCount/this.state.limit)
       });
     })
   }
@@ -88,12 +79,11 @@ class Transaction extends React.Component{
         translist: res.result.list,
         page:this.state.page+1,
         iswa:true,
-        allcount: res.result.totalCount
-      },()=>{console.log(this.state.params)});
+        allpage: Math.ceil(res.result.totalCount/this.state.limit)
+      });
     })
   }
   getMytrans = (params,callback) => {
-    var _this = this;
     axios.post('http://localhost:8081', {
       "id":"51",
       "method": "GetMyTransactions",
@@ -101,7 +91,6 @@ class Transaction extends React.Component{
     })
     .then(function (response) {
       var _data = response.data;
-      console.log(_data)
       if(_data.msgType === -1){
         message.error("查询失败");
         return;
@@ -115,7 +104,6 @@ class Transaction extends React.Component{
     });
   };
   getAlltrans = (params,callback) => {
-    var _this = this;
     axios.post('http://localhost:8081', {
       "id":"51",
       "method": "QueryTransactions",
@@ -123,7 +111,6 @@ class Transaction extends React.Component{
     })
     .then(function (response) {
       var _data = response.data;
-      console.log(_data)
       if(_data.msgType === -1){
         message.error("查询失败");
         return;
@@ -153,7 +140,6 @@ class Transaction extends React.Component{
         },
         () => {
           window.dispatchEvent(new Event('resize'));
-          console.log(this.state);
         },
       );
     });
@@ -181,10 +167,10 @@ class Transaction extends React.Component{
     });
   }
   render = () =>{
-    const {translist,loacl,loading,showEle,iswa} = this.state;
-    const loadMore = !loading && showEle ? (
+    const {translist,loacl,loading,iswa,page,allpage} = this.state;
+    const loadMore = !loading && page <= allpage ? (
       <div className="text-c mb3">
-        {iswa?(<Button type="primary" onClick={this.loadMyMore}>加载更多(wallet)</Button> )
+        {iswa?(<Button type="primary" onClick={this.loadMyMore}>加载更多</Button> )
         :(<Button type="primary" onClick={this.loadMore}>加载更多</Button>)}
       </div>
     ) : null;

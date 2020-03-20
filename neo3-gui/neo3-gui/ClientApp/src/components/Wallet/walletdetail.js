@@ -38,15 +38,17 @@ class Walletdetail extends React.Component{
   getBalances = () =>{
     var _this = this;
     let _add = location.pathname.split(":")[1];
+    console.log(_add)
     axios.post('http://localhost:8081', {
-        "id":"51",
-        "method": "GetMyBalances",
-        "params":{
-            "address":_add
-        }
+      "id":"51",
+      "method": "GetMyBalances",
+      "params":{
+        "address":_add
+      }
     })
     .then(function (response) {
       var _data = response.data;
+      console.log(_data)
       if(_data.msgType === -1){
         console.log("需要先打开钱包再进入页面");
         return;

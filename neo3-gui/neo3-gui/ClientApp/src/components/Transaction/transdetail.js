@@ -3,17 +3,19 @@ import React from 'react';
 import axios from 'axios';
 import '../../static/css/trans.css';
 import {Link} from 'react-router-dom';
-import { Layout, Row, Col, Tabs, Typography, message, Button, Divider } from 'antd';
+import { Layout, Row, Col, Tabs, message, Button, Divider } from 'antd';
 import Translog from './translog';
 import Transdetail from './transdetail';
 import Intitle from '../Common/intitle';
 import Datatrans from '../Common/datatrans';
 import Sync from '../sync';
-import {ArrowRightOutlined,SwapOutlined} from '@ant-design/icons';
+import { SwapOutlined } from '@ant-design/icons';
 
 const { Content } = Layout;
 
 const { TabPane } = Tabs;
+
+const loacl = location.pathname.split("/")[1];
 
 class Transcon extends React.Component{
   constructor(props){
@@ -77,8 +79,7 @@ class Transcon extends React.Component{
     });
   }
   render = () =>{
-    const {hashdetail,transfers,witnesses,attributes} = this.state;
-    console.log(hashdetail);
+    const {hashdetail,transfers,witnesses,attributes,local} = this.state;
     return (
       <Layout className="gui-container">
         <Sync/>
@@ -88,7 +89,6 @@ class Transcon extends React.Component{
                   <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
                   <Tabs className="tran-title" defaultActiveKey="1">
                     <TabPane tab="交易体" key="1">
-                      {/* <Transdetail hashdetail={this.state.hashdetail}/> */}
                       <Detail hashdetail={hashdetail} />
                       <Translist transfers={transfers}/>
                       <Attrlist attributes={attributes}/>
@@ -142,7 +142,9 @@ const Translist = ({ transfers }) => (
         return(
           <ul className="detail-ul border-under" key={index}>
             <li><span className="gray">转出</span><span className="detail-add">{item.fromAddress?item.fromAddress:"--"}</span></li>
-            <li><span className="gray">转入</span><span className="detail-add">{item.toAddress?item.toAddress:"--"}</span></li>
+            <li><span className="gray">转出</span><span className="detail-add">{item.toAddress?item.toAddress:"--"}</span></li>
+            {/* <li><span className="gray">转出</span>{item.fromAddress?<Link className="detail-add" to={"./address:"+item.fromAddress}>{item.fromAddress}</Link>:"--"}</li>
+            <li><span className="gray">转入</span>{item.toAddress?<Link className="detail-add" to={"./address:"+item.toAddress}>{item.toAddress}</Link>:"--"}</li> */}
             <li><span className="gray">金额</span><span className="detail-amount">{item.amount} {item.symbol}</span></li>
           </ul>
         )

@@ -52,25 +52,25 @@ class Chainasset extends React.Component{
             <Col span={24} className="bg-white pv4">
             <Intitle content="资产列表"/>
             <List
-                itemLayout="horizontal"
-                dataSource={assetlist}
-                className="font-s"
-                renderItem={item => (
-                <List.Item>
-                    <List.Item.Meta
-                    title={<Link to={"/chain/detail:"+item.asset} title="查看详情">{item.name}</Link>}
-                    description={<div className="font-s">{item.asset}</div>}
-                    />
-                    <Typography>asset：{item.asset}</Typography>||
-                    <Typography>name：{item.name}</Typography>||
-                    <Typography>symbol：{item.symbol}</Typography>||
-                    <Typography>decimals：{item.decimals}</Typography>||
-                    <Typography className="upcase ml4"><span className="wa-amount">{item.transactionCount}</span></Typography>
-                </List.Item>
-                )}
-              />
-              </Col>
-              <div className="pv1"></div>
+              header={<div><span>资产hash</span><span className="float-r">精度</span></div>}
+              itemLayout="horizontal"
+              dataSource={assetlist}
+              className="font-s"
+              renderItem={item => (
+              <List.Item>
+                <List.Item.Meta
+                title={<Link to={"/chain/asset:"+item.asset} title="查看详情">{item.name}</Link>}
+                description={
+                  <div className="font-s">
+                    <span className="w300 ellipsis">{item.asset}</span>
+                  </div>}
+                />
+                <Typography className="ml4">{item.decimals}</Typography>
+              </List.Item>
+              )}
+            />
+            </Col>
+            <div className="pv1"></div>
           </Row>
         </Content>
       </Layout>

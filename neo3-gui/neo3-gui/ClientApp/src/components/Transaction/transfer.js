@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Alert , Input,
     Tooltip,
     Icon,
-    Cascader,
+    InputNumber,
     Modal,
     Select,
     Row,
@@ -14,7 +14,6 @@ import { Alert , Input,
     Button,
     AutoComplete,
   } from 'antd';
-  
 import {  Layout } from 'antd';
 import Intitle from '../Common/intitle'
 import '../../static/css/wallet.css'
@@ -35,7 +34,7 @@ class Transfer extends React.Component{
     this.state = {
         size: 'default',
         iconLoading:false,
-        accountlist: [],
+        addresslist: [],
         selectadd:[]
     };
   }
@@ -43,31 +42,7 @@ class Transfer extends React.Component{
     var _this = this;
     axios.post('http://localhost:8081', {
       "id": "1234",
-      "method": "ListAddress",
-      "params": {
-        "count": 10
-      }
-    })
-    .then(function (response) {
-      var _data = response.data;
-      if(_data.msgType === -1){
-        console.log("需要先打开钱包再进入页面");
-        return;
-      }
-      _this.setState({
-        accountlist:_data.result.accounts
-      })
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error2");
-    });
-  }
-  setAddress = () =>{
-    var _this = this;
-    axios.post('http://localhost:8081', {
-      "id": "1234",
-      "method": "GetMyTotalBalance",
+      "method": "GetMyBalances",
       "params": {}
     })
     .then(function (response) {
@@ -77,7 +52,7 @@ class Transfer extends React.Component{
         return;
       }
       _this.setState({
-        selectadd:_data.result
+        addresslist:_data.result
       })
     })
     .catch(function (error) {
@@ -85,30 +60,46 @@ class Transfer extends React.Component{
       console.log("error2");
     });
   }
+  setAddress = target =>{
+    target = target?target:0;
+    let _detail = this.state.addresslist[target].balances;
+    this.setState({
+      selectadd: _detail
+    })
+  }
+  shouldComponentUpdate(nextProps, nextState){
+    console.log(nextProps)
+    console.log(nextState)
+    console.log(11111111)
+    return true
+  }
   getAsset = () =>{
     this.setState({
       neo:_data.result.accounts
     })
   }
   transfer = fieldsValue =>{
-    let _sender = this.state.accountlist[fieldsValue.sender].address;
+    let _sender = this.state.addresslist[fieldsValue.sender].address;
     let _this = this;
+    this.setState({
+      iconLoading:true
+    })
     axios.post('http://localhost:8081', {
       "id":"5",
       "method": "SendToAddress",
       "params": {
         "sender":_sender,
-        "receiver":fieldsValue.receiver,
+        "receiver":fieldsValue.receiver.trim(),
         "amount":fieldsValue.amount,
         "asset":fieldsValue.asset
        }
     })
     .then(function (response) {
       var _data = response.data;
-      console.log(_data)
+      _this.setState({ iconLoading: false });
       if(_data.msgType === -1){
         message.error("交易失败");
-        message.error("这里需要给几个error code：资金不够、手续费不够、地址错误、其他");
+        message.error("这里需要根据几个不同的情况分析：资金不够、手续费不够、地址错误、其他");
         return;
       }else{
         Modal.info({
@@ -120,7 +111,6 @@ class Transfer extends React.Component{
           ),
           okText:"确认"
         });
-        _this.setState({ iconLoading: false });
       }
       console.log(_data);
     })
@@ -130,8 +120,7 @@ class Transfer extends React.Component{
     });
   }
   render() {
-    const {size,accountlist,selectadd} = this.state;
-    
+    const {size,addresslist,selectadd} = this.state;
     return (
       <Layout className="gui-container">
         <Sync />
@@ -156,7 +145,7 @@ class Transfer extends React.Component{
                   placeholder={"选择账户"}
                   style={{ width: '100%'}}
                   onChange={this.setAddress}>
-                  {accountlist.map((item,index)=>{
+                  {addresslist.map((item,index)=>{
                     return(
                     <Option key={index}>{item.address}</Option>
                     )
@@ -176,7 +165,7 @@ class Transfer extends React.Component{
                 <Input placeholder="输入账户" />
               </Form.Item>
               <Row>
-                <Col span={16}>
+                <Col span={15}>
                   <Form.Item
                     name="amount"
                     label="转账金额"
@@ -186,11 +175,10 @@ class Transfer extends React.Component{
                         message: '请填写正确的转账金额',
                       },
                     ]}>
-
-                    <Input placeholder="请输入转账金额"/>
+                    <InputNumber min={0} step={1} placeholder="转账金额"/>
                   </Form.Item>
                 </Col>
-                <Col span={8}>
+                <Col span={9}>
                   <Form.Item
                     name="asset"
                     label="发送资产"
@@ -206,7 +194,7 @@ class Transfer extends React.Component{
                       >
                       {selectadd.map((item,index)=>{
                       return(
-                        <Option key={index} value={item.asset}>{item.symbol} <small>{item.balance}</small></Option>
+                        <Option key={index} value={item.asset} title={item.symbol}><span className="trans-symbol">{item.symbol} </span><small>{item.balance}</small></Option>
                       )
                       })}
                     </Select>
