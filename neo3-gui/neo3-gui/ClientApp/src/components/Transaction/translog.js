@@ -7,9 +7,8 @@ class Translog extends React.Component{
     const {notifies,hash} = this.props;
     return (
     <div className="info-detail">
-        <p className="pv3"></p>
         <ul className="trans-ul">
-        {notifies.map((item,index)=>{
+        {notifies.map((item)=>{
             let _data = item.value;
             var html=[];
             html.push(<li className="trans-title pa3" key="title"><span>ScriptHash: &nbsp;&nbsp;&nbsp;</span>{hash}</li>);

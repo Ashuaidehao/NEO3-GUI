@@ -3,12 +3,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { observer, inject } from "mobx-react";
 import axios from 'axios';
-import { Layout, message, Row, Col, List, Input, Avatar, Button, Typography } from 'antd';
+import { Layout, message, Row, Col, List, Avatar, Button, Typography } from 'antd';
 import '../../static/css/wallet.css'
 import Sync from '../sync';
 import Intitle from '../Common/intitle'
 
-const { Sider, Content } = Layout;
+const { Content } = Layout;
 
 @inject("walletStore")
 @observer
@@ -27,7 +27,6 @@ class Walletlist extends React.Component {
     this.getAllasset();
     this.getGas();
   }
-
   getAllasset = () => {
     var _this = this;
     axios.post('http://localhost:8081', {
@@ -135,27 +134,6 @@ class Walletlist extends React.Component {
         console.log("error");
       });
   }
-  showPrivate = () => {
-    var _this = this;
-    axios.post('http://localhost:8081', {
-      "id": "123456",
-      "method": "ShowPrivateKey",
-      "params": {
-        "address": "NdBqia8N7sknTpgheck3ZznFoLzWdbaBoK"
-      }
-    })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          console.log("需要先打开钱包再进入页面");
-          return;
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
-  }
   importPrivate = () => {
     var _this = this.state;
     // var pass = document.getElementById("privateKey").value;
@@ -177,9 +155,6 @@ class Walletlist extends React.Component {
         console.log(error);
         console.log("error");
       });
-  }
-  refresh = () => {
-    location.href = location.origin + "/wallet/walletlist";
   }
   render() {
     const accounts = this.props.walletStore.accountlist;
@@ -220,7 +195,9 @@ class Walletlist extends React.Component {
                   <List.Item>
                     <List.Item.Meta
                       avatar={
+                        // <Avatar src="https://neo3.azureedge.net/images/gui/0x43cf98eddbe047e198a3e5d57006311442a0ca15.png" />
                         <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                        // <Avatar src={"https://neo3.azureedge.net/images/gui/"+item.asset+".png"} />
                       }
                       title={<span className="upcase">{item.symbol}</span>}
                       description={<span className="f-xs">{item.asset}</span>}
@@ -235,14 +212,10 @@ class Walletlist extends React.Component {
             </Col>
           </Row>
 
-          <div className="mt1 pv3">
-            <Link to='/Wallet'>去钱包打开页面</Link>           
-          </div>
-          <Button type="primary" className="mr2" onClick={this.refresh}>刷新界面</Button>
-          <Button type="primary" onClick={this.addAddress}>创建新地址</Button>
-          <br /><br />
+          <Button className="mt3 mb1" type="primary" onClick={this.addAddress}>创建新地址</Button>
+          {/* <br /><br />
           <Input type="text" ref="private" placeholder="请输入WIF格式的私钥" />
-          <Button onClick={this.importPrivate} className="mb1">导入私钥</Button>
+          <Button onClick={this.importPrivate} className="mb1">导入私钥</Button> */}
         </Content>
       </Layout>
     );

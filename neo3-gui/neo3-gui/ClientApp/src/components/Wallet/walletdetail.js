@@ -16,8 +16,6 @@ import {
 const { confirm } = Modal;
 const { Content } = Layout;
 
-const info = ["GetMyTransactions"];
-
 class Walletdetail extends React.Component{
   constructor(props){
     super(props);
@@ -35,23 +33,22 @@ class Walletdetail extends React.Component{
   }
   checkAddress = () =>{
     let _add = location.pathname.split(":")[1];
-    this.setState({
-        address:_add
-    })
-    info.push(_add);
+    this.setState({address:_add})
   }
   getBalances = () =>{
     var _this = this;
     let _add = location.pathname.split(":")[1];
+    console.log(_add)
     axios.post('http://localhost:8081', {
-        "id":"51",
-        "method": "GetMyBalances",
-        "params":{
-            "address":_add
-        }
+      "id":"51",
+      "method": "GetMyBalances",
+      "params":{
+        "address":_add
+      }
     })
     .then(function (response) {
       var _data = response.data;
+      console.log(_data)
       if(_data.msgType === -1){
         console.log("需要先打开钱包再进入页面");
         return;
@@ -192,7 +189,7 @@ class Walletdetail extends React.Component{
                 </div>
               </Col>
             </Row>
-            <Transaction info={info} content="交易列表"/>
+            <Transaction page="walletdetail" content="交易列表"/>
             </Content>
         </Layout>
     );

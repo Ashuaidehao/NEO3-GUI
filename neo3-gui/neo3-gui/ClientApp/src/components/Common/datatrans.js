@@ -1,10 +1,8 @@
 /* eslint-disable */
 import React from 'react';
 import 'antd/dist/antd.css';
-import { Link } from 'react-router-dom';
 import '../../static/css/trans.css';
 import '../../static/js/bundledemo.js';
-import axios from 'axios';
 import {
     Alert, Input,
     Tooltip,
@@ -12,21 +10,15 @@ import {
     Cascader,
     Modal,
     Drawer,
-    Select,
-    Row,
-    Col,
     message,
     Button,
     AutoComplete,
 } from 'antd';
 
-import { Layout } from 'antd';
-import Intitle from '../Common/intitle'
 import '../../static/css/wallet.css'
 import DataConvert from "./dataConverter";
 
 import { SwapOutlined } from '@ant-design/icons';
-import { constants } from 'fs';
 
 
 class Datatrans extends React.Component {
