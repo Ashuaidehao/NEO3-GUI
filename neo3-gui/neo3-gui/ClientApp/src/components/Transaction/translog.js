@@ -4,21 +4,21 @@ import { Divider } from 'antd';
 
 class Translog extends React.Component{
   render = () =>{
-    const {notifies,hash} = this.props;
+    const {notifies} = this.props;
     return (
     <div className="info-detail">
-        <ul className="trans-ul">
-        {notifies.map((item)=>{
-            let _data = item.value;
-            var html=[];
-            html.push(<li className="trans-title pa3" key="title"><span>ScriptHash: &nbsp;&nbsp;&nbsp;</span>{hash}</li>);
-            for(var i = 0;i<_data.length;i++){
-                html.push(<li className="pa3" key={i}><span className="trans-type">{_data[i].type}</span>{_data[i].value?_data[i].value:"--"}</li>)
-            }
-            html.push(<Divider key="divider"></Divider>)
-            return html;
-        })}   
-        </ul>
+      <ul className="trans-ul">
+      {notifies.map((item)=>{
+        let _data = item.state?item.state.value:[];
+        var html=[];
+        html.push(<li className="trans-title pa3" key="title"><span>ScriptHash: &nbsp;&nbsp;&nbsp;</span>{item.contract}</li>);
+        for(var i = 0;i<_data.length;i++){
+          html.push(<li className="pa3" key={i}><span className="trans-type">{_data[i].type}</span>{_data[i].value? JSON.stringify(_data[i].value).replace(/\"/g,' '):"--"}</li>);
+        }
+        html.push(<Divider key="divider"></Divider>)
+        return html;
+      })}    
+      </ul>
     </div>
     );
   }
