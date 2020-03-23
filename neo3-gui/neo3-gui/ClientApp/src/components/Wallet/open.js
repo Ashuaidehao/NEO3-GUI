@@ -5,6 +5,7 @@ import axios from 'axios';
 import { message, Input, Row, Col, Button } from 'antd';
 import Topath from '../Common/topath';
 import { walletStore } from "../../store/stores";
+
 const { dialog } = window.remote;
 
 class Walletopen extends React.Component {
