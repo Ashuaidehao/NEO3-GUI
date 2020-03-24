@@ -24,8 +24,10 @@ class Untransaction extends React.Component{
     };
   }
   componentDidMount() {
+    let path = location.pathname.split("/");
+    path.pop()
     this.setState({
-      loacl:location.pathname.split("/")[1]
+      loacl:path
     })
     this.selTrans()
   }

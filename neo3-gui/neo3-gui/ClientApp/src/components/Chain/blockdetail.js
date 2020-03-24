@@ -10,8 +10,6 @@ import Sync from '../sync';
 
 const { Content } = Layout;
 
-var info = ["blockdetail"]
-
 class Blockdetail extends React.Component{
   constructor(props){
     super(props);
@@ -23,7 +21,7 @@ class Blockdetail extends React.Component{
     };
   }
   componentDidMount(){
-    let _h = Number(location.pathname.split(":")[1])
+    let _h = Number(location.pathname.split(":").pop())
     this.setHeight(_h)();
     this.setState({
       local:location.pathname

@@ -58,3 +58,11 @@
     border:1px solid rgb(0, 175, 137);
     font-weight: 400;
 }
+
+.dis-file{
+
+    background: transparent;
+}
+.dis-file .ant-input{
+    background: transparent;
+}

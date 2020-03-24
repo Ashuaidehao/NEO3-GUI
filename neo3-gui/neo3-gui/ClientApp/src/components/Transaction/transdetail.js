@@ -15,8 +15,6 @@ const { Content } = Layout;
 
 const { TabPane } = Tabs;
 
-const loacl = location.pathname.split("/")[1];
-
 class Transcon extends React.Component{
   constructor(props){
     super(props);
@@ -52,8 +50,7 @@ class Transcon extends React.Component{
     });
   };
   getTransdetail = callback => {
-    let _hash = location.pathname.split(":")[1];
-    console.log(_hash)
+    let _hash = location.pathname.split(":").pop();
     axios.post('http://localhost:8081', {
         "id":"51",
         "method": "GetTransaction",
@@ -79,7 +76,7 @@ class Transcon extends React.Component{
     });
   }
   render = () =>{
-    const {hashdetail,transfers,witnesses,attributes,local} = this.state;
+    const {hashdetail,transfers,witnesses,attributes} = this.state;
     return (
       <Layout className="gui-container">
         <Sync/>

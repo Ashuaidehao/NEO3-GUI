@@ -21,7 +21,7 @@ class Contractdetail extends React.Component{
     };
   }
   componentDidMount(){
-    let _hash = location.pathname.split(":")[1];
+    let _hash = location.pathname.split(":").pop();
     this.contractDetail(_hash,res=>{
         this.setState({
             hash:_hash,
