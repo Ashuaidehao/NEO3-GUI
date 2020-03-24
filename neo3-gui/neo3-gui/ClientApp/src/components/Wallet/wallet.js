@@ -60,7 +60,7 @@ class Wallet extends React.Component{
             {!this.state.showElem?(
               <a className="back" onClick={this.getInset(-1)} key="1"><ArrowLeftOutlined /></a>
             ):null}
-            <a className="close" href="/home"><CloseOutlined /></a>
+            <Link className="close" to="/"><CloseOutlined /></Link>
           </div>
           <div className="logo mt5"></div>
           <div className="wa-open mt2">
