@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Neo.IO.Json;
 using Neo.Network.P2P.Payloads;
+using Neo.SmartContract.Native;
 
 namespace Neo.Models.Transactions
 {
@@ -13,11 +14,11 @@ namespace Neo.Models.Transactions
         public TransactionModel(Transaction tx)
         {
             TxId = tx.Hash;
-            NetworkFee = tx.NetworkFee;
+            NetworkFee = new BigDecimal(tx.NetworkFee, NativeContract.GAS.Decimals);
             Nonce = tx.Nonce;
             Script = tx.Script;
             Sender = tx.Sender;
-            SystemFee = tx.SystemFee;
+            SystemFee = new BigDecimal(tx.SystemFee, NativeContract.GAS.Decimals);
             ValidUntilBlock = tx.ValidUntilBlock;
             Version = tx.Version;
             Size = tx.Size;
@@ -36,7 +37,7 @@ namespace Neo.Models.Transactions
         public DateTime BlockTime => Timestamp.FromTimestampMS().ToLocalTime();
         public ulong Timestamp { get; set; }
         public List<TransferModel> Transfers { get; set; }
-        public long NetworkFee { get; set; }
+        public BigDecimal NetworkFee { get; set; }
 
         public uint Nonce { get; set; }
 
@@ -44,7 +45,7 @@ namespace Neo.Models.Transactions
 
         public UInt160 Sender { get; set; }
 
-        public long SystemFee { get; set; }
+        public BigDecimal SystemFee { get; set; }
 
         public uint ValidUntilBlock { get; set; }
 
@@ -52,7 +53,7 @@ namespace Neo.Models.Transactions
 
 
         public uint Confirmations { get; set; }
-        
+
         public int Size { get; set; }
 
         public List<TranAttributeModel> Attributes { get; set; }
