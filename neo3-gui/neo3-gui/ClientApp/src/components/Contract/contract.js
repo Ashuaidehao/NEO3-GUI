@@ -50,7 +50,6 @@ class Contract extends React.Component{
           <Col span={24} className="bg-white pv4">
             <PageHeader title="搜索合约"></PageHeader>
           </Col>
-          
         </Row>
         <Searcharea show={this.show()}/>
       </Content>

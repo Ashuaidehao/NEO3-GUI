@@ -15,7 +15,8 @@ import { Input,
     Button,Drawer 
   } from 'antd';
 import {  Layout } from 'antd';
-import Sync from '../sync'
+import Sync from '../sync';
+import Topath from '../Common/topath';
 import {
     ArrowRightOutlined,
     SearchOutlined 
@@ -23,7 +24,7 @@ import {
 
 const { Content } = Layout;
 const {dialog} = window.remote;
-
+const { Search } = Input;
 
 class Searcharea extends React.Component{
   constructor(props){
@@ -56,20 +57,48 @@ class Searcharea extends React.Component{
     stopPropagation(e) {
         e.nativeEvent.stopImmediatePropagation();
     }
+    searchContract = () => {
+        let _hash = (this.refs.sinput.input.value).trim();
+        if(!_hash){message.info("请输入后再试");return;}
+        var _this = this;
+        axios.post('http://localhost:8081', {
+            "id":"1111",
+            "method": "GetContract",
+            "params": {
+                "contractHash":_hash
+            }
+        })
+        .then(function (response) {
+          var _data = response.data;
+          console.log(_data);
+          if(_data.msgType === -1){
+            message.info("该合约hash不存在，请检查后再尝试");
+            return;
+          }else if(_data.msgType === 3){
+            _this.setState({topath:"/contract/detail:"+_hash});
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+          console.log("error");
+        });
+    }
     render = () =>{
     return (
         <div className="search-area">
+            <Topath topath={this.state.topath}></Topath>
             <div className="search-btn">
                 <SearchOutlined className="inset-btn" onClick={this.addClass}/>
             </div>
             <div className={this.state.cname}>
                 <div className="search-detail" ref="sarea" onClick={this.stopPropagation}>
-                    <Input 
-                    suffix={
-                        <ArrowRightOutlined />
-                    }></Input>
-                    {this.props.show?"点击显示":null}
-                    {!this.props.show?"点击隐藏":null}
+                    <Input
+                    placeholder="输入脚本散列"
+                    onPressEnter={this.searchContract}
+                    ref="sinput"
+                    defaultValue="0x8c23f196d8a1bfd103a9dcb1f9ccf0c611377d3b"
+                    suffix={<ArrowRightOutlined onClick={this.searchContract}/>}
+                    />
                 </div>
             </div>
         </div>

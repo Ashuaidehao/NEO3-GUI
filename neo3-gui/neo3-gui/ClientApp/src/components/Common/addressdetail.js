@@ -90,8 +90,7 @@ class Addressdetail extends React.Component{
                   </List.Item>
                   )}
                 />
-                <div className="mb4 text-r">
-                </div>
+                <div className="mb4 text-r"></div>
               </Col>
             </Row>
             <Transaction page="walletdetail" content="交易列表"/>

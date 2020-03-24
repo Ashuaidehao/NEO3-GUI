@@ -27,6 +27,7 @@ import Contract from '../components/Contract/contract';
 import Contractlayout from '../components/Contract/contractlayout';
 import Contractdeploy from '../components/Contract/deploy';
 import Contractinvoke from '../components/Contract/invoke';
+import Contractdetail from '../components/Contract/contractdetail';
 
 import { Layout } from 'antd';
 
@@ -68,6 +69,7 @@ const BasicRoute = () => (
                     <Route exact path="/contract" component={Contract} />
                     <Route exact path="/contract/deploy" component={Contractdeploy} />
                     <Route exact path="/contract/invoke" component={Contractinvoke} />
+                    <Route exact path="/contract/detail:hash" component={Contractdetail} />
                 </Layout>
             </Route>
             <Redirect from="*" to="/" />

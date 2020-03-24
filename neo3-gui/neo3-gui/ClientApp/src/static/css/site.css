@@ -437,15 +437,15 @@ small,.small{
 .ant-input{
     padding: 6px 12px;
 }
-
+.ant-input-affix-wrapper:hover{
+    border-color:#00AF92;
+}
 .ant-input:focus,
 .ant-input:hover,
 .ant-input:focus,
 .ant-input:active,
 .ant-input-focused,
-.ant-input-affix-wrapper:hover,
-.ant-input-affix-wrapper:focus,
-.ant-input-affix-wrapper:active,
+.ant-input-affix-wrapper-focused,
 .ant-input-password:hover,
 .ant-input-password:focus,
 .ant-input-password:active{

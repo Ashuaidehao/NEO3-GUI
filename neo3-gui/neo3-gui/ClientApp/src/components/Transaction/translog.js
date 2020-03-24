@@ -13,7 +13,7 @@ class Translog extends React.Component{
         var html=[];
         html.push(<li className="trans-title pa3" key="title"><span>ScriptHash: &nbsp;&nbsp;&nbsp;</span>{item.contract}</li>);
         for(var i = 0;i<_data.length;i++){
-          html.push(<li className="pa3" key={i}><span className="trans-type">{_data[i].type}</span>{_data[i].value? JSON.stringify(_data[i].value).replace(/\"/g,' '):"--"}</li>);
+          html.push(<li className="pa3" key={i}><span className="trans-type">{_data[i].type}</span>{_data[i].value? JSON.stringify(_data[i].value).replace(/"/g,' '):"--"}</li>);
         }
         html.push(<Divider key="divider"></Divider>)
         return html;
