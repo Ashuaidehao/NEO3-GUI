@@ -24,7 +24,7 @@ const { Content } = Layout;
 const {dialog} = window.remote;
 
 
-class Consensusdeploy extends React.Component{
+class Contractdeploy extends React.Component{
   constructor(props){
     super(props);
     this.state = {
@@ -117,4 +117,4 @@ class Consensusdeploy extends React.Component{
   }
 } 
 
-export default Consensusdeploy;
+export default Contractdeploy;

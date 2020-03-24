@@ -77,7 +77,7 @@ class Home extends Component {
                     </Link>
                   </Col>
                   <Col span={6}>
-                    <Link to='/consensus'>
+                    <Link to='/contract'>
                       <div className="home-link">
                         <span>合约</span>
                       </div>

@@ -76,7 +76,6 @@ h1,.h1{
 }
 h2,.h2,.font-xl{
     font-size: 20px;
-    text-shadow: 0.1px 0 0 #222222;
 }
 h3,.h3,.font-l{
     font-size: 16px;
@@ -221,9 +220,33 @@ small,.small{
     padding-right: 8px;
 }
 
+/* 覆盖 */
 .ant-btn{
     border-radius: 0;
     height: auto;
+    padding:6px 0;
+    text-align:center;
+    border: 1px solid #00AF92;
+    color: #00AF92;
+    background: transparent;
+    min-width: 100px;
+}
+.ant-btn-primary{
+    color: #FFFFFF;
+    background: #00AF92;
+}
+.ant-btn:hover{
+    color: #FFFFFF!important;
+    background-color: #2b393f;
+    border-color: #2b393f!important;
+}
+
+.ant-btn-circle, .ant-btn-circle-outline{
+    border-radius:50%;
+    border: auto;
+    height: 32px;
+    padding: 0;
+    min-width: auto;
 }
 
 
@@ -281,25 +304,18 @@ small,.small{
 .in-title .anticon svg{
     vertical-align: middle;
 }
-
-
-/* 覆盖 */
-.ant-btn{
-    padding:6px 0;
-    text-align:center;
-    border: 1px solid #00AF92;
-    color: #00AF92;
-    background: transparent;
-    min-width: 100px;
+.ant-page-header{
+    padding:12px;
+    border-bottom: 1px solid #E8E8E8;
 }
-.ant-btn-primary{
-    color: #FFFFFF;
-    background: #00AF92;
+.ant-page-header-heading-title{
+    color:#222222;
+    font-weight: 500;
+    line-height: 22px;
 }
-.ant-btn:hover{
-    color: #FFFFFF!important;
-    background-color: #2b393f;
-    border-color: #2b393f!important;
+.ant-page-header-heading-extra .anticon {
+    font-size: 20px;
+    color: #555555;
 }
 
 /* 列表样式覆盖 */
@@ -414,4 +430,34 @@ small,.small{
     border: 1px solid #EEE;
     color: #00AF92;
     font-size: 22px;
+}
+
+
+
+.ant-input{
+    padding: 6px 12px;
+}
+
+.ant-input:focus,
+.ant-input:hover,
+.ant-input:focus,
+.ant-input:active,
+.ant-input-focused,
+.ant-input-affix-wrapper:hover,
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper:active,
+.ant-input-password:hover,
+.ant-input-password:focus,
+.ant-input-password:active{
+    border:1px solid #00AF92;
+    box-shadow: 0 0 0 2px rgba(3, 212, 178, 0.2);
+}
+.ant-input-affix-wrapper > input.ant-input{
+    padding: 0;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+.ant-input-affix-wrapper-focus{
+
 }
