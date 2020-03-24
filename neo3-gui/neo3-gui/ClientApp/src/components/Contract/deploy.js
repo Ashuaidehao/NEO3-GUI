@@ -23,6 +23,8 @@ import { FolderOpenOutlined } from '@ant-design/icons';
 const { Content } = Layout;
 const { dialog } = window.remote;
 
+const { TextArea } = Input;
+
 class Contractdeploy extends React.Component{
   constructor(props){
     super(props);
@@ -31,6 +33,7 @@ class Contractdeploy extends React.Component{
       mapath:"",
       expath:"",
       disabled:true,
+      visible:false,
       cost:-1
       };
     }
@@ -65,23 +68,28 @@ class Contractdeploy extends React.Component{
       })
     }
     onFill = () => {
+      console.log(this.refs.formRef)
+      console.log(this.refs.formRef.getFieldsValue())
       this.refs.formRef.setFieldsValue({
         nefPath: this.state.expath,
         manifestPath: this.state.mapath,
+        tresult:this.state.tresult
       });
     };
     onTest = () =>{
-      console.log(this.refs.formRef.validateFields());
-      this.refs.formRef.validateFields(
-        console.log(this)
-      )
-      let _params = this.refs.formRef.getFieldsValue();
-      // _params.sendTx = false;
-      // this.deployContract( _params,res =>{
-      //   this.setState({
-      //     disabled:false
-      //   },()=>{this.onFill()});
-      // })
+      this.refs.formRef.validateFields().then(data => {
+        let _params = data;
+        _params.sendTx = false;
+        this.deployContract( _params,res =>{
+          console.log(res);
+          this.setState({
+            disabled:false,
+            tresult:JSON.stringify(res.result)
+          },this.onFill());
+        })
+      }).catch(function(){
+        message.error("请先选择文件");
+      })
     }
     ondeploy = fieldsValue =>{
       let params = fieldsValue;
@@ -99,7 +107,6 @@ class Contractdeploy extends React.Component{
       })
       .then(function (response) {
         var _data = response.data;
-        console.log(_data);
         if(_data.msgType === -1){
           message.info("试运行失败，请检查后再尝试");
           return;
@@ -155,7 +162,9 @@ class Contractdeploy extends React.Component{
                 试运行
               </Button>
             </Form.Item>
-            {cost>-1?<div className="text-c lighter"><small>手续费 {cost} GAS</small></div>:null}
+            <div className="pa3 mb4">
+              <TextArea rows={3} value={this.state.tresult}/>
+            </div>
             <Form.Item className="text-c w200">
               <Button type="primary" htmlType="submit" disabled={disabled} loading={this.state.iconLoading}>
                 发送
