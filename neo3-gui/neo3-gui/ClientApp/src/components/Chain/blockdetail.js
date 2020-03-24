@@ -86,7 +86,7 @@ class Blockdetail extends React.Component{
                     </Col>
                     <Col span={12}>
                         <ul className="detail-ul">
-                            <li><span className="hint">大小：</span>{blockdetail.size}</li>
+                            <li><span className="hint">大小：</span>{blockdetail.size} 字节</li>
                             <li><span className="hint">随机数：</span>{nonce}</li>
                             <li><span className="hint">系统费：</span>{blockdetail.networkFee?blockdetail.networkFee:'--'}</li>
                             <li><span className="hint">见证人：</span>{witness}</li>
