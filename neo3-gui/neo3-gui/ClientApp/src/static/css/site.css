@@ -28,6 +28,11 @@ a:hover{
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+.app-logo{
+    margin-top: 80px;
+    margin-bottom: 80px;
+    width: 250px;
+}
 
 
 .text-r{

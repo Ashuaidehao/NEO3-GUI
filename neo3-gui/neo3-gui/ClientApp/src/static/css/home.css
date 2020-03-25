@@ -10,38 +10,33 @@ body,html{
     margin: 32px auto;
 }
 
-.App-logo{
+.app-logo{
     max-width: 500px;
 }
 
 .home-icon{
     padding-top: 30px;
 }
-.home-icon img{
-    height: 80px;
-    width: 80px;
-}
 .home-icon span{
     display: inline-block;
     font-size: 20px;
-    font-weight: 500;
+    font-weight: 600;
     margin-top: 5px;
-    letter-spacing: 8px;
 }
 .home-icon a{
     color: #000000;
 }
 .home-icon .home-link{
+    text-align: center;
     padding: 20px;
-    min-height: 240px;
-    background:rgba(255,255,255,1);
-    box-shadow:0px 4px 6px 2px rgba(50,64,77,0.1);
-    filter: grayscale(1);
+    min-height: 200px;
+    background:#F0F0F0;
     opacity: 1;
-    transition: opacity 2s cubic-bezier(0.165, 0.84, 0.44, 1);
+    color: rgba(0, 0, 0, 0.4);
+    text-shadow: 1px 1px 3px #ccd0d4, 0 0 0 rgba(0, 0, 0, 0.8), 1px 1px 4px white;
+    box-shadow: -8px -11px 18px 5px rgba(255, 255, 255, 0.5), inset 0 -3px 4px -1px rgba(0, 0, 0, 0.1), 5px 9px 29px 0 rgba(0, 0, 0, 0.05), inset 0 3px 2px -1px rgba(255, 255, 255, 0.8), inset 0 0 5px 1px rgba(255, 255, 255, 0.9), inset 6px 9px 19px 0 rgba(255, 255, 255, 0.3);
 }
 .home-icon .home-link{
-    background: url(../images/blockchain.svg),#FFFFFF;
     background-size: 65%;
     background-repeat: no-repeat;
     background-position: right center;
@@ -49,9 +44,17 @@ body,html{
 }
 .home-icon a:hover .home-link{
     animation: scale-ani .3s forwards cubic-bezier(0.165, 0.84, 0.44, 1);
-    
+    transform: scale3d(1.05, 1.05, 1);
+    box-shadow:
+    0 15px 25px -4px rgba(0, 0, 0, 0.4), inset 0 -8px 25px -1px rgba(255, 255, 255, 0.9), 0 -10px 15px -1px rgba(255, 255, 255, 0.6), inset 0 8px 20px 0 rgba(0, 0, 0, 0.2), inset 0 0 5px 1px rgba(255, 255, 255, 0.6)
 }
-@keyframes scale-ani{
+.home-icon img{
+    margin: 5px auto 20px;
+    display: block;
+    height: 90px;
+}
+
+/* @keyframes scale-ani{
     0%{
         box-shadow:0px 4px 6px 2px rgba(50,64,77,0.1);
         transform: scale3d(1, 1, 1);
@@ -60,4 +63,4 @@ body,html{
         box-shadow: 0 6px 16px 0 rgba(50,64,77, 0.15), 0 4px 15px 0 rgba(50,64,77, 0.1);
         transform: scale3d(1.05, 1.05, 1);
     }
-}
+} */

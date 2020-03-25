@@ -7,6 +7,11 @@ import Sync from '../components/sync';
 import '../static/css/site.css';
 import '../static/css/home.css';
 import img from '../static/images/logo.svg';
+import blockimg from '../static/images/1.svg';
+import walletimg from '../static/images/2.svg';
+import contractimg from '../static/images/3.svg';
+import adavancedimg from '../static/images/4.svg';
+import bg from '../static/images/bg.svg';
 
 const { Text } = Typography;
 const { Content } = Layout;
@@ -52,46 +57,47 @@ class Home extends Component {
             <Layout className="home-content">
               <Content>
                 <Sync></Sync>
-                <div className="w600 text-c">
-                  <img src={img} className="App-logo" alt="img" />
+                <div className="pv1 text-c">
+                  <img src={img} className="app-logo" alt="img" />
                 </div>
-                <Content className="text-r">
-                  <Text type="secondary"> 版本 v3.0.1</Text>
-                </Content>
               </Content>
 
               <Content className="home-icon">
-                <Row gutter={32}>
+                <Row gutter={60}>
                   <Col span={6}>
                     <Link to='/chain'>
                       <div className="home-link">
-                        <span>区块链</span>
+                        <img src={blockimg} alt="img" />
+                        <span>区 块 链</span>
                       </div>
                     </Link>
                   </Col>
                   <Col span={6}>
                     <Link to='/wallet/walletlist'>
                       <div className="home-link">
-                        <span>钱包</span>
+                        <img src={walletimg} alt="img" />
+                        <span>钱 包</span>
                       </div>
                     </Link>
                   </Col>
                   <Col span={6}>
                     <Link to='/contract'>
                       <div className="home-link">
-                        <span>合约</span>
+                        <img src={contractimg} alt="img"/>
+                        <span>合 约</span>
                       </div>
                     </Link>
                   </Col>
                   <Col span={6}>
                     {/* <Link to='/advanced'>
                       <div className="home-link">
-                        <span>高级</span>
+                        <span>高 级</span>
                       </div>
                     </Link> */}
                     <Link to='/pages'>
                       <div className="home-link">
-                        <span>高级</span>
+                        <img src={adavancedimg} alt="img"/>
+                        <span>高 级</span>
                       </div>
                     </Link>
                   </Col>
