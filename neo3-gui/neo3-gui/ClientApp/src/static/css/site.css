@@ -57,6 +57,9 @@ a:hover{
 .bolder{
     font-weight: bold;
 }
+.t-dark{
+    color: #000000;
+}
 .t-normal{
     color: #222222;
 }
@@ -460,4 +463,35 @@ small,.small{
 }
 .ant-input-affix-wrapper-focus{
 
+}
+
+.set-modal .ant-modal-content{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.set-modal .ant-modal-header {
+    padding: 20px 15px;
+}
+.set-modal .ant-modal-title{
+    font-size: 20px;
+    color: #000000;
+}
+.set-modal .ant-modal-body{
+    padding: 15px;
+}
+.set-modal h4{
+    color: #000000;
+}
+.set-ul{
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.65);
+}
+.set-modal .ant-radio-checked .ant-radio-inner{
+    border-color: #00AF92;
+}
+.ant-radio-inner::after{
+    background-color: #00AF92;
+}
+.ant-radio-checked::after{
+    border: 1px solid #00AF92;
 }

@@ -10,6 +10,7 @@ import axios from 'axios';
 import { Layout, Menu, message } from 'antd';
 import MenuDown from '../Common/menudown';
 import Topath from '../Common/topath';
+import { walletStore } from "../../store/stores";
 import {
   HomeOutlined,
   WalletOutlined
@@ -47,6 +48,7 @@ class Walletlayout extends React.Component{
         _this.setState({topath:"/wallet"});
         return;
       }
+      walletStore.setWalletState(true);
       _this.setState({isopen:true});
     })
     .catch(function (error) {
@@ -59,7 +61,7 @@ class Walletlayout extends React.Component{
     const {isopen} = this.state;
     return (
       <div style={{ height: '100%'}}>
-        {walletOpen || isopen?<Topath topath="/wallet/walletlist"></Topath>:null}
+        {walletOpen || isopen ? <Topath topath="/wallet/walletlist"></Topath>:<Topath topath="/wallet"></Topath>}
         <Sider style={{ height: '100%'}} >
           <Menu
             className="menu-scroll"
@@ -94,23 +96,22 @@ class Walletlayout extends React.Component{
             ) : null}
             {!walletOpen && !isopen ? (
             <SubMenu
-              key="sub1"
-              title={
-                <span>
-                  <WalletOutlined />
-                  <span>钱包</span>
-                </span>
-              }
-              >
-                <Menu.Item key="1">
-                  <Link to="/wallet">账户列表</Link>
-                </Menu.Item>
-                <Menu.Item key="2">
-                  <Link to="/wallet">交易列表</Link>
-                </Menu.Item>
-                <Menu.Item key="3">
-                  <Link to="/wallet">转账</Link>
-                </Menu.Item>
+            key="sub1"
+            title={
+              <span>
+                <WalletOutlined />
+                <span>钱包</span>
+              </span>
+            }>
+              <Menu.Item key="1">
+                <Link to="/wallet">账户列表</Link>
+              </Menu.Item>
+              <Menu.Item key="2">
+                <Link to="/wallet">交易列表</Link>
+              </Menu.Item>
+              <Menu.Item key="3">
+                <Link to="/wallet">转账</Link>
+              </Menu.Item>
             </SubMenu>
             ) : null}
           </Menu>

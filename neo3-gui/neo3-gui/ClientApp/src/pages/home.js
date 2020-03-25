@@ -70,7 +70,7 @@ class Home extends Component {
                     </Link>
                   </Col>
                   <Col span={6}>
-                    <Link to='/wallet'>
+                    <Link to='/wallet/walletlist'>
                       <div className="home-link">
                         <span>钱包</span>
                       </div>

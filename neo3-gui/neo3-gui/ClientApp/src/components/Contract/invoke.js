@@ -41,14 +41,12 @@ class Contractinvoke extends React.Component{
     selectNef = () =>{
       this.opendialog( res =>{
         this.setState({ path: res.filePaths }
-        ,()=>{
-          console.log(res)
-          console.log(this.state)
-        });
+        ,()=>{});
       })
     }
     opendialog = callback => {
       var _this = this;
+      _this.setState({disabled:true})
       dialog.showOpenDialog({
         title: '保存钱包文件',
         defaultPath: '/',

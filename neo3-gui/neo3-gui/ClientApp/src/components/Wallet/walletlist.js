@@ -7,6 +7,7 @@ import { Layout, message, Row, Col, List, Avatar, Button, Typography } from 'ant
 import '../../static/css/wallet.css'
 import Sync from '../sync';
 import Intitle from '../Common/intitle'
+import Topath from '../Common/topath';
 
 const { Content } = Layout;
 
@@ -158,6 +159,7 @@ class Walletlist extends React.Component {
   }
   render() {
     const accounts = this.props.walletStore.accountlist;
+    const walletOpen = this.props.walletStore.isOpen;
     const { assetlist } = this.state;
     return (
       <Layout className="gui-container">

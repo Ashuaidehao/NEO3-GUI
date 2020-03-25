@@ -39,23 +39,27 @@ class Walletopen extends React.Component {
         "password": pass
       }
     })
-      .then(function (res) {
-        let _data = res.data;
-        walletStore.setWalletState(true);
-        _this.setState({ iconLoading: false });
-        if (_data.msgType == 3) {
-          message.success("钱包文件已打开", 3);
-          
+    .then(function (res) {
+      let _data = res.data;
+      walletStore.setWalletState(true);
+      _this.setState({ iconLoading: false });
+      if (_data.msgType == 3) {
+        message.success("钱包文件已打开", 3);
+        let page = (location.pathname).search(/contract\/wallet/g);
+        if(page === 1){
+          _this.setState({ topath: "/contract" });
+        }else{
           _this.setState({ topath: "/wallet/walletlist" });
-        } else {
-          message.info("钱包文件或密码错误，请检查后重试", 2);
         }
+      } else {
+        message.info("钱包文件或密码错误，请检查后重试", 2);
+      }
 
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   opendialog = () => {
     var _this = this;
