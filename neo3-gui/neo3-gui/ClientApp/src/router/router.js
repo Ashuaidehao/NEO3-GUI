@@ -69,7 +69,7 @@ const BasicRoute = () => (
                     <Route exact path="/contract" component={Contract} />
                     <Route exact path="/contract/deploy" component={Contractdeploy} />
                     <Route exact path="/contract/invoke" component={Contractinvoke} />
-                    <Route exact path="/contract/detail:hash" component={Contractdetail} />
+                    <Route exact path="/contract/wallet" component={Wallet} />
                 </Layout>
             </Route>
             <Redirect from="*" to="/" />

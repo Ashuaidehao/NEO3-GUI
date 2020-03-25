@@ -1,6 +1,7 @@
 /* eslint-disable */
 import React from 'react';
 import { observer, inject } from "mobx-react";
+import { withRouter } from "react-router-dom";
 import 'antd/dist/antd.css';
 import { message } from 'antd';
 import axios from 'axios';
@@ -8,7 +9,6 @@ import {
     LogoutOutlined,
     SettingOutlined
 } from '@ant-design/icons';
-import { withRouter } from "react-router-dom";
 
 @inject("walletStore")
 @observer

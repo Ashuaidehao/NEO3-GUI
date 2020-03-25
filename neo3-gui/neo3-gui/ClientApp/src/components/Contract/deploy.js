@@ -19,12 +19,17 @@ import Intitle from '../Common/intitle';
 import '../../static/css/wallet.css';
 import Sync from '../sync';
 import { FolderOpenOutlined } from '@ant-design/icons';
+import { observer, inject } from "mobx-react";
+import { withRouter } from "react-router-dom";
 
 const { Content } = Layout;
 const { dialog } = window.remote;
 
 const { TextArea } = Input;
 
+@inject("walletStore")
+@observer
+@withRouter
 class Contractdeploy extends React.Component{
   constructor(props){
     super(props);

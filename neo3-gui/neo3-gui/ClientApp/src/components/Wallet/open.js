@@ -45,6 +45,7 @@ class Walletopen extends React.Component {
         _this.setState({ iconLoading: false });
         if (_data.msgType == 3) {
           message.success("钱包文件已打开", 3);
+          
           _this.setState({ topath: "/wallet/walletlist" });
         } else {
           message.info("钱包文件或密码错误，请检查后重试", 2);

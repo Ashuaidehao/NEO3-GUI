@@ -1,5 +1,7 @@
 /* eslint-disable */ 
 import React from 'react';
+import { observer, inject } from "mobx-react";
+import { withRouter } from "react-router-dom";
 import 'antd/dist/antd.css';
 import '../../static/css/menu.css'
 import '../../static/css/wallet.css'
@@ -11,21 +13,28 @@ import {
   FileSyncOutlined
 } from '@ant-design/icons';
 
-
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
+@inject("walletStore")
+@observer
+@withRouter
 class Contractlayout extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-        size: 'default'
+        deploypath:"/contract/wallet",
+        invokepath:"/contract/wallet"
     };
   }
-  toHome = () =>{
-    location.href=location.origin;
-  }
-  toPage = (e) =>{
+  componentDidMount() {
+    const walletOpen = this.props.walletStore.isOpen;
+    if(walletOpen){
+      this.setState({
+        deploypath:"/contract/deploy",
+        invokepath:"/contract/invoke"
+      })
+    }
   }
   render = () =>{
     return (
@@ -54,10 +63,10 @@ class Contractlayout extends React.Component{
                   <Link to="/contract">搜索合约</Link>
                 </Menu.Item>
                 <Menu.Item key="2" onClick={this.toPage}>
-                  <Link to="/contract/deploy">部署合约</Link>
+                  <Link to={this.state.deploypath}>部署合约</Link>
                 </Menu.Item>
                 <Menu.Item key="3" onClick={this.toPage}>
-                  <Link to="/contract/invoke">调用合约</Link>
+                  <Link to={this.state.invokepath}>调用合约</Link>
                 </Menu.Item>
               </SubMenu>
             </Menu>
