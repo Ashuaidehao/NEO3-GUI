@@ -95,7 +95,7 @@ class Transcon extends React.Component{
                       <Witlist witnesses={witnesses}/>
                     </TabPane>
                     <TabPane tab="交易日志" key="2">
-                      <Translog notifies={this.state.notifies} hash={hashdetail.txId}/>
+                      <Translog notifies={this.state.notifies}/>
                     </TabPane>
                   </Tabs>
                 </Col>
