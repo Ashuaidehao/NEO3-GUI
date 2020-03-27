@@ -1,4 +1,3 @@
-/* eslint-disable */ 
 import React from 'react';
 import 'antd/dist/antd.css';
 import { Redirect} from 'react-router-dom';

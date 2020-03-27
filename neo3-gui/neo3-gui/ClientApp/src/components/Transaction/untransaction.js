@@ -12,60 +12,175 @@ class Untransaction extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-        size: 'default',
-        untranslist:[],
-        loacl:""
+      loacl:"",
+      allpage:0,
+      page: 1,
+      limit:3,
+      params:{},
+      data: [],
+      untranslist:[],
+      loading: true,
+      iswa:false,
     };
   }
   componentDidMount() {
     this.setState({
-      loacl:location.pathname
+      loacl:location.pathname.split("/")[1]
     })
-    this.getUnconfirmtrans(this.props.info?this.props.info:null);
+    this.selTrans()
   }
-  getUnconfirmtrans = (info) =>{
-    var _this = this,add = {};
-    info = ["GetMyUnconfirmedTransactions"];
+  selTrans = () =>{
+    let page = this.props.page?this.props.page:"all";
+    var _params = this.madeParams();
+    if(page === "all"){
+      this.allset(_params);
+    }else if( page === "wallet"){
+      this.walletset(_params);
+    }else {
+      this.allset(_params);
+    }
+  }
+  madeParams = () =>{
+    return {
+      "pageIndex":this.state.page,
+      "limit": this.state.limit
+    };
+  }
+  allset = params =>{
+    this.getAlluntrans(params,res => {
+      this.setState({
+        loading: false,
+        data: res.result.list,
+        untranslist: res.result.list,
+        page:this.state.page+1,
+        allpage: Math.ceil(res.result.totalCount/this.state.limit)
+      },()=>{console.log(this.state)});
+    })
+  }
+  walletset = params =>{
+    this.getMyuntrans(params,res => {
+      this.setState({
+        loading: false,
+        data: res.result.list,
+        untranslist: res.result.list,
+        page:this.state.page+1,
+        iswa:true,
+        allpage: Math.ceil(res.result.totalCount/this.state.limit)
+      },()=>{});
+    })
+  }
+  getMyuntrans = (params,callback) => {
     axios.post('http://localhost:8081', {
       "id":"51",
       "method": "GetMyUnconfirmedTransactions",
-      "params": {
-        "limit":100
-      }
+      "params": params
     })
     .then(function (response) {
       var _data = response.data;
       if(_data.msgType === -1){
-        message.error("未确认交易查询失败");
+        message.error("查询失败");
         return;
+      }else{
+        callback(_data);
       }
-      _this.setState({
-        untranslist:_data.result
-      })
     })
     .catch(function (error) {
       console.log(error);
       console.log("error");
     });
+  };
+  getAlluntrans = (params,callback) => {
+    axios.post('http://localhost:8081', {
+      "id":"51",
+      "method": "GetUnconfirmTransactions",
+      "params": params
+    })
+    .then(function (response) {
+      var _data = response.data;
+      console.log("my")
+      console.log(_data)
+      if(_data.msgType === -1){
+        message.error("查询失败");
+        return;
+      }else{
+        callback(_data);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
+  };
+  loadUnMore = () =>{
+    this.setState({
+      loading: true,
+    });
+    var _params = this.madeParams();
+    this.getAlluntrans(_params,res => {
+      const data = this.state.data.concat(res.result.list);
+      const _page = this.state.page + 1;
+      this.setState(
+        {
+          data:data,
+          untranslist: data,
+          loading: false,
+          page: _page
+        },
+        () => {
+          window.dispatchEvent(new Event('resize'));
+          console.log(this.state);
+        },
+      );
+    });
+  }
+  loadMyUnMore = () =>{
+    this.setState({
+      loading: true,
+    });
+    var _params = this.madeParams();
+    this.getMyuntrans(_params,res => {
+      const data = this.state.data.concat(res.result.list);
+      const _page = this.state.page + 1;
+      this.setState(
+        {
+          data:data,
+          untranslist: data,
+          loading: false,
+          page: _page
+        },
+        () => {
+          window.dispatchEvent(new Event('resize'));
+          console.log(this.state);
+        },
+      );
+    });
   }
   render = () =>{
-    const {untranslist} = this.state;
+    const {untranslist,loading,iswa,page,allpage} = this.state;
+    const loadUnMore = !loading && page <= allpage ? (
+      <div className="text-c mb3">
+        {iswa?(<Button type="primary" onClick={this.loadMyUnMore}>加载更多</Button> )
+        :(<Button type="primary" onClick={this.loadUnMore}>加载更多</Button>)}
+      </div>
+    ) : null;
     return (
       <div>
-        <Content className="mt3">
-          <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100px )'}}>
-            <Col span={24} className="bg-white pv4">
-            <Intitle content={this.props.content||"未确认交易"}/>
+        <Content className="mt3 mb4">
+        <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': '120px'}}>
+              <Col span={24} className="bg-white pv4">
+              <Intitle content={this.props.content||"未确认交易"}/>
               <List
                 header={<div><span>交易hash</span><span className="float-r ml4"><span className="wa-amount"></span>数量</span><span className="float-r">时间</span></div>}
                 footer={<span></span>}
                 itemLayout="horizontal"
+                loading={loading}
+                loadMore={loadUnMore}
                 dataSource={untranslist}
                 className="font-s"
                 renderItem={item => (
                 <List.Item>
                     <List.Item.Meta
-                    title={<Link to={loacl+":"+item.txId} title="查看详情">{item.txId}</Link>}
+                    title={<div className="link-style">{item.txId}</div>}
                     description={
                     <div className="font-s">
                         From：<span className="w300 ellipsis">{item.transfers[0].fromAddress?item.transfers[0].fromAddress:"--"}</span><br></br>
@@ -80,7 +195,7 @@ class Untransaction extends React.Component{
               />
               </Col>
               <div className="pv1"></div>
-            </Row>
+          </Row>
         </Content>
       </div>
     );

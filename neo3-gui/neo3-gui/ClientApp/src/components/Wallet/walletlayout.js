@@ -22,7 +22,6 @@ class Walletlayout extends React.Component{
     this.state = {
         size: 'default',
         isopen: false
-        // isopen: true
     };
   }
   componentDidMount = () =>{

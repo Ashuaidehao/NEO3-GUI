@@ -1,3 +1,4 @@
+/* eslint-disable */
 import BlockSyncStore from "./blockSyncStore";
 import WalletStore from "./walletStore";
 import NodeStore from "./nodeStore";
