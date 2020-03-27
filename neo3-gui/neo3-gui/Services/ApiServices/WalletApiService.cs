@@ -68,7 +68,7 @@ namespace Neo.Services.ApiServices
         /// <returns></returns>
         public async Task<bool> CloseWallet()
         {
-            Program.Starter.CloseWallet();
+            Program.Starter.OnCloseWalletCommand(null);
             return true;
         }
 
