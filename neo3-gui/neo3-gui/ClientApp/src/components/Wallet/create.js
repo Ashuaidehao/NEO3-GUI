@@ -3,9 +3,13 @@ import React from 'react';
 import 'antd/dist/antd.css';
 import axios from 'axios';
 import { Input, message, Button,Row,Col } from 'antd';
+import { walletStore } from "../../store/stores";
+import { withRouter } from "react-router-dom";
+
 
 const {dialog} = window.remote;
 
+@withRouter
 class Walletcreate extends React.Component{
   constructor(props){
     super(props);
@@ -74,6 +78,8 @@ class Walletcreate extends React.Component{
       _this.setState({ iconLoading: false });
       if(_data.msgType === 3){
         message.success("钱包已创建",2);
+        walletStore.setWalletState(true);
+        _this.props.history.push('/wallet/walletlist');
       }else{
         message.info("钱包创建失败，请检查后重试",2);
       }

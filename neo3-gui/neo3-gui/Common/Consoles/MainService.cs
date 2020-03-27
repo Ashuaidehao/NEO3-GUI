@@ -45,7 +45,7 @@ namespace Neo.Common.Consoles
             {
                 return currentWallet;
             }
-            private set
+            internal set
             {
                 currentWallet = value;
                 WalletChanged?.Invoke(this, EventArgs.Empty);

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Win32.SafeHandles;
 using Neo.IO;
+using Neo.IO.Json;
 using Neo.Ledger;
 using Neo.Models;
 using Neo.Models.Contracts;
@@ -27,8 +28,14 @@ namespace Neo.Services.ApiServices
         {
             using var snapshot = Blockchain.Singleton.GetSnapshot();
             var contract = snapshot.Contracts.TryGet(contractHash);
+            if (contract == null)
+            {
+                return Error(ErrorCode.UnknownContract);
+            }
             return new ContractModel(contract);
         }
+
+
 
 
         public async Task<object> DeployContract(string nefPath, string manifestPath = null, bool sendTx = false)
@@ -48,7 +55,7 @@ namespace Neo.Services.ApiServices
             // Read nef
             NefFile nefFile = ReadNefFile(nefPath);
             // Read manifest
-            ContractManifest manifest=ReadManifestFile(manifestPath);
+            ContractManifest manifest = ReadManifestFile(manifestPath);
             // Basic script checks
             await CheckBadOpcode(nefFile.Script);
 
@@ -93,7 +100,86 @@ namespace Neo.Services.ApiServices
             return result;
         }
 
+        public async Task<object> InvokeContract(InvokeContractParameterModel para)
+        {
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            if (para.ContractHash == null || para.Method.IsNull())
+            {
+                return Error(ErrorCode.ParameterIsNull);
+            }
+            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            var contract = snapshot.Contracts.TryGet(para.ContractHash);
+            if (contract == null)
+            {
+                return Error(ErrorCode.UnknownContract);
+            }
+            ContractParameter[] contractParameters = para.Parameters?.Select(p =>
+            {
+                var parameterValue = new ContractParameter(p.Type);
+                parameterValue.SetValue(p.Value);
+                return parameterValue;
+            }).ToArray();
 
+            var signers = new List<Cosigner>();
+            if (para.Cosigners.NotEmpty())
+            {
+                signers.AddRange(para.Cosigners.Select(s => new Cosigner() { Account = s.Account, Scopes = s.Scopes }));
+            }
+
+            Transaction tx = new Transaction
+            {
+                Sender = UInt160.Zero,
+                Attributes = new TransactionAttribute[0],
+                Witnesses = new Witness[0],
+                Cosigners = signers.ToArray(),
+            };
+            using (ScriptBuilder scriptBuilder = new ScriptBuilder())
+            {
+                scriptBuilder.EmitAppCall(para.ContractHash, para.Method, contractParameters);
+                tx.Script = scriptBuilder.ToArray();
+            }
+            try
+            {
+                tx = CurrentWallet.MakeTransaction(tx.Script, null, tx.Attributes, tx.Cosigners);
+            }
+            catch (InvalidOperationException)
+            {
+                return Error(ErrorCode.EngineFault);
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("Insufficient GAS"))
+                {
+                    return Error(ErrorCode.GasNotEnough);
+                }
+                throw;
+            }
+
+            var (signSuccess, context) = CurrentWallet.TrySignTx(tx);
+            if (!signSuccess)
+            {
+                return Error(ErrorCode.SignFail, context.SafeSerialize());
+            }
+            var result = new InvokeResultModel();
+            using ApplicationEngine engine = ApplicationEngine.Run(tx.Script, tx, testMode: true);
+            result.VmState = engine.State;
+            result.GasConsumed = new BigDecimal(tx.SystemFee, NativeContract.GAS.Decimals);
+            result.ResultStack = engine.ResultStack.Select(p => JStackItem.FromJson(p.ToParameter().ToJson())).ToList();
+            if (engine.State.HasFlag(VMState.FAULT))
+            {
+                return Error(ErrorCode.EngineFault);
+            }
+            if (!para.SendTx)
+            {
+                return result;
+            }
+            await tx.Broadcast();
+            result.TxId = tx.Hash;
+            return result;
+        }
 
         /// <summary>
         /// try to read nef file

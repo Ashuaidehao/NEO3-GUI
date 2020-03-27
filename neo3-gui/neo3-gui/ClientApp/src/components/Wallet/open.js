@@ -5,9 +5,11 @@ import axios from 'axios';
 import { message, Input, Row, Col, Button } from 'antd';
 import Topath from '../Common/topath';
 import { walletStore } from "../../store/stores";
+import { withRouter } from "react-router-dom";
 
 const { dialog } = window.remote;
 
+@withRouter
 class Walletopen extends React.Component {
   constructor(props) {
     super(props);
@@ -41,11 +43,12 @@ class Walletopen extends React.Component {
     })
       .then(function (res) {
         let _data = res.data;
-        walletStore.setWalletState(true);
         _this.setState({ iconLoading: false });
         if (_data.msgType == 3) {
           message.success("钱包文件已打开", 3);
-          _this.setState({ topath: "/wallet/walletlist" });
+          walletStore.setWalletState(true);
+          _this.props.history.push('/wallet/walletlist');
+          // _this.setState({ topath: "/wallet/walletlist" });
         } else {
           message.info("钱包文件或密码错误，请检查后重试", 2);
         }
