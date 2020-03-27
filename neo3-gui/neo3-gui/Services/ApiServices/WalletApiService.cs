@@ -68,7 +68,7 @@ namespace Neo.Services.ApiServices
         /// <returns></returns>
         public async Task<bool> CloseWallet()
         {
-            Program.Starter.CloseWallet();
+            Program.Starter.OnCloseWalletCommand(null);
             return true;
         }
 
@@ -100,6 +100,7 @@ namespace Neo.Services.ApiServices
                                 ScriptHash = account.ScriptHash,
 
                             });
+                            Program.Starter.CurrentWallet = wallet;
                         }
                         break;
                     case ".json":
@@ -114,6 +115,7 @@ namespace Neo.Services.ApiServices
                                 ScriptHash = account.ScriptHash,
                                 Address = account.Address,
                             });
+                            Program.Starter.CurrentWallet = wallet;
                         }
                         break;
                     default:
