@@ -11,17 +11,23 @@ namespace Neo.Models.Contracts
     {
         public ContractModel(ContractState contract)
         {
-            Id = contract.Id;
+            ContractId = contract.Id;
             ContractHash = contract.ScriptHash;
             HasStorage = contract.HasStorage;
             Payable = contract.Payable;
             Script = contract.Script;
+            Manifest = new ManifestModel(contract.Manifest);
         }
 
-        public int Id { get; set; }
+
+
+        public int ContractId { get; set; }
         public UInt160 ContractHash { get; set; }
         public bool HasStorage { get; set; }
         public bool Payable { get; set; }
         public byte[] Script { get; set; }
+        public ManifestModel Manifest { get; set; }
+
     }
+
 }
