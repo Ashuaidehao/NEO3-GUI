@@ -17,12 +17,16 @@ const url = require('url')
 let mainWindow
 
 function createWindow() {
+    //Hide Menu bar
+    // Menu.setApplicationMenu(null)
+
     // Create the browser window.
     mainWindow = new BrowserWindow({
         width: 1100,
         height: 700,
         minWidth: 1100,
         minHeight: 700,
+        // resizable: false,
         webPreferences: {
             javascript: true,
             plugins: true,
@@ -31,7 +35,6 @@ function createWindow() {
             preload: path.join(__dirname, './preload.js')
         }
     })
-
 
     // and load the index.html of the app.
     if (process.env.NODE_ENV === "development") {

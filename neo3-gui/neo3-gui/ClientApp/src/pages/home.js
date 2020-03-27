@@ -56,7 +56,7 @@ class Home extends Component {
                   <img src={img} className="App-logo" alt="img" />
                 </div>
                 <Content className="text-r">
-                  <Text type="secondary"> 版本 v3.0.1</Text>
+                  <Text type="secondary"> 版本 v1.1.0</Text>
                 </Content>
               </Content>
 
