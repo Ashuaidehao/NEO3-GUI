@@ -57,12 +57,6 @@ class menuDown extends React.Component {
                             </a>
                         </li>
                     ) : null}
-                    <li>
-                        <a onClick={this.logout}>
-                            <LogoutOutlined />
-                            <span>登出钱包</span>
-                        </a>
-                    </li>
                     {/* {this.state.showOut&&this.state.showPass?(
                     <li>
                         <a>
