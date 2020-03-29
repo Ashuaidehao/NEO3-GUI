@@ -89,7 +89,7 @@ class Blockdetail extends React.Component{
                             <li><span className="hint">大小：</span>{blockdetail.size} 字节</li>
                             <li><span className="hint">随机数：</span>{nonce}</li>
                             <li><span className="hint">系统费：</span>{blockdetail.networkFee?blockdetail.networkFee:'--'}</li>
-                            <li><span className="hint">见证人：</span>{witness}</li>
+                            <li><span className="hint">见证人：</span>{blockdetail.nextConsensus}</li>
                             <li><span className="hint">下一区块：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight+1)} onClick={this.setHeight(blockdetail.blockHeight+1)}>{blockdetail.blockHeight+1}</Link></li>
                         </ul>
                     </Col>

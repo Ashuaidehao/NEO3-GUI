@@ -138,7 +138,7 @@ const Translist = ({ transfers }) => (
         {transfers.map((item,index)=>{
         return(
           <ul className="detail-ul border-under" key={index}>
-            <li><span className="gray">转出</span><span className="detail-add">{item.fromAddress?item.fromAddress:"--"}</span></li>
+            <li><span className="gray">转入</span><span className="detail-add">{item.fromAddress?item.fromAddress:"--"}</span></li>
             <li><span className="gray">转出</span><span className="detail-add">{item.toAddress?item.toAddress:"--"}</span></li>
             {/* <li><span className="gray">转出</span>{item.fromAddress?<Link className="detail-add" to={"./address:"+item.fromAddress}>{item.fromAddress}</Link>:"--"}</li>
             <li><span className="gray">转入</span>{item.toAddress?<Link className="detail-add" to={"./address:"+item.toAddress}>{item.toAddress}</Link>:"--"}</li> */}
