@@ -130,7 +130,7 @@ namespace Neo.Common
             {
                 return false;
             }
-            if (notifyArray[0].ValueString != "Transfer")
+            if (!"transfer".Equals(notifyArray[0].ValueString, StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }
