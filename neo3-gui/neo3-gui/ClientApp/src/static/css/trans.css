@@ -50,10 +50,10 @@
 }
 .trans-area label{
     display: inline-block;
-    width: 120px;
+    width: 100px;
 }
 .trans-area input{
-    width: 320px;
+    width: 340px;
     margin-bottom: 5px;
 }
 .trans-text{

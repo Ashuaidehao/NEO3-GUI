@@ -28,7 +28,7 @@ class DataConverter {
      */
     toScriptHash(address){
         var bytes= bs58check.decode(address);
-        return "0x"+ this.reverseHexString(Buffer.from(bytes).toString("hex").slice(2));
+        return "0x"+ Buffer.from(bytes).toString("hex").slice(2);
     }
 
 
@@ -42,8 +42,6 @@ class DataConverter {
         }
         return hexString.match(/../g).reverse().join("");
     }
-
 }
-
 
 export default DataConverter;
