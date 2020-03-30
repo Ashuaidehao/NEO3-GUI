@@ -32,12 +32,12 @@ class Addressdetail extends React.Component{
     this.getBalances();
   }
   checkAddress = () =>{
-    let _add = location.pathname.split(":")[1];
+    let _add = location.pathname.split(":").pop();
     this.setState({address:_add})
   }
   getBalances = () =>{
     var _this = this;
-    let _add = location.pathname.split(":")[1];
+    let _add = location.pathname.split(":").pop();
     axios.post('http://localhost:8081', {
         "id":"51",
         "method": "GetAddressBalance",
@@ -90,8 +90,7 @@ class Addressdetail extends React.Component{
                   </List.Item>
                   )}
                 />
-                <div className="mb4 text-r">
-                </div>
+                <div className="mb4 text-r"></div>
               </Col>
             </Row>
             <Transaction page="walletdetail" content="交易列表"/>

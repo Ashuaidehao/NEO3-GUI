@@ -48,16 +48,14 @@ class Walletopen extends React.Component {
           message.success("钱包文件已打开", 3);
           walletStore.setWalletState(true);
           _this.props.history.push('/wallet/walletlist');
-          // _this.setState({ topath: "/wallet/walletlist" });
         } else {
           message.info("钱包文件或密码错误，请检查后重试", 2);
         }
-
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   opendialog = () => {
     var _this = this;

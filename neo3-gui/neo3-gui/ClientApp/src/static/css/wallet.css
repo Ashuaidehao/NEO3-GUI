@@ -7,9 +7,9 @@
     padding: 28px;
 }
 .wa-content .logo{
-    background: url(../images/logo.svg) no-repeat;
+    background: url(/static/media/logo.0907bca5.svg) no-repeat;
     background-position: center;
-    height: 80px;
+    height: 40px;
 }
 .wa-open{
     padding: 0 90px;

@@ -15,8 +15,6 @@ const { Content } = Layout;
 
 const { TabPane } = Tabs;
 
-const loacl = location.pathname.split("/")[1];
-
 class Transcon extends React.Component{
   constructor(props){
     super(props);
@@ -52,8 +50,7 @@ class Transcon extends React.Component{
     });
   };
   getTransdetail = callback => {
-    let _hash = location.pathname.split(":")[1];
-    console.log(_hash)
+    let _hash = location.pathname.split(":").pop();
     axios.post('http://localhost:8081', {
         "id":"51",
         "method": "GetTransaction",
@@ -79,7 +76,7 @@ class Transcon extends React.Component{
     });
   }
   render = () =>{
-    const {hashdetail,transfers,witnesses,attributes,local} = this.state;
+    const {hashdetail,transfers,witnesses,attributes} = this.state;
     return (
       <Layout className="gui-container">
         <Sync/>
@@ -141,7 +138,7 @@ const Translist = ({ transfers }) => (
         {transfers.map((item,index)=>{
         return(
           <ul className="detail-ul border-under" key={index}>
-            <li><span className="gray">转出</span><span className="detail-add">{item.fromAddress?item.fromAddress:"--"}</span></li>
+            <li><span className="gray">转入</span><span className="detail-add">{item.fromAddress?item.fromAddress:"--"}</span></li>
             <li><span className="gray">转出</span><span className="detail-add">{item.toAddress?item.toAddress:"--"}</span></li>
             {/* <li><span className="gray">转出</span>{item.fromAddress?<Link className="detail-add" to={"./address:"+item.fromAddress}>{item.fromAddress}</Link>:"--"}</li>
             <li><span className="gray">转入</span>{item.toAddress?<Link className="detail-add" to={"./address:"+item.toAddress}>{item.toAddress}</Link>:"--"}</li> */}

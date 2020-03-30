@@ -1,0 +1,68 @@
+.ant-row{
+    position: relative;
+}
+.search-area{
+    width: calc( 100vw - 250px);
+    background: rgba(255, 255, 255, 0.404);
+    position: absolute;
+    height: 0;
+    top: 120px;
+    margin-left: -25px;
+}
+.search-content{
+    position: relative;
+    overflow: hidden;
+    height: 200px;
+    animation: test1 forwards .3s;
+}
+.search-btn{
+    padding-right: 35px;
+}
+.search-btn .inset-btn{
+    float: right;
+    margin-top: -35px;
+}
+.search-btn .anticon{
+    font-size: 20px;
+}
+.search-detail{
+    position: absolute;
+    width: calc( 100% - 20px);
+    padding: 15px 25px;
+    margin: 0 10px;
+    background: #FFFFFF;
+    box-shadow:none;
+    transform:translateY(-100%);
+    transition:transform 0.3s cubic-bezier(0.7, 0.3, 0.1, 1), box-shadow 0.5s cubic-bezier(0.7, 0.3, 0.1, 1);
+}
+
+.show-child{
+    display: block!important;
+    z-index: 1;
+}
+.show-child .search-detail{
+    transform:translateY(0);
+    box-shadow:0px 4px 12px 0px rgba(0, 0, 0, 0.103);
+    transition:transform 0.3s cubic-bezier(0.7, 0.3, 0.1, 1), box-shadow 0.5s cubic-bezier(0.7, 0.3, 0.1, 1);
+}
+.search-detail .ant-input-affix-wrapper:hover{
+    border-color:#00AF92;
+}
+.search-detail .ant-input-affix-wrapper-focused{
+    border:1px solid #00AF92;
+    box-shadow: 0 0 0 2px rgba(3, 212, 178, 0.2);
+}
+.ant-tag-green{
+    color: #00AF92;
+    background:rgba(0, 175, 137, 0.05);
+    border:1px solid rgb(0, 175, 137);
+    font-weight: 400;
+}
+
+.dis-file{
+
+    background: transparent;
+}
+.dis-file .ant-input{
+    background: transparent;
+}

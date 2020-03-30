@@ -62,7 +62,7 @@ class Wallet extends React.Component{
             ):null}
             <Link className="close" to="/"><CloseOutlined /></Link>
           </div>
-          <div className="logo mt5"></div>
+          <div className="logo mt2 mb3"></div>
           <div className="wa-open mt2">
             {this.state.showElem?(
               <div>

@@ -67,12 +67,6 @@ class Transfer extends React.Component{
       selectadd: _detail
     })
   }
-  shouldComponentUpdate(nextProps, nextState){
-    console.log(nextProps)
-    console.log(nextState)
-    console.log(11111111)
-    return true
-  }
   getAsset = () =>{
     this.setState({
       neo:_data.result.accounts
@@ -103,7 +97,7 @@ class Transfer extends React.Component{
         return;
       }else{
         Modal.info({
-          title: '交易成功',
+          title: '交易发送成功',
           content: (
             <div className="show-pri">
               <p>交易哈希：{_data.result.txId}</p>
@@ -111,8 +105,8 @@ class Transfer extends React.Component{
           ),
           okText:"确认"
         });
+        _this.refs.formRef.resetFields()
       }
-      console.log(_data);
     })
     .catch(function (error) {
       console.log(error);
@@ -125,7 +119,7 @@ class Transfer extends React.Component{
       <Layout className="gui-container">
         <Sync />
         <Content className="mt3">
-        <Form name="time_related_controls" className="trans-form" onFinish={this.transfer}>
+        <Form ref="formRef" className="trans-form" onFinish={this.transfer}>
           <Row gutter={[30, 0]}  className="bg-white pv4" style={{ 'minHeight': 'calc( 100vh - 150px )'}}>
             <Col span={24}>
               <Intitle content="转账"/>

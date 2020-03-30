@@ -31,10 +31,8 @@ class Datatrans extends React.Component {
             outbighash: "",
             outbigadd: ""
         };
-        this.convert=new DataConvert();
-        let address= this.convert.toAddress("0xf9df308b7bb380469354062f6b73f9cb0124317b");
-        console.log(address);
     }
+    convert = new DataConvert();
     componentDidMount() {
     }
     hexToString = (hex) => {
@@ -106,31 +104,28 @@ class Datatrans extends React.Component {
             outhash: _outhash
         })
     }
-    // bigTrans = () =>{
-    //     var _this = this;
-    //     var inbighash = document.getElementById("inBigHash").value.replace(/(^\s*)|(\s*$)/g, "");
-    //     if (inbighash) {
-    //         if(inbighash.substr(0, 2)=="0x")inbighash = inbighash.slice(2);
-    //         if(inbighash.length!=40){alert("Illegal Format Script Hash!");return;}
-    //         var hash160 = Neo.Uint160.parse(inbighash);
-    //         Neo.Wallets.Wallet.toAddress(hash160).then(function (val) {
-    //             _this.setState({
-    //                 outbighash: val
-    //             })
-    //         });
-    //     }
-    //     var inbigadd = document.getElementById("inBigAddress").value.replace(/(^\s*)|(\s*$)/g, "");
-    //     if (inbigadd) {
-    //         if(inbigadd.length!=34){message.error("输入的格式错误，请检查后再试");return;}
-    //         Neo.Wallets.Wallet.toScriptHash(inbigadd).then(function (val) {
-    //             _this.setState({
-    //                 outbigadd: val.toString()
-    //             })
-    //         });
-    //     }
-    // }
-
-
+    bigTrans = () =>{
+        var _this = this;
+        var inbighash = document.getElementById("inBigHash").value.replace(/(^\s*)|(\s*$)/g, "");
+        if (inbighash) {
+            if(inbighash.substr(0, 2)=="0x")inbighash = inbighash.slice(2);
+            if(inbighash.length!=40){alert("Illegal Format Script Hash!");return;}
+            let _address= this.convert.toAddress(inbighash);
+            _this.setState({
+                outbighash: _address
+            })
+        }
+        var inbigadd = document.getElementById("inBigAddress").value.replace(/(^\s*)|(\s*$)/g, "");
+        if (inbigadd) {
+            // if(inbigadd.length!=34){message.error("输入的格式错误，请检查后再试");return;}
+            let _hash = this.convert.reverseHexString("NhVvgdk458V1SceGsvMbqChsbSFBtGvdXF");
+            console.log(_hash)
+        }
+    }
+    addTrans = () =>{
+        let address= this.convert.toAddress("NfxTs1w2q9PqkQmExYgsqQzpXDTg4QcuqX");
+        
+    }
     render() {
         return (
             <Drawer
@@ -168,7 +163,7 @@ class Datatrans extends React.Component {
                             <Button type="primary" onClick={this.endianTrans}>Transform</Button>
                         </p>
                     </li>
-                    {/* <li>
+                    <li>
                         <p className="trans-title">Address (big endian) <SwapOutlined className="small"/> Script Hash</p>
                         <p className="trans-area">
                             <label>Script Hash:</label><Input id="inBigHash" type="text" placeholder="0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9" value="0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9"/>
@@ -182,7 +177,7 @@ class Datatrans extends React.Component {
                             <Button type="primary" onClick={this.bigTrans}>Transform</Button>
                         </p>
                     </li>
-                    <li>
+                    {/* <li>
                         <p className="trans-title">Address (little endian) <SwapOutlined className="small"/> Hex String</p>
                         <p className="trans-area">
                             <label>Hex String:</label><Input id="inScriptHash" type="text" placeholder="7472616e73666572"/>
