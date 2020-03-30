@@ -92,8 +92,18 @@ class Transfer extends React.Component{
       var _data = response.data;
       _this.setState({ iconLoading: false });
       if(_data.msgType === -1){
-        message.error("交易失败");
-        message.error("这里需要根据几个不同的情况分析：资金不够、手续费不够、地址错误、其他");
+        let res = _data.error;
+        Modal.error({
+          title: '交易失败，请检查后再尝试',
+          width: 400,
+          content: (
+            <div className="show-pri">
+              <p>失败码: {res.code}</p>
+              <p>错误信息: {res.message}</p>
+            </div>
+          ),
+          okText:"确认"
+        });
         return;
       }else{
         Modal.info({
