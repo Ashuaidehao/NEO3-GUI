@@ -11,8 +11,6 @@ namespace Neo.Common.Storage
         public UInt160 From { get; set; }
         public UInt160 To { get; set; }
 
-        public BigInteger FromBalance { get; set; }
-        public BigInteger ToBalance { get; set; }
         public BigInteger Amount { get; set; }
         public ulong TimeStamp { get; set; }
 

@@ -45,7 +45,7 @@ namespace Neo.Common.Consoles
             {
                 return currentWallet;
             }
-            private set
+            internal set
             {
                 currentWallet = value;
                 WalletChanged?.Invoke(this, EventArgs.Empty);
@@ -1017,7 +1017,7 @@ namespace Neo.Common.Consoles
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        private bool OnCloseWalletCommand(string[] args)
+        public bool OnCloseWalletCommand(string[] args)
         {
             if (CurrentWallet == null)
             {

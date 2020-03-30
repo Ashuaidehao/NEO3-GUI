@@ -17,11 +17,11 @@ namespace Neo.Common.Utility
 
 
 
-        public static void RegisterBlockPersistEvent()
+        public static void RegisterBlockPersistEvent(NeoSystem neoSystem)
         {
             if (_actor == null)
             {
-                _actor = Program.Starter.NeoSystem.ActorSystem.ActorOf(EventWrapper<Blockchain.PersistCompleted>.Props(Blockchain_PersistCompleted));
+                _actor = neoSystem.ActorSystem.ActorOf(EventWrapper<Blockchain.PersistCompleted>.Props(Blockchain_PersistCompleted));
             }
         }
 
