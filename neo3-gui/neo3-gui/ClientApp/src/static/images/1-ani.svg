@@ -81,9 +81,20 @@
 	.st75{fill:#00AF92;stroke:#00AF92;stroke-width:0.75;stroke-linecap:round;stroke-linejoin:round;}
 	.st76{opacity:0.15;fill:#00AF92;enable-background:new    ;}
 	.st77{fill:none;stroke:#00AF92;stroke-width:0.75;stroke-linecap:round;stroke-linejoin:round;}
-	.ani .ani-1{
-		opacity:0.15;
+	@keyframes a1 {
+        15% {transform: translate(3px,0)}
+        50% {transform: translate(5px, 0)}
+        85% {transform: translate(0, 0)}
 	}
+    @keyframes a2 {
+        50% {transform: rotate(6deg);}
+    }
+    @keyframes a3 {
+        50% {transform: rotate(-90deg);}
+    }
+	.a1 {animation:a1 3s linear infinite;}
+	.a2 {transform-origin: 51px 50px;animation:a2 2s linear infinite;}
+	.a3 {transform-origin: 51px 50px;animation: a3 3s infinite;}
 </style>
 <g id="图层_2_1_">
 	<g id="Diagram">
@@ -730,10 +741,10 @@
 			</g>
 		</g>
 		<circle class="st75" cx="52.7" cy="49.8" r="3.1"/>
-		<polygon class="st77" points="57.5,41.5 58,14 82,28.6"/>
+		<polygon class="st77 a2"  points="57.5,41.5 58,14 82,28.6"/>
 		<circle class="st76" cx="90.3" cy="31" r="4.8"/>
-		<line class="st77" x1="30.5" y1="63.3" x2="50.5" y2="51.8"/>
-		<g class="ani-1">
+		<line class="st77 a3" x1="30.5" y1="63.3" x2="50.5" y2="51.8"/>
+		<g class="a1">
 			<polyline class="st76" points="22.1,58.5 37.2,49.5 0.1,27.8 0,71.7 22.1,58.5"/>
 			<polyline class="st77" points="8.4,60.6 36,45 19.8,35.3 "/>
 		</g>

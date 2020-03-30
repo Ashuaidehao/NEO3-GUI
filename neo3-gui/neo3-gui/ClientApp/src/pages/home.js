@@ -8,9 +8,13 @@ import '../static/css/site.css';
 import '../static/css/home.css';
 import img from '../static/images/logo.svg';
 import blockimg from '../static/images/1.svg';
+import aniblockimg from '../static/images/1-ani.svg';
 import walletimg from '../static/images/2.svg';
+import aniwalletimg from '../static/images/2-ani.svg';
 import contractimg from '../static/images/3.svg';
+import anicontractimg from '../static/images/3-ani.svg';
 import adavancedimg from '../static/images/4.svg';
+import aniadavancedimg from '../static/images/4-ani.svg';
 import bg from '../static/images/bg.svg';
 
 const { Text } = Typography;
@@ -18,38 +22,9 @@ const { Content } = Layout;
 
 class Home extends Component {
     state = {
-        ModalText: 'Content of the modal',
         visible: false,
         confirmLoading: false
     };
-
-    showModal = () => {
-        this.setState({
-            visible: true,
-        });
-    };
-
-    handleOk = () => {
-        this.setState({
-            ModalText: 'The modal will be closed after two seconds',
-            confirmLoading: true,
-        });
-
-        setTimeout(() => {
-            this.setState({
-                visible: false,
-                confirmLoading: false,
-            });
-        }, 1000);
-    };
-
-    handleCancel = () => {
-        console.log('Clicked cancel button');
-        this.setState({
-            visible: false,
-        });
-    };
-
     render() {
         const { visible, confirmLoading, ModalText } = this.state;
         return (
@@ -61,13 +36,13 @@ class Home extends Component {
                   <img src={img} className="app-logo" alt="img" />
                 </div>
               </Content>
-
               <Content className="home-icon">
                 <Row gutter={60}>
                   <Col span={6}>
                     <Link to='/chain'>
                       <div className="home-link">
-                        <img src={blockimg} alt="img" />
+                        <img className="show-img" src={blockimg} alt="img" />
+                        <img className="hidden-img" src={aniblockimg} alt="img" />
                         <span>区 块 链</span>
                       </div>
                     </Link>
@@ -75,7 +50,8 @@ class Home extends Component {
                   <Col span={6}>
                     <Link to='/wallet/walletlist'>
                       <div className="home-link">
-                        <img src={walletimg} alt="img" />
+                        <img className="show-img" src={walletimg} alt="img" />
+                        <img className="hidden-img" src={aniwalletimg} alt="img" />
                         <span>钱 包</span>
                       </div>
                     </Link>
@@ -83,7 +59,8 @@ class Home extends Component {
                   <Col span={6}>
                     <Link to='/contract'>
                       <div className="home-link">
-                        <img src={contractimg} alt="img"/>
+                        <img className="show-img" src={contractimg} alt="img" />
+                        <img className="hidden-img" src={anicontractimg} alt="img" />
                         <span>合 约</span>
                       </div>
                     </Link>
@@ -96,7 +73,8 @@ class Home extends Component {
                     </Link> */}
                     <Link to='/pages'>
                       <div className="home-link">
-                        <img src={adavancedimg} alt="img"/>
+                        <img className="show-img" src={adavancedimg} alt="img" />
+                        <img className="hidden-img" src={aniadavancedimg} alt="img" />
                         <span>高 级</span>
                       </div>
                     </Link>
