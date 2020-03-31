@@ -7,7 +7,10 @@ import { message } from 'antd';
 import { Modal, Button } from 'antd';
 import axios from 'axios';
 import { Radio } from 'antd';
+import Addressdetail from './addressdetail';
+import Setting from './setting';
 import {
+    ReadOutlined,
     LogoutOutlined,
     SettingOutlined
 } from '@ant-design/icons';
@@ -21,7 +24,8 @@ class menuDown extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            showPass: false
+            showPass: false,
+            title:"设置",
         };
     }
     componentDidMount() {
@@ -59,9 +63,17 @@ class menuDown extends React.Component {
             visible: false,
         });
     };
-    openUrl (url) {
-        return ()=>{
-            shell.openExternal(url);
+    getInset = (ele) => {
+        return () =>{
+            this.setState({showElem: false})
+            switch(ele){
+                case 0:this.setState({title:"地址簿",children: <Addressdetail />});break;
+                case 1:this.setState({title:"设置",children: <Setting />});break;
+                default:this.setState({title:"设置",children: <Setting />});break;
+            }
+            this.setState({
+                visible: true,
+            });
         }
     }
     render() {
@@ -70,12 +82,19 @@ class menuDown extends React.Component {
             <div className="menu-down">
                 <ul>
                     {walletOpen ? (
-                        <li>
-                            <a onClick={this.logout}>
-                                <LogoutOutlined />
-                                <span>登出钱包</span>
-                            </a>
-                        </li>
+                    <li>
+                        <a onClick={this.getInset(0)}>
+                            <ReadOutlined />
+                            <span>地址簿</span>
+                        </a>
+                    </li>):null}
+                    {walletOpen ? (
+                    <li>
+                        <a onClick={this.logout}>
+                            <LogoutOutlined />
+                            <span>登出钱包</span>
+                        </a>
+                    </li>
                     ) : null}
                     {/* {walletOpen&&this.state.showPass?(
                     <li>
@@ -86,7 +105,7 @@ class menuDown extends React.Component {
                     </li>
                     ):null} */}
                     <li>
-                        <a onClick={this.showModal}>
+                        <a onClick={this.getInset(1)}>
                             <SettingOutlined />
                             <span>设置</span>
                         </a>
@@ -94,38 +113,14 @@ class menuDown extends React.Component {
                 </ul>
                 <Modal
                 className="set-modal"
-                title="设置"
+                title={this.state.title}
                 visible={this.state.visible}
                 onCancel={this.hideModal}
                 footer={null}
                 >
-                    <h4>网络切换</h4>
-                    <p>
-                        <Radio.Group name="radiogroup" defaultValue={1}>
-                            <Radio value={1}>主网</Radio>
-                            <Radio value={2} disabled>测试网</Radio>
-                        </Radio.Group>
-                    </p>
-
-                    <h4 className="mt3">语言设置</h4>
-                    <Radio.Group className="setting-ul" defaultValue={1}>
-                        <Radio value={1} >中文</Radio>
-                        <Radio value={2} disabled>English</Radio>
-                    </Radio.Group>
-
-                    <h4 className="mt3">关于</h4>
-                    {/* <p className="font-s mb5 t-dark">更新完成，请重新启动Neo-GUI</p> */}
-                    <p className="font-s">当前版本1.0.1</p>
-
-                    <p className="mt1 mb3 text-c small">
-                        <p className="mb5 t-light">NeoGUI @ 2020 Neo-Project 保留所有权利</p>
-                        <p>
-                            {/* <a className="mr3 t-green" onClick={this.openUrl("https://github.com/neo-ngd/Neo3-GUI/issues")}>查看帮助</a> */}
-                            <a className="mr3 t-green" onClick={this.openUrl("https://github.com/neo-ngd/Neo3-GUI/issues")}>问题反馈</a>
-                            <a className="t-green" onClick={this.openUrl("https://neo.org/")}>Neo官网</a>
-                        </p>
-                    </p>
+                    {this.state.children}
                 </Modal>
+
             </div>
         )
     }

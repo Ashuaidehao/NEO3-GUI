@@ -27,10 +27,6 @@ class Contract extends React.Component{
         show:false
     };
   }
-  toHome = () =>{
-  }
-  toPage = (e) =>{
-  }
   visi = () =>{
     this.setState({
       show: !this.state.show,

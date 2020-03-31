@@ -41,16 +41,21 @@ class Walletopen extends React.Component {
         "password": pass
       }
     })
-      .then(function (res) {
-        let _data = res.data;
-        _this.setState({ iconLoading: false });
-        if (_data.msgType == 3) {
-          message.success("钱包文件已打开", 3);
-          walletStore.setWalletState(true);
+    .then(function (res) {
+      let _data = res.data;
+      _this.setState({ iconLoading: false });
+      if (_data.msgType == 3) {
+        walletStore.setWalletState(true);
+        let page = (location.pathname).search(/contract/g);
+        console.log(_this.props.history)
+        if(page === 1){
+          _this.props.history.push('/contract');
+        }else{
           _this.props.history.push('/wallet/walletlist');
-        } else {
-          message.info("钱包文件或密码错误，请检查后重试", 2);
         }
+      } else {
+        message.info("钱包文件或密码错误，请检查后重试", 2);
+      }
     })
     .catch(function (error) {
       console.log(error);
@@ -77,7 +82,6 @@ class Walletopen extends React.Component {
   render() {
     return (
       <div className="open">
-        <Topath topath={this.state.topath}></Topath>
         <Row>
           <Col span={18}>
             <Input placeholder="请选择文件存储位置" ref="path" disabled value={this.state.path} />

@@ -500,3 +500,17 @@ small,.small{
 .ant-radio-checked::after{
     border: 1px solid #00AF92;
 }
+
+.add-mark{
+    padding: 0px;
+    list-style: none;
+    font-size: 12px;
+    letter-spacing: 1px;
+    font-weight: 400;
+    color: #333333;
+}
+.add-mark li{
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #FCFCFC;
+}
