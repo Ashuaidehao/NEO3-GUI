@@ -1,18 +1,22 @@
-/* eslint-disable */ 
+/* eslint-disable */
 //just test replace wallet//
 import React from 'react';
-import {Link} from 'react-router-dom';
-import { Layout, Row, Col, List, Typography, message,Button } from 'antd';
+import { Link } from 'react-router-dom';
+import { Layout, Row, Col, List, Typography, message, Button } from 'antd';
 import axios from 'axios';
 import Intitle from '../Common/intitle';
 import Sync from '../sync'
+import { withTranslation } from 'react-i18next';
+import Config from "../../config";
+
+
 
 const { Content } = Layout;
 
 const count = 3;
-
-class Chain extends React.Component{
-  constructor(props){
+@withTranslation()
+class Chain extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       loading: false,
@@ -21,45 +25,45 @@ class Chain extends React.Component{
       blocklist: [],
     };
   }
-  componentDidMount(){
+  componentDidMount() {
     this.getBlock(res => {
       this.setState({
         initLoading: false,
         data: res.result,
         blocklist: res.result,
-        lastblock: res.result[res.result.length-1].blockHeight-1
-      },()=>{});
+        lastblock: res.result[res.result.length - 1].blockHeight - 1
+      }, () => { });
     })
   }
   getBlock = callback => {
     console.log(this.state.lastblock)
-    let _params = this.state.lastblock?{
+    let _params = this.state.lastblock ? {
       "limit": 50,
-      "height":this.state.lastblock
-    }:{
-      "limit": 50
-    };
+      "height": this.state.lastblock
+    } : {
+        "limit": 50
+      };
     axios.post('http://localhost:8081', {
-      "id":"51",
+      "id": "51",
       "method": "GetLastBlocks",
       "params": _params
     })
-    .then(function (response) {
-      var _data = response.data;
-      console.log(_data)
-      if(_data.msgType === -1){
-        message.error("查询失败");
-        return;
-      }else{
-        callback(_data);
-      }
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error");
-    });
+      .then(function (response) {
+        var _data = response.data;
+        console.log(_data)
+        if (_data.msgType === -1) {
+          message.error("查询失败");
+          return;
+        } else {
+          callback(_data);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        console.log("error");
+      });
   };
-  loadMore = () =>{
+  loadMore = () => {
     this.setState({
       loading: true,
       blocklist: this.state.data.concat([...new Array(count)].map(() => ({ loading: true, name: {} }))),
@@ -71,7 +75,7 @@ class Chain extends React.Component{
           data,
           blocklist: data,
           loading: false,
-          lastblock: data[data.length-1].blockHeight-1
+          lastblock: data[data.length - 1].blockHeight - 1
         },
         () => {
           window.dispatchEvent(new Event('resize'));
@@ -79,23 +83,24 @@ class Chain extends React.Component{
       );
     });
   }
-  render(){
-    const {initLoading,loading,blocklist} = this.state;
+  render() {
+    const { t } = this.props;
+    const { initLoading, loading, blocklist } = this.state;
     const loadMore =
       !initLoading && !loading ? (
         <div className="text-c mb3">
-          <Button type="primary" onClick={this.loadMore}>加载更多</Button>
+          <Button type="primary" onClick={this.loadMore}>{t("load more")}</Button>
         </div>
       ) : null;
     return (
       <Layout className="gui-container">
         <Sync />
         <Content className="mt3">
-          <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
+          <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
             <Col span={24} className="bg-white pv4">
-            <Intitle content="区块列表"/>
+              <Intitle content={t("blockchain page.blocks nav")} />
               <List
-                header={<div><span>区块信息</span><span className="float-r ml4"><span className="wa-amount">交易数量</span></span><span className="float-r">更新时间</span></div>}
+                header={<div><span>{t("blockchain page.block info")}</span><span className="float-r ml4"><span className="wa-amount">{t("blockchain page.transaction count")}</span></span><span className="float-r">{t("blockchain page.update time")}</span></div>}
                 footer={<span></span>}
                 itemLayout="horizontal"
                 loading={initLoading}
@@ -103,23 +108,23 @@ class Chain extends React.Component{
                 dataSource={blocklist}
                 className="font-s"
                 renderItem={item => (
-                <List.Item>
+                  <List.Item>
                     <List.Item.Meta
-                    title={<Link to={"/chain/detail:"+item.blockHeight} title="查看详情">{item.blockHeight}</Link>}
-                    description={<div className="font-s">{item.blockHash}</div>}
+                      title={<Link to={"/chain/detail:" + item.blockHeight} title={t("show detail")}>{item.blockHeight}</Link>}
+                      description={<div className="font-s">{item.blockHash}</div>}
                     />
                     <Typography>{item.blockTime}</Typography>
                     <Typography className="upcase ml4"><span className="wa-amount">{item.transactionCount}</span></Typography>
-                </List.Item>
+                  </List.Item>
                 )}
               />
-              </Col>
+            </Col>
           </Row>
           <div className="pv1"></div>
         </Content>
       </Layout>
     );
   }
-} 
+}
 
 export default Chain;

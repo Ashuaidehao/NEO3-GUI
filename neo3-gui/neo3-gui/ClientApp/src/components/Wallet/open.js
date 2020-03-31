@@ -6,9 +6,12 @@ import { message, Input, Row, Col, Button } from 'antd';
 import Topath from '../Common/topath';
 import { walletStore } from "../../store/stores";
 import { withRouter } from "react-router-dom";
+import { withTranslation } from "react-i18next";
+
 
 const { dialog } = window.remote;
 
+@withTranslation()
 @withRouter
 class Walletopen extends React.Component {
   constructor(props) {
@@ -75,77 +78,22 @@ class Walletopen extends React.Component {
     })
   }
   render() {
+    const{t}=this.props;
     return (
       <div className="open">
         <Topath topath={this.state.topath}></Topath>
         <Row>
           <Col span={18}>
-            <Input placeholder="请选择文件存储位置" ref="path" disabled value={this.state.path} />
+            <Input placeholder={t("please select file location")} ref="path" disabled value={this.state.path} />
           </Col>
           <Col span={6}>
-            <Button type="primary" onClick={this.opendialog}>选择路径</Button>
+            <Button type="primary" onClick={this.opendialog}>{t("select path")}</Button>
           </Col>
         </Row>
-        <Input.Password placeholder="input password" ref="pass" maxLength={this.state.maxLength} onChange={this.checkinput} onPressEnter={this.openWallet} />
-        <Button className="mt3 mb2" type="primary" onClick={this.verifi} loading={this.state.iconLoading}>确认</Button>
+        <Input.Password placeholder={t("please input password")} ref="pass" maxLength={this.state.maxLength} onChange={this.checkinput} onPressEnter={this.openWallet} />
+        <Button className="mt3 mb2" type="primary" onClick={this.verifi} loading={this.state.iconLoading}>{t("button.confirm")}</Button>
       </div>
     );
-  }
-  openWallet2 = () => {
-    var path = this.state.path;
-    var _this = this;
-    console.log(path);
-    console.log(file.path);
-    var pass = document.getElementById("password").value;
-    if (!path || !pass) {
-      message.error("请确认文件及密码", 3);
-      return;
-    }
-    this.setState({ iconLoading: true });
-    // var ws = new WebSocket("ws://localhost:8081");
-    // let da = {
-    //   "id":"1234",
-    //   "method": "OpenWallet",
-    //   "params": {
-    //     "path": path,
-    //     "password": "123456"
-    //   }
-    // };
-    // // let da = {
-    // //   "id":"1234",
-    // //   "method": "OpenWallet",
-    // //   "params": {
-    // //     "path": path,
-    // //     "password": pass
-    // //   }
-    // // };
-    // ws.onopen = function() {
-
-    //   ws.send(JSON.stringify(da));
-
-    //   console.log("数据发送中...");
-    // };
-
-    // ws.onmessage = function(e) {
-    //     let data = JSON.parse(e.data);
-    //     console.log(data)
-    //     if(data.msgType == 3){
-    //       _this.setState({ iconLoading: false });
-    //       message.success("钱包文件已选择",2);
-    //     }else{
-    //       message.info("钱包文件或密码错误，请检查后重试",2);
-    //     }
-    // }
-
-    // ws.onclose = function(e) {
-    //     console.log(e);
-    //     message.info("网络连接失败，请稍后再试",3);
-    // }
-
-    // ws.onerror = function(e) {
-    //     console.log(e);
-    //     message.info("error" + e);
-    // }
   }
 }
 

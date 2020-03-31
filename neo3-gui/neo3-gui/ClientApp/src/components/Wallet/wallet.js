@@ -10,6 +10,10 @@ import Walletopen from './open'
 import Walletcreate from './create'
 import Walletprivate from './private'
 import Sync from '../sync';
+import { withTranslation } from "react-i18next";
+import Config from "../../config";
+
+
 
 import {
   ArrowLeftOutlined,
@@ -18,6 +22,7 @@ import {
 
 const { Footer } = Layout;
 
+@withTranslation()
 class Wallet extends React.Component{
   constructor(props){
     super(props);
@@ -29,6 +34,8 @@ class Wallet extends React.Component{
         path:'',
         login:false
     };
+
+    console.log(Config.Language)
   }
   componentDidMount(){
   }
@@ -51,6 +58,7 @@ class Wallet extends React.Component{
     }
   }
   render = () =>{
+    const{t}=this.props;
     return (
       <Layout className="gui-container">
         <Sync />
@@ -66,14 +74,14 @@ class Wallet extends React.Component{
           <div className="wa-open mt2">
             {this.state.showElem?(
               <div>
-                <Button type="primary" onClick={this.getInset(0)}>打开钱包文件</Button>
-                <Button className="mt3 mb2" type="primary" onClick={this.getInset(1)}>创建钱包文件</Button>
+                <Button type="primary" onClick={this.getInset(0)}>{t("wallet page.open wallet file")}</Button>
+                <Button className="mt3 mb2" type="primary" onClick={this.getInset(1)}>{t("wallet page.create wallet file")}</Button>
                 
-                <Divider className="t-light">导入钱包</Divider>
+                <Divider className="t-light">{t("wallet page.import wallet")}</Divider>
                 <Row justify="space-between">
-                  <Col span={6}><Button  size="small" onClick={this.getInset(2)}>私钥</Button></Col>
-                  <Col span={6} offset={3}><Button size="small" disabled>加密私钥</Button></Col>
-                  <Col span={6} offset={3}><Button size="small" disabled>助记词</Button></Col>
+                  <Col span={6}><Button  size="small" onClick={this.getInset(2)}>{t("wallet page.private key")}</Button></Col>
+                  <Col span={6} offset={3}><Button size="small" disabled>{t("wallet page.encrypted private key")}</Button></Col>
+                  <Col span={6} offset={3}><Button size="small" disabled>{t("wallet page.mnemonic phrase")}</Button></Col>
                 </Row>
               </div>
             ):null}

@@ -3,9 +3,12 @@ import 'antd/dist/antd.css';
 import axios from 'axios';
 import { message, Button, Input,Divider } from 'antd';
 import Walletcreate from '../Wallet/create';
+import { withTranslation } from "react-i18next";
+
 
 const {dialog} = window.remote;
 
+@withTranslation()
 class Walletprivate extends React.Component{
   constructor(props){
     super(props);
@@ -108,18 +111,19 @@ class Walletprivate extends React.Component{
     });
   }
   render = () =>{
+    const{t}=this.props;
     return (
       <div>
-          <Input id="privateKey" disabled={this.state.showElem} placeholder="导入HEX/WIF格式私钥" onKeyUp={this.toTrim} data-value="私钥"/>
+          <Input id="privateKey" disabled={this.state.showElem} placeholder={t("please input Hex/WIF private key")} onKeyUp={this.toTrim} data-value="私钥"/>
           {!this.state.showElem?(
             <div>
-              <Button className="mt3" onClick={this.veriPrivate}>下一步</Button>
+              <Button className="mt3" onClick={this.veriPrivate}>{t("button.next")}</Button>
             </div>
           ):null}
           {this.state.showElem?(
             <div>
-                <Button className="mt3" onClick={this.changeTab}>上一步</Button>
-                <Divider>保存钱包</Divider>
+                <Button className="mt3" onClick={this.changeTab}>{t("button.prev")}</Button>
+                <Divider>{t("wallet page.private key save wallet title")}</Divider>
                 <Walletcreate priclass="pri-class" cname="pri-pass" private={this.state.private}/>
             </div>
           ):null}
