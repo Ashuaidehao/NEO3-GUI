@@ -51,10 +51,6 @@ class Contractinvoke extends React.Component{
       this.refs.formRef.setFieldsValue({
         hash: "0x8c23f196d8a1bfd103a9dcb1f9ccf0c611377d3b"
       })
-      console.log(this.props.walletStore.accountlist)
-      const accounts = this.props.walletStore.accountlist;
-      
-      console.log(accounts)
     }
     toHome = () =>{
       location.href=location.origin;
@@ -74,19 +70,14 @@ class Contractinvoke extends React.Component{
         let list = new Array();
         list = res.entryPoint?list.concat(res.entryPoint):list;
         let methods = list.concat(res.methods);
-        console.log(methods)
         this.setState({
+          hash:res.contractHash,
           methods:methods
         })
       });
     }
     searchContract = callback => {
-      
-      // let _hash = (this.refs.sinput.input.value).trim();
-      console.log(this.refs);
-      console.log();
       let _hash = (this.refs.sinput.input.value).trim();
-      // let _hash = "0x8c23f196d8a1bfd103a9dcb1f9ccf0c611377d3b";
       if(!_hash){message.info("请输入后再试");return;}
       axios.post('http://localhost:8081', {
           "id":"1111",
@@ -116,65 +107,99 @@ class Contractinvoke extends React.Component{
         methodname:this.state.methods[e].name
       })
     }
-    invoke = fieldsValue =>{
-      console.log(fieldsValue)
-
+    makeParams = (data) =>{
+      let _params = {
+        "contractHash": this.state.hash,
+        "method": this.state.methodname,
+        "parameters":[],
+        "cosigners":[],
+        "sendTx": false
+      };
+      
       let inside = new Array();
       this.state.params.map((item)=>{
-        item.value = fieldsValue[item.name];
+        item.value = data[item.name];
         inside = inside.concat(item)
       })
-      
-      // let cosigners = fieldsValue.cosigners;
-      // this.state.params.map((item)=>{
-      //   item.value = fieldsValue[item.name];
-      //   inside = inside.concat(item)
-      // })
-      // console.log(inside)
+      if(inside) _params.parameters = inside;
 
       let cosigners = new Array();
+      data.cosigners?data.cosigners.map((item)=>{
+        let _list = {};
+        _list.account = item;
+        cosigners = cosigners.concat(_list)
+      }):null;
+      if(cosigners) _params.cosigners = cosigners;
 
-      let params = {
-        "contractHash": fieldsValue.hash,
-        "method": this.state.methodname,
-        "parameters": inside,
-        "cosigners": fieldsValue.cosigners,
-        "sendTx": false
+      return _params;
     }
-    console.log(params)
-    // this.invokeContract(res=>{
-    //   let list = new Array();
-    //   list = res.entryPoint?list.concat(res.entryPoint):list;
-    //   let methods = list.concat(res.methods);
-    //   console.log(methods)
-    //   this.setState({
-    //     methods:methods
-    //   })
-    // });
+    onFill = () => {
+      this.refs.formRef.setFieldsValue({
+        tresult:this.state.tresult
+      });
+    };
+    testInvoke = () => {
+      this.setState({
+        tresult:"",
+      },this.onFill());
+      this.refs.formRef.validateFields().then(data => {
+        let params = this.makeParams(data);
+
+        this.invokeContract(params,res=>{
+          this.setState({
+            tresult:JSON.stringify(res),
+          },this.onFill());
+        });
+      }).catch(function(res){
+        console.log(res)
+        message.error("请先输入完毕");
+      })
+    }
+    invoke = fieldsValue =>{
+      let params = this.makeParams(fieldsValue);
+      params.sendTx = true;
+      this.setState({
+        tresult:"",
+      },this.onFill());
+      this.invokeContract(params,res=>{
+        Modal.info({
+          title: '合约',
+          width: 600,
+          content: (
+            <div className="show-pri">
+              <p>TxID : {res.result.txId?res.result.txId:"--"}</p>
+              <p>GAS  : {res.result.gasConsumed?res.result.gasConsumed:"--"}</p>
+            </div>
+          ),
+          okText:"确认"
+        });
+      });
     }
     invokeContract = (params,callback) =>{
+      console.log(params)
       axios.post('http://localhost:8081', {
         "id":"1111",
         "method": "InvokeContract",
         "params": params
       })
-      .then(function (response) {
-        var _data = response.data;
+      .then(function (res) {
+        var _data = res.data;
+        console.log(_data)
         if(_data.msgType === -1){
           Modal.error({
             title: '运行失败，请检查后再尝试',
-            width: 400,
+            width: 600,
             content: (
               <div className="show-pri">
-                <p>失败码: {res.code}</p>
-                <p>错误信息: {res.message}</p>
+                <p>失败码: {_data.error.code}</p>
+                <p>错误信息: {_data.error.message}</p>
               </div>
             ),
             okText:"确认"
           });
           return;
         }else if(_data.msgType === 3){
-          callback(_data.result)
+          callback(_data)
         }
       })
       .catch(function (error) {
@@ -232,7 +257,6 @@ class Contractinvoke extends React.Component{
                 </Form.Item>
                 {params[0]?<div className="param-title"><span>*</span> 参数列表 :</div>:null}
                 {params.map((item, index) => {
-                    console.log(item)
                   return(
                     <Form.Item
                       {...layout}
@@ -269,7 +293,7 @@ class Contractinvoke extends React.Component{
               </Col>
             </Row>
             <Form.Item className="text-c w200" >
-              <Button type="primary"  htmlType="button" onClick={this.onTest}>
+              <Button type="primary"  htmlType="button" onClick={this.testInvoke}>
                 试运行
               </Button>
             </Form.Item>
