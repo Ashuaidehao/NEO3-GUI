@@ -24,16 +24,18 @@ class Walletopen extends React.Component {
     };
   }
   verifi = () => {
+    const { t } = this.props;
     var path = this.refs.path.input.value;
     var pass = this.refs.pass.input.value;
     if (!path || !pass) {
-      message.error("请选择文件及输入密码", 3);
+      message.error(t("wallet page.please select file and input password"), 3);
       return;
     }
     this.setState({ iconLoading: true });
     this.openWallet();
   }
   openWallet = () => {
+    const { t } = this.props;
     var _this = this;
     var pass = this.refs.pass.input.value;
     axios.post('http://localhost:8081', {
@@ -48,22 +50,23 @@ class Walletopen extends React.Component {
         let _data = res.data;
         _this.setState({ iconLoading: false });
         if (_data.msgType == 3) {
-          message.success("钱包文件已打开", 3);
+          message.success(t("wallet page.wallet opened"), 3);
           walletStore.setWalletState(true);
           _this.props.history.push('/wallet/walletlist');
         } else {
-          message.info("钱包文件或密码错误，请检查后重试", 2);
+          message.info(t("wallet page.open wallet failed"), 2);
         }
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error");
-    });
+      })
+      .catch(function (error) {
+        console.log(error);
+        console.log("error");
+      });
   }
   opendialog = () => {
+    const { t } = this.props;
     var _this = this;
     dialog.showOpenDialog({
-      title: '打开钱包文件',
+      title: t("wallet page.open wallet file"),
       defaultPath: '/',
       filters: [
         {
@@ -78,7 +81,7 @@ class Walletopen extends React.Component {
     })
   }
   render() {
-    const{t}=this.props;
+    const { t } = this.props;
     return (
       <div className="open">
         <Topath topath={this.state.topath}></Topath>

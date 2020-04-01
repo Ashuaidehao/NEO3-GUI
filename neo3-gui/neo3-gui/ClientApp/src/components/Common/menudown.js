@@ -33,11 +33,11 @@ class menuDown extends React.Component {
 
     switchLang = (lng) => {
         const { t, i18n } = this.props;
-        console.log("current lang:",Config.Language)
-        if(Config.Language===lng){
+        console.log("current lang:", Config.Language)
+        if (Config.Language === lng) {
             return;
         }
-        Config.Language=lng;
+        Config.Language = lng;
         i18n.changeLanguage(lng);
     }
 
@@ -46,21 +46,22 @@ class menuDown extends React.Component {
         if (_path <= -1) return;
         this.setState({ showPass: true });
     }
-    logout = () =>{
+    logout = () => {
+        const { t } = this.props;
         var _this = this;
         axios.post('http://localhost:8081', {
-          "id": "1234",
-          "method": "CloseWallet"
+            "id": "1234",
+            "method": "CloseWallet"
         })
-        .then(()=> {
-            message.success("钱包退出成功", 2);
-            this.props.walletStore.logout();
-            this.props.history.push('/');
-        })
-        .catch(function (error) {
-            console.log(error);
-            console.log("error");
-        });
+            .then(() => {
+                message.success(t("wallet page.close wallet success"), 2);
+                this.props.walletStore.logout();
+                this.props.history.push('/');
+            })
+            .catch(function (error) {
+                console.log(error);
+                console.log("error");
+            });
     }
     showModal = () => {
         this.setState({
@@ -73,14 +74,14 @@ class menuDown extends React.Component {
             visible: false,
         });
     };
-    openUrl (url) {
-        return ()=>{
+    openUrl(url) {
+        return () => {
             shell.openExternal(url);
         }
     }
     render() {
         const walletOpen = this.props.walletStore.isOpen;
-        const {t,i18n}=this.props;
+        const { t, i18n } = this.props;
         return (
             <div className="menu-down">
                 <ul>
@@ -108,11 +109,11 @@ class menuDown extends React.Component {
                     </li>
                 </ul>
                 <Modal
-                className="set-modal"
-                title={t("settings")}
-                visible={this.state.visible}
-                onCancel={this.hideModal}
-                footer={null}
+                    className="set-modal"
+                    title={t("settings")}
+                    visible={this.state.visible}
+                    onCancel={this.hideModal}
+                    footer={null}
                 >
                     <h4>{t("network setting")}</h4>
                     <p>
@@ -137,7 +138,7 @@ class menuDown extends React.Component {
                         <p>
                             {/* <a className="mr3 t-green" onClick={this.openUrl("https://github.com/neo-ngd/Neo3-GUI/issues")}>查看帮助</a> */}
                             <a className="mr3 t-green" onClick={this.openUrl("https://github.com/neo-ngd/Neo3-GUI/issues")}>{t("report issues")}</a>
-                <a className="t-green" onClick={this.openUrl("https://neo.org/")}>Neo{t("official website")}</a>
+                            <a className="t-green" onClick={this.openUrl("https://neo.org/")}>Neo{t("official website")}</a>
                         </p>
                     </p>
                 </Modal>

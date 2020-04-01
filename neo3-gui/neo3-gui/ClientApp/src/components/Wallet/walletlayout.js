@@ -39,6 +39,7 @@ class Walletlayout extends React.Component {
   }
   getGas = () => {
     var _this = this;
+    const { t } = this.props;
     axios.post('http://localhost:8081', {
       "id": 51,
       "method": "ShowGas"
@@ -46,7 +47,7 @@ class Walletlayout extends React.Component {
       .then(function (response) {
         var _data = response.data;
         if (_data.msgType === -1) {
-          message.info("请打开钱包", 2);
+          message.info(t("wallet page.please open wallet"), 2);
           _this.setState({ topath: "/wallet" });
           return;
         }
@@ -103,7 +104,7 @@ class Walletlayout extends React.Component {
                 title={
                   <span>
                     <WalletOutlined />
-                    <span>{t("home.wallet")}</span>
+                    <span>{t("wallet")}</span>
                   </span>
                 }>
                 <Menu.Item key="1">
