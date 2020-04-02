@@ -45,32 +45,27 @@ class Walletopen extends React.Component {
         "path": _this.state.path,
         "password": pass
       }
-    })
+    })\
     .then(function (res) {
       let _data = res.data;
       _this.setState({ iconLoading: false });
       if (_data.msgType == 3) {
         walletStore.setWalletState(true);
         let page = (location.pathname).search(/contract/g);
-        console.log(_this.props.history)
         if(page === 1){
           _this.props.history.push('/contract');
         }else{
-      .then(function (res) {
-        let _data = res.data;
-        _this.setState({ iconLoading: false });
-        if (_data.msgType == 3) {
           message.success(t("wallet page.wallet opened"), 3);
-          walletStore.setWalletState(true);
           _this.props.history.push('/wallet/walletlist');
-        } else {
-          message.info(t("wallet page.open wallet failed"), 2);
         }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+      } else {
+        message.info(t("wallet page.open wallet failed"), 2);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   opendialog = () => {
     const { t } = this.props;

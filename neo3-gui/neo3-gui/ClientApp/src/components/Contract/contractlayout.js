@@ -98,13 +98,13 @@ class Contractlayout extends React.Component {
                   </span>
                 }
               >
-                <Menu.Item key="1" onClick={this.toPage}>
+                <Menu.Item key="1">
                   <Link to="/contract">{ t('contract page.search contract nav') }</Link>
                 </Menu.Item>
-                <Menu.Item key="2" onClick={this.toPage}>
+                <Menu.Item key="2">
                   <Link to="/contract/wallet">{ t('contract page.deploy contract nav') }</Link>
                 </Menu.Item>
-                <Menu.Item key="3" onClick={this.toPage}>
+                <Menu.Item key="3">
                   <Link to="/contract/wallet">{ t('contract page.invoke contract nav') }</Link>
                 </Menu.Item>
               </SubMenu>
