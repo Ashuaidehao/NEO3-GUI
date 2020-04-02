@@ -54,6 +54,14 @@ namespace Neo.Services.ApiServices
             }
             // Read nef
             NefFile nefFile = ReadNefFile(nefPath);
+
+
+            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            var oldContract= snapshot.Contracts.TryGet(nefFile.ScriptHash);
+            if (oldContract != null)
+            {
+                return Error(ErrorCode.ContractAlreadyExist);
+            }
             // Read manifest
             ContractManifest manifest = ReadManifestFile(manifestPath);
             // Basic script checks
