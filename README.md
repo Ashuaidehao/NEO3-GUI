@@ -8,7 +8,7 @@ git clone --recursive https://github.com/neo-ngd/NEO3-GUI.git
 
 ## Required Tools and Dependencies
 
-1. [.NET Core](https://dotnet.microsoft.com/download) and [Visual Studio 2019](https://visualstudio.microsoft.com/)
+1. [Visual Studio 2019](https://visualstudio.microsoft.com/) and [.NET Core](https://dotnet.microsoft.com/download) 
 2. [Node](https://nodejs.org/) 
 
 ## Build and Run
@@ -24,4 +24,4 @@ Open "neo3-gui/neo3-gui.sln" with Visual Studio 2019, press "F5" to run.
 
 ## Release
 
-Run "neo3-gui/neo3-gui/publish.sh" in shell, and the default release output diractory is "neo3-gui/neo3-gui/ClientApp/build-electron". 
+Run "neo3-gui/neo3-gui/publish.sh" in shell, and the default release output directory is "neo3-gui/neo3-gui/ClientApp/build-electron". 
