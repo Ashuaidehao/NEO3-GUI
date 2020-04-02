@@ -90,6 +90,7 @@
 	"unconfirmed transactions": "Unconfirmed Transactions",
 	"verification script": "Verification Script",
 	"wallet": "Wallet",
+	"open wallet first": "Please open wallet",
 	"wallet page": {
 		"accounts nav": "Accounts",
 		"assets": "Assets",
@@ -134,6 +135,7 @@
 		"transfer asset": "Asset",
 		"transfer nav": "Transfer",
 		"transfer send success": "Send Success",
+		"transfer send error":"Send failed, please try again later",
 		"transfer warning": "Safety tip: Do not transfer money to strangers easily.Please confirm the receiving account, transfer amount and asset type carefully.Please carefully identify assets with the same name to avoid being cheated.Do not transfer money to the receiving account (address) of other blockchain.",
 		"wallet opened": "Wallet is opened"
 	},

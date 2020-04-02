@@ -49,20 +49,20 @@ class Transfer extends React.Component {
       "method": "GetMyBalances",
       "params": {}
     })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          console.log("需要先打开钱包再进入页面");
-          return;
-        }
-        _this.setState({
-          addresslist: _data.result
-        })
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        message.error(t("open wallet first"));
+        return;
+      }
+      _this.setState({
+        addresslist: _data.result
       })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error2");
-      });
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error2");
+    });
   }
   setAddress = target => {
     target = target ? target : 0;
@@ -99,12 +99,12 @@ class Transfer extends React.Component {
       if(_data.msgType === -1){
         let res = _data.error;
         Modal.error({
-          title: '交易失败，请检查后再尝试',
+          title: t('wallet page.transfer send error'),
           width: 400,
           content: (
             <div className="show-pri">
-              <p>失败码: {res.code}</p>
-              <p>错误信息: {res.message}</p>
+              <p>{t("error code")}: {res.code}</p>
+              <p>{t("error msg")}: {res.message}</p>
             </div>
           ),
           okText:"确认"
@@ -112,10 +112,10 @@ class Transfer extends React.Component {
         return;
       }else{
         Modal.info({
-          title: '交易发送成功',
+          title: t('wallet page.transfer send success'),
           content: (
             <div className="show-pri">
-              <p>交易哈希：{_data.result.txId}</p>
+              <p>{t("transaction hash")}：{_data.result.txId}</p>
             </div>
           ),
           okText:"确认"
