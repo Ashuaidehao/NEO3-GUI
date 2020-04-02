@@ -78,11 +78,6 @@ class menuDown extends React.Component {
             visible: false,
         });
     };
-    openUrl(url) {
-        return () => {
-            shell.openExternal(url);
-        }
-    }
     getInset = (ele) => {
         return () =>{
             this.setState({showElem: false})
@@ -94,6 +89,11 @@ class menuDown extends React.Component {
             this.setState({
                 visible: true,
             });
+        }
+    }
+    openUrl(url) {
+        return () => {
+            shell.openExternal(url);
         }
     }
     render() {
@@ -113,24 +113,9 @@ class menuDown extends React.Component {
                     <li>
                         <a onClick={this.logout}>
                             <LogoutOutlined />
-                            <span>登出钱包</span>
+                            <span>{t("button.close wallet")}</span>
                         </a>
-                    </li>
-                        <li>
-                            <a onClick={this.logout}>
-                                <LogoutOutlined />
-                                <span>{t("button.close wallet")}</span>
-                            </a>
-                        </li>
-                    ) : null}
-                    {/* {walletOpen&&this.state.showPass?(
-                    <li>
-                        <a>
-                        <KeyOutlined />
-                        <span>修改密码</span>
-                        </a>
-                    </li>
-                    ):null} */}
+                    </li>) : null}
                     <li>
                         <a onClick={this.getInset(1)}>
                             <SettingOutlined />
@@ -144,12 +129,9 @@ class menuDown extends React.Component {
                     visible={this.state.visible}
                     onCancel={this.hideModal}
                     footer={null}
-                className="set-modal"
-                title={this.state.title}
-                visible={this.state.visible}
-                onCancel={this.hideModal}
-                footer={null}
                 >
+                    {this.state.children}
+                </Modal>
                     <h4>{t("network setting")}</h4>
                     <p>
                         <Radio.Group name="radiogroup" defaultValue={1}>
@@ -165,13 +147,11 @@ class menuDown extends React.Component {
                     </Radio.Group>
 
                     <h4 className="mt3">{t("about")}</h4>
-                    {/* <p className="font-s mb5 t-dark">更新完成，请重新启动Neo-GUI</p> */}
                     <p className="font-s">{t("current version")} 1.0.1</p>
 
                     <p className="mt1 mb3 text-c small">
                         <p className="mb5 t-light">NeoGUI @ 2020 Neo-Project {t("copyright")}</p>
                         <p>
-                            {/* <a className="mr3 t-green" onClick={this.openUrl("https://github.com/neo-ngd/Neo3-GUI/issues")}>查看帮助</a> */}
                             <a className="mr3 t-green" onClick={this.openUrl("https://github.com/neo-ngd/Neo3-GUI/issues")}>{t("report issues")}</a>
                             <a className="t-green" onClick={this.openUrl("https://neo.org/")}>Neo{t("official website")}</a>
                         </p>
