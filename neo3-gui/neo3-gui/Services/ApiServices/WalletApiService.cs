@@ -657,7 +657,7 @@ namespace Neo.Services.ApiServices
 
             var addresses = address != null ? new List<UInt160>() { address } : CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
             using var db = new TrackDB();
-            var trans = db.FindTransactions(new TrackFilter() { FromOrTo = addresses, PageIndex = pageIndex, PageSize = limit });
+            var trans = db.FindNep5Transactions(new TransferFilter() { FromOrTo = addresses, PageIndex = pageIndex, PageSize = limit });
             var result = new PageList<TransactionPreviewModel>
             {
                 TotalCount = trans.TotalCount,
