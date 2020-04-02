@@ -28,7 +28,7 @@ class Assetdetail extends React.Component{
     })
   }
   getAsset = () =>{
-      console.log("数据暂无")
+      // console.log("数据暂无")
     // var _this = this;
     // let _height = this.state.height;
     // axios.post('http://localhost:8081', {

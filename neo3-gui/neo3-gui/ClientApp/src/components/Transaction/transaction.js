@@ -46,13 +46,16 @@ class Transaction extends React.Component {
       this.allset(_params);
     } else if (page === "assetdetail") {
       _params.asset = _hash;
+      this.setState({
+        params:_params
+      })
       this.allset(_params);
     } else if (page === "wallettrans") {
       this.walletset(_params);
     } else if (page === "walletdetail") {
       _params.address = _hash;
       this.walletset(_params);
-    } else {
+    } else{
       this.allset(_params);
     }
   }
@@ -91,19 +94,19 @@ class Transaction extends React.Component {
       "method": "GetMyTransactions",
       "params": params
     })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          message.error("查询失败");
-          return;
-        } else {
-          callback(_data);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        message.error("查询失败");
+        return;
+      } else {
+        callback(_data);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   };
   getAlltrans = (params, callback) => {
     axios.post('http://localhost:8081', {
@@ -111,25 +114,26 @@ class Transaction extends React.Component {
       "method": "QueryTransactions",
       "params": params
     })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          message.error("查询失败");
-          return;
-        } else {
-          callback(_data);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        message.error("查询失败");
+        return;
+      } else {
+        callback(_data);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   };
   loadMore = () => {
     this.setState({
       loading: true,
     });
-    var _params = this.madeParams();
+    var _flag = this.madeParams();
+    var _params = Object.assign(this.state.params, _flag);
     this.getAlltrans(_params, res => {
       const data = this.state.data.concat(res.result.list);
       const _page = this.state.page + 1;
