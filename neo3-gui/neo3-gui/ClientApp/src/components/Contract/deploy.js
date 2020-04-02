@@ -147,30 +147,30 @@ class Contractdeploy extends React.Component {
       "method": "DeployContract",
       "params": params
     })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          let res = _data.error;
-          Modal.error({
-            title: t('contract page.invoke fail title'),
-            width: 400,
-            content: (
-              <div className="show-pri">
-                <p>{t('error code')}: {res.code}</p>
-                <p>{t('error msg')}: {res.message}</p>
-              </div>
-            ),
-            okText: t("button.ok")
-          });
-          return;
-        } else if (_data.msgType === 3) {
-          callback(_data);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        let res = _data.error;
+        Modal.error({
+          title: t('contract page.fail title'),
+          width: 400,
+          content: (
+            <div className="show-pri">
+              <p>{t('error code')}: {res.code}</p>
+              <p>{t('error msg')}: {res.message}</p>
+            </div>
+          ),
+          okText: t("button.ok")
+        });
+        return;
+      } else if (_data.msgType === 3) {
+        callback(_data);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   render = () => {
     const { t } = this.props;
@@ -213,11 +213,11 @@ class Contractdeploy extends React.Component {
                 </Form.Item>
                 <Form.Item className="text-c w200" >
                   <Button type="primary" htmlType="button" onClick={this.onTest}>
-                    {t('contract page.test invoke')}
+                    {t('contract page.test deploy')}
                   </Button>
                 </Form.Item>
                 <div className="pa3 mb4">
-                  <p className="mb5 bolder">{t('contract page.invoke result')}</p>
+                  <p className="mb5 bolder">{t('contract page.test result')}</p>
                   <TextArea rows={3} value={this.state.tresult} />
                 </div>
                 {/* {cost>=0?<p className="text-c small mt4 mb0">手续费：{cost} GAS</p>:null} */}

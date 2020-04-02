@@ -45,7 +45,7 @@ class Walletopen extends React.Component {
         "path": _this.state.path,
         "password": pass
       }
-    })\
+    })
     .then(function (res) {
       let _data = res.data;
       _this.setState({ iconLoading: false });

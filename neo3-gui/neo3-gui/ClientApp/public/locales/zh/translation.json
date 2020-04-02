@@ -28,8 +28,14 @@
 		"next": "下一步",
 		"ok": "确认",
 		"prev": "上一步",
-		"send": "发送"
+		"send": "发送",
+		"search":"搜索"
 	},
+	"input":{
+		"required":"该输入框为必填项",
+		"checked":"请确认已经输入完毕"
+	},
+	"address book":"地址簿",
 	"byte": "字节",
 	"bytes": "字节",
 	"confirm count": "确认数",
@@ -38,14 +44,23 @@
 		"deploy contract": "部署合约",
 		"deploy contract nav": "部署合约",
 		"deploy success": "交易发送成功，请等待区块确认",
+		"invoke contract": "调用合约",
 		"invoke contract nav": "调用合约",
-		"invoke fail title": "运行失败，请检查后再尝试",
-		"invoke result": "运行结果",
 		"please select file path": "请选择文件后再试",
 		"search contract": "搜索合约",
 		"search contract nav": "搜索合约",
 		"select {file} path title": "选择需要的{{file}}文件",
-		"test invoke": "试运行"
+		"test deploy": "试运行",
+		"test invoke": "试运行",
+		"test result": "运行结果",
+		"search fail": "请正确输入需要查找的hash",
+		"search input check": "请输入后再试",
+		"choose account":"选择账户",
+		"cosigners":"附加签名",
+		"fail title": "运行失败，请检查后再尝试",
+		"invoke method":"调用方法",
+		"select method":"选择方法",
+		"parameters":"参数列表"
 	},
 	"copyright": "保留所有权利",
 	"count": "数量",

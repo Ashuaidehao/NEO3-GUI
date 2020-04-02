@@ -24,16 +24,22 @@ import Sync from '../sync'
 
 import { SwapOutlined } from '@ant-design/icons';
 
+import { withRouter } from "react-router-dom";
+import { withTranslation } from "react-i18next";
+
 const { TextArea } = Input;
 const { Content } = Layout;
 const {dialog} = window.remote;
 const {Option} = Select;
 const layout = {
-  labelCol: { span: 3 },
-  wrapperCol: { span: 21 },
+  labelCol: { span: 4 },
+  wrapperCol: { span: 20 },
 };
 
+@withTranslation()
 @inject("walletStore")
+@observer
+@withRouter
 class Contractinvoke extends React.Component{
   constructor(props){
     super(props);
@@ -46,11 +52,6 @@ class Contractinvoke extends React.Component{
         params:[],
         methodname:""
       };
-    }
-    componentDidMount(){
-      this.refs.formRef.setFieldsValue({
-        hash: "0x8c23f196d8a1bfd103a9dcb1f9ccf0c611377d3b"
-      })
     }
     toHome = () =>{
       location.href=location.origin;
@@ -77,8 +78,9 @@ class Contractinvoke extends React.Component{
       });
     }
     searchContract = callback => {
+      const { t } = this.props;
       let _hash = (this.refs.sinput.input.value).trim();
-      if(!_hash){message.info("请输入后再试");return;}
+      if(!_hash){message.info(t("contract page.search input check"));return;}
       axios.post('http://localhost:8081', {
           "id":"1111",
           "method": "GetContract",
@@ -90,7 +92,7 @@ class Contractinvoke extends React.Component{
         var _data = response.data;
         console.log(_data);
         if(_data.msgType === -1){
-          message.info("该合约hash不存在，请检查后再尝试");
+          message.info(t("contract page.search fail"));
           return;
         }else if(_data.msgType === 3){
           callback(_data.result.manifest.abi)
@@ -152,7 +154,7 @@ class Contractinvoke extends React.Component{
         });
       }).catch(function(res){
         console.log(res)
-        message.error("请先输入完毕");
+        message.error(t("input.checked"));
       })
     }
     invoke = fieldsValue =>{
@@ -163,7 +165,7 @@ class Contractinvoke extends React.Component{
       },this.onFill());
       this.invokeContract(params,res=>{
         Modal.info({
-          title: '合约',
+          title: t("contract page.invoke contract"),
           width: 600,
           content: (
             <div className="show-pri">
@@ -171,12 +173,13 @@ class Contractinvoke extends React.Component{
               <p>GAS  : {res.result.gasConsumed?res.result.gasConsumed:"--"}</p>
             </div>
           ),
-          okText:"确认"
+          okText:t("button.ok")
         });
       });
     }
     invokeContract = (params,callback) =>{
       console.log(params)
+      const { t } = this.props;
       axios.post('http://localhost:8081', {
         "id":"1111",
         "method": "InvokeContract",
@@ -187,15 +190,15 @@ class Contractinvoke extends React.Component{
         console.log(_data)
         if(_data.msgType === -1){
           Modal.error({
-            title: '运行失败，请检查后再尝试',
+            title: t('contract page.fail title'),
             width: 600,
             content: (
               <div className="show-pri">
-                <p>失败码: {_data.error.code}</p>
-                <p>错误信息: {_data.error.message}</p>
+                <p>{t('error code')}: {_data.error.code}</p>
+                <p>{t('error msg')}: {_data.error.message}</p>
               </div>
             ),
-            okText:"确认"
+            okText: t("button.ok")
           });
           return;
         }else if(_data.msgType === 3){
@@ -209,7 +212,7 @@ class Contractinvoke extends React.Component{
     }
     render = () =>{
     const {methods,params,disabled} = this.state;
-    
+    const { t } = this.props;
     const accounts = this.props.walletStore.accountlist;
     return (
     <Layout className="gui-container">
@@ -219,7 +222,7 @@ class Contractinvoke extends React.Component{
           <Col span={24}>
             
           <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
-          <Intitle content="调用合约"/>
+          <Intitle content={t('contract page.invoke contract')}/>
           <Form ref="formRef" className="trans-form" onFinish={this.invoke}>
             <Row className="mt3">
               <Col span={20}>
@@ -229,23 +232,23 @@ class Contractinvoke extends React.Component{
                   rules={[
                     {
                       required: true,
-                      message: '请输入正确的合约hash',
+                      message: t('contract page.search fail'),
                     },
                   ]}>
-                  <Input ref="sinput" placeholder="输入Scripthash"/>
+                  <Input ref="sinput" placeholder="Scripthash"/>
                 </Form.Item>
                 <Form.Item
                   name="method"
-                  label="调用方法"
+                  label={t("contract page.invoke method")}
                   rules={[
                     {
                       required: true,
-                      message: '请搜索后，选择要调用的方法',
+                      message: t("input.required"),
                     },
                   ]}
                 >
                   <Select
-                    placeholder={"选择方法"}
+                    placeholder={t("contract page.select method")}
                     style={{ width: '100%'}}
                     onChange={this.showPara}>
                     {methods.map((item,index)=>{
@@ -255,7 +258,7 @@ class Contractinvoke extends React.Component{
                     })}
                   </Select>
                 </Form.Item>
-                {params[0]?<div className="param-title"><span>*</span> 参数列表 :</div>:null}
+                {params[0]?<div className="param-title"><span>*</span> {t("contract page.parameters")} :</div>:null}
                 {params.map((item, index) => {
                   return(
                     <Form.Item
@@ -263,10 +266,11 @@ class Contractinvoke extends React.Component{
                       className="param-input"
                       name={item.name}
                       key={item.name}
-                      label={<span className="upcase">{item.name}</span>}
+                      label={<span>{item.name}</span>}
                       rules={[
                         {
                           required: true,
+                          message: t("input.required"),
                         },
                       ]}>
                       <Input placeholder={item.type}/>
@@ -275,9 +279,9 @@ class Contractinvoke extends React.Component{
                 )}
                 <Form.Item
                   name="cosigners"
-                  label="附加签名">
+                  label={t("contract page.cosigners")}>
                   <Select
-                    placeholder={"选择账户"}
+                    placeholder={t("contract page.choose account")}
                     mode="tags"
                     style={{ width: '100%'}}>
                     {accounts.map((item,index)=>{
@@ -289,22 +293,21 @@ class Contractinvoke extends React.Component{
                 </Form.Item>
               </Col>
               <Col span={4}>
-                <Button className="w200 form-btn" onClick={this.showDetail}>搜索</Button>
+                <Button className="w200 form-btn" onClick={this.showDetail}>{t("button.search")}</Button>
               </Col>
             </Row>
             <Form.Item className="text-c w200" >
               <Button type="primary"  htmlType="button" onClick={this.testInvoke}>
-                试运行
+               {t('contract page.test invoke')}
               </Button>
             </Form.Item>
             <div className="pa3 mb4">
-              <p className="mb5 bolder">运行结果</p>
+              <p className="mb5 bolder">{t('contract page.test result')}</p>
               <TextArea rows={3} value={this.state.tresult}/>
             </div>
-            {/* {cost>=0?<p className="text-c small mt4 mb0">手续费：{cost} GAS</p>:null} */}
             <Form.Item className="text-c w200">
               <Button type="primary" htmlType="submit" disabled={disabled} loading={this.state.iconLoading}>
-                发送
+                {t("button.send")}
               </Button>
             </Form.Item>
           </Form>

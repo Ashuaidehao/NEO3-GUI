@@ -12,6 +12,7 @@ import Intitle from '../Common/intitle';
 import Transaction from '../Transaction/transaction';
 import '../../static/css/wallet.css';
 import Topath from '../Common/topath';
+import { withTranslation } from 'react-i18next';
 import {
   CloseCircleOutlined 
 } from '@ant-design/icons';
@@ -19,6 +20,7 @@ import {
 const { confirm } = Modal;
 const { Content } = Layout;
 
+@withTranslation()
 @inject("walletStore")
 @observer
 @withRouter
@@ -37,15 +39,15 @@ class Addressdetail extends React.Component{
   }
   render = () =>{
     const accounts = this.props.walletStore.accountlist;
-    console.log(accounts)
+    const { t } = this.props;
     return (
       <div>
-        <h4>钱包地址</h4>
+        <h4>{t("address book")}</h4>
         <ul className="add-mark">
         {accounts.map((item,index)=>{
           return(
             <li key={index}>
-              {item.address}<br />
+              {item.address} <span className="float-r mr2 small">NEO {item.neo}</span>
               {/* <span className="mr2 small">NEO {item.neo}</span>
               <span className="small">GAS {item.gas}</span> */}
             </li>
@@ -53,7 +55,7 @@ class Addressdetail extends React.Component{
         })}
         </ul>
         <div className="mt1 mb3 text-c small">
-            <p className="mb5 t-light">NeoGUI @ 2020 Neo-Project 保留所有权利</p>
+            <p className="mb5 t-light">NeoGUI @ 2020 Neo-Project {t("copyright")}</p>
         </div>
       </div>
     );
