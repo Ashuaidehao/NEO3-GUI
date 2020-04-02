@@ -17,9 +17,11 @@ namespace Neo.Common.Storage
         private readonly uint _magic;
         private readonly SQLiteContext _sqldb;
         private readonly LevelDbContext _leveldb;
-        private DateTime _createTime = DateTime.Now;
+        private readonly DateTime _createTime = DateTime.Now;
 
         public TimeSpan LiveTime => DateTime.Now - _createTime;
+
+        private static bool _hasConsistencyCheck = false;
 
         public TrackDB()
         {
@@ -36,6 +38,36 @@ namespace Neo.Common.Storage
                 Directory.CreateDirectory(levelDbPath);
             }
             _leveldb = new LevelDbContext(levelDbPath);
+
+            if (!_hasConsistencyCheck)
+            {
+                _hasConsistencyCheck = true;
+                InitConsistencyCheck();
+            }
+        }
+
+
+        /// <summary>
+        /// check 2 db has the same sync index
+        /// </summary>
+        public void InitConsistencyCheck()
+        {
+            var levelMax = _leveldb.GetMaxSyncIndex(_sqldb.Identity);
+            var sqlMax = _sqldb.GetMaxSyncIndex();
+            if (levelMax == sqlMax)
+            {
+                return;
+            }
+            if ((levelMax == null && sqlMax == 0) || levelMax < sqlMax)
+            {
+                // try repair sync height
+                // when last sync: sqldb save successfully, but leveldb fails
+                _leveldb.AddSyncIndex(_sqldb.Identity, sqlMax.Value);
+                _leveldb.Commit();
+                return;
+            }
+            //unknown issue?
+            throw new Exception("track db damaged!");
         }
 
         public void Commit()
@@ -55,7 +87,7 @@ namespace Neo.Common.Storage
         public bool HasSyncIndex(uint index)
         {
             return _leveldb.HasSyncIndex(_sqldb.Identity, index);
-            //return _db.SyncIndexes.AsNoTracking().FirstOrDefault(s => s.BlockHeight == index) != null;
+            //return _sqldb.SyncIndexes.AsNoTracking().FirstOrDefault(s => s.BlockHeight == index) != null;
         }
 
 
@@ -152,7 +184,55 @@ namespace Neo.Common.Storage
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public PageList<TransferInfo> FindTransactions(TrackFilter filter)
+        public PageList<TransactionInfo> FindTransactions(TransactionFilter filter)
+        {
+            IQueryable<TransactionEntity> query = _sqldb.Transactions.Include(tx => tx.Sender);
+
+            if (filter.StartTime != null)
+            {
+                query = query.Where(r => r.Time >= filter.StartTime.Value.ToUniversalTime());
+            }
+            if (filter.EndTime != null)
+            {
+                query = query.Where(r => r.Time <= filter.EndTime.Value.ToUniversalTime());
+            }
+
+            if (filter.BlockHeight != null)
+            {
+                query = query.Where(r => r.BlockHeight == filter.BlockHeight);
+            }
+            if (filter.TxIds.NotEmpty())
+            {
+                var txids = filter.TxIds.Select(t => t.ToBigEndianHex()).Distinct().ToList();
+                query = query.Where(r => txids.Contains(r.TxId));
+            }
+
+            var pageList = new PageList<TransactionInfo>();
+            var pageIndex = filter.PageIndex <= 0 ? 0 : filter.PageIndex - 1;
+            pageList.TotalCount = query.Count();
+            pageList.PageIndex = pageIndex + 1;
+            pageList.PageSize = filter.PageSize;
+            if (filter.PageSize > 0)
+            {
+                pageList.List.AddRange(query.OrderByDescending(g => g.Time)
+                    .Skip(pageIndex * filter.PageSize)
+                    .Take(filter.PageSize).Select(tx => new TransactionInfo()
+                    {
+                        TxId = UInt256.Parse(tx.TxId),
+                        BlockHeight = tx.BlockHeight,
+                        Sender = tx.Sender != null ? UInt160.Parse(tx.Sender.Address) : null,
+                        Time = tx.Time,
+                    }));
+            }
+            return pageList;
+        }
+
+        /// <summary>
+        ///  Paged by Transactions
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public PageList<TransferInfo> FindNep5Transactions(TransferFilter filter)
         {
             var query = BuildQuery(filter);
             var pageList = new PageList<TransferInfo>();
@@ -176,7 +256,7 @@ namespace Neo.Common.Storage
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public PageList<TransferInfo> FindTransfer(TrackFilter filter)
+        public PageList<TransferInfo> FindTransfer(TransferFilter filter)
         {
             var query = BuildQuery(filter);
             var pageList = new PageList<TransferInfo>();
@@ -234,17 +314,35 @@ namespace Neo.Common.Storage
 
         #endregion
 
+        #region Transaction
 
+        public void AddTransaction(TransactionInfo transaction)
+        {
+            var sender = GetOrCreateAddress(transaction.Sender);
+            _sqldb.Transactions.Add(new TransactionEntity()
+            {
+                TxId = transaction.TxId.ToBigEndianHex(),
+                BlockHeight = transaction.BlockHeight,
+                Time = transaction.Time,
+                SenderId = sender?.Id,
+            });
+        }
+
+        #endregion
 
 
 
         #region Private
 
 
-
+        private readonly Dictionary<UInt160, AddressEntity> _addressCache = new Dictionary<UInt160, AddressEntity>();
         private AddressEntity GetOrCreateAddress(UInt160 address)
         {
             if (address == null) return null;
+            if (_addressCache.ContainsKey(address))
+            {
+                return _addressCache[address];
+            }
             var addr = address.ToBigEndianHex();
             var old = _sqldb.Addresses.FirstOrDefault(a => a.Address == addr);
             if (old == null)
@@ -253,11 +351,17 @@ namespace Neo.Common.Storage
                 _sqldb.Addresses.Add(old);
                 _sqldb.SaveChanges();
             }
+            _addressCache[address] = old;
             return old;
         }
 
+        private readonly Dictionary<UInt160, AssetEntity> _assetCache = new Dictionary<UInt160, AssetEntity>();
         private AssetEntity GetOrCreateAsset(AssetInfo asset)
         {
+            if (_assetCache.ContainsKey(asset.Asset))
+            {
+                return _assetCache[asset.Asset];
+            }
             var assetScriptHash = asset.Asset.ToBigEndianHex();
             var old = _sqldb.Assets.FirstOrDefault(a => a.Asset == assetScriptHash);
             if (old == null)
@@ -266,9 +370,9 @@ namespace Neo.Common.Storage
                 _sqldb.Assets.Add(old);
                 _sqldb.SaveChanges();
             }
+            _assetCache[asset.Asset] = old;
             return old;
         }
-
 
         private AssetBalanceEntity GetOrCreateBalance(AddressEntity address, AssetEntity asset, BigInteger balance, uint height)
         {
@@ -279,12 +383,11 @@ namespace Neo.Common.Storage
                 _sqldb.AssetBalances.Add(old);
                 _sqldb.SaveChanges();
             }
-
             return old;
         }
 
 
-        private IQueryable<Nep5TransactionEntity> BuildQuery(TrackFilter filter)
+        private IQueryable<Nep5TransactionEntity> BuildQuery(TransferFilter filter)
         {
             IQueryable<Nep5TransactionEntity> query = _sqldb.Nep5Transactions
                 .Include(t => t.From)
