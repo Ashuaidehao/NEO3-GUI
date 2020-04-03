@@ -43,13 +43,16 @@ class Transaction extends React.Component {
       this.allset(_params);
     } else if (page === "blockdetail") {
       _params.blockHeight = Number(_hash);
+      this.setState({params:_params})
       this.allset(_params);
+    } else if (page === "addressdetail") {
+      _params.address = Number(_hash);
+      this.setState({params:_params})
+      this.nepset(_params);
     } else if (page === "assetdetail") {
       _params.asset = _hash;
-      this.setState({
-        params:_params
-      })
-      this.allset(_params);
+      this.setState({params:_params})
+      this.nepset(_params);
     } else if (page === "wallettrans") {
       this.walletset(_params);
     } else if (page === "walletdetail") {
@@ -67,6 +70,17 @@ class Transaction extends React.Component {
   }
   allset = params => {
     this.getAlltrans(params, res => {
+      this.setState({
+        loading: false,
+        data: res.result.list,
+        translist: res.result.list,
+        page: this.state.page + 1,
+        allpage: Math.ceil(res.result.totalCount / this.state.limit)
+      });
+    })
+  }
+  nepset = params => {
+    this.getNeptrans(params, res => {
       this.setState({
         loading: false,
         data: res.result.list,
@@ -107,11 +121,31 @@ class Transaction extends React.Component {
       console.log(error);
       console.log("error");
     });
-  };
+  }
   getAlltrans = (params, callback) => {
     axios.post('http://localhost:8081', {
       "id": "51",
       "method": "QueryTransactions",
+      "params": params
+    })
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        message.error("查询失败");
+        return;
+      } else {
+        callback(_data);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
+  };
+  getNeptrans = (params, callback) => {
+    axios.post('http://localhost:8081', {
+      "id": "51",
+      "method": "QueryNep5Transactions",
       "params": params
     })
     .then(function (response) {
