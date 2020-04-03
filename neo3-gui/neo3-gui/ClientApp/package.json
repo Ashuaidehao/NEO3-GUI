@@ -39,8 +39,8 @@
         "prod": "npm run build && npm run start-electron-prod"
     },
     "build": {
-        "appId": "neo.ngd",
-        "productName": "neo-gui-demo",
+        "appId": "neo.ngd.neo-gui",
+        "productName": "Neo-GUI",
         "extends": null,
         "directories": {
             "output": "build-electron"
@@ -60,9 +60,33 @@
             "target": "nsis",
             "icon": "public/logo512.png"
         },
+        "mac": {
+            "target": [
+                "dmg"
+            ],
+            "icon": "public/logo512.png"
+        },
+        "linux": {
+            "icon": "public/logo512.png"
+        },
         "nsis": {
             "oneClick": false,
             "allowToChangeInstallationDirectory": true
+        },
+        "dmg": {
+            "contents": [
+                {
+                    "x": 410,
+                    "y": 150,
+                    "type": "link",
+                    "path": "/Applications"
+                },
+                {
+                    "x": 130,
+                    "y": 150,
+                    "type": "file"
+                }
+            ]
         }
     },
     "eslintConfig": {
