@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -35,7 +36,7 @@ namespace Neo.Common
             {
                 try
                 {
-                    if (_scanHeight <= Blockchain.Singleton.Height && await Sync(_scanHeight))
+                    if (await Sync(_scanHeight))
                     {
                         _scanHeight++;
                     }
@@ -61,13 +62,13 @@ namespace Neo.Common
 
 
         /// <summary>
-        /// analysis block  execute result logs
+        /// analysis block transaction execute result logs
         /// </summary>
         /// <param name="blockHeight"></param>
         /// <returns></returns>
         public async Task<bool> Sync(uint blockHeight)
         {
-            if (Blockchain.Singleton.Height < blockHeight)
+            if (blockHeight > Blockchain.Singleton.Height)
             {
                 return false;
             }
@@ -78,30 +79,42 @@ namespace Neo.Common
             }
 
             var block = Blockchain.Singleton.GetBlock(blockHeight);
+            if (block.Transactions.IsEmpty())
+            {
+                return true;
+            }
             using var snapshot = Blockchain.Singleton.GetSnapshot();
-            bool shouldCommit = false;
             foreach (var transaction in block.Transactions)
             {
+                _db.AddTransaction(new TransactionInfo()
+                {
+                    TxId = transaction.Hash,
+                    BlockHeight = blockHeight,
+                    Sender = transaction.Sender,
+                    Time = block.Timestamp.FromTimestampMS(),
+                });
                 var executeResult = _db.GetExecuteLog(transaction.Hash);
                 if (executeResult == null || executeResult.VMState.HasFlag(VMState.FAULT) || executeResult.Notifications.IsEmpty())
                 {
                     continue;
                 }
 
-                shouldCommit = executeResult.Notifications.Aggregate(shouldCommit, (current, notification) => current | HasTransfer(notification, transaction, block, snapshot));
+                foreach (var notification in executeResult.Notifications)
+                {
+                    HasTransfer(notification, transaction, block, snapshot);
+                }
+
+                //shouldCommit = executeResult.Notifications.Aggregate(shouldCommit, (current, notification) => current | HasTransfer(notification, transaction, block, snapshot));
             }
 
-            if (shouldCommit)
+            _db.AddSyncIndex(blockHeight);
+            _db.Commit();
+            Console.WriteLine($"Syncing:{_scanHeight}");
+            if (_db.LiveTime.TotalSeconds > 15)
             {
-                _db.AddSyncIndex(blockHeight);
-                _db.Commit();
-                Console.WriteLine($"Syncing:{_scanHeight}");
-                if (_db.LiveTime.TotalSeconds > 15)
-                {
-                    //release memory
-                    _db.Dispose();
-                    _db = new TrackDB();
-                }
+                //release memory
+                _db.Dispose();
+                _db = new TrackDB();
             }
             return true;
         }

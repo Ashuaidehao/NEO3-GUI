@@ -42,7 +42,7 @@ namespace Neo.Services.ApiServices
                 model.Confirmations = Blockchain.Singleton.Height - header.Index + 1;
             }
             using var db = new TrackDB();
-            var trans = db.FindTransfer(new TrackFilter() { TxIds = new List<UInt256>() { txId }, PageSize = int.MaxValue }).List;
+            var trans = db.FindTransfer(new TransferFilter() { TxIds = new List<UInt256>() { txId }, PageSize = int.MaxValue }).List;
             model.Transfers = trans.Select(tx => tx.ToTransferModel()).ToList();
 
             var executeResult = db.GetExecuteLog(txId);
@@ -82,11 +82,38 @@ namespace Neo.Services.ApiServices
         /// query all transactions(on chain)
         /// </summary>
         /// <returns></returns>
-        public async Task<object> QueryTransactions(int pageIndex = 1, int limit = 100, UInt160 address = null, UInt160 asset = null, uint? blockHeight = null)
+        public async Task<object> QueryTransactions(int pageIndex = 1, int limit = 100, uint? blockHeight = null)
+        {
+            using var db = new TrackDB();
+            var trans = db.FindTransactions(new TransactionFilter() { BlockHeight = blockHeight, PageIndex = pageIndex, PageSize = limit });
+            var transfers = new List<TransferInfo>();
+            if (trans.List.NotEmpty())
+            {
+                transfers = db.FindTransfer(new TransferFilter() { TxIds = trans.List.Select(tx => tx.TxId).ToList(), PageSize = int.MaxValue }).List;
+
+            }
+            var result = new PageList<TransactionPreviewModel>
+            {
+                TotalCount = trans.TotalCount,
+                PageSize = trans.PageSize,
+                PageIndex = pageIndex,
+                List = ConvertToTransactionPreviewModel(trans.List, transfers),
+            };
+            return result;
+        }
+
+
+    
+
+        /// <summary>
+        /// query all nep transactions(on chain)
+        /// </summary>
+        /// <returns></returns>
+        public async Task<object> QueryNep5Transactions(int pageIndex = 1, int limit = 100, UInt160 address = null, UInt160 asset = null, uint? blockHeight = null)
         {
             var addresses = address != null ? new List<UInt160>() { address } : new List<UInt160>();
             using var db = new TrackDB();
-            var trans = db.FindTransactions(new TrackFilter() { FromOrTo = addresses, Asset = asset, BlockHeight = blockHeight, PageIndex = pageIndex, PageSize = limit });
+            var trans = db.FindNep5Transactions(new TransferFilter() { FromOrTo = addresses, Asset = asset, BlockHeight = blockHeight, PageIndex = pageIndex, PageSize = limit });
             var result = new PageList<TransactionPreviewModel>
             {
                 TotalCount = trans.TotalCount,
@@ -101,7 +128,7 @@ namespace Neo.Services.ApiServices
         /// query transaction info
         /// </summary>
         /// <returns></returns>
-        public async Task<PageList<TransferInfo>> QueryTransfers(TrackFilter filter)
+        public async Task<PageList<TransferInfo>> QueryTransfers(TransferFilter filter)
         {
             using var db = new TrackDB();
             var result = db.FindTransfer(filter) as PageList<TransferInfo>;
@@ -133,6 +160,20 @@ namespace Neo.Services.ApiServices
             return result;
         }
 
+
+
+        private List<TransactionPreviewModel> ConvertToTransactionPreviewModel(List<TransactionInfo> transactions, List<TransferInfo> transfers)
+        {
+            var model = transactions.Select(tx => new TransactionPreviewModel()
+            {
+                TxId = tx.TxId,
+                Timestamp = tx.Time.ToTimestampMS(),
+                BlockHeight = tx.BlockHeight,
+                Transfers = transfers?.Where(t => t.TxId == tx.TxId).Select(t => t.ToTransferModel()).ToList(),
+            }).ToList();
+
+            return model;
+        }
 
     }
 }

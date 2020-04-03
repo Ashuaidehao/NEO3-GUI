@@ -24,6 +24,7 @@ namespace Neo.Common.Storage.SQLiteModules
         public DbSet<AssetEntity> Assets { get; set; }
         public DbSet<AssetBalanceEntity> AssetBalances { get; set; }
         public DbSet<AddressEntity> Addresses { get; set; }
+        public DbSet<TransactionEntity> Transactions { get; set; }
 
 
         public SQLiteContext(string filename)
@@ -57,6 +58,18 @@ namespace Neo.Common.Storage.SQLiteModules
             }
         }
 
+        public uint? GetMaxSyncIndex()
+        {
+            try
+            {
+                return SyncIndexes.OrderBy(s => s.BlockHeight).LastOrDefault()?.BlockHeight;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
@@ -83,10 +96,8 @@ namespace Neo.Common.Storage.SQLiteModules
             modelBuilder.Entity<AssetBalanceEntity>().HasIndex(p => new { p.AddressId, p.AssetId });
 
 
-            modelBuilder.Entity<SyncIndex>().HasIndex(p => p.BlockHeight);
-            //modelBuilder.Entity<ExecuteResultEntity>().HasIndex(p => p.TxId);
-
-            //modelBuilder.Entity<NotifyEventEntity>().HasIndex(p => p.Contract);
+            //modelBuilder.Entity<SyncIndex>().HasIndex(p => p.BlockHeight);
+            modelBuilder.Entity<TransactionEntity>().HasIndex(p => p.BlockHeight);
         }
     }
 }
