@@ -7,9 +7,11 @@ import axios from 'axios';
 import Intitle from '../Common/intitle';
 import Transaction from '../Transaction/transaction';
 import Sync from '../sync';
+import { withTranslation } from 'react-i18next';
 
 const { Content } = Layout;
 
+@withTranslation()
 class Assetdetail extends React.Component{
   constructor(props){
     super(props);
@@ -28,7 +30,7 @@ class Assetdetail extends React.Component{
     })
   }
   getAsset = () =>{
-      console.log("数据暂无")
+      // console.log("数据暂无")
     // var _this = this;
     // let _height = this.state.height;
     // axios.post('http://localhost:8081', {
@@ -66,6 +68,7 @@ class Assetdetail extends React.Component{
   }
   render(){
     const {blockdetail,witness,nonce} = this.state;
+    const { t } = this.props;
     return (
       <Layout className="gui-container">
           <Sync/>
@@ -98,7 +101,7 @@ class Assetdetail extends React.Component{
               </div>
             </Col>
           </Row> */}
-          <Transaction content="交易列表" page="assetdetail"/>
+          <Transaction content={t("transaction list")} page="assetdetail"/>
         </Content>
       </Layout>
     );

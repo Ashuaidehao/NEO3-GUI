@@ -16,7 +16,6 @@ import {
 import { withTranslation } from "react-i18next";
 
 
-
 const { Content } = Layout;
 const { SubMenu } = Menu;
 
@@ -30,11 +29,7 @@ class Contract extends React.Component {
       show: false
     };
   }
-  toHome = () => {
-  }
-  toPage = (e) => {
-  }
-  visi = () => {
+  visi = () =>{
     this.setState({
       show: !this.state.show,
     });

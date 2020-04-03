@@ -28,24 +28,39 @@
 		"next": "Next",
 		"ok": "OK",
 		"prev": "Prev",
-		"send": "Send"
+		"send": "Send",
+		"search":"Search"
 	},
+	"input":{
+		"required":"This input is required.",
+		"checked":"Please confirm all input."
+	},
+	"address book":"Address",
 	"byte": "Byte",
 	"bytes": "Bytes",
 	"confirm count": "Confirmations",
 	"contract": "Contract",
 	"contract page": {
 		"deploy contract": "Deploy Contract",
-		"deploy contract nav": "Deploy Contract",
+		"deploy contract nav": "Deploy",
 		"deploy success": "Deploy successfully, please wait for confirmation",
-		"invoke contract nav": "Invoke Contract",
+		"invoke contract": "Invoke Contract",
+		"invoke contract nav": "Invoke",
 		"invoke fail title": "Invoke failed, please check and retry",
-		"invoke result": "Invoke Result",
 		"please select file path": "Please select file path",
 		"search contract": "Search Contract",
-		"search contract nav": "Search Contract",
+		"search contract nav": "Search",
 		"select {file} path title": "Select {{file}} file",
-		"test invoke": "Test Invoke"
+		"test deploy": "Test Deploy",
+		"test invoke": "Test Invoke",
+		"test result": "Test Result",
+		"search fail": "Please check the hash and try again",
+		"search input check": "Please fill the hash",
+		"choose account":"Choose account",
+		"cosigners":"Cosigners",
+		"invoke method":"Invoke method",
+		"select method":"Select method",
+		"parameters":"Parameters"
 	},
 	"copyright": "Copyright",
 	"count": "Count",
@@ -90,6 +105,7 @@
 	"unconfirmed transactions": "Unconfirmed Transactions",
 	"verification script": "Verification Script",
 	"wallet": "Wallet",
+	"open wallet first": "Please open wallet",
 	"wallet page": {
 		"accounts nav": "Accounts",
 		"assets": "Assets",
@@ -134,8 +150,14 @@
 		"transfer asset": "Asset",
 		"transfer nav": "Transfer",
 		"transfer send success": "Send Success",
+		"transfer send error":"Send failed, please try again later",
 		"transfer warning": "Safety tip: Do not transfer money to strangers easily.Please confirm the receiving account, transfer amount and asset type carefully.Please carefully identify assets with the same name to avoid being cheated.Do not transfer money to the receiving account (address) of other blockchain.",
 		"wallet opened": "Wallet is opened"
 	},
+	"transaction page":{
+		"confirmed":"Confirmed",
+		"unconfirmed":"Unconfirmed"
+	},
+	"transaction list":"Transaction list",
 	"witness": "Witness"
 }

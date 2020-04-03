@@ -1,7 +1,7 @@
 body{
     font-family: "SF Pro SC", "SF Pro Text", "SF Pro Icons", "PingFang SC", 'Segoe UI', "Microsoft YaHei", "微软雅黑", "Helvetica Neue", "Helvetica", "Arial";
     letter-spacing: .05em;
-    font-weight: 500;
+    font-weight: 400;
     line-height: 22px;
     overflow: hidden;
 }
@@ -60,7 +60,7 @@ a:hover{
     font-weight: 500;
 }
 .bolder{
-    font-weight: bold;
+    font-weight: 600;
 }
 .t-dark{
     color: #000000;
@@ -341,6 +341,10 @@ small,.small{
     color: #000000;
     transition: all 0.2s;
 }
+.ant-list-item-meta-title{
+    font-size: 12px;
+    margin-bottom: 0;
+}
 .ant-list-item:hover .ant-list-item-meta-title > a{
     text-shadow: 0px 0px 1px #222222;
 }
@@ -358,7 +362,9 @@ small,.small{
     color: #00AF92;
     text-shadow: none!important;
 }
-
+.ant-list-footer, .ant-list-item{
+    padding: 8px 12px;
+}
 
 .gui-container{
     background: #F0F0F0;
@@ -499,4 +505,18 @@ small,.small{
 }
 .ant-radio-checked::after{
     border: 1px solid #00AF92;
+}
+
+.add-mark{
+    padding: 0px;
+    list-style: none;
+    font-size: 12px;
+    letter-spacing: 1px;
+    font-weight: 400;
+    color: #333333;
+}
+.add-mark li{
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #FCFCFC;
 }
