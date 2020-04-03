@@ -154,6 +154,10 @@
 		"transfer warning": "安全提示：请勿轻易向陌生人转账。请仔细确认收款账户、转账金额、资产类型。请仔细辨别相同资产名称的资产，避免被骗。请勿向其它区块链的收款账户（地址）转账。",
 		"wallet opened": "钱包文件已打开"
 	},
+	"transaction page":{
+		"confirmed":"已完成",
+		"unconfirmed":"待确认"
+	},
 	"transaction list":"交易列表",
 	"witness": "见证人"
 }

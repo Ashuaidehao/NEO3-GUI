@@ -141,6 +141,7 @@ class Contractinvoke extends React.Component{
       });
     };
     testInvoke = () => {
+      const { t } = this.props;
       this.setState({
         tresult:"",
       },this.onFill());
@@ -160,12 +161,13 @@ class Contractinvoke extends React.Component{
     invoke = fieldsValue =>{
       let params = this.makeParams(fieldsValue);
       params.sendTx = true;
+      const { t } = this.props;
       this.setState({
         tresult:"",
       },this.onFill());
       this.invokeContract(params,res=>{
         Modal.info({
-          title: t("contract page.invoke contract"),
+          title: t('contract page.invoke contract'),
           width: 600,
           content: (
             <div className="show-pri">
@@ -173,7 +175,7 @@ class Contractinvoke extends React.Component{
               <p>GAS  : {res.result.gasConsumed?res.result.gasConsumed:"--"}</p>
             </div>
           ),
-          okText:t("button.ok")
+          okText:t('button.ok')
         });
       });
     }
@@ -198,7 +200,7 @@ class Contractinvoke extends React.Component{
                 <p>{t('error msg')}: {_data.error.message}</p>
               </div>
             ),
-            okText: t("button.ok")
+            okText: t('button.ok')
           });
           return;
         }else if(_data.msgType === 3){
