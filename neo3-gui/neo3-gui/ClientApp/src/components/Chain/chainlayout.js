@@ -41,7 +41,7 @@ class Chainlayout extends React.Component {
             mode="inline"
           >
             <Menu.Item>
-              <Link to="/"><HomeOutlined />{t("home page")}</Link>
+              <Link to="/"><HomeOutlined />{t("sideBar.home")}</Link>
             </Menu.Item>
             <SubMenu
               key="sub1"
