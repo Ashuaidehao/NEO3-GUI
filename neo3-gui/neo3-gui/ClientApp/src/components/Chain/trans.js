@@ -1,6 +1,7 @@
 import React from 'react';
 import { Layout } from 'antd';
 import Transaction from '../Transaction/transaction';
+import Untransaction from '../Transaction/untransaction';
 import Sync from '../sync';
 import { withTranslation } from 'react-i18next';
 
@@ -18,6 +19,8 @@ class Blocktrans extends React.Component{
     return (
       <Layout className="gui-container">
         <Sync />
+        
+        <Untransaction content="未确认交易" page="wallet"/>
         <Transaction content={t("blockchain page.last transactions")} page="all" />
       </Layout>
     );

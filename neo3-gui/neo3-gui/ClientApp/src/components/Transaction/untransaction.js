@@ -7,10 +7,11 @@ import { Layout, Icon, Row, Col, Modal, List, Button, Typography, message, Tag }
 import Intitle from '../Common/intitle';
 import { withTranslation } from "react-i18next";
 
+import { SwapRightOutlined } from '@ant-design/icons';
 
 const { Content } = Layout;
 
-@withTranslation
+@withTranslation()
 class Untransaction extends React.Component {
   constructor(props) {
     super(props);
@@ -186,16 +187,23 @@ class Untransaction extends React.Component {
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
-                      title={<div className="link-style">{item.txId}</div>}
-                      description={
-                        <div className="font-s">
-                          From：<span className="w300 ellipsis">{item.transfers[0].fromAddress ? item.transfers[0].fromAddress : "--"}</span><br></br>
-                        To：<span className="w300 ellipsis" >{item.transfers[0].toAddress ? item.transfers[0].toAddress : "--"}</span>
-                        </div>
-                      }
+                    title={<span className="fail-light">{t('transaction page.confirmed')}</span>}
                     />
-                    <Typography>{item.blockTime}</Typography>
-                    <Typography className="upcase ml4"><span className="wa-amount">{item.transfers[0].amount}</span>{item.transfers[0].symbol}</Typography>
+                    <div className="trans-detail">
+                        <p>
+                          <a href="#">{item.txId}</a>
+                          <span className="float-r">{item.blockTime}</span>
+                        </p>
+                        {item.transfers[0]?
+                        <div >
+                          <span className="w200 ellipsis">{item.transfers[0].fromAddress ? item.transfers[0].fromAddress : "--"}</span>
+                          <SwapRightOutlined />
+                          <span className="w200 ellipsis" >{item.transfers[0].toAddress ? item.transfers[0].toAddress : "--"}</span>
+                          <span className="float-r"><span className="trans-amount">{item.transfers[0].amount}</span>{item.transfers[0].symbol}</span>
+                        </div>
+                        :null}
+                        {/* // :<div className="font-s"><Tag color="default">Invoke</Tag></div>}  */}
+                    </div>
                   </List.Item>
                 )}
               />

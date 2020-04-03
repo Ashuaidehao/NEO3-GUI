@@ -5,7 +5,6 @@ import Transaction from '../Transaction/transaction';
 import Untransaction from '../Transaction/untransaction';
 import { withTranslation } from "react-i18next";
 
-
 @withTranslation()
 class Wallettrans extends React.Component{
   constructor(props){
@@ -20,7 +19,7 @@ class Wallettrans extends React.Component{
     return (
       <Layout className="gui-container">
         <Sync />
-        <Untransaction page="wallet"/>
+        <Untransaction content="未确认交易" page="wallet"/>
         <Transaction content={t("lastest transactions")} page="wallettrans"/>
       </Layout>
     );

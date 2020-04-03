@@ -136,6 +136,8 @@
     min-width: 50px;
     vertical-align: middle;
 }
+
+.fail-light,
 .succes-light{
     display: inline-block;
     font-weight: 400;
@@ -143,6 +145,7 @@
     min-width: 85px;
     margin-right: 10px;
 }
+.fail-light::before,
 .succes-light::before{
     content: "";
     display: inline-block;
@@ -152,6 +155,9 @@
     border-radius: 6px;
     background-color: #00E599;
     margin-right: 8px;
+}
+.fail-light::before{
+    background-color: #F0F0F0;
 }
 .ant-list-header .succes-light::before{
     display: none;
