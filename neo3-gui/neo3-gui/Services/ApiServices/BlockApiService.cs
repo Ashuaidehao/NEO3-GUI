@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using Akka.IO;
 using Neo.Common;
 using Neo.Common.Storage;
 using Neo.Ledger;
@@ -98,6 +99,12 @@ namespace Neo.Services.ApiServices
             return balances.ToLookup(b=>b.Address).ToAddressBalanceModels();
         }
 
+
+        public async Task<object> GetSync()
+        {
+            using var db=new TrackDB();
+            return db.GetMaxSyncIndex();
+        }
 
         #region Private
 
