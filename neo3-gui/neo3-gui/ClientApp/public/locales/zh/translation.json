@@ -12,17 +12,20 @@
         "home": "主页",
         "logout": "登出钱包",
         "settings": "设置",
-        "address book":"地址簿"
+		"address book":"地址簿",
+        "blockchain": "区块链",
+		"blocks": "区块",
+		"transactions": "交易",
+		"assets": "资产",
+		"wallet": "钱包",
+		"accounts": "账户列表",
+		"transaction Records": "交易记录",
+		"transfer": "转账",
+		"contract": "合约",
+		"search contract": "搜索",
+		"deploy contract": "部署",
+		"invoke contract": "调用"
 	},
-	"settings":{
-		"network": "网络切换",
-		"mainnet": "主网",
-		"testnet": "测试网",
-		"language": "语言切换",
-		"about": "关于",
-		"version": "当前版本"
-	},
-	
 	"advance": "高级",
 	"amount": "金额",
 	"asset hash": "资产hash",
@@ -30,16 +33,13 @@
 	"block": "区块",
 	"blockchain": "区块链",
 	"blockchain page": {
-		"asset nav": "资产",
 		"block": "区块",
 		"block info": "区块信息",
-		"blocks nav": "区块",
 		"height": "高度",
 		"last transactions": "最新交易",
 		"next block": "下一区块",
 		"prev block": "上一区块",
 		"transaction count": "交易数量",
-		"transactions nav": "交易列表",
 		"update time": "更新时间"
 	},
 	"button": {
@@ -62,16 +62,12 @@
 	"byte": "字节",
 	"bytes": "字节",
 	"confirm count": "确认数",
-	"contract": "合约",
 	"contract page": {
 		"deploy contract": "部署合约",
-		"deploy contract nav": "部署合约",
 		"deploy success": "交易发送成功，请等待区块确认",
 		"invoke contract": "调用合约",
-		"invoke contract nav": "调用合约",
 		"please select file path": "请选择文件后再试",
 		"search contract": "搜索合约",
-		"search contract nav": "搜索合约",
 		"select {file} path title": "选择需要的{{file}}文件",
 		"test deploy": "试运行",
 		"test invoke": "试运行",
@@ -85,7 +81,7 @@
 		"select method":"选择方法",
 		"parameters":"参数列表"
 	},
-	"copyright": "保留所有权利",
+	
 	"count": "数量",
 	"error code": "错误码",
 	"error msg": "错误信息",
@@ -96,15 +92,12 @@
 	"lastest transactions": "最新交易",
 	"load more": "加载更多",
 	"network fee": "网络费",
-	"network setting": "网络切换",
-	"official website": "官网",
 	"please confirm your password": "请确认密码",
 	"please input Hex/WIF private key": "导入HEX/WIF格式私钥",
 	"please input password": "请输入密码",
 	"please select file location": "请选择文件存储位置",
 	"precision": "精度",
 	"random": "随机数",
-	"report issues": "问题反馈",
 	"select": "选择",
 	"select account": "选择账户",
 	"select file": "选择文件",
@@ -126,7 +119,6 @@
 	"wallet": "钱包",
 	"open wallet first": "请先打开钱包",
 	"wallet page": {
-		"accounts nav": "账户列表",
 		"assets": "资产列表",
 		"balance": "余额",
 		"claim": "提取",
@@ -164,10 +156,8 @@
 		"show private key": "显示私钥",
 		"title": "钱包",
 		"to address": "收款地址",
-		"transactions nav": "交易列表",
 		"transfer amount": "转账金额",
 		"transfer asset": "发送资产",
-		"transfer nav": "转账",
 		"transfer send success": "交易发送成功",
 		"transfer send error":"交易发送失败,请检查后再试",
 		"transfer warning": "安全提示：请勿轻易向陌生人转账。请仔细确认收款账户、转账金额、资产类型。请仔细辨别相同资产名称的资产，避免被骗。请勿向其它区块链的收款账户（地址）转账。",
@@ -178,5 +168,16 @@
 		"unconfirmed":"待确认"
 	},
 	"transaction list":"交易列表",
-	"witness": "见证人"
+	"witness": "见证人",
+	"settings":{
+		"network": "网络切换",
+		"mainnet": "主网",
+		"testnet": "测试网",
+		"language": "语言切换",
+		"about": "关于",
+		"version": "当前版本",
+		"copyright": "保留所有权利",
+		"report issues": "问题反馈",
+		"website": "官网"
+	}
 }

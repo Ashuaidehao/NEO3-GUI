@@ -55,7 +55,7 @@ class Addressdetail extends React.Component{
         })}
         </ul>
         <div className="mt1 mb3 text-c small">
-            <p className="mb5 t-light">NeoGUI @ 2020 Neo-Project {t("copyright")}</p>
+            <p className="mb5 t-light">NeoGUI @ 2020 Neo-Project {t("settings.copyright")}</p>
         </div>
       </div>
     );

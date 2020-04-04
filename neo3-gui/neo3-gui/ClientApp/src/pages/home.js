@@ -23,63 +23,6 @@ const { Text } = Typography;
 const { Content } = Layout;
 
 
-<<<<<<< HEAD
-        setTimeout(() => {
-            this.setState({
-                visible: false,
-                confirmLoading: false,
-            });
-        }, 1000);
-    };
-
-    handleCancel = () => {
-        console.log('Clicked cancel button');
-        this.setState({
-            visible: false,
-        });
-    };
-
-    render() {
-        const { visible, confirmLoading, ModalText } = this.state;
-        return (
-          <div>
-            <Layout className="home-content">
-              <Content>
-                <Sync></Sync>
-                <div className="w600 text-c">
-                  <img src={img} className="App-logo" alt="img" />
-                </div>
-                <Content className="text-r">
-                  <Text type="secondary"> 版本 v1.1.0</Text>
-                </Content>
-              </Content>
-
-              <Content className="home-icon">
-                <Row gutter={32}>
-                  <Col span={6}>
-                    <Link to='/chain'>
-                      <div className="home-link">
-                        <span>区块链</span>
-                      </div>
-                    </Link>
-                  </Col>
-                  <Col span={6}>
-                    <Link to='/wallet'>
-                      <div className="home-link">
-                        <span>钱包</span>
-                      </div>
-                    </Link>
-                  </Col>
-                  <Col span={6}>
-                    <Link to='/consensus'>
-                      <div className="home-link">
-                        <span>合约</span>
-                      </div>
-                    </Link>
-                  </Col>
-                  <Col span={6}>
-                    {/* <Link to='/advanced'>
-=======
 @withTranslation()
 class Home extends Component {
   state = {
@@ -128,7 +71,6 @@ class Home extends Component {
               </Col>
               <Col span={6}>
                 {/* <Link to='/advanced'>
->>>>>>> d4633e620fb5538196ebe84c2d4ba6d309d9ed62
                       <div className="home-link">
                         <span>高 级</span>
                       </div>
