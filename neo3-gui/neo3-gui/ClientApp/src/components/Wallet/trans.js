@@ -3,7 +3,10 @@ import { Layout } from 'antd';
 import Sync from '../sync';
 import Transaction from '../Transaction/transaction';
 import Untransaction from '../Transaction/untransaction';
+import { withTranslation } from "react-i18next";
 
+
+@withTranslation()
 class Wallettrans extends React.Component{
   constructor(props){
     super(props);
@@ -13,11 +16,12 @@ class Wallettrans extends React.Component{
     };
   }
   render = () =>{
+    const{t}=this.props;
     return (
       <Layout className="gui-container">
         <Sync />
         <Untransaction page="wallet"/>
-        <Transaction content={"最新交易"} page="wallettrans"/>
+        <Transaction content={t("lastest transactions")} page="wallettrans"/>
       </Layout>
     );
   }

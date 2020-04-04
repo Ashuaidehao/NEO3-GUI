@@ -21,7 +21,7 @@ class Blockdetail extends React.Component{
     };
   }
   componentDidMount(){
-    let _h = location.pathname.split(":")[1];
+    let _h = location.pathname.split(":").pop();
     this.setHash(_h)();
     this.setState({
       local:location.pathname

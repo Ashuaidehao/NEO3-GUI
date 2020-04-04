@@ -1,7 +1,7 @@
 body{
     font-family: "SF Pro SC", "SF Pro Text", "SF Pro Icons", "PingFang SC", 'Segoe UI', "Microsoft YaHei", "微软雅黑", "Helvetica Neue", "Helvetica", "Arial";
     letter-spacing: .05em;
-    font-weight: 500;
+    font-weight: 400;
     line-height: 22px;
     overflow: hidden;
 }
@@ -27,6 +27,11 @@ a:hover{
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+.app-logo{
+    margin-top: 80px;
+    margin-bottom: 80px;
+    width: 350px;
 }
 
 
@@ -55,7 +60,10 @@ a:hover{
     font-weight: 500;
 }
 .bolder{
-    font-weight: bold;
+    font-weight: 600;
+}
+.t-dark{
+    color: #000000;
 }
 .t-normal{
     color: #222222;
@@ -76,7 +84,6 @@ h1,.h1{
 }
 h2,.h2,.font-xl{
     font-size: 20px;
-    text-shadow: 0.1px 0 0 #222222;
 }
 h3,.h3,.font-l{
     font-size: 16px;
@@ -221,9 +228,33 @@ small,.small{
     padding-right: 8px;
 }
 
+/* 覆盖 */
 .ant-btn{
     border-radius: 0;
     height: auto;
+    padding:6px 0;
+    text-align:center;
+    border: 1px solid #00AF92;
+    color: #00AF92;
+    background: transparent;
+    min-width: 100px;
+}
+.ant-btn-primary{
+    color: #FFFFFF;
+    background: #00AF92;
+}
+.ant-btn:hover{
+    color: #FFFFFF!important;
+    background-color: #2b393f;
+    border-color: #2b393f!important;
+}
+
+.ant-btn-circle, .ant-btn-circle-outline{
+    border-radius:50%;
+    border: auto;
+    height: 32px;
+    padding: 0;
+    min-width: auto;
 }
 
 
@@ -281,25 +312,18 @@ small,.small{
 .in-title .anticon svg{
     vertical-align: middle;
 }
-
-
-/* 覆盖 */
-.ant-btn{
-    padding:6px 0;
-    text-align:center;
-    border: 1px solid #00AF92;
-    color: #00AF92;
-    background: transparent;
-    min-width: 100px;
+.ant-page-header{
+    padding:12px;
+    border-bottom: 1px solid #E8E8E8;
 }
-.ant-btn-primary{
-    color: #FFFFFF;
-    background: #00AF92;
+.ant-page-header-heading-title{
+    color:#222222;
+    font-weight: 500;
+    line-height: 22px;
 }
-.ant-btn:hover{
-    color: #FFFFFF!important;
-    background-color: #2b393f;
-    border-color: #2b393f!important;
+.ant-page-header-heading-extra .anticon {
+    font-size: 20px;
+    color: #555555;
 }
 
 /* 列表样式覆盖 */
@@ -316,6 +340,10 @@ small,.small{
     background: #EFEFEF;
     color: #000000;
     transition: all 0.2s;
+}
+.ant-list-item-meta-title{
+    font-size: 12px;
+    margin-bottom: 0;
 }
 .ant-list-item:hover .ant-list-item-meta-title > a{
     text-shadow: 0px 0px 1px #222222;
@@ -334,7 +362,9 @@ small,.small{
     color: #00AF92;
     text-shadow: none!important;
 }
-
+.ant-list-footer, .ant-list-item{
+    padding: 8px 12px;
+}
 
 .gui-container{
     background: #F0F0F0;
@@ -414,4 +444,79 @@ small,.small{
     border: 1px solid #EEE;
     color: #00AF92;
     font-size: 22px;
+}
+
+
+
+.ant-input{
+    padding: 6px 12px;
+}
+.ant-input-affix-wrapper:hover{
+    border-color:#00AF92;
+}
+.ant-input:focus,
+.ant-input:hover,
+.ant-input:focus,
+.ant-input:active,
+.ant-input-focused,
+.ant-input-affix-wrapper-focused,
+.ant-input-password:hover,
+.ant-input-password:focus,
+.ant-input-password:active{
+    border:1px solid #00AF92;
+    box-shadow: 0 0 0 2px rgba(3, 212, 178, 0.2);
+}
+.ant-input-affix-wrapper > input.ant-input{
+    padding: 0;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+.ant-input-affix-wrapper-focus{
+
+}
+
+.set-modal .ant-modal-content{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.set-modal .ant-modal-header {
+    padding: 20px 15px;
+}
+.set-modal .ant-modal-title{
+    font-size: 20px;
+    color: #000000;
+}
+.set-modal .ant-modal-body{
+    padding: 15px;
+}
+.set-modal h4{
+    color: #000000;
+}
+.set-ul{
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.65);
+}
+.set-modal .ant-radio-checked .ant-radio-inner{
+    border-color: #00AF92;
+}
+.ant-radio-inner::after{
+    background-color: #00AF92;
+}
+.ant-radio-checked::after{
+    border: 1px solid #00AF92;
+}
+
+.add-mark{
+    padding: 0px;
+    list-style: none;
+    font-size: 12px;
+    letter-spacing: 1px;
+    font-weight: 400;
+    color: #333333;
+}
+.add-mark li{
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #FCFCFC;
 }

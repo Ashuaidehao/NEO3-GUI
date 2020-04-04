@@ -1,15 +1,25 @@
 /* eslint-disable */
 import React from 'react';
 import { observer, inject } from "mobx-react";
+import { withRouter } from "react-router-dom";
 import 'antd/dist/antd.css';
 import { message } from 'antd';
+import { Modal, Button } from 'antd';
 import axios from 'axios';
+import { Radio } from 'antd';
+import Addressdetail from './addressdetail';
+import Setting from './setting';
 import {
+    ReadOutlined,
     LogoutOutlined,
     SettingOutlined
 } from '@ant-design/icons';
-import { withRouter } from "react-router-dom";
+import { withTranslation } from 'react-i18next';
+import Config from "../../config";
 
+const { shell } = window.electron;
+
+@withTranslation()
 @inject("walletStore")
 @observer
 @withRouter
@@ -17,7 +27,8 @@ class menuDown extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            showPass: false
+            showPass: false,
+            title:"设置",
         };
     }
     componentDidMount() {
@@ -28,14 +39,15 @@ class menuDown extends React.Component {
         if (_path <= -1) return;
         this.setState({ showPass: true });
     }
-    logout = () =>{
+    logout = () => {
+        const { t } = this.props;
         var _this = this;
         axios.post('http://localhost:8081', {
-          "id": "1234",
-          "method": "CloseWallet"
+            "id": "1234",
+            "method": "CloseWallet"
         })
-        .then(()=> {
-            message.success("钱包退出成功", 2);
+        .then(() => {
+            message.success(t("wallet page.close wallet success"), 2);
             this.props.walletStore.logout();
             this.props.history.push('/');
         })
@@ -44,40 +56,72 @@ class menuDown extends React.Component {
             console.log("error");
         });
     }
+    showModal = () => {
+        this.setState({
+            visible: true,
+        });
+    };
+
+    hideModal = () => {
+        this.setState({
+            visible: false,
+        });
+    };
+    getInset = (ele) => {
+        const { t } = this.props;
+        return () =>{
+            this.setState({showElem: false})
+            switch(ele){
+                case 0:this.setState({title:t("sideBar.address book"),children: <Addressdetail />});break;
+                case 1:this.setState({title:t("sideBar.settings"),children: <Setting />});break;
+                default:this.setState({title:t("sideBar.settings"),children: <Setting />});break;
+            }
+            this.setState({
+                visible: true,
+            });
+        }
+    }
+    openUrl(url) {
+        return () => {
+            shell.openExternal(url);
+        }
+    }
     render() {
         const walletOpen = this.props.walletStore.isOpen;
+        const { t } = this.props;
         return (
             <div className="menu-down">
                 <ul>
                     {walletOpen ? (
-                        <li>
-                            <a onClick={this.logout}>
-                                <LogoutOutlined />
-                                <span>登出钱包</span>
-                            </a>
-                        </li>
-                    ) : null}
+                    <li>
+                        <a onClick={this.getInset(0)}>
+                            <ReadOutlined />
+                            <span>{t("sideBar.address book")}</span>
+                        </a>
+                    </li>):null}
+                    {walletOpen ? (
                     <li>
                         <a onClick={this.logout}>
                             <LogoutOutlined />
-                            <span>登出钱包</span>
+                            <span>{t("sideBar.logout")}</span>
                         </a>
-                    </li>
-                    {/* {this.state.showOut&&this.state.showPass?(
+                    </li>) : null}
                     <li>
-                        <a>
-                        <KeyOutlined />
-                        <span>修改密码</span>
-                        </a>
-                    </li>
-                    ):null} */}
-                    <li>
-                        <a>
+                        <a onClick={this.getInset(1)}>
                             <SettingOutlined />
-                            <span>设置</span>
+                            <span>{t("sideBar.settings")}</span>
                         </a>
                     </li>
                 </ul>
+                <Modal
+                    className="set-modal"
+                    title={this.state.title}
+                    visible={this.state.visible}
+                    onCancel={this.hideModal}
+                    footer={null}
+                >
+                    {this.state.children}
+                </Modal>
             </div>
         )
     }

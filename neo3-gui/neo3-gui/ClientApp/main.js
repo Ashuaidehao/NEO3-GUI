@@ -17,8 +17,8 @@ const url = require('url')
 let mainWindow
 
 function createWindow() {
-    //Hide Menu bar
-    // Menu.setApplicationMenu(null)
+    //Hide toolBar
+    //Menu.setApplicationMenu(null)
 
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -26,7 +26,7 @@ function createWindow() {
         height: 700,
         minWidth: 1100,
         minHeight: 700,
-        // resizable: false,
+        //resizable: false,
         webPreferences: {
             javascript: true,
             plugins: true,

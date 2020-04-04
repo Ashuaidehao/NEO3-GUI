@@ -12,8 +12,6 @@ import Chaintrans from '../components/Chain/trans';
 import Chainasset from '../components/Chain/asset';
 import Assetdetail from '../components/Chain/assetdetail';
 
-import Advanced from '../components/Advanced/advanced';
-
 import Wallet from '../components/Wallet/wallet';
 import Walletlayout from '../components/Wallet/walletlayout';
 import Walletlist from '../components/Wallet/walletlist';
@@ -23,9 +21,14 @@ import Wallettrans from '../components/Wallet/trans';
 import Transfer from '../components/Transaction/transfer';
 import Transdetail from '../components/Transaction/transdetail';
 
-import Consensus from '../components/Consensus/consensus';
-import Consensuslayout from '../components/Consensus/consensuslayout';
-import Consensusdeploy from '../components/Consensus/deploy';
+import Contract from '../components/Contract/contract';
+import Contractlayout from '../components/Contract/contractlayout';
+import Contractdeploy from '../components/Contract/deploy';
+import Contractinvoke from '../components/Contract/invoke';
+import Contractdetail from '../components/Contract/contractdetail';
+
+import Advanced from '../components/Advanced/advanced';
+import Advancedlayout from '../components/Advanced/advancedlayout';
 
 import { Layout } from 'antd';
 
@@ -35,7 +38,6 @@ const BasicRoute = () => (
         <Switch>
             <Route exact path="/" component={Home}/>
             <Route exact path="/sync" component={Sync}/>
-            <Route exact path="/advanced" component={Advanced}/>
             <Route path="/chain">
                 <Layout style={{ height: 'calc( 100vh )'}}>
                     <Route component={Chainlayout} />
@@ -61,11 +63,20 @@ const BasicRoute = () => (
                     <Route exact path="/wallet/transfer" component={Transfer} />
                 </Layout>
             </Route>
-            <Route path="/consensus">
+            <Route path="/contract">
                 <Layout style={{ height: 'calc( 100vh )'}}>
-                    <Route component={Consensuslayout} />
-                    <Route exact path="/consensus" component={Consensus} />
-                    <Route exact path="/consensus/deploy" component={Consensusdeploy} />
+                    <Route component={Contractlayout} />
+                    <Route exact path="/contract" component={Contract} />
+                    <Route exact path="/contract/detail:hash" component={Contractdetail} />
+                    <Route exact path="/contract/deploy" component={Contractdeploy} />
+                    <Route exact path="/contract/invoke" component={Contractinvoke} />
+                    <Route exact path="/contract/wallet" component={Wallet} />
+                </Layout>
+            </Route>
+            <Route path="/advanced">
+                <Layout style={{ height: 'calc( 100vh )'}}>
+                    <Route component={Advancedlayout} />
+                    <Route exact path="/advanced" component={Advanced} />
                 </Layout>
             </Route>
             <Redirect from="*" to="/" />

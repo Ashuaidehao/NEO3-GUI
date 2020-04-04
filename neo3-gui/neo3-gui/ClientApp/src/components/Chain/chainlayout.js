@@ -1,63 +1,67 @@
-/* eslint-disable */ 
+/* eslint-disable */
 import React from 'react';
 import 'antd/dist/antd.css';
 import '../../static/css/menu.css'
 import '../../static/css/wallet.css'
-import {  Layout, Menu, Icon } from 'antd';
-import {Link} from 'react-router-dom';
+import { Layout, Menu, Icon } from 'antd';
+import { Link } from 'react-router-dom';
 import MenuDown from '../Common/menudown'
 import {
   HomeOutlined,
   RadiusUpleftOutlined
 } from '@ant-design/icons';
+import { withTranslation } from 'react-i18next';
+
 
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
-class Chainlayout extends React.Component{
-  constructor(props){
+@withTranslation()
+class Chainlayout extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
-        size: 'default'
+      size: 'default'
     };
   }
-  toHome = () =>{
-    location.href=location.origin;
+  toHome = () => {
+    location.href = location.origin;
   }
-  render = () =>{
+  render = () => {
+    const { t } = this.props;
     return (
-      <div style={{ height: '100%'}}>
-          <Sider style={{ height: '100%'}} >
-            <Menu
-              className="menu-scroll"
-              theme="light"
-              defaultSelectedKeys={['1']}
-              defaultOpenKeys={['sub1']}
-              mode="inline"
+      <div style={{ height: '100%' }}>
+        <Sider style={{ height: '100%' }} >
+          <Menu
+            className="menu-scroll"
+            theme="light"
+            defaultSelectedKeys={['1']}
+            defaultOpenKeys={['sub1']}
+            mode="inline"
+          >
+            <Menu.Item>
+              <Link to="/"><HomeOutlined />{t("sideBar.home")}</Link>
+            </Menu.Item>
+            <SubMenu
+              key="sub1"
+              title={
+                <span>
+                  <RadiusUpleftOutlined />
+                  <span>{t("blockchain")}</span>
+                </span>
+              }
             >
-              <Menu.Item>
-                <Link to="/"><HomeOutlined />主页</Link>
-              </Menu.Item>
-              <SubMenu
-                key="sub1"
-                title={
-                  <span>
-                    <RadiusUpleftOutlined />
-                    <span>区块链</span>
-                  </span>
-                }
-              >
-                <Menu.Item key="1" ><Link to="/chain">区块</Link></Menu.Item>
-                <Menu.Item key="2" ><Link to="/chain/transaction">交易</Link></Menu.Item>
-                <Menu.Item key="3" ><Link to="/chain/asset">资产</Link></Menu.Item>
-              </SubMenu>
-            </Menu>
-            <MenuDown />
-          </Sider>
+              <Menu.Item key="1" ><Link to="/chain">{t("blockchain page.blocks nav")}</Link></Menu.Item>
+              <Menu.Item key="2" ><Link to="/chain/transaction">{t("blockchain page.transactions nav")}</Link></Menu.Item>
+              <Menu.Item key="3" ><Link to="/chain/asset">{t("blockchain page.asset nav")}</Link></Menu.Item>
+            </SubMenu>
+          </Menu>
+          <MenuDown />
+        </Sider>
       </div>
     );
   }
-} 
+}
 
 export default Chainlayout;

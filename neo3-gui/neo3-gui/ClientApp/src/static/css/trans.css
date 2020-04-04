@@ -50,10 +50,10 @@
 }
 .trans-area label{
     display: inline-block;
-    width: 120px;
+    width: 100px;
 }
 .trans-area input{
-    width: 320px;
+    width: 340px;
     margin-bottom: 5px;
 }
 .trans-text{
@@ -114,4 +114,56 @@
 .detail-ul .trans-table .trans-type{
     margin-right: 12px;
     min-width: 96px;
+}
+.ant-list-item:hover .trans-detail{
+    color: #000000!important;
+}
+.ant-list-item:hover .trans-detail a{
+    text-shadow: 0px 0px 1px #222222;
+}
+.trans-detail a:hover{
+    text-shadow: none!important;
+}
+.trans-detail{
+    display: inline-block;
+    width: 90%;
+}
+.trans-detail p{
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+.trans-detail span{
+    min-width: 50px;
+    vertical-align: middle;
+}
+.succes-light{
+    display: inline-block;
+    font-weight: 400;
+    letter-spacing: .3px;
+    min-width: 85px;
+    margin-right: 10px;
+}
+.succes-light::before{
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-bottom: 2px;
+    border-radius: 6px;
+    background-color: #00E599;
+    margin-right: 8px;
+}
+.ant-list-header .succes-light::before{
+    display: none;
+}
+
+.trans-detail .trans-amount{
+    width: 90px;
+    margin-right: 2px;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: bottom;
 }

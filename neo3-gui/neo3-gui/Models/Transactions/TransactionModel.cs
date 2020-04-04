@@ -34,8 +34,8 @@ namespace Neo.Models.Transactions
         public UInt256 TxId { get; set; }
         public UInt256 BlockHash { get; set; }
         public uint BlockHeight { get; set; }
-        public DateTime BlockTime => Timestamp.FromTimestampMS().ToLocalTime();
-        public ulong Timestamp { get; set; }
+        public DateTime? BlockTime => Timestamp?.FromTimestampMS().ToLocalTime();
+        public ulong? Timestamp { get; set; }
         public List<TransferModel> Transfers { get; set; }
         public BigDecimal NetworkFee { get; set; }
 

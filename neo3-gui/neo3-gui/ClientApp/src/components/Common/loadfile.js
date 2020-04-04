@@ -14,17 +14,14 @@ import { Input,
     Menu,
     Button,
   } from 'antd';
-  
 import {  Layout } from 'antd';
-import Intitle from '../Common/intitle'
-import '../../static/css/wallet.css'
 import Sync from '../sync'
 
 const { Content } = Layout;
 const {dialog} = window.remote;
 
 
-class Consensusdeploy extends React.Component{
+class Loadfile extends React.Component{
   constructor(props){
     super(props);
     this.state = {
@@ -117,4 +114,4 @@ class Consensusdeploy extends React.Component{
   }
 } 
 
-export default Consensusdeploy;
+export default Loadfile;

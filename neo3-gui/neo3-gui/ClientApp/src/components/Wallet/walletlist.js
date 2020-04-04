@@ -7,9 +7,13 @@ import { Layout, message, Row, Col, List, Avatar, Button, Typography } from 'ant
 import '../../static/css/wallet.css'
 import Sync from '../sync';
 import Intitle from '../Common/intitle'
+import Topath from '../Common/topath';
+import { withTranslation } from "react-i18next";
+
 
 const { Content } = Layout;
 
+@withTranslation()
 @inject("walletStore")
 @observer
 class Walletlist extends React.Component {
@@ -101,19 +105,19 @@ class Walletlist extends React.Component {
       "id": 51,
       "method": "ClaimGas"
     })
-    .then(function (response) {
-      var _data = response.data;
-      if (_data.msgType === -1) {
-        console.log("需要先打开钱包再进入页面");
-        return;
-      } else if (_data.msgType = 3) {
-        message.success("GAS 提取成功，请稍后刷新页面查看", 3);
-      }
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error");
-    });
+      .then(function (response) {
+        var _data = response.data;
+        if (_data.msgType === -1) {
+          console.log("需要先打开钱包再进入页面");
+          return;
+        } else if (_data.msgType = 3) {
+          message.success("GAS 提取成功，请稍后刷新页面查看", 3);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        console.log("error");
+      });
   }
   addAddress = () => {
     var _this = this;
@@ -158,21 +162,23 @@ class Walletlist extends React.Component {
   }
   render() {
     const accounts = this.props.walletStore.accountlist;
+    const walletOpen = this.props.walletStore.isOpen;
     const { assetlist } = this.state;
+    const { t } = this.props;
     return (
       <Layout className="gui-container">
         <Sync />
         <Content className="mt3">
           <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
             <Col span={13} className="bg-white pv4">
-              <Intitle content="账户列表" show="true" />
+              <Intitle content={t("wallet page.accounts nav")} show="true" />
               <List
                 itemLayout="horizontal"
                 dataSource={accounts}
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
-                      title={<Link to={"/wallet/walletlist:" + item.address} title="查看详情">{item.address}</Link>}
+                      title={<Link to={"/wallet/walletlist:" + item.address} title={t("wallet page.show detail")}>{item.address}</Link>}
                       description={
                         <span className="f-s">
                           <span className="mr2">NEO {item.neo}</span>
@@ -184,13 +190,13 @@ class Walletlist extends React.Component {
               />
             </Col>
             <Col span={10} offset={1} className="bg-white pv4">
-              <Intitle content="资产列表" />
+              <Intitle content={t("wallet page.assets")} />
               <List
                 className="asset-list"
                 itemLayout="horizontal"
                 style={{ 'minHeight': 'calc( 100% - 135px )' }}
                 dataSource={assetlist}
-                header={<div><span>资产 <small>hash</small></span><span className="float-r wa-amount">余额</span></div>}
+                header={<div><span>{t("asset hash")} <small></small></span><span className="float-r wa-amount">{t("wallet page.balance")}</span></div>}
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
@@ -207,7 +213,7 @@ class Walletlist extends React.Component {
                 )}
               />
               <div className="w200 mt4">
-                <Button className="w200" onClick={this.claimGas} loading={this.state.iconLoading}>提取 {this.state.gas} GAS</Button>
+                <Button className="w200" onClick={this.claimGas} loading={this.state.iconLoading}>{t("wallet page.claim")} {this.state.gas} GAS</Button>
               </div>
             </Col>
           </Row>
