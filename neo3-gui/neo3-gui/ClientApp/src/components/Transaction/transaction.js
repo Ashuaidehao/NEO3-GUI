@@ -261,7 +261,7 @@ class Transaction extends React.Component {
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
-                    title={<span className="succes-light">{t('transaction page.confirmed')}</span>}
+                    title={<span className="succes-light">{t('blockchain.transaction.confirmed')}</span>}
                     />
                     <div className="trans-detail">
                         <p>

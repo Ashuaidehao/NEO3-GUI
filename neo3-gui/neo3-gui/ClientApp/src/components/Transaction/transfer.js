@@ -52,7 +52,7 @@ class Transfer extends React.Component {
     .then(function (response) {
       var _data = response.data;
       if (_data.msgType === -1) {
-        message.error(t("open wallet first"));
+        message.error(t("wallet.open wallet first"));
         return;
       }
       _this.setState({
@@ -199,7 +199,7 @@ class Transfer extends React.Component {
                           },
                         ]}>
                         <Select
-                          placeholder={t("select")}
+                          placeholder={t("wallet.select")}
                           style={{ width: '100%' }}
                         >
                           {selectadd.map((item, index) => {

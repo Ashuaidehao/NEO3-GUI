@@ -7,6 +7,34 @@
         "syncing": "区块同步中",
 		"load more": "加载更多"
 	},
+	"settings":{
+		"network": "网络切换",
+		"mainnet": "主网",
+		"testnet": "测试网",
+		"language": "语言切换",
+		"about": "关于",
+		"version": "当前版本",
+		"copyright": "保留所有权利",
+		"report issues": "问题反馈",
+		"website": "官网"
+	},
+	"button": {
+		"cancel": "取消",
+		"confirm": "确认",
+		"close wallet": "登出钱包",
+		"create wallet": "创建钱包",
+		"show private key": "显示私钥",
+		"delete account": "删除地址",
+		"claim": "提取",
+		"delete": "删除",
+		"next": "下一步",
+		"ok": "确认",
+		"prev": "上一步",
+		"send": "发送",
+		"search":"搜索",
+		"test deploy": "试运行",
+		"test invoke": "试运行"
+	},
 	"home": {
         "blockchain": "区块链",
         "wallet": "钱包",
@@ -53,8 +81,11 @@
 		"prev block": "上一区块",
 		"precision": "精度",
 		"last transactions": "最新交易",
+		"unconfirmed transactions": "待确认交易",
 		"transaction":{
 			"status": "交易状态",
+			"confirmed":"已完成",
+			"unconfirmed":"待确认",
 			"content": "交易体",
 			"log": "交易日志",
 			"transfers": "转账记录",
@@ -85,6 +116,7 @@
 		"to": "收款地址",
 		"amount": "转账金额",
 		"asset": "发送资产",
+		"select": "选择",
 		"estimated time": "预计到账时间",
 		"fee": "手续费",
 		"close wallet success": "钱包退出成功",
@@ -111,7 +143,7 @@
 		"transfer send error":"交易发送失败,请检查后再试",
 		"transfer warning": "安全提示：请勿轻易向陌生人转账。请仔细确认收款账户、转账金额、资产类型。请仔细辨别相同资产名称的资产，避免被骗。请勿向其它区块链的收款账户（地址）转账。",
 		"wallet opened": "钱包文件已打开",
-		"please open wallet": "请打开钱包"
+		"open wallet first": "请先打开钱包"
 	},
 	"contract": {
 		"search contract": "搜索合约",
@@ -133,7 +165,6 @@
 		"search input check": "请输入后再试",
 		"fail title": "运行失败，请检查后再尝试"
 	},
-	
 	"input":{
 		"required":"该输入框为必填项",
 		"checked":"请确认已经输入完毕"
@@ -145,44 +176,7 @@
 	"please input Hex/WIF private key": "导入HEX/WIF格式私钥",
 	"please input password": "请输入密码",
 	"please select file location": "请选择文件存储位置",
-	"select": "选择",
 	"select account": "选择账户",
 	"select path": "选择路径",
-	"show detail": "查看详情",
-	"unconfirmed transactions": "待确认交易",
-	"open wallet first": "请先打开钱包",
-	
-	"transaction page":{
-		"confirmed":"已完成",
-		"unconfirmed":"待确认"
-	},
-	"transaction list":"交易列表",
-	"settings":{
-		"network": "网络切换",
-		"mainnet": "主网",
-		"testnet": "测试网",
-		"language": "语言切换",
-		"about": "关于",
-		"version": "当前版本",
-		"copyright": "保留所有权利",
-		"report issues": "问题反馈",
-		"website": "官网"
-	},
-	"button": {
-		"cancel": "取消",
-		"confirm": "确认",
-		"close wallet": "登出钱包",
-		"create wallet": "创建钱包",
-		"show private key": "显示私钥",
-		"delete account": "删除地址",
-		"claim": "提取",
-		"delete": "删除",
-		"next": "下一步",
-		"ok": "确认",
-		"prev": "上一步",
-		"send": "发送",
-		"search":"搜索",
-		"test deploy": "试运行",
-		"test invoke": "试运行"
-	}
+	"show detail": "查看详情"
 }

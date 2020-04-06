@@ -101,7 +101,7 @@ class Assetdetail extends React.Component{
               </div>
             </Col>
           </Row> */}
-          <Transaction content={t("transaction list")} page="assetdetail"/>
+          <Transaction content={t("blockchain.transactions")} page="assetdetail"/>
         </Content>
       </Layout>
     );

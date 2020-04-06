@@ -7,6 +7,34 @@
 		"syncing": "Syncing",
 		"load more": "Load More"
 	},
+	"settings":{
+		"network": "Network",
+		"mainnet": "Mainnet",
+		"testnet": "Testnet",
+		"language": "Language",
+		"about": "About",
+		"version": "Current Version",
+		"copyright": "Copyright",
+		"report issues": "Report Issues",
+		"website": "WebSite"
+	},
+	"button": {
+		"cancel": "Cancel",
+		"confirm": "Confirm",
+		"close wallet": "Close Wallet",
+		"create wallet": "Create Wallet",
+		"show details": "Show Details",
+		"delete account": "Delete",
+		"claim": "Claim",
+		"delete": "Delete",
+		"next": "Next",
+		"ok": "OK",
+		"prev": "Prev",
+		"send": "Send",
+		"search":"Search",
+		"test deploy": "Test Deploy",
+		"test invoke": "Test Invoke"
+	},
 	"home": {
         "blockchain": "Blockchain",
         "wallet": "Wallet",
@@ -52,9 +80,12 @@
 		"next block": "Next Block",
 		"prev block": "Prev Block",
 		"precision": "Precision",
-		"last transactions": "Lastest Transactions",
+		"lastest transactions": "Lastest Transactions",
+		"unconfirmed transactions": "Unconfirmed Transactions",
 		"transaction":{
 			"status": "Status",
+			"confirmed":"Confirmed",
+			"unconfirmed":"Unconfirmed",
 			"content": "Transaction",
 			"log": "Notifications",
 			"transfers": "Transfers",
@@ -84,6 +115,7 @@
 		"to": "To",
 		"amount": "Amount",
 		"asset": "Asset",
+		"select": "Select",
 		"estimated time": "Estimated receipt time",
 		"fee": "Fee",
 		"close wallet success": "Close Wallet Success",
@@ -110,7 +142,8 @@
 		"transfer send success": "Send Success",
 		"transfer send error":"Send failed, please try again later",
 		"transfer warning": "Safety tip: Do not transfer money to strangers easily.Please confirm the receiving account, transfer amount and asset type carefully.Please carefully identify assets with the same name to avoid being cheated.Do not transfer money to the receiving account (address) of other blockchain.",
-		"wallet opened": "Wallet is opened"
+		"wallet opened": "Wallet is opened",
+		"open wallet first": "Please open wallet"
 	},
 	"contract": {
 		"search contract": "Search Contract",
@@ -140,47 +173,9 @@
 	"error msg": "Error Message",
 	"input account": "Input Account",
 	"please confirm your password": "Please confirm your password",
-	"please input Hex/WIF private key": "please input Hex/WIF private key",
+	"please input Hex/WIF private key": "Please input Hex/WIF private key",
 	"please input password": "Please input password",
 	"please select file location": "Please select file location",
-	"select": "Select",
 	"select account": "Select Account",
-	"show detail": "Show Detail",
-	"unconfirmed transactions": "Unconfirmed Transactions",
-
-	"open wallet first": "Please open wallet",
-	
-	"transaction page":{
-		"confirmed":"Confirmed",
-		"unconfirmed":"Unconfirmed"
-	},
-	"transaction list":"Transaction list",
-	"settings":{
-		"network": "Network",
-		"mainnet": "Mainnet",
-		"testnet": "Testnet",
-		"language": "Language",
-		"about": "About",
-		"version": "Current Version",
-		"copyright": "Copyright",
-		"report issues": "Report Issues",
-		"website": "WebSite"
-	},
-	"button": {
-		"cancel": "Cancel",
-		"confirm": "Confirm",
-		"close wallet": "Close Wallet",
-		"create wallet": "Create Wallet",
-		"show details": "Show Details",
-		"delete account": "Delete",
-		"claim": "Claim",
-		"delete": "Delete",
-		"next": "Next",
-		"ok": "OK",
-		"prev": "Prev",
-		"send": "Send",
-		"search":"Search",
-		"test deploy": "Test Deploy",
-		"test invoke": "Test Invoke"
-	}
+	"show detail": "Show Detail"
 }
