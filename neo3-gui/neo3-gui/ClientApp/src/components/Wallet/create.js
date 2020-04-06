@@ -33,14 +33,14 @@ class Walletcreate extends React.Component {
     let _path = this.state.path;
 
     if (!_path) {
-      message.error(t("wallet page.please select file path"), 2); return false;
+      message.error(t("wallet.please select file path"), 2); return false;
     }
     if (!_fpass) {
-      message.error(t("wallet page.please input password"), 2); return false;
+      message.error(t("wallet.please input password"), 2); return false;
     }
     if (num === 0) return false;
     if (!_spass) {
-      message.error(t("wallet page.please confirm password"), 2); return false;
+      message.error(t("wallet.please confirm password"), 2); return false;
     }
     return true;
   }
@@ -48,7 +48,7 @@ class Walletcreate extends React.Component {
     const { t } = this.props;
     var _this = this;
     dialog.showSaveDialog({
-      title: t("wallet page.save wallet file title"),
+      title: t("wallet.save wallet file title"),
       defaultPath: '/',
       filters: [
         {
@@ -82,11 +82,11 @@ class Walletcreate extends React.Component {
         let _data = res.data;
         _this.setState({ iconLoading: false });
         if (_data.msgType === 3) {
-          message.success(t("wallet page.create wallet success"), 2);
+          message.success(t("wallet.create wallet success"), 2);
           walletStore.setWalletState(true);
           _this.props.history.push('/wallet/walletlist');
         } else {
-          message.info(t("wallet page.create wallet fail"), 2);
+          message.info(t("wallet.create wallet fail"), 2);
         }
       })
       .catch(function (error) {
@@ -101,7 +101,7 @@ class Walletcreate extends React.Component {
     let _spass = this.refs.sPass.input.value;
 
     if (_fpass !== _spass) {
-      message.info(t("wallet page.password not match"), 2);
+      message.info(t("wallet.password not match"), 2);
       return false;
     }
     return true;
@@ -115,7 +115,7 @@ class Walletcreate extends React.Component {
             <Input placeholder={t("please select file location")} ref="file" disabled value={this.state.path} />
           </Col>
           <Col span={6}>
-            <Button type="primary" onClick={this.savedialog}>{t("select path")}</Button>
+            <Button type="primary" onClick={this.savedialog}>{t("wallet.select path")}</Button>
           </Col>
         </Row>
         <Row>
@@ -147,7 +147,7 @@ class Walletcreate extends React.Component {
         <Button type="primary" onClick={this.createWallet} loading={this.state.iconLoading} ref="create">{t("button.create wallet")}</Button>
         <p className="mt3 mb2">
           <small>
-            {t("wallet page.create warning")}
+            {t("wallet.create warning")}
           </small>
           {/* <small>因钱包较为私密，在选择已有文件的情况下，不会进行覆盖操作。<br />
           如需要删除原始钱包文件，请手动删除。</small> */}

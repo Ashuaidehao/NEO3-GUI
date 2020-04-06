@@ -171,14 +171,14 @@ class Walletlist extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
             <Col span={13} className="bg-white pv4">
-              <Intitle content={t("wallet page.accounts nav")} show="true" />
+              <Intitle content={t("wallet.accounts")} show="true" />
               <List
                 itemLayout="horizontal"
                 dataSource={accounts}
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
-                      title={<Link to={"/wallet/walletlist:" + item.address} title={t("wallet page.show detail")}>{item.address}</Link>}
+                      title={<Link to={"/wallet/walletlist:" + item.address} title={t("wallet.show detail")}>{item.address}</Link>}
                       description={
                         <span className="f-s">
                           <span className="mr2">NEO {item.neo}</span>
@@ -190,13 +190,13 @@ class Walletlist extends React.Component {
               />
             </Col>
             <Col span={10} offset={1} className="bg-white pv4">
-              <Intitle content={t("wallet page.assets")} />
+              <Intitle content={t("wallet.assets")} />
               <List
                 className="asset-list"
                 itemLayout="horizontal"
                 style={{ 'minHeight': 'calc( 100% - 135px )' }}
                 dataSource={assetlist}
-                header={<div><span>{t("blockchain.asset info")} <small></small></span><span className="float-r wa-amount">{t("wallet page.balance")}</span></div>}
+                header={<div><span>{t("blockchain.asset info")} <small></small></span><span className="float-r wa-amount">{t("wallet.balance")}</span></div>}
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
@@ -213,7 +213,7 @@ class Walletlist extends React.Component {
                 )}
               />
               <div className="w200 mt4">
-                <Button className="w200" onClick={this.claimGas} loading={this.state.iconLoading}>{t("wallet page.claim")} {this.state.gas} GAS</Button>
+                <Button className="w200" onClick={this.claimGas} loading={this.state.iconLoading}>{t("button.claim")} {this.state.gas} GAS</Button>
               </div>
             </Col>
           </Row>

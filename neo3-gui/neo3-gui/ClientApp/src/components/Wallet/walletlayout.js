@@ -47,7 +47,7 @@ class Walletlayout extends React.Component {
       .then(function (response) {
         var _data = response.data;
         if (_data.msgType === -1) {
-          message.info(t("wallet page.please open wallet"), 2);
+          message.info(t("wallet.please open wallet"), 2);
           _this.setState({ topath: "/wallet" });
           return;
         }

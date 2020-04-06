@@ -123,7 +123,7 @@ class Walletprivate extends React.Component{
           {this.state.showElem?(
             <div>
                 <Button className="mt3" onClick={this.changeTab}>{t("button.prev")}</Button>
-                <Divider>{t("wallet page.private key save wallet title")}</Divider>
+                <Divider>{t("wallet.private key save wallet title")}</Divider>
                 <Walletcreate priclass="pri-class" cname="pri-pass" private={this.state.private}/>
             </div>
           ):null}

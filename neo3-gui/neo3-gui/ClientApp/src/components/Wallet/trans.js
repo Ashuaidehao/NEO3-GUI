@@ -21,7 +21,7 @@ class Wallettrans extends React.Component{
       <Layout className="gui-container">
         <Sync />
         <Untransaction page="wallet"/>
-        <Transaction content={t("lastest transactions")} page="wallettrans"/>
+        <Transaction content={t("wallet.lastest transactions")} page="wallettrans"/>
       </Layout>
     );
   }

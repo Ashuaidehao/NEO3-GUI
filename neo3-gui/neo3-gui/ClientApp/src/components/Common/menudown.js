@@ -47,7 +47,7 @@ class menuDown extends React.Component {
             "method": "CloseWallet"
         })
         .then(() => {
-            message.success(t("wallet page.close wallet success"), 2);
+            message.success(t("wallet.close wallet success"), 2);
             this.props.walletStore.logout();
             this.props.history.push('/');
         })

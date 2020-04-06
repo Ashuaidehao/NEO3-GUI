@@ -89,7 +89,7 @@ class Chain extends React.Component {
     const loadMore =
       !initLoading && !loading ? (
         <div className="text-c mb3">
-          <Button type="primary" onClick={this.loadMore}>{t("load more")}</Button>
+          <Button type="primary" onClick={this.loadMore}>{t("common.load more")}</Button>
         </div>
       ) : null;
     return (

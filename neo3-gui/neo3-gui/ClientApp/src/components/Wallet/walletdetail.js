@@ -148,9 +148,9 @@ class Walletdetail extends React.Component {
             title: t("wallet.private key warning"),
             content: (
               <div className="show-pri">
-                <p>{t("wallet page.private key")}:{_data.privateKey}</p>
+                <p>{t("wallet.private key")}:{_data.privateKey}</p>
                 <p>WIF：{_data.wif}</p>
-                <p>{t("wallet page.public key")}：{_data.publicKey}</p>
+                <p>{t("wallet.public key")}：{_data.publicKey}</p>
               </div>
             ),
             okText: t("button.ok")
@@ -174,7 +174,7 @@ class Walletdetail extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]}>
             <Col span={24} className="bg-white pv4">
-              <Intitle content={t("wallet page.accounts nav")} />
+              <Intitle content={t("wallet.accounts")} />
               <List
                 header={<div>{address}</div>}
                 footer={<span></span>}
@@ -190,12 +190,12 @@ class Walletdetail extends React.Component {
                 )}
               />
               <div className="mb4 text-r">
-                <Button type="primary" onClick={this.showPrivate}>{t("wallet page.show private key")}</Button>
-                <Button className="ml3" onClick={this.deleteConfirm}>{t("wallet page.delete account")}</Button>
+                <Button type="primary" onClick={this.showPrivate}>{t("button.show private key")}</Button>
+                <Button className="ml3" onClick={this.deleteConfirm}>{t("button.delete account")}</Button>
               </div>
             </Col>
           </Row>
-          <Transaction page="walletdetail" content={t("wallet page.transactions nav")} />
+          <Transaction page="walletdetail" content={t("wallet.transactions")} />
         </Content>
       </Layout>
     );
