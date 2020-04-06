@@ -1,4 +1,6 @@
 {
+	"block": "区块",
+	"time": "时间",
 	"common": {
         "syncing": "区块同步中"
 	},
@@ -26,34 +28,45 @@
 		"deploy contract": "部署",
 		"invoke contract": "调用"
 	},
-	"advance": "高级",
-	"amount": "金额",
-	"asset hash": "资产hash",
-	"attributes": "属性",
-	"block": "区块",
-	"blockchain": "区块链",
-	"blockchain page": {
-		"block": "区块",
+	"blockchain": {
+		"blocks": "区块列表",
 		"block info": "区块信息",
+		"transactions": "交易列表",
+		"transaction info": "交易信息",
+		"transaction hash": "交易哈希",
+		"assets": "资产列表",
+		"asset info": "资产信息",
+		"block time": "出块时间",
+		"transaction count": "交易数量",
 		"height": "高度",
-		"last transactions": "最新交易",
+		"size": "大小",
+		"nounce": "随机数",
+		"timestamp": "时间戳",
+		"system fee": "系统费",
+		"network fee": "网络费",
+		"confirmations": "确认数",
+		"witness": "见证人",
 		"next block": "下一区块",
 		"prev block": "上一区块",
-		"transaction count": "交易数量",
-		"update time": "更新时间"
+		"precision": "精度",
+		"last transactions": "最新交易",
+		"transaction":{
+			"status": "交易状态",
+			"content": "交易体",
+			"log": "交易日志",
+			"transfers": "转账记录",
+			"from": "转出",
+			"to": "转入",
+			"amount": "金额",
+			"attributes": "属性",
+			"invocation script": "调用脚本",
+			"verification script": "验证脚本"
+		}
+		
 	},
-	"button": {
-		"cancel": "取消",
-		"close wallet": "登出钱包",
-		"confirm": "确认",
-		"create wallet": "创建钱包",
-		"delete": "删除",
-		"next": "下一步",
-		"ok": "确认",
-		"prev": "上一步",
-		"send": "发送",
-		"search":"搜索"
-	},
+
+	
+	
 	"input":{
 		"required":"该输入框为必填项",
 		"checked":"请确认已经输入完毕"
@@ -61,7 +74,6 @@
 	"address book":"地址簿",
 	"byte": "字节",
 	"bytes": "字节",
-	"confirm count": "确认数",
 	"contract page": {
 		"deploy contract": "部署合约",
 		"deploy success": "交易发送成功，请等待区块确认",
@@ -85,37 +97,20 @@
 	"count": "数量",
 	"error code": "错误码",
 	"error msg": "错误信息",
-	"home page": "主页",
 	"input account": "输入账户",
-	"invocation script": "调用脚本",
 	"language setting": "语言切换",
 	"lastest transactions": "最新交易",
 	"load more": "加载更多",
-	"network fee": "网络费",
 	"please confirm your password": "请确认密码",
 	"please input Hex/WIF private key": "导入HEX/WIF格式私钥",
 	"please input password": "请输入密码",
 	"please select file location": "请选择文件存储位置",
-	"precision": "精度",
-	"random": "随机数",
 	"select": "选择",
 	"select account": "选择账户",
 	"select file": "选择文件",
 	"select path": "选择路径",
 	"show detail": "查看详情",
-	"size": "大小",
-	"syncing": "区块同步中",
-	"system fee": "系统费",
-	"time": "时间",
-	"timestamp": "时间戳",
-	"transaction content": "交易体",
-	"transaction hash": "交易hash",
-	"transaction log": "交易日志",
-	"transfer from": "转出",
-	"transfer records": "转账记录",
-	"transfer to": "转入",
 	"unconfirmed transactions": "待确认交易",
-	"verification script": "验证脚本",
 	"wallet": "钱包",
 	"open wallet first": "请先打开钱包",
 	"wallet page": {
@@ -168,7 +163,6 @@
 		"unconfirmed":"待确认"
 	},
 	"transaction list":"交易列表",
-	"witness": "见证人",
 	"settings":{
 		"network": "网络切换",
 		"mainnet": "主网",
@@ -179,5 +173,17 @@
 		"copyright": "保留所有权利",
 		"report issues": "问题反馈",
 		"website": "官网"
+	},
+	"button": {
+		"cancel": "取消",
+		"close wallet": "登出钱包",
+		"confirm": "确认",
+		"create wallet": "创建钱包",
+		"delete": "删除",
+		"next": "下一步",
+		"ok": "确认",
+		"prev": "上一步",
+		"send": "发送",
+		"search":"搜索"
 	}
 }

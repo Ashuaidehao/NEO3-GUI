@@ -196,7 +196,7 @@ class Walletlist extends React.Component {
                 itemLayout="horizontal"
                 style={{ 'minHeight': 'calc( 100% - 135px )' }}
                 dataSource={assetlist}
-                header={<div><span>{t("asset hash")} <small></small></span><span className="float-r wa-amount">{t("wallet page.balance")}</span></div>}
+                header={<div><span>{t("blockchain.asset info")} <small></small></span><span className="float-r wa-amount">{t("wallet page.balance")}</span></div>}
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta

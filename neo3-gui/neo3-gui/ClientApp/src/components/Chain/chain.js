@@ -98,9 +98,9 @@ class Chain extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
             <Col span={24} className="bg-white pv4">
-              <Intitle content={t("blockchain page.blocks nav")} />
+              <Intitle content={t("blockchain.blocks")} />
               <List
-                header={<div><span>{t("blockchain page.block info")}</span><span className="float-r ml4"><span className="wa-amount">{t("blockchain page.transaction count")}</span></span><span className="float-r">{t("blockchain page.update time")}</span></div>}
+                header={<div><span>{t("blockchain.block info")}</span><span className="float-r ml4"><span className="wa-amount">{t("blockchain.transaction count")}</span></span><span className="float-r">{t("blockchain.block time")}</span></div>}
                 footer={<span></span>}
                 itemLayout="horizontal"
                 loading={initLoading}

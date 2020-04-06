@@ -251,7 +251,7 @@ class Transaction extends React.Component {
             <Col span={24} className="bg-white pv4">
               <Intitle content={this.props.content || t("lastest transactions")} />
               <List
-                header={<div><span className="succes-light">交易状态</span><span>{t("transaction hash")}</span><span className="float-r">{t("time")}</span></div>}
+                header={<div><span className="succes-light">{t("blockchain.transaction.status")}</span><span>{t("blockchain.transaction info")}</span><span className="float-r">{t("time")}</span></div>}
                 footer={<span></span>}
                 itemLayout="horizontal"
                 loading={loading}

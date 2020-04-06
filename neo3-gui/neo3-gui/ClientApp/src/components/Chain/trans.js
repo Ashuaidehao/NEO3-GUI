@@ -18,7 +18,7 @@ class Blocktrans extends React.Component{
     return (
       <Layout className="gui-container">
         <Sync />
-        <Transaction content={t("blockchain page.last transactions")} page="all" />
+        <Transaction content={t("blockchain.transactions")} page="all" />
       </Layout>
     );
   }

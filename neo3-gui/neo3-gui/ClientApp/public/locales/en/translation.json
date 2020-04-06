@@ -1,4 +1,6 @@
 {
+	"block": "Block",
+	"time": "Time",
 	"common": {
 		"syncing": "Syncing"
 	},
@@ -26,34 +28,42 @@
 		"deploy contract": "Deploy",
 		"invoke contract": "Invoke"
     },
-	
-	"amount": "Amount",
-	"asset hash": "Asset Hash",
-	"attributes": "Attributes",
-	"block": "Block",
-	"blockchain": "BlockChain",
-	"blockchain page": {
-		"block": "Block",
+	"blockchain": {
+		"blocks": "Blocks",
 		"block info": "Block Info",
+		"transactions": "Transactions",
+		"transaction info": "Transaction Info",
+		"transaction hash": "Transaction Hash",
+		"assets": "Assets",
+		"asset info": "Asset Info",
+		"block time": "Block Time",
+		"transaction count": "TX Count",
 		"height": "Height",
-		"last transactions": "Lastest Transactions",
+		"size": "Size",
+		"nounce": "Nounce",
+		"timestamp": "TimeStamp",
+		"system fee": "System Fee",
+		"network fee": "Network Fee",
+		"confirmations": "Confirmations",
+		"witness": "Witness",
 		"next block": "Next Block",
 		"prev block": "Prev Block",
-		"transaction count": "Transaction Count",
-		"update time": "Update Time"
+		"precision": "Precision",
+		"last transactions": "Lastest Transactions",
+		"transaction":{
+			"status": "Status",
+			"content": "Transaction",
+			"log": "Notifications",
+			"transfers": "Transfers",
+			"from": "From",
+			"to": "To",
+			"amount": "Amount",
+			"attributes": "Attributes",
+			"invocation script": "Invocation Script",
+			"verification script": "Verification Script"
+		}
 	},
-	"button": {
-		"cancel": "Cancel",
-		"close wallet": "Close Wallet",
-		"confirm": "Confirm",
-		"create wallet": "Create Wallet",
-		"delete": "Delete",
-		"next": "Next",
-		"ok": "OK",
-		"prev": "Prev",
-		"send": "Send",
-		"search":"Search"
-	},
+
 	"input":{
 		"required":"This input is required.",
 		"checked":"Please confirm all input."
@@ -61,7 +71,6 @@
 	"address book":"Address",
 	"byte": "Byte",
 	"bytes": "Bytes",
-	"confirm count": "Confirmations",
 	"contract page": {
 		"deploy contract": "Deploy Contract",
 		"deploy success": "Deploy successfully, please wait for confirmation",
@@ -84,36 +93,20 @@
 	"count": "Count",
 	"error code": "Error Code",
 	"error msg": "Error Message",
-	"home page": "Home Page",
 	"input account": "Input Account",
-	"invocation script": "Invocation Script",
 	"lastest transactions": "Lastest Transactions",
 	"load more": "Load More",
 	"mainnet": "Mainnet",
-	"network fee": "Network Fee",
 	"please confirm your password": "Please confirm your password",
 	"please input Hex/WIF private key": "please input Hex/WIF private key",
 	"please input password": "Please input password",
 	"please select file location": "Please select file location",
-	"precision": "Precision",
-	"random": "Random Number",
 	"select": "Select",
 	"select account": "Select Account",
 	"select file": "Select file",
 	"select path": "Select path",
 	"show detail": "Show Detail",
-	"size": "Size",
-	"system fee": "System Fee",
-	"time": "Time",
-	"timestamp": "Timestamp",
-	"transaction content": "Transaction",
-	"transaction hash": "Transaction Hash",
-	"transaction log": "Notify",
-	"transfer from": "From",
-	"transfer records": "Transfer Records",
-	"transfer to": "To",
 	"unconfirmed transactions": "Unconfirmed Transactions",
-	"verification script": "Verification Script",
 
 	"open wallet first": "Please open wallet",
 	"wallet page": {
@@ -166,7 +159,6 @@
 		"unconfirmed":"Unconfirmed"
 	},
 	"transaction list":"Transaction list",
-	"witness": "Witness",
 	"settings":{
 		"network": "Network",
 		"mainnet": "Mainnet",
@@ -177,5 +169,17 @@
 		"copyright": "Copyright",
 		"report issues": "Report Issues",
 		"website": "WebSite"
+	},
+	"button": {
+		"cancel": "Cancel",
+		"close wallet": "Close Wallet",
+		"confirm": "Confirm",
+		"create wallet": "Create Wallet",
+		"delete": "Delete",
+		"next": "Next",
+		"ok": "OK",
+		"prev": "Prev",
+		"send": "Send",
+		"search":"Search"
 	}
 }

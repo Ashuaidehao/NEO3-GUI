@@ -176,7 +176,7 @@ class Untransaction extends React.Component {
             <Col span={24} className="bg-white pv4">
               <Intitle content={this.props.content || "未确认交易"} />
               <List
-                header={<div><span>{t("transaction hash")}</span><span className="float-r ml4"><span className="wa-amount"></span>{t("count")}</span><span className="float-r">{t("time")}</span></div>}
+                header={<div><span>{t("blockchain.transaction Info")}</span><span className="float-r ml4"><span className="wa-amount"></span>{t("count")}</span><span className="float-r">{t("time")}</span></div>}
                 footer={<span></span>}
                 itemLayout="horizontal"
                 loading={loading}
