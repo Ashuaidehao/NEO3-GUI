@@ -90,7 +90,7 @@ class Blockdetail extends React.Component {
                   </Col>
                   <Col span={12}>
                     <ul className="detail-ul">
-                      <li><span className="hint">{t("blockchain.size")}：</span>{blockdetail.size} {t("bytes")}</li>
+                      <li><span className="hint">{t("common.size")}：</span>{blockdetail.size} {t("common.bytes")}</li>
                       <li><span className="hint">{t("blockchain.nounce")}：</span>{nonce}</li>
                       <li><span className="hint">{t("blockchain.system fee")}：</span>{blockdetail.networkFee ? blockdetail.networkFee : '--'}</li>
                       <li><span className="hint">{t("blockchain.witness")}：</span>{blockdetail.nextConsensus}</li>

@@ -118,7 +118,7 @@ const Detail = ({ hashdetail }) => {
       {console.log(hashdetail)}
       <Col span={12}>
         <ul className="detail-ul">
-          <li><span className="hint">{t("block")}：</span><Link to={"/chain/detail:" + hashdetail.blockHeight}>{hashdetail.blockHeight}</Link></li>
+          <li><span className="hint">{t("blockchain.block")}：</span><Link to={"/chain/detail:" + hashdetail.blockHeight}>{hashdetail.blockHeight}</Link></li>
           <li><span className="hint">{t("blockchain.timestamp")}：</span>{hashdetail.timestamp}</li>
           <li><span className="hint">{t("blockchain.network fee")}：</span>{hashdetail.networkFee ? hashdetail.networkFee : '--'} GAS</li>
           <li><span className="hint">{t("blockchain.confirmations")}：</span>{hashdetail.confirmations}</li>
@@ -126,8 +126,8 @@ const Detail = ({ hashdetail }) => {
       </Col>
       <Col span={12}>
         <ul className="detail-ul">
-          <li><span className="hint">{t("blockchain.size")}：</span>{hashdetail.size} {t("byte")}</li>
-          <li><span className="hint">{t("time")}：</span>{hashdetail.blockTime}</li>
+          <li><span className="hint">{t("common.size")}：</span>{hashdetail.size} {t("common.bytes")}</li>
+          <li><span className="hint">{t("common.time")}：</span>{hashdetail.blockTime}</li>
           <li><span className="hint">{t("blockchain.system fee")}：</span>{hashdetail.systemFee} GAS</li>
           <li><span className="hint">{t("blockchain.nounce")}：</span>{hashdetail.nonce}</li>
         </ul>

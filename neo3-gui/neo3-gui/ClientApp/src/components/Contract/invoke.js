@@ -80,7 +80,7 @@ class Contractinvoke extends React.Component{
     searchContract = callback => {
       const { t } = this.props;
       let _hash = (this.refs.sinput.input.value).trim();
-      if(!_hash){message.info(t("contract page.search input check"));return;}
+      if(!_hash){message.info(t("contract.search input check"));return;}
       axios.post('http://localhost:8081', {
           "id":"1111",
           "method": "GetContract",
@@ -92,7 +92,7 @@ class Contractinvoke extends React.Component{
         var _data = response.data;
         console.log(_data);
         if(_data.msgType === -1){
-          message.info(t("contract page.search fail"));
+          message.info(t("contract.search fail"));
           return;
         }else if(_data.msgType === 3){
           callback(_data.result.manifest.abi)
@@ -167,7 +167,7 @@ class Contractinvoke extends React.Component{
       },this.onFill());
       this.invokeContract(params,res=>{
         Modal.info({
-          title: t('contract page.invoke contract'),
+          title: t('contract.invoke contract'),
           width: 600,
           content: (
             <div className="show-pri">
@@ -192,7 +192,7 @@ class Contractinvoke extends React.Component{
         console.log(_data)
         if(_data.msgType === -1){
           Modal.error({
-            title: t('contract page.fail title'),
+            title: t('contract.fail title'),
             width: 600,
             content: (
               <div className="show-pri">
@@ -224,24 +224,24 @@ class Contractinvoke extends React.Component{
           <Col span={24}>
             
           <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
-          <Intitle content={t('contract page.invoke contract')}/>
+          <Intitle content={t('contract.invoke contract')}/>
           <Form ref="formRef" className="trans-form" onFinish={this.invoke}>
             <Row className="mt3">
               <Col span={20}>
                 <Form.Item
                   name="hash"
-                  label="ScriptHash"
+                  label={t("contract.scripthash")}
                   rules={[
                     {
                       required: true,
-                      message: t('contract page.search fail'),
+                      message: t('contract.search fail'),
                     },
                   ]}>
                   <Input ref="sinput" placeholder="Scripthash"/>
                 </Form.Item>
                 <Form.Item
                   name="method"
-                  label={t("contract page.invoke method")}
+                  label={t("contract.invoke method")}
                   rules={[
                     {
                       required: true,
@@ -250,7 +250,7 @@ class Contractinvoke extends React.Component{
                   ]}
                 >
                   <Select
-                    placeholder={t("contract page.select method")}
+                    placeholder={t("contract.select method")}
                     style={{ width: '100%'}}
                     onChange={this.showPara}>
                     {methods.map((item,index)=>{
@@ -260,7 +260,7 @@ class Contractinvoke extends React.Component{
                     })}
                   </Select>
                 </Form.Item>
-                {params[0]?<div className="param-title"><span>*</span> {t("contract page.parameters")} :</div>:null}
+                {params[0]?<div className="param-title"><span>*</span> {t("contract.parameters")} :</div>:null}
                 {params.map((item, index) => {
                   return(
                     <Form.Item
@@ -281,9 +281,9 @@ class Contractinvoke extends React.Component{
                 )}
                 <Form.Item
                   name="cosigners"
-                  label={t("contract page.cosigners")}>
+                  label={t("contract.cosigners")}>
                   <Select
-                    placeholder={t("contract page.choose account")}
+                    placeholder={t("contract.choose account")}
                     mode="tags"
                     style={{ width: '100%'}}>
                     {accounts.map((item,index)=>{
@@ -300,11 +300,11 @@ class Contractinvoke extends React.Component{
             </Row>
             <Form.Item className="text-c w200" >
               <Button type="primary"  htmlType="button" onClick={this.testInvoke}>
-               {t('contract page.test invoke')}
+               {t('button.test invoke')}
               </Button>
             </Form.Item>
             <div className="pa3 mb4">
-              <p className="mb5 bolder">{t('contract page.test result')}</p>
+              <p className="mb5 bolder">{t('contract.test result')}</p>
               <TextArea rows={3} value={this.state.tresult}/>
             </div>
             <Form.Item className="text-c w200">

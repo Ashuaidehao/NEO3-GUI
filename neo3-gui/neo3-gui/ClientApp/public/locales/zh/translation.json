@@ -1,7 +1,9 @@
 {
-	"block": "区块",
-	"time": "时间",
 	"common": {
+		"size": "大小",
+		"time": "时间",
+		"bytes": "字节",
+		"count": "数量",
         "syncing": "区块同步中",
 		"load more": "加载更多"
 	},
@@ -30,6 +32,7 @@
 		"invoke contract": "调用"
 	},
 	"blockchain": {
+		"block": "区块",
 		"blocks": "区块列表",
 		"block info": "区块信息",
 		"transactions": "交易列表",
@@ -40,7 +43,6 @@
 		"block time": "出块时间",
 		"transaction count": "交易数量",
 		"height": "高度",
-		"size": "大小",
 		"nounce": "随机数",
 		"timestamp": "时间戳",
 		"system fee": "系统费",
@@ -111,35 +113,31 @@
 		"wallet opened": "钱包文件已打开",
 		"please open wallet": "请打开钱包"
 	},
-	
+	"contract": {
+		"search contract": "搜索合约",
+		"deploy contract": "部署合约",
+		"invoke contract": "调用合约",
+		"contact detail": "合约详情",
+		"test result": "运行结果",
+		"scripthash": "合约哈希",
+		"invoke method":"调用方法",
+		"select method":"选择方法",		
+		"parameters":"参数列表",
+		"cosigners":"附加签名",
+		"choose account":"选择账户",
+		"select file": "选择文件",
+		"deploy success": "交易发送成功，请等待区块确认",
+		"please select file path": "请选择文件后再试",
+		"select {file} path title": "选择需要的{{file}}文件",
+		"search fail": "请正确输入需要查找的hash",
+		"search input check": "请输入后再试",
+		"fail title": "运行失败，请检查后再尝试"
+	},
 	
 	"input":{
 		"required":"该输入框为必填项",
 		"checked":"请确认已经输入完毕"
 	},
-	"byte": "字节",
-	"bytes": "字节",
-	"contract page": {
-		"deploy contract": "部署合约",
-		"deploy success": "交易发送成功，请等待区块确认",
-		"invoke contract": "调用合约",
-		"please select file path": "请选择文件后再试",
-		"search contract": "搜索合约",
-		"select {file} path title": "选择需要的{{file}}文件",
-		"test deploy": "试运行",
-		"test invoke": "试运行",
-		"test result": "运行结果",
-		"search fail": "请正确输入需要查找的hash",
-		"search input check": "请输入后再试",
-		"choose account":"选择账户",
-		"cosigners":"附加签名",
-		"fail title": "运行失败，请检查后再尝试",
-		"invoke method":"调用方法",
-		"select method":"选择方法",
-		"parameters":"参数列表"
-	},
-	
-	"count": "数量",
 	"error code": "错误码",
 	"error msg": "错误信息",
 	"input account": "输入账户",
@@ -149,7 +147,6 @@
 	"please select file location": "请选择文件存储位置",
 	"select": "选择",
 	"select account": "选择账户",
-	"select file": "选择文件",
 	"select path": "选择路径",
 	"show detail": "查看详情",
 	"unconfirmed transactions": "待确认交易",
@@ -184,6 +181,8 @@
 		"ok": "确认",
 		"prev": "上一步",
 		"send": "发送",
-		"search":"搜索"
+		"search":"搜索",
+		"test deploy": "试运行",
+		"test invoke": "试运行"
 	}
 }

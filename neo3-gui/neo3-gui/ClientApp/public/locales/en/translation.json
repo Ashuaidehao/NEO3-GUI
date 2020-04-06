@@ -1,7 +1,9 @@
 {
-	"block": "Block",
-	"time": "Time",
 	"common": {
+		"time": "Time",
+		"bytes": "Bytes",
+		"size": "Size",
+		"count": "Count",
 		"syncing": "Syncing",
 		"load more": "Load More"
 	},
@@ -30,6 +32,7 @@
 		"invoke contract": "Invoke"
     },
 	"blockchain": {
+		"block": "Block",
 		"blocks": "Blocks",
 		"block info": "Block Info",
 		"transactions": "Transactions",
@@ -40,7 +43,6 @@
 		"block time": "Block Time",
 		"transaction count": "TX Count",
 		"height": "Height",
-		"size": "Size",
 		"nounce": "Nounce",
 		"timestamp": "TimeStamp",
 		"system fee": "System Fee",
@@ -110,32 +112,30 @@
 		"transfer warning": "Safety tip: Do not transfer money to strangers easily.Please confirm the receiving account, transfer amount and asset type carefully.Please carefully identify assets with the same name to avoid being cheated.Do not transfer money to the receiving account (address) of other blockchain.",
 		"wallet opened": "Wallet is opened"
 	},
+	"contract": {
+		"search contract": "Search Contract",
+		"deploy contract": "Deploy Contract",
+		"invoke contract": "Invoke Contract",
+		"contact detail": "Contract Detail",
+		"test result": "Test Result",
+		"scripthash": "ScriptHash",
+		"invoke method":"Invoke method",
+		"select method":"Select method",
+		"parameters":"Parameters",
+		"cosigners":"Cosigners",
+		"choose account":"Choose account",
+		"select file": "Select file",
+		"deploy success": "Deploy successfully, please wait for confirmation",
+		"invoke fail title": "Invoke failed, please check and retry",
+		"please select file path": "Please select file path",
+		"select {file} path title": "Select {{file}} file",
+		"search fail": "Please check the hash and try again",
+		"search input check": "Please fill the hash"
+	},
 	"input":{
 		"required":"This input is required.",
 		"checked":"Please confirm all input."
 	},
-	"byte": "Byte",
-	"bytes": "Bytes",
-	"contract page": {
-		"deploy contract": "Deploy Contract",
-		"deploy success": "Deploy successfully, please wait for confirmation",
-		"invoke contract": "Invoke Contract",
-		"invoke fail title": "Invoke failed, please check and retry",
-		"please select file path": "Please select file path",
-		"search contract": "Search Contract",
-		"select {file} path title": "Select {{file}} file",
-		"test deploy": "Test Deploy",
-		"test invoke": "Test Invoke",
-		"test result": "Test Result",
-		"search fail": "Please check the hash and try again",
-		"search input check": "Please fill the hash",
-		"choose account":"Choose account",
-		"cosigners":"Cosigners",
-		"invoke method":"Invoke method",
-		"select method":"Select method",
-		"parameters":"Parameters"
-	},
-	"count": "Count",
 	"error code": "Error Code",
 	"error msg": "Error Message",
 	"input account": "Input Account",
@@ -145,7 +145,6 @@
 	"please select file location": "Please select file location",
 	"select": "Select",
 	"select account": "Select Account",
-	"select file": "Select file",
 	"show detail": "Show Detail",
 	"unconfirmed transactions": "Unconfirmed Transactions",
 
@@ -180,6 +179,8 @@
 		"ok": "OK",
 		"prev": "Prev",
 		"send": "Send",
-		"search":"Search"
+		"search":"Search",
+		"test deploy": "Test Deploy",
+		"test invoke": "Test Invoke"
 	}
 }
