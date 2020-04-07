@@ -5,7 +5,7 @@ import axios from 'axios';
 import { observer, inject } from "mobx-react";
 import { Input,
     Icon,
-    Cascader,
+    PageHeader,
     Modal,
     Select,
     Row,
@@ -224,7 +224,7 @@ class Contractinvoke extends React.Component{
           <Col span={24}>
             
           <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
-          <Intitle content={t('contract page.invoke contract')}/>
+          <PageHeader title={t('contract page.invoke contract')}></PageHeader>
           <Form ref="formRef" className="trans-form" onFinish={this.invoke}>
             <Row className="mt3">
               <Col span={20}>

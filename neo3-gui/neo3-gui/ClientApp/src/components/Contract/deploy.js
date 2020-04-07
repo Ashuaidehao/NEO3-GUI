@@ -5,7 +5,7 @@ import axios from 'axios';
 import {
   Input,
   Icon,
-  Cascader,
+  PageHeader,
   Modal,
   Select,
   Row,
@@ -181,7 +181,7 @@ class Contractdeploy extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]}>
             <Col span={24} className="bg-white pv4">
-              <Intitle content={t('contract page.deploy contract')} />
+              <PageHeader title={t('contract page.deploy contract')}></PageHeader>
               <Form ref="formRef" className="trans-form mt3" onFinish={this.ondeploy}>
                 <Form.Item
                   name="nefPath"

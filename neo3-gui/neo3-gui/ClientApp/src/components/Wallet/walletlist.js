@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { observer, inject } from "mobx-react";
 import axios from 'axios';
-import { Layout, message, Row, Col, List, Avatar, Button, Typography } from 'antd';
+import { Layout, message, Row, Col, List, Avatar, Button, Typography,PageHeader } from 'antd';
 import '../../static/css/wallet.css'
 import Sync from '../sync';
 import Intitle from '../Common/intitle'
@@ -38,21 +38,21 @@ class Walletlist extends React.Component {
       "method": "GetMyTotalBalance",
       "params": {}
     })
-      .then(function (response) {
-        var _data = response.data;
-        console.log(_data);
-        if (_data.msgType === -1) {
-          console.log("需要先打开钱包再进入页面");
-          return;
-        }
-        _this.setState({
-          assetlist: _data.result
-        })
+    .then(function (response) {
+      var _data = response.data;
+      console.log(_data);
+      if (_data.msgType === -1) {
+        console.log("需要先打开钱包再进入页面");
+        return;
+      }
+      _this.setState({
+        assetlist: _data.result
       })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   getAddress = () => {
     var _this = this;
@@ -63,19 +63,19 @@ class Walletlist extends React.Component {
         "count": 10
       }
     })
-      .then(function (response) {
-        var _data = response.data;
-        console.log(_data);
-        if (_data.msgType === -1) {
-          console.log("需要先打开钱包再进入页面");
-          return;
-        }
-        _this.props.walletStore.setAccounts(_data.result.accounts);
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (response) {
+      var _data = response.data;
+      console.log(_data);
+      if (_data.msgType === -1) {
+        console.log("需要先打开钱包再进入页面");
+        return;
+      }
+      _this.props.walletStore.setAccounts(_data.result.accounts);
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   getGas = () => {
     var _this = this;
@@ -83,21 +83,21 @@ class Walletlist extends React.Component {
       "id": 51,
       "method": "ShowGas"
     })
-      .then(function (response) {
-        var _data = response.data;
-        console.log(_data);
-        if (_data.msgType == -1) {
-          console.log("需要先打开钱包再进入页面");
-          return;
-        }
-        _this.setState({
-          gas: _data.result.unclaimedGas
-        })
+    .then(function (response) {
+      var _data = response.data;
+      console.log(_data);
+      if (_data.msgType == -1) {
+        console.log("需要先打开钱包再进入页面");
+        return;
+      }
+      _this.setState({
+        gas: _data.result.unclaimedGas
       })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   claimGas = () => {
     var _this = this;
@@ -105,19 +105,19 @@ class Walletlist extends React.Component {
       "id": 51,
       "method": "ClaimGas"
     })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          console.log("需要先打开钱包再进入页面");
-          return;
-        } else if (_data.msgType = 3) {
-          message.success("GAS 提取成功，请稍后刷新页面查看", 3);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        console.log("需要先打开钱包再进入页面");
+        return;
+      } else if (_data.msgType = 3) {
+        message.success("GAS 提取成功，请稍后刷新页面查看", 3);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   addAddress = () => {
     var _this = this;
@@ -125,18 +125,18 @@ class Walletlist extends React.Component {
       "id": "1",
       "method": "CreateAddress"
     })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          console.log("需要先打开钱包再进入页面");
-          return;
-        }
-        _this.props.walletStore.addAccount(_data.result);
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        console.log("需要先打开钱包再进入页面");
+        return;
+      }
+      _this.props.walletStore.addAccount(_data.result);
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   importPrivate = () => {
     var _this = this.state;
@@ -147,22 +147,21 @@ class Walletlist extends React.Component {
       "method": "ImportWif",
       "params": [pass]
     })
-      .then(function (res) {
-        let _data = res.data;
-        if (_data.msgType === 3) {
-          message.success("私钥打开成功", 2);
-        } else {
-          message.info("私钥输入错误", 2);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (res) {
+      let _data = res.data;
+      if (_data.msgType === 3) {
+        message.success("私钥打开成功", 2);
+      } else {
+        message.info("私钥输入错误", 2);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   render() {
     const accounts = this.props.walletStore.accountlist;
-    const walletOpen = this.props.walletStore.isOpen;
     const { assetlist } = this.state;
     const { t } = this.props;
     return (
@@ -171,7 +170,7 @@ class Walletlist extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
             <Col span={13} className="bg-white pv4">
-              <Intitle content={t("wallet page.accounts nav")} show="true" />
+              <Intitle content={t("wallet page.accounts nav")} show="true"/>
               <List
                 itemLayout="horizontal"
                 dataSource={accounts}
@@ -190,7 +189,7 @@ class Walletlist extends React.Component {
               />
             </Col>
             <Col span={10} offset={1} className="bg-white pv4">
-              <Intitle content={t("wallet page.assets")} />
+              <PageHeader title={t("wallet page.assets")} ></PageHeader>
               <List
                 className="asset-list"
                 itemLayout="horizontal"

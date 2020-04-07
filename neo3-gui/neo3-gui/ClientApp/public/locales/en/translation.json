@@ -60,7 +60,8 @@
 		"cosigners":"Cosigners",
 		"invoke method":"Invoke method",
 		"select method":"Select method",
-		"parameters":"Parameters"
+		"parameters":"Parameters",
+		"contract detail":"Contract Detail"
 	},
 	"copyright": "Copyright",
 	"count": "Count",
@@ -156,7 +157,9 @@
 	},
 	"transaction page":{
 		"confirmed":"Confirmed",
-		"unconfirmed":"Unconfirmed"
+		"unconfirmed":"Unconfirmed",
+		"state":"State",
+		"untrans":"Untransactions list"
 	},
 	"transaction list":"Transaction list",
 	"witness": "Witness"

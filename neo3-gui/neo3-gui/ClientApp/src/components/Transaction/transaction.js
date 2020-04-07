@@ -4,8 +4,7 @@ import React from 'react';
 import { observer, inject } from "mobx-react";
 import { withRouter, Link } from 'react-router-dom';
 import axios from 'axios';
-import { Layout, Row, Col, List, Button, Tag, message } from 'antd';
-import Intitle from '../Common/intitle';
+import { Layout, Row, Col, List, Button, PageHeader, message } from 'antd';
 import { withTranslation } from "react-i18next";
 
 import { SwapRightOutlined } from '@ant-design/icons';
@@ -249,9 +248,9 @@ class Transaction extends React.Component {
         <Content className="mt3 mb4">
           <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': '120px' }}>
             <Col span={24} className="bg-white pv4">
-              <Intitle content={this.props.content || t("lastest transactions")} />
+              <PageHeader title={this.props.content || t("lastest transactions")}></PageHeader>
               <List
-                header={<div><span className="succes-light">交易状态</span><span>{t("transaction hash")}</span><span className="float-r">{t("time")}</span></div>}
+                header={<div><span className="succes-light">{t("transaction page.state")}</span><span>{t("transaction hash")}</span><span className="float-r">{t("time")}</span></div>}
                 footer={<span></span>}
                 itemLayout="horizontal"
                 loading={loading}
@@ -265,7 +264,7 @@ class Transaction extends React.Component {
                     />
                     <div className="trans-detail">
                         <p>
-                          <Link className="w500 ellipsis" to={"/" + loacl + "/transaction:" + item.txId} title={t("show detail")}>{item.txId}</Link>
+                          <Link className="w500 ellipsis hash" to={"/" + loacl + "/transaction:" + item.txId} title={t("show detail")}>{item.txId}</Link>
                           <span className="float-r">{item.blockTime}</span>
                         </p>
                         {item.transfers[0]?

@@ -60,7 +60,8 @@
 		"fail title": "运行失败，请检查后再尝试",
 		"invoke method":"调用方法",
 		"select method":"选择方法",
-		"parameters":"参数列表"
+		"parameters":"参数列表",
+		"contract detail":"合约列表"
 	},
 	"copyright": "保留所有权利",
 	"count": "数量",
@@ -156,7 +157,9 @@
 	},
 	"transaction page":{
 		"confirmed":"已完成",
-		"unconfirmed":"待确认"
+		"unconfirmed":"待确认",
+		"state":"交易状态",
+		"untrans":"未确认交易"
 	},
 	"transaction list":"交易列表",
 	"witness": "见证人"

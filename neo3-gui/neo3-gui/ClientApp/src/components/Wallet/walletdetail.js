@@ -3,7 +3,7 @@
 import React from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Layout, Row, Col, Modal, List, Button, Typography, message } from 'antd';
+import { Layout, Row, Col, Modal, List, Button, Typography, message,PageHeader } from 'antd';
 import Sync from '../sync';
 import Intitle from '../Common/intitle';
 import Transaction from '../Transaction/transaction';
@@ -174,7 +174,7 @@ class Walletdetail extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]}>
             <Col span={24} className="bg-white pv4">
-              <Intitle content={t("wallet page.accounts nav")} />
+              <PageHeader title={t("wallet page.accounts nav")}></PageHeader>
               <List
                 header={<div>{address}</div>}
                 footer={<span></span>}
