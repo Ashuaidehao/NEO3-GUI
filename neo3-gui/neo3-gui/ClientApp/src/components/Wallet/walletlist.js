@@ -3,13 +3,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { observer, inject } from "mobx-react";
 import axios from 'axios';
-import { Layout, message, Row, Col, List, Avatar, Button, Typography,PageHeader } from 'antd';
+import { Layout, message, Row, Col, List, Avatar, Button, Typography,PageHeader,Modal } from 'antd';
 import '../../static/css/wallet.css'
 import Sync from '../sync';
-import Intitle from '../Common/intitle'
-import Topath from '../Common/topath';
 import { withTranslation } from "react-i18next";
 
+import {
+  PlusCircleOutlined
+} from '@ant-design/icons';
 
 const { Content } = Layout;
 
@@ -122,44 +123,64 @@ class Walletlist extends React.Component {
   addAddress = () => {
     var _this = this;
     axios.post('http://localhost:8081', {
-      "id": "1",
-      "method": "CreateAddress"
+    "id": "1",
+    "method": "CreateAddress"
     })
     .then(function (response) {
-      var _data = response.data;
-      if (_data.msgType === -1) {
+    var _data = response.data;
+    if (_data.msgType === -1) {
         console.log("需要先打开钱包再进入页面");
         return;
-      }
-      _this.props.walletStore.addAccount(_data.result);
+    }
+    message.success("钱包地址新建成功")
+    _this.props.walletStore.addAccount(_data.result);
     })
     .catch(function (error) {
-      console.log(error);
-      console.log("error");
+    console.log(error);
+    console.log("error");
     });
   }
   importPrivate = () => {
-    var _this = this.state;
-    // var pass = document.getElementById("privateKey").value;
-    // console.log(pass);
-    axios.post('http://localhost:8081', {
+      var _this = this.state;
+      var pass = document.getElementById("privateKey").value;
+      console.log(pass);
+      axios.post('http://localhost:8081', {
       "id": "20",
       "method": "ImportWif",
       "params": [pass]
-    })
-    .then(function (res) {
+      })
+      .then(function (res) {
       let _data = res.data;
       if (_data.msgType === 3) {
-        message.success("私钥打开成功", 2);
+          message.success("私钥打开成功", 2);
       } else {
-        message.info("私钥输入错误", 2);
+          message.info("私钥输入错误", 2);
       }
-    })
-    .catch(function (error) {
+      })
+      .catch(function (error) {
       console.log(error);
       console.log("error");
-    });
+      });
   }
+  showModal = () => {
+    this.setState({
+      visible: true,
+    });
+  };
+
+  handleOk = e => {
+    console.log(e);
+    this.setState({
+      visible: false,
+    });
+  };
+
+  handleCancel = e => {
+    console.log(e);
+    this.setState({
+      visible: false,
+    });
+  };
   render() {
     const accounts = this.props.walletStore.accountlist;
     const { assetlist } = this.state;
@@ -170,7 +191,20 @@ class Walletlist extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
             <Col span={13} className="bg-white pv4">
-              <Intitle content={t("wallet page.accounts nav")} show="true"/>
+              <div className="in-title">
+                <h2 className="mb0">
+                  {t("wallet page.accounts nav")}
+                  <div className="wal-import float-r">
+                      <PlusCircleOutlined className=""/>
+                      <div className="wal-ul">
+                        <ul>
+                          <li><a onClick={this.addAddress}>创建新地址</a></li>
+                          <li><a onClick={this.importPrivate}>导入私钥</a></li>
+                        </ul>
+                      </div>
+                  </div>
+                </h2>
+              </div>
               <List
                 itemLayout="horizontal"
                 dataSource={accounts}
@@ -221,6 +255,16 @@ class Walletlist extends React.Component {
           {/* <br /><br />
           <Input type="text" ref="private" placeholder="请输入WIF格式的私钥" />
           <Button onClick={this.importPrivate} className="mb1">导入私钥</Button> */}
+
+          <Modal
+            title="Vertically centered modal dialog"
+            centered
+            visible={this.state.visible}
+            onOk={() => this.handleOk}
+            onCancel={() => this.handleCancel}
+          >
+            {this.state.modalPanel}
+          </Modal>
         </Content>
       </Layout>
     );
@@ -228,3 +272,12 @@ class Walletlist extends React.Component {
 }
 
 export default Walletlist;
+
+
+const Private = () => {
+  return (
+    <div>
+      私钥打开方式
+    </div>
+  )
+};

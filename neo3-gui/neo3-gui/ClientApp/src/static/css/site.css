@@ -144,30 +144,7 @@ small,.small{
 }
 
 /* walletlist */
-.wal-import{
-    position: relative;
-    font-size: 12px;
-}
-.wal-import ul{
-    background: #FFFFFF;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
-    padding: 8px 0;
-    position: relative;
-    position: absolute;
-    right: 0;
-    z-index: 99;
-}
-.wal-import li{
-    list-style: none;
-    padding: 2px 8px;
-    min-width: 150px;
-    z-index: 100;
-    color: rgba(0, 0, 0, 0.65);
-}
-.wal-import li:hover{
-    background: rgba(232, 232, 232, 0.65);
-    color: rgba(0, 0, 0, 0.90);
-}
+
 
 .ellipsis{
     display: inline-block;

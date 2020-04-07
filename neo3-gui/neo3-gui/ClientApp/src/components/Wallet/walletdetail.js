@@ -94,7 +94,7 @@ class Walletdetail extends React.Component {
     let _this = this;
     let { t } = this.props;
     confirm({
-      title: t("wallet.delete account warning"),
+      title: t("wallet page.delete account warning"),
       icon: <CloseCircleOutlined />,
       okText: t("button.delete"),
       cancelText: t("button.cancel"),
@@ -145,7 +145,7 @@ class Walletdetail extends React.Component {
           return;
         } else {
           Modal.info({
-            title: t("wallet.private key warning"),
+            title: t("wallet page.private key warning"),
             content: (
               <div className="show-pri">
                 <p>{t("wallet page.private key")}:{_data.privateKey}</p>
