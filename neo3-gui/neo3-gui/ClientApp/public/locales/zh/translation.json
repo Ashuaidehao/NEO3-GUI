@@ -1,5 +1,28 @@
 {
-	"about": "关于",
+	"common": {
+        "syncing": "区块同步中"
+	},
+	"home": {
+        "blockchain": "区块链",
+        "wallet": "钱包",
+        "contract": "合约",
+        "advanced": "高级"
+	},
+	"sideBar":{
+        "home": "主页",
+        "logout": "登出钱包",
+        "settings": "设置",
+        "address book":"地址簿"
+	},
+	"settings":{
+		"network": "网络切换",
+		"mainnet": "主网",
+		"testnet": "测试网",
+		"language": "语言切换",
+		"about": "关于",
+		"version": "当前版本"
+	},
+	
 	"advance": "高级",
 	"amount": "金额",
 	"asset hash": "资产hash",
@@ -7,10 +30,10 @@
 	"block": "区块",
 	"blockchain": "区块链",
 	"blockchain page": {
-		"asset nav": "资产列表",
+		"asset nav": "资产",
 		"block": "区块",
 		"block info": "区块信息",
-		"blocks nav": "区块列表",
+		"blocks nav": "区块",
 		"height": "高度",
 		"last transactions": "最新交易",
 		"next block": "下一区块",
@@ -65,7 +88,6 @@
 	},
 	"copyright": "保留所有权利",
 	"count": "数量",
-	"current version": "当前版本",
 	"error code": "错误码",
 	"error msg": "错误信息",
 	"home page": "主页",
@@ -74,7 +96,6 @@
 	"language setting": "语言切换",
 	"lastest transactions": "最新交易",
 	"load more": "加载更多",
-	"mainnet": "主网",
 	"network fee": "网络费",
 	"network setting": "网络切换",
 	"official website": "官网",
@@ -89,12 +110,10 @@
 	"select account": "选择账户",
 	"select file": "选择文件",
 	"select path": "选择路径",
-	"settings": "设置",
 	"show detail": "查看详情",
 	"size": "大小",
 	"syncing": "区块同步中",
 	"system fee": "系统费",
-	"testnet": "测试网",
 	"time": "时间",
 	"timestamp": "时间戳",
 	"transaction content": "交易体",

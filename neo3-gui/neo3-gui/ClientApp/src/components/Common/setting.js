@@ -64,20 +64,20 @@ class Setting extends React.Component{
     const { t, i18n } = this.props;
     return (
       <div>
-        <h4>{t("network setting")}</h4>
+        <h4>{t("settings.network")}</h4>
         <Radio.Group name="radiogroup" defaultValue={1}>
-          <Radio value={1}>{t("mainnet")}</Radio>
-          <Radio value={2} disabled>{t("testnet")}</Radio>
+          <Radio value={1}>{t("settings.mainnet")}</Radio>
+          <Radio value={2} disabled>{t("settings.testnet")}</Radio>
         </Radio.Group>
 
-        <h4 className="mt3">{t("language setting")}</h4>
+        <h4 className="mt3">{t("settings.language")}</h4>
         <Radio.Group className="setting-ul" defaultValue={i18n.language}>
           <Radio value="zh" onClick={(e) => this.switchLang("zh")}>中文</Radio>
           <Radio value="en" onClick={(e) => this.switchLang("en")}>English</Radio>
         </Radio.Group>
 
-        <h4 className="mt3">{t("about")}</h4>
-        <p className="font-s">{t("current version")} 1.0.1</p>
+        <h4 className="mt3">{t("settings.about")}</h4>
+        <p className="font-s">{t("settings.version")} 1.0.1</p>
 
         <div className="mt1 mb3 text-c small">
             <p className="mb5 t-light">NeoGUI @ 2020 Neo-Project {t("copyright")}</p>

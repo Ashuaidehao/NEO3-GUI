@@ -72,9 +72,9 @@ class menuDown extends React.Component {
         return () =>{
             this.setState({showElem: false})
             switch(ele){
-                case 0:this.setState({title:t("address book"),children: <Addressdetail />});break;
-                case 1:this.setState({title:t("settings"),children: <Setting />});break;
-                default:this.setState({title:t("settings"),children: <Setting />});break;
+                case 0:this.setState({title:t("sideBar.address book"),children: <Addressdetail />});break;
+                case 1:this.setState({title:t("sideBar.settings"),children: <Setting />});break;
+                default:this.setState({title:t("sideBar.settings"),children: <Setting />});break;
             }
             this.setState({
                 visible: true,
@@ -96,20 +96,20 @@ class menuDown extends React.Component {
                     <li>
                         <a onClick={this.getInset(0)}>
                             <ReadOutlined />
-                            <span>{t("address book")}</span>
+                            <span>{t("sideBar.address book")}</span>
                         </a>
                     </li>):null}
                     {walletOpen ? (
                     <li>
                         <a onClick={this.logout}>
                             <LogoutOutlined />
-                            <span>{t("button.close wallet")}</span>
+                            <span>{t("sideBar.logout")}</span>
                         </a>
                     </li>) : null}
                     <li>
                         <a onClick={this.getInset(1)}>
                             <SettingOutlined />
-                            <span>{t("settings")}</span>
+                            <span>{t("sideBar.settings")}</span>
                         </a>
                     </li>
                 </ul>

@@ -47,7 +47,7 @@ class Home extends Component {
                   <div className="home-link">
                     <img className="show-img" src={blockimg} alt="img" />
                     <img className="hidden-img" src={aniblockimg} alt="img" />
-                    <span>{t("blockchain")}</span>
+                    <span>{t("home.blockchain")}</span>
                   </div>
                 </Link>
               </Col>
@@ -56,7 +56,7 @@ class Home extends Component {
                   <div className="home-link">
                     <img className="show-img" src={walletimg} alt="img" />
                     <img className="hidden-img" src={aniwalletimg} alt="img" />
-                    <span>{t("wallet page.title")}</span>
+                    <span>{t("home.wallet")}</span>
                   </div>
                 </Link>
               </Col>
@@ -65,7 +65,7 @@ class Home extends Component {
                   <div className="home-link">
                     <img className="show-img" src={contractimg} alt="img" />
                     <img className="hidden-img" src={anicontractimg} alt="img" />
-                    <span>{t("contract")}</span>
+                    <span>{t("home.contract")}</span>
                   </div>
                 </Link>
               </Col>
@@ -79,7 +79,7 @@ class Home extends Component {
                   <div className="home-link">
                     <img className="show-img" src={adavancedimg} alt="img" />
                     <img className="hidden-img" src={aniadavancedimg} alt="img" />
-                    <span>{t("advance")}</span>
+                    <span>{t("home.advanced")}</span>
                   </div>
                 </Link>
               </Col>

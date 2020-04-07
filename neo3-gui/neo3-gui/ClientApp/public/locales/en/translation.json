@@ -1,5 +1,28 @@
 {
-	"about": "About",
+	"common": {
+		"syncing": "Syncing"
+	},
+	"home": {
+        "blockchain": "Blockchain",
+        "wallet": "Wallet",
+        "contract": "Contract",
+        "advanced": "Advanced"
+	},
+	"sideBar":{
+        "home": "Home",
+        "logout": "Logout",
+        "settings": "Settings",
+        "address book":"Address"
+    },
+	"settings":{
+		"network": "Network",
+		"mainnet": "Mainnet",
+		"testnet": "Testnet",
+		"language": "Language",
+		"about": "About",
+		"version": "Current Version"
+	},
+	
 	"advance": "Advance",
 	"amount": "Amount",
 	"asset hash": "Asset Hash",
@@ -65,13 +88,11 @@
 	},
 	"copyright": "Copyright",
 	"count": "Count",
-	"current version": "Current Version",
 	"error code": "Error Code",
 	"error msg": "Error Message",
 	"home page": "Home Page",
 	"input account": "Input Account",
 	"invocation script": "Invocation Script",
-	"language setting": "Language",
 	"lastest transactions": "Lastest Transactions",
 	"load more": "Load More",
 	"mainnet": "Mainnet",
@@ -89,12 +110,9 @@
 	"select account": "Select Account",
 	"select file": "Select file",
 	"select path": "Select path",
-	"settings": "Settings",
 	"show detail": "Show Detail",
 	"size": "Size",
-	"syncing": "Syncing",
 	"system fee": "System Fee",
-	"testnet": "Testnet",
 	"time": "Time",
 	"timestamp": "Timestamp",
 	"transaction content": "Transaction",

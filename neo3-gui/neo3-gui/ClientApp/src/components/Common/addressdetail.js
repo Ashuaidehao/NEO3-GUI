@@ -42,7 +42,7 @@ class Addressdetail extends React.Component{
     const { t } = this.props;
     return (
       <div>
-        <h4>{t("address book")}</h4>
+        <h4>{t("sideBar.address book")}</h4>
         <ul className="add-mark">
         {accounts.map((item,index)=>{
           return(

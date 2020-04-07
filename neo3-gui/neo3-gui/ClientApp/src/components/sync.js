@@ -20,7 +20,7 @@ class Sync extends React.Component {
     const{t}=this.props;
     return (
       <div className="ml3 mb0">
-        <Text className="t-normal bold"> {this.props.blockSyncStore.syncHeight} / {this.props.blockSyncStore.headerHeight} {t("syncing")}</Text>
+        <Text className="t-normal bold"> {this.props.blockSyncStore.syncHeight} / {this.props.blockSyncStore.headerHeight} {t("common.syncing")}</Text>
         <SyncOutlined className="ml3" type="sync" spin/> 
       </div>
     );
