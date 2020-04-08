@@ -86,6 +86,7 @@
 			"status": "Status",
 			"confirmed":"Confirmed",
 			"unconfirmed":"Unconfirmed",
+			"pending":"Pending",
 			"content": "Transaction",
 			"log": "Notifications",
 			"transfers": "Transfers",
@@ -168,12 +169,6 @@
 	"input":{
 		"required":"This input is required.",
 		"checked":"Please confirm all input."
-	},
-	"transaction page":{
-		"confirmed":"Confirmed",
-		"unconfirmed":"Unconfirmed",
-		"state":"State",
-		"untrans":"Untransactions list"
 	},
 	"error code": "Error Code",
 	"error msg": "Error Message",

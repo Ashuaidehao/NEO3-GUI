@@ -223,7 +223,7 @@ class Walletlist extends React.Component {
               />
             </Col>
             <Col span={10} offset={1} className="bg-white pv4">
-              <Intitle content={t("wallet.assets")} />
+              <PageHeader title={t("wallet.assets")} ></PageHeader>
               <List
                 className="asset-list"
                 itemLayout="horizontal"

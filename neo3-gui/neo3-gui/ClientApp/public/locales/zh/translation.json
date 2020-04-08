@@ -23,7 +23,7 @@
 		"confirm": "确认",
 		"close wallet": "登出钱包",
 		"create wallet": "创建钱包",
-		"show private key": "显示私钥",
+		"show details": "显示私钥",
 		"delete account": "删除地址",
 		"claim": "提取",
 		"delete": "删除",
@@ -86,6 +86,7 @@
 			"status": "交易状态",
 			"confirmed":"已完成",
 			"unconfirmed":"待确认",
+			"pending":"未确认交易",
 			"content": "交易体",
 			"log": "交易日志",
 			"transfers": "转账记录",
@@ -168,12 +169,6 @@
 	"input":{
 		"required":"该输入框为必填项",
 		"checked":"请确认已经输入完毕"
-	},
-	"transaction page":{
-		"confirmed":"已完成",
-		"unconfirmed":"待确认",
-		"state":"交易状态",
-		"untrans":"未确认交易"
 	},
 	"error code": "错误码",
 	"error msg": "错误信息",
