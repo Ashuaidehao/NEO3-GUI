@@ -62,7 +62,9 @@ namespace Neo.Models
         ExecuteContractFail = 20027,
         [Description("Unknown contract. ")]
         UnknownContract = 20028,
-        [Description("Contract already onchain. ")]
+        [Description("Contract already onchain.")]
         ContractAlreadyExist = 20029,
+        [Description("Validator already exits.")]
+        ValidatorAlreadyExist = 20030,
     }
 }
