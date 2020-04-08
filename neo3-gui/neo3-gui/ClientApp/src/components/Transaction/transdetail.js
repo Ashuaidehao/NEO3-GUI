@@ -3,15 +3,12 @@ import React from 'react';
 import axios from 'axios';
 import '../../static/css/trans.css';
 import { Link } from 'react-router-dom';
-import { Layout, Row, Col, Tabs, message, Button, Divider } from 'antd';
+import { Layout, Row, Col, Tabs, message, PageHeader, Divider } from 'antd';
 import Translog from './translog';
-import Transdetail from './transdetail';
-import Intitle from '../Common/intitle';
 import Datatrans from '../Common/datatrans';
 import Sync from '../sync';
 import { SwapOutlined } from '@ant-design/icons';
 import { useTranslation, withTranslation } from "react-i18next";
-
 
 const { Content } = Layout;
 

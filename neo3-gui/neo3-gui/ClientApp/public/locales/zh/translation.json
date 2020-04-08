@@ -95,8 +95,7 @@
 			"attributes": "属性",
 			"invocation script": "调用脚本",
 			"verification script": "验证脚本"
-		}
-		
+		}	
 	},
 	"wallet": {
 		"open wallet file": "打开钱包文件",
@@ -130,6 +129,7 @@
 		"please input a account": "请填写需要转入的 NEO3 地址",
 		"please input a correct amount": "请填写正确的转账金额",
 		"please input password": "密码不可为空",
+		"please open wallet": "请先打开钱包",
 		"please select a account": "请选择要转出的地址",
 		"please select file and input password": "请选择文件及输入密码",
 		"please select file path": "请选择钱包文件的存储位置",
@@ -149,7 +149,7 @@
 		"search contract": "搜索合约",
 		"deploy contract": "部署合约",
 		"invoke contract": "调用合约",
-		"contact detail": "合约详情",
+		"contract detail": "合约详情",
 		"test result": "运行结果",
 		"scripthash": "合约哈希",
 		"invoke method":"调用方法",
@@ -168,6 +168,12 @@
 	"input":{
 		"required":"该输入框为必填项",
 		"checked":"请确认已经输入完毕"
+	},
+	"transaction page":{
+		"confirmed":"已完成",
+		"unconfirmed":"待确认",
+		"state":"交易状态",
+		"untrans":"未确认交易"
 	},
 	"error code": "错误码",
 	"error msg": "错误信息",

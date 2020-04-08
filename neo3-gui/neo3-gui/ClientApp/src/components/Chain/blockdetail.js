@@ -2,7 +2,7 @@
 //just test replace wallet//
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Layout, Row, Col, message, List, Typography } from 'antd';
+import { Layout, Row, Col, message, PageHeader, Typography } from 'antd';
 import axios from 'axios';
 import Intitle from '../Common/intitle';
 import Transaction from '../Transaction/transaction';
@@ -75,7 +75,7 @@ class Blockdetail extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]} type="flex">
             <Col span={24} className="bg-white pv4">
-              <Intitle className="mb2" content={t("blockchain.block info")} />
+              <PageHeader title={t("blockchain.block info")}></PageHeader>
               <div className="info-detail pv3">
                 <div className="f-1 pa3"><span>Hash: &nbsp;&nbsp;&nbsp;</span>{blockdetail.blockHash}</div>
                 <Row>

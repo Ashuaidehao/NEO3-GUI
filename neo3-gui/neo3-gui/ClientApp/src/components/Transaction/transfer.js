@@ -4,7 +4,7 @@ import 'antd/dist/antd.css';
 import axios from 'axios';
 import {
   Alert, Input,
-  Tooltip,
+  PageHeader,
   Icon,
   InputNumber,
   Modal,
@@ -16,7 +16,6 @@ import {
   AutoComplete,
 } from 'antd';
 import { Layout } from 'antd';
-import Intitle from '../Common/intitle'
 import '../../static/css/wallet.css'
 import { Form, DatePicker, TimePicker } from 'antd';
 import Sync from '../sync';
@@ -138,7 +137,7 @@ class Transfer extends React.Component {
           <Form ref="formRef" className="trans-form" onFinish={this.transfer}>
             <Row gutter={[30, 0]} className="bg-white pv4" style={{ 'minHeight': 'calc( 100vh - 150px )' }}>
               <Col span={24}>
-                <Intitle content={t("wallet.transfer")} />
+                <PageHeader title={t("wallet.transfer")}></PageHeader>
                 <div className="w400 mt2" style={{ 'minHeight': 'calc( 100vh - 350px )' }}>
                   <Form.Item
                     name="sender"

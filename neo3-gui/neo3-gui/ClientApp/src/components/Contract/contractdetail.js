@@ -2,7 +2,7 @@
 //just test replace wallet//
 import React from 'react';
 import {Link} from 'react-router-dom';
-import { Layout, Row, Col, message,List,Typography,Tag  } from 'antd';
+import { Layout, Row, Col, message,PageHeader,Typography,Tag  } from 'antd';
 import axios from 'axios';
 import Intitle from '../Common/intitle';
 import Transaction from '../Transaction/transaction';
@@ -63,7 +63,7 @@ class Contractdetail extends React.Component{
         <Content className="mt3">
         <Row gutter={[30, 0]} type="flex">
         <Col span={24} className="bg-white pv4">
-            <Intitle className="mb2" content="合约详情"/>
+            <PageHeader title={t('contract page.contract detail')}></PageHeader>
             <div className="info-detail pv3">
                 <div className="f-1 pa3">
                     <span>脚本散列: &nbsp;&nbsp;&nbsp;</span>{detail.contractHash} 

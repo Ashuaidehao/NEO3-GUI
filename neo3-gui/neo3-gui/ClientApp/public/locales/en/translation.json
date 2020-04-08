@@ -149,7 +149,7 @@
 		"search contract": "Search Contract",
 		"deploy contract": "Deploy Contract",
 		"invoke contract": "Invoke Contract",
-		"contact detail": "Contract Detail",
+		"contract detail": "Contract Detail",
 		"test result": "Test Result",
 		"scripthash": "ScriptHash",
 		"invoke method":"Invoke method",
@@ -169,6 +169,12 @@
 		"required":"This input is required.",
 		"checked":"Please confirm all input."
 	},
+	"transaction page":{
+		"confirmed":"Confirmed",
+		"unconfirmed":"Unconfirmed",
+		"state":"State",
+		"untrans":"Untransactions list"
+	},
 	"error code": "Error Code",
 	"error msg": "Error Message",
 	"input account": "Input Account",
@@ -177,5 +183,6 @@
 	"please input password": "Please input password",
 	"please select file location": "Please select file location",
 	"select account": "Select Account",
+	"select path": "Select Path",
 	"show detail": "Show Detail"
 }

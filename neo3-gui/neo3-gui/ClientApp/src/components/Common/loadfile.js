@@ -4,7 +4,7 @@ import 'antd/dist/antd.css';
 import axios from 'axios';
 import { Input,
     Icon,
-    Cascader,
+    PageHeader,
     Modal,
     Select,
     Row,
@@ -72,7 +72,7 @@ class Loadfile extends React.Component{
       <Content className="mt3">
       <Row gutter={[30, 0]}>
         <Col span={24} className="bg-white pv4">
-          <Intitle content="部署合约"/>
+          <PageHeader title="部署合约"></PageHeader>
           <div className="w400 mt1 pv1">
             <Form className="trans-form"  onFinish={this.out}>
             <Form.Item

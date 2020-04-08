@@ -144,6 +144,8 @@ small,.small{
 }
 
 /* walletlist */
+
+
 .ellipsis{
     display: inline-block;
     vertical-align: bottom;
@@ -363,7 +365,7 @@ small,.small{
     text-shadow: none!important;
 }
 .ant-list-footer, .ant-list-item{
-    padding: 8px 12px;
+    padding: 10px 12px;
 }
 
 .gui-container{
