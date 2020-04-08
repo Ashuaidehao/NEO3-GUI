@@ -112,6 +112,32 @@ namespace Neo
             return signContext.ToJson().SerializeJson();
         }
 
+        /// <summary>
+        /// create tx by script and signer
+        /// </summary>
+        /// <param name="wallet"></param>
+        /// <param name="script"></param>
+        /// <param name="signers"></param>
+        /// <returns></returns>
+        public static Transaction InitTransaction(this Wallet wallet, byte[] script, params UInt160[] signers)
+        {
+            var cosigners = signers.Select(account => new Cosigner { Account = account }).ToArray();
+            return InitTransaction(wallet, script, cosigners);
+        }
+
+        /// <summary>
+        /// create tx by script and signer
+        /// </summary>
+        /// <param name="wallet"></param>
+        /// <param name="script"></param>
+        /// <param name="signers"></param>
+        /// <returns></returns>
+        public static Transaction InitTransaction(this Wallet wallet, byte[] script, params Cosigner[] signers)
+        {
+            var tx = wallet.MakeTransaction(script, null, null, signers);
+            return tx;
+        }
+
 
         /// <summary>
         /// append sign to signContext
@@ -695,7 +721,7 @@ namespace Neo
             }
             try
             {
-                return Wallet.GetPrivateKeyFromWIF(privateKey); 
+                return Wallet.GetPrivateKeyFromWIF(privateKey);
             }
             catch (FormatException)
             {
