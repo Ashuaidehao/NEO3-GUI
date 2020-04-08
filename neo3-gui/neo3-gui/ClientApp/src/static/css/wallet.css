@@ -249,7 +249,7 @@ button,input{
     z-index: 99;
     display: none;
     min-width: 50px;
-    padding-top: 12px;
+    padding-top: 10px;
     text-align: left;
 }
 .wal-import ul{
@@ -262,10 +262,12 @@ button,input{
 .wal-ul li{
     list-style: none;
     padding: 2px 8px;
-    min-width: 150px;
+    min-width: 160px;
     cursor: pointer;
 }
 .wal-ul li a{
+    display: inline-block;
+    width: 100%;
     color: rgba(0, 0, 0, 0.65);
 }
 .wal-ul li:hover{

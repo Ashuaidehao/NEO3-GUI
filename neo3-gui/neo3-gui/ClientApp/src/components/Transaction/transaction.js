@@ -21,7 +21,7 @@ class Transaction extends React.Component {
       loacl: "",
       allpage: 0,
       page: 1,
-      limit: 30,
+      limit: 50,
       params: {},
       data: [],
       translist: [],

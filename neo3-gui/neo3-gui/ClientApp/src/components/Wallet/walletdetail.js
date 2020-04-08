@@ -148,7 +148,7 @@ class Walletdetail extends React.Component {
             title: t("wallet page.private key warning"),
             content: (
               <div className="show-pri">
-                <p>{t("wallet page.private key")}:{_data.privateKey}</p>
+                <p>{t("wallet page.private key")}: {_data.privateKey}</p>
                 <p>WIF：{_data.wif}</p>
                 <p>{t("wallet page.public key")}：{_data.publicKey}</p>
               </div>

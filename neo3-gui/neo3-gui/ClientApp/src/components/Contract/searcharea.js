@@ -21,11 +21,13 @@ import {
     ArrowRightOutlined,
     SearchOutlined 
   } from '@ant-design/icons';
+import { withTranslation } from "react-i18next";
 
 const { Content } = Layout;
 const {dialog} = window.remote;
 const { Search } = Input;
 
+@withTranslation()
 class Searcharea extends React.Component{
   constructor(props){
     super(props);
@@ -35,9 +37,6 @@ class Searcharea extends React.Component{
         disabled:false,
         cname:"search-content"
       };
-    }
-    componentDidMount() {
-        document.addEventListener('click', this.removeClass);
     }
     addClass = (e) =>{
         this.stopPropagation(e);
@@ -84,6 +83,7 @@ class Searcharea extends React.Component{
         });
     }
     render = () =>{
+    const { t } = this.props;
     return (
         <div className="search-area">
             <Topath topath={this.state.topath}></Topath>

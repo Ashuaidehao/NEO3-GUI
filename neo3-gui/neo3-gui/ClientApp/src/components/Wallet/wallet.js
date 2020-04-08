@@ -9,6 +9,8 @@ import axios from 'axios';
 import Walletopen from './open'
 import Walletcreate from './create'
 import Walletprivate from './private'
+import Walletencrypted from './encrypted'
+
 import Sync from '../sync';
 import { withTranslation } from "react-i18next";
 import Config from "../../config";
@@ -51,7 +53,7 @@ class Wallet extends React.Component{
         case 0:this.setState({children: <Walletopen />});break;
         case 1:this.setState({children: <Walletcreate />});break;
         case 2:this.setState({children: <Walletprivate />});break;
-        case 3:this.setState({children: <Walletopen />});break;
+        case 3:this.setState({children: <Walletencrypted />});break;
         case 4:this.setState({children: <Walletopen />});break;
         default:this.setState({showElem: true});break;
       }
@@ -80,7 +82,7 @@ class Wallet extends React.Component{
                 <Divider className="t-light">{t("wallet page.import wallet")}</Divider>
                 <Row justify="space-between">
                   <Col span={6}><Button  size="small" onClick={this.getInset(2)}>{t("wallet page.private key")}</Button></Col>
-                  <Col span={6} offset={3}><Button size="small" disabled>{t("wallet page.encrypted private key")}</Button></Col>
+                  <Col span={6} offset={3}><Button size="small" onClick={this.getInset(3)}>{t("wallet page.encrypted private key")}</Button></Col>
                   <Col span={6} offset={3}><Button size="small" disabled>{t("wallet page.mnemonic phrase")}</Button></Col>
                 </Row>
               </div>
