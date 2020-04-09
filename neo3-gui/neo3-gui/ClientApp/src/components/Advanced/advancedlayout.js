@@ -49,9 +49,9 @@ class Advancedlayout extends React.Component {
                 </span>
               }
             >
-              <Menu.Item key="1" ><Link to="/advanced">{t("blockchain page.blocks nav")}</Link></Menu.Item>
-              <Menu.Item key="2" ><Link to="/advanced/transaction">{t("blockchain page.transactions nav")}</Link></Menu.Item>
-              <Menu.Item key="3" ><Link to="/advanced/asset">{t("blockchain page.asset nav")}</Link></Menu.Item>
+              <Menu.Item key="1" ><Link to="/advanced">{t("blockchain.blocks")}</Link></Menu.Item>
+              <Menu.Item key="2" ><Link to="/advanced/transaction">{t("blockchain.transactions")}</Link></Menu.Item>
+              <Menu.Item key="3" ><Link to="/advanced/asset">{t("blockchain.assets")}</Link></Menu.Item>
             </SubMenu>
           </Menu>
           <MenuDown />

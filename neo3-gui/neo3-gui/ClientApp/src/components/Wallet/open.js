@@ -28,7 +28,7 @@ class Walletopen extends React.Component {
     var path = this.refs.path.input.value;
     var pass = this.refs.pass.input.value;
     if (!path || !pass) {
-      message.error(t("wallet page.please select file and input password"), 3);
+      message.error(t("wallet.please select file and input password"), 3);
       return;
     }
     this.setState({ iconLoading: true });
@@ -55,11 +55,11 @@ class Walletopen extends React.Component {
         if(page === 1){
           _this.props.history.push('/contract');
         }else{
-          message.success(t("wallet page.wallet opened"), 3);
+          message.success(t("wallet.wallet opened"), 3);
           _this.props.history.push('/wallet/walletlist');
         }
       } else {
-        message.info(t("wallet page.open wallet failed"), 2);
+        message.info(t("wallet.open wallet failed"), 2);
       }
     })
     .catch(function (error) {
@@ -71,7 +71,7 @@ class Walletopen extends React.Component {
     const { t } = this.props;
     var _this = this;
     dialog.showOpenDialog({
-      title: t("wallet page.open wallet file"),
+      title: t("wallet.open wallet file"),
       defaultPath: '/',
       filters: [
         {
@@ -94,7 +94,7 @@ class Walletopen extends React.Component {
             <Input placeholder={t("please select file location")} ref="path" disabled value={this.state.path} />
           </Col>
           <Col span={6}>
-            <Button type="primary" onClick={this.opendialog}>{t("select path")}</Button>
+            <Button type="primary" onClick={this.opendialog}>{t("wallet.select path")}</Button>
           </Col>
         </Row>
         <Input.Password placeholder={t("please input password")} ref="pass" maxLength={this.state.maxLength} onChange={this.checkinput} onPressEnter={this.openWallet} />

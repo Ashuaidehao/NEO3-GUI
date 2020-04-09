@@ -250,7 +250,7 @@ class Transaction extends React.Component {
             <Col span={24} className="bg-white pv4">
               <PageHeader title={this.props.content || t("lastest transactions")}></PageHeader>
               <List
-                header={<div><span className="succes-light">{t("transaction page.state")}</span><span>{t("transaction hash")}</span><span className="float-r">{t("time")}</span></div>}
+                header={<div><span className="succes-light">{t("blockchain.transaction.status")}</span><span>{t("blockchain.transaction info")}</span><span className="float-r">{t("common.time")}</span></div>}
                 footer={<span></span>}
                 itemLayout="horizontal"
                 loading={loading}
@@ -260,7 +260,7 @@ class Transaction extends React.Component {
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
-                    title={<span className="succes-light">{t('transaction page.confirmed')}</span>}
+                    title={<span className="succes-light">{t('blockchain.transaction.confirmed')}</span>}
                     />
                     <div className="trans-detail">
                         <p>

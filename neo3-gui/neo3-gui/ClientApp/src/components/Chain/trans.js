@@ -20,8 +20,8 @@ class Blocktrans extends React.Component{
       <Layout className="gui-container">
         <Sync />
         
-        <Untransaction content={t("transaction page.untrans")}/>
-        <Transaction content={t("blockchain page.last transactions")} page="all" />
+        <Untransaction content={t("blockchain.transaction.pending")}/>
+        <Transaction content={t("blockchain.transactions")} page="all" />
       </Layout>
     );
   }

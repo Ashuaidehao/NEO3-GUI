@@ -75,33 +75,33 @@ class Blockdetail extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]} type="flex">
             <Col span={24} className="bg-white pv4">
-              <PageHeader title={t("blockchain page.block info")}></PageHeader>
+              <PageHeader title={t("blockchain.block info")}></PageHeader>
               <div className="info-detail pv3">
                 <div className="f-1 pa3"><span>Hash: &nbsp;&nbsp;&nbsp;</span>{blockdetail.blockHash}</div>
                 <Row>
                   <Col span={12}>
                     <ul className="detail-ul">
-                      <li><span className="hint">{t("blockchain page.height")}:</span>{blockdetail.blockHeight}</li>
-                      <li><span className="hint">{t("timestamp")}：</span>{blockdetail.blockTime}</li>
-                      <li><span className="hint">{t("network fee")}：</span>{blockdetail.networkFee ? blockdetail.networkFee : '--'}</li>
-                      <li><span className="hint">{t("confirm count")}：</span>{blockdetail.confirmations}</li>
-                      <li><span className="hint">{t("blockchain page.prev block")}：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight - 1)} onClick={this.setHeight(blockdetail.blockHeight - 1)}>{blockdetail.blockHeight - 1}</Link></li>
+                      <li><span className="hint">{t("blockchain.height")}:</span>{blockdetail.blockHeight}</li>
+                      <li><span className="hint">{t("blockchain.timestamp")}：</span>{blockdetail.blockTime}</li>
+                      <li><span className="hint">{t("blockchain.network fee")}：</span>{blockdetail.networkFee ? blockdetail.networkFee : '--'}</li>
+                      <li><span className="hint">{t("blockchain.confirmations")}：</span>{blockdetail.confirmations}</li>
+                      <li><span className="hint">{t("blockchain.prev block")}：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight - 1)} onClick={this.setHeight(blockdetail.blockHeight - 1)}>{blockdetail.blockHeight - 1}</Link></li>
                     </ul>
                   </Col>
                   <Col span={12}>
                     <ul className="detail-ul">
-                      <li><span className="hint">{t("size")}：</span>{blockdetail.size} {t("bytes")}</li>
-                      <li><span className="hint">{t("random")}：</span>{nonce}</li>
-                      <li><span className="hint">{t("system fee")}：</span>{blockdetail.networkFee ? blockdetail.networkFee : '--'}</li>
-                      <li><span className="hint">{t("witness")}：</span>{blockdetail.nextConsensus}</li>
-                      <li><span className="hint">{t("blockchain page.next block")}：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight + 1)} onClick={this.setHeight(blockdetail.blockHeight + 1)}>{blockdetail.blockHeight + 1}</Link></li>
+                      <li><span className="hint">{t("common.size")}：</span>{blockdetail.size} {t("common.bytes")}</li>
+                      <li><span className="hint">{t("blockchain.nounce")}：</span>{nonce}</li>
+                      <li><span className="hint">{t("blockchain.system fee")}：</span>{blockdetail.networkFee ? blockdetail.networkFee : '--'}</li>
+                      <li><span className="hint">{t("blockchain.witness")}：</span>{blockdetail.nextConsensus}</li>
+                      <li><span className="hint">{t("blockchain.next block")}：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight + 1)} onClick={this.setHeight(blockdetail.blockHeight + 1)}>{blockdetail.blockHeight + 1}</Link></li>
                     </ul>
                   </Col>
                 </Row>
               </div>
             </Col>
           </Row>
-          <Transaction page="blockdetail" content={t("blockchain page.transactions nav")} />
+          <Transaction page="blockdetail" content={t("blockchain.transactions")} />
         </Content>
       </Layout>
     );

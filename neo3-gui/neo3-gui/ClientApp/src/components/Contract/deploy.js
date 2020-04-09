@@ -78,7 +78,7 @@ class Contractdeploy extends React.Component {
     str = str || "";
     this.setState({ disabled: true, isOpenDialog: true })
     dialog.showOpenDialog({
-      title: t('contract page.select {file} path title', { file: str }),
+      title: t('contract.select {file} path title', { file: str }),
       defaultPath: '/',
       filters: [
         {
@@ -113,7 +113,7 @@ class Contractdeploy extends React.Component {
         }, this.onFill());
       })
     }).catch(function () {
-      message.error(t("contract page.please select file path"));
+      message.error(t("contract.please select file path"));
     })
   }
   ondeploy = fieldsValue => {
@@ -122,7 +122,7 @@ class Contractdeploy extends React.Component {
     _params.sendTx = true;
     this.deployContract(_params, res => {
       Modal.info({
-        title: t('contract page.deploy success'),
+        title: t('contract.deploy success'),
         width: 600,
         content: (
           <div className="show-pri">
@@ -152,7 +152,7 @@ class Contractdeploy extends React.Component {
       if (_data.msgType === -1) {
         let res = _data.error;
         Modal.error({
-          title: t('contract page.fail title'),
+          title: t('contract.fail title'),
           width: 400,
           content: (
             <div className="show-pri">
@@ -181,7 +181,7 @@ class Contractdeploy extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]}>
             <Col span={24} className="bg-white pv4">
-              <PageHeader title={t('contract page.deploy contract')}></PageHeader>
+              <PageHeader title={t('contract.deploy contract')}></PageHeader>
               <Form ref="formRef" className="trans-form mt3" onFinish={this.ondeploy}>
                 <Form.Item
                   name="nefPath"
@@ -190,7 +190,7 @@ class Contractdeploy extends React.Component {
                   rules={[
                     {
                       required: true,
-                      message: t("contract page.please select file path")
+                      message: t("contract.please select file path")
                     },
                   ]}
                 >
@@ -204,7 +204,7 @@ class Contractdeploy extends React.Component {
                   rules={[
                     {
                       required: true,
-                      message: t("contract page.please select file path")
+                      message: t("contract.please select file path")
                     },
                   ]}
                 >
@@ -213,11 +213,11 @@ class Contractdeploy extends React.Component {
                 </Form.Item>
                 <Form.Item className="text-c w200" >
                   <Button type="primary" htmlType="button" onClick={this.onTest}>
-                    {t('contract page.test deploy')}
+                    {t('button.test deploy')}
                   </Button>
                 </Form.Item>
                 <div className="pa3 mb4">
-                  <p className="mb5 bolder">{t('contract page.test result')}</p>
+                  <p className="mb5 bolder">{t('contract.test result')}</p>
                   <TextArea rows={3} value={this.state.tresult} />
                 </div>
                 {/* {cost>=0?<p className="text-c small mt4 mb0">手续费：{cost} GAS</p>:null} */}

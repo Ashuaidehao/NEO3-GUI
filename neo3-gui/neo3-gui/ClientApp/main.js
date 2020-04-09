@@ -36,7 +36,6 @@ function createWindow() {
         }
     })
 
-
     // and load the index.html of the app.
     if (process.env.NODE_ENV === "development") {
         console.log("development");

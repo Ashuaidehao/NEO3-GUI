@@ -172,9 +172,9 @@ class Untransaction extends React.Component {
         <Content className="mt3 mb4">
           <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': '120px' }}>
             <Col span={24} className="bg-white pv4">
-              <PageHeader title={this.props.content || t("transaction page.untrans")}></PageHeader>
+              <PageHeader title={this.props.content || t("blockchain.transaction.pending")}></PageHeader>
               <List
-                header={<div><span className="fail-light">{t("transaction page.state")}</span><span>{t("transaction hash")}</span></div>}
+                header={<div><span className="fail-light">{t("blockchain.transaction.status")}</span><span>{t("blockchain.transaction info")}</span></div>}
                 footer={<span></span>}
                 itemLayout="horizontal"
                 loading={loading}
@@ -184,7 +184,7 @@ class Untransaction extends React.Component {
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
-                    title={<span className="fail-light">{t('transaction page.confirmed')}</span>}
+                    title={<span className="fail-light">{t('blockchain.transaction.confirmed')}</span>}
                     />
                     <div className="trans-detail">
                         <p className="hash">{item.txId}</p>

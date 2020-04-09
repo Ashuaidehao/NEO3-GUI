@@ -79,11 +79,11 @@ class Contractdetail extends React.Component{
     const { t } = this.props;
     return (
     <Layout className="gui-container">
-      <Sync/> 
-      <Content className="mt3">
-        <Row className="mb2" gutter={[30, 0]} type="flex">
-          <Col span={24} className="bg-white pv4">
-            <PageHeader title={t('contract page.contract detail')}></PageHeader>
+        <Sync/> 
+        <Content className="mt3">
+        <Row gutter={[30, 0]} type="flex">
+        <Col span={24} className="bg-white pv4">
+            <PageHeader title={t('contract.contract detail')}></PageHeader>
             <div className="info-detail pv3">
               <div className="f-1 pa3">
                 <span>脚本散列: &nbsp;&nbsp;&nbsp;</span>{detail.contractHash}

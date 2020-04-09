@@ -72,18 +72,18 @@ class Contractlayout extends React.Component {
                 title={
                   <span>
                     <FileSyncOutlined />
-                    <span>{t("wallet")}</span>
+                    <span>{t("sideBar.contract")}</span>
                   </span>
                 }
               >
                 <Menu.Item key="1">
-                  <Link to="/contract">{ t('contract page.search contract nav') }</Link>
+                  <Link to="/contract">{ t('sideBar.search contract') }</Link>
                 </Menu.Item>
                 <Menu.Item key="2">
-                  <Link to="/contract/deploy">{ t('contract page.deploy contract nav') }</Link>
+                  <Link to="/contract/deploy">{ t('sideBar.deploy contract') }</Link>
                 </Menu.Item>
                 <Menu.Item key="3">
-                  <Link to="/contract/invoke">{ t('contract page.invoke contract nav') }</Link>
+                  <Link to="/contract/invoke">{ t('sideBar.invoke contract') }</Link>
                 </Menu.Item>
               </SubMenu>
             ) : null}
@@ -94,18 +94,18 @@ class Contractlayout extends React.Component {
                 title={
                   <span>
                     <FileSyncOutlined />
-                    <span>{t("contract")}</span>
+                    <span>{t("sideBar.contract")}</span>
                   </span>
                 }
               >
                 <Menu.Item key="1">
-                  <Link to="/contract">{ t('contract page.search contract nav') }</Link>
+                  <Link to="/contract">{ t('sideBar.search contract') }</Link>
                 </Menu.Item>
                 <Menu.Item key="2">
-                  <Link to="/contract/wallet">{ t('contract page.deploy contract nav') }</Link>
+                  <Link to="/contract/wallet">{ t('sideBar.deploy contract') }</Link>
                 </Menu.Item>
                 <Menu.Item key="3">
-                  <Link to="/contract/wallet">{ t('contract page.invoke contract nav') }</Link>
+                  <Link to="/contract/wallet">{ t('sideBar.invoke contract') }</Link>
                 </Menu.Item>
               </SubMenu>
             ) : null}

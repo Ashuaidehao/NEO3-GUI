@@ -51,7 +51,7 @@ class Transfer extends React.Component {
     .then(function (response) {
       var _data = response.data;
       if (_data.msgType === -1) {
-        message.error(t("open wallet first"));
+        message.error(t("wallet.open wallet first"));
         return;
       }
       _this.setState({
@@ -98,7 +98,7 @@ class Transfer extends React.Component {
       if(_data.msgType === -1){
         let res = _data.error;
         Modal.error({
-          title: t('wallet page.transfer send error'),
+          title: t('wallet.transfer send error'),
           width: 400,
           content: (
             <div className="show-pri">
@@ -111,10 +111,10 @@ class Transfer extends React.Component {
         return;
       }else{
         Modal.info({
-          title: t('wallet page.transfer send success'),
+          title: t('wallet.transfer send success'),
           content: (
             <div className="show-pri">
-              <p>{t("transaction hash")}：{_data.result.txId}</p>
+              <p>{t("blockchain.transaction hash")}：{_data.result.txId}</p>
             </div>
           ),
           okText:"确认"
@@ -137,15 +137,15 @@ class Transfer extends React.Component {
           <Form ref="formRef" className="trans-form" onFinish={this.transfer}>
             <Row gutter={[30, 0]} className="bg-white pv4" style={{ 'minHeight': 'calc( 100vh - 150px )' }}>
               <Col span={24}>
-                <PageHeader title={t("wallet page.transfer nav")}></PageHeader>
+                <PageHeader title={t("wallet.transfer")}></PageHeader>
                 <div className="w400 mt2" style={{ 'minHeight': 'calc( 100vh - 350px )' }}>
                   <Form.Item
                     name="sender"
-                    label={t("wallet page.from address")}
+                    label={t("wallet.from")}
                     rules={[
                       {
                         required: true,
-                        message: t("wallet page.please select a account"),
+                        message: t("wallet.please select a account"),
                       },
                     ]}
                   >
@@ -163,11 +163,11 @@ class Transfer extends React.Component {
                   </Form.Item>
                   <Form.Item
                     name="receiver"
-                    label={t("wallet page.to address")}
+                    label={t("wallet.to")}
                     rules={[
                       {
                         required: true,
-                        message: t("wallet page.please input a account"),
+                        message: t("wallet.please input a account"),
                       },
                     ]}
                   >
@@ -177,28 +177,28 @@ class Transfer extends React.Component {
                     <Col span={15}>
                       <Form.Item
                         name="amount"
-                        label={t("wallet page.transfer amount")}
+                        label={t("wallet.amount")}
                         rules={[
                           {
                             required: true,
-                            message: t("wallet page.please input a correct amount"),
+                            message: t("wallet.please input a correct amount"),
                           },
                         ]}>
-                        <InputNumber min={0} step={1} placeholder={t("wallet page.transfer amount")} />
+                        <InputNumber min={0} step={1} placeholder={t("wallet.amount")} />
                       </Form.Item>
                     </Col>
                     <Col span={9}>
                       <Form.Item
                         name="asset"
-                        label={t("wallet page.transfer asset")}
+                        label={t("wallet.asset")}
                         rules={[
                           {
                             required: true,
-                            message: t("wallet page.required"),
+                            message: t("wallet.required"),
                           },
                         ]}>
                         <Select
-                          placeholder={t("select")}
+                          placeholder={t("wallet.select")}
                           style={{ width: '100%' }}
                         >
                           {selectadd.map((item, index) => {
@@ -211,7 +211,7 @@ class Transfer extends React.Component {
                     </Col>
                   </Row>
                   <div className="text-c lighter">
-                        <small>{t("wallet page.estimated time")}：20s  &nbsp;&nbsp;<i> ({ t('wallet page.fee') } 1 GAS)</i></small>
+                        <small>{t("wallet.estimated time")}：20s  &nbsp;&nbsp;<i> ({ t('wallet.fee') } 1 GAS)</i></small>
                   </div>
                   <Form.Item>
                     <Button type="primary" htmlType="submit" loading={this.state.iconLoading}>
@@ -223,7 +223,7 @@ class Transfer extends React.Component {
                   className="mt2 mb4"
                   showIcon
                   type="info"
-                  message={t("wallet page.transfer warning")}
+                  message={t("wallet.transfer warning")}
                 />
               </Col>
             </Row>
