@@ -268,6 +268,25 @@ namespace Neo.Services.ApiServices
             });
         }
 
+
+        /// <summary>
+        /// list current wallet candidate address(only single sign address)
+        /// </summary>
+        /// <returns></returns>
+        public async Task<object> ListCandidatePublicKey(int count = 100)
+        {
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            var accounts = CurrentWallet.GetAccounts().Where(a => !a.WatchOnly && a.Contract.Script.IsSignatureContract()).Take(count).ToList();
+            return accounts.Select(a => new PublicKeyModel
+            {
+                Address = a.Address,
+                PublicKey = a.GetKey().PublicKey.EncodePoint(true),
+            });
+        }
+
         /// <summary>
         /// import watch only addresses
         /// </summary>
