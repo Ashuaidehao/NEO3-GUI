@@ -5,6 +5,20 @@ body{
     line-height: 22px;
     overflow: hidden;
 }
+.ant-layout.ant-layout-has-sider > .ant-layout::-webkit-scrollbar,
+.ant-layout.ant-layout-has-sider > .ant-layout-content::-webkit-scrollbar{
+    height: 10px;
+    width: 10px;
+    background:transparent;
+}
+.ant-layout.ant-layout-has-sider > .ant-layout::-webkit-scrollbar-thumb,
+.ant-layout.ant-layout-has-sider > .ant-layout-content::-webkit-scrollbar-thumb{
+    height: 10px;
+    width: 10px;
+    background:rgba(0, 0, 0, .15);
+    border-radius: 10px;
+}
+
 a{
     color: #333333;
 }

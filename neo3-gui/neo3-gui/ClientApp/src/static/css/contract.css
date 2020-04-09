@@ -2,18 +2,20 @@
     position: relative;
 }
 .search-area{
-    width: calc( 100vw - 250px);
+    width: calc( 100% + 20px);
     background: rgba(255, 255, 255, 0.404);
     position: absolute;
     height: 0;
-    top: 120px;
-    margin-left: -25px;
+    top: 54px;
+    margin-left: -10px;
 }
 .search-content{
     position: relative;
     overflow: hidden;
-    height: 200px;
     animation: test1 forwards .3s;
+}
+.height-sea{
+    height: 80px;
 }
 .search-btn{
     padding-right: 35px;

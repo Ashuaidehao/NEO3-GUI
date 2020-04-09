@@ -2,7 +2,7 @@
 import React from 'react';
 import 'antd/dist/antd.css';
 import axios from 'axios';
-import { Input, message } from 'antd';
+import { Input,message} from 'antd';
 import Topath from '../Common/topath';
 import {
     ArrowRightOutlined,
@@ -11,7 +11,7 @@ import {
 import { withTranslation } from "react-i18next";
 
 @withTranslation()
-class Searcharea extends React.Component{
+class Chainsearch extends React.Component{
   constructor(props){
     super(props);
     this.state = {
@@ -43,29 +43,30 @@ class Searcharea extends React.Component{
       }),500)
     }
     stopPropagation(e) {
-      e.nativeEvent.stopImmediatePropagation();
+        e.nativeEvent.stopImmediatePropagation();
     }
-    searchContract = () => {
-      
+    searchChain = () => {
       const { t } = this.props;
-      let _hash = (this.refs.sinput.input.value).trim();
-      if(!_hash){message.info(t('search.check again'));return;}
-      var _this = this;
+      let _this = this;
+      
+      let _height = Number((this.refs.sinput.input.value).trim());
+      if(!_height){message.info(t('search.check again'));return;}
+
       axios.post('http://localhost:8081', {
-          "id":"1111",
-          "method": "GetContract",
-          "params": {
-              "contractHash":_hash
-          }
+        "id": "1111",
+        "method": "GetBlock",
+        "params": {
+          "index": _height
+        }
       })
       .then(function (response) {
         var _data = response.data;
-        console.log(_data);
-        if(_data.msgType === -1){
-          message.info(t('search.hash unexist'));
+        console.log(_data)
+        if (_data.msgType === -1) {
+          message.info(t('blockchain.height unexist'));
           return;
-        }else if(_data.msgType === 3){
-          _this.setState({topath:"/contract/detail:"+_hash});
+        }else{
+          _this.setState({topath:"/chain/detail:"+_height});
         }
       })
       .catch(function (error) {
@@ -84,11 +85,10 @@ class Searcharea extends React.Component{
             <div className={this.state.cname}>
                 <div className="search-detail" ref="sarea" onClick={this.stopPropagation}>
                     <Input
-                    placeholder={t("search.hash-hint")}
-                    onPressEnter={this.searchContract}
+                    placeholder={t("search.chain-hint")}
+                    onPressEnter={this.searchChain}
                     ref="sinput"
-                    defaultValue="0x8c23f196d8a1bfd103a9dcb1f9ccf0c611377d3b"
-                    suffix={<ArrowRightOutlined onClick={this.searchContract}/>}
+                    suffix={<ArrowRightOutlined onClick={this.searchChain}/>}
                     />
                 </div>
             </div>
@@ -97,4 +97,4 @@ class Searcharea extends React.Component{
   }
 } 
 
-export default Searcharea;
+export default Chainsearch;

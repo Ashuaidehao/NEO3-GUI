@@ -146,7 +146,10 @@
 		"transfer send error":"Send failed, please try again later",
 		"transfer warning": "Safety tip: Do not transfer money to strangers easily.Please confirm the receiving account, transfer amount and asset type carefully.Please carefully identify assets with the same name to avoid being cheated.Do not transfer money to the receiving account (address) of other blockchain.",
 		"wallet opened": "Wallet is opened",
-		"open wallet first": "Please open wallet"
+		"open wallet first": "Please open wallet",
+		"private fail": "Private key error, please checked and try again",
+		"encryred fail": "Encryred key error, please checked and try again",
+		"please input twice": "Please confirm password twice"
 	},
 	"contract": {
 		"search contract": "Search Contract",
@@ -179,6 +182,13 @@
 	"input":{
 		"required":"This input is required.",
 		"checked":"Please confirm all input."
+	},
+	"search":{
+		"hash-hint":"Pelese input hash",
+		"chain-hint":"Pelese input height",
+		"height unexist":"The height not exist,please check again",
+		"hash unexist":"The hash not exist,please check again",
+		"check again":"Please check input"
 	},
 	"error code": "Error Code",
 	"error msg": "Error Message",

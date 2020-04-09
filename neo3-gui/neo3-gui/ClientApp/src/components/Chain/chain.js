@@ -4,11 +4,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Layout, Row, Col, List, Typography, message, Button,PageHeader } from 'antd';
 import axios from 'axios';
-import Intitle from '../Common/intitle';
+import Chainsearch from './searcharea';
 import Sync from '../sync'
 import { withTranslation } from 'react-i18next';
-import Config from "../../config";
 
+import '../../static/css/contract.css'
 
 
 const { Content } = Layout;
@@ -23,6 +23,8 @@ class Chain extends React.Component {
       initLoading: true,
       data: [],
       blocklist: [],
+      visible: false,
+      show: false
     };
   }
   componentDidMount() {
@@ -83,6 +85,11 @@ class Chain extends React.Component {
       );
     });
   }
+  show = (e) => {
+    return () => {
+      console.log(this.state.show)
+    }
+  }
   render() {
     const { t } = this.props;
     const { initLoading, loading, blocklist } = this.state;
@@ -96,7 +103,7 @@ class Chain extends React.Component {
       <Layout className="gui-container">
         <Sync />
         <Content className="mt3">
-          <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
+          <Row gutter={[30, 0]} style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
             <Col span={24} className="bg-white pv4">
               <PageHeader title={t("blockchain.blocks")}></PageHeader>
               <List
@@ -119,8 +126,9 @@ class Chain extends React.Component {
                 )}
               />
             </Col>
+          <Chainsearch show={this.show()} />
           </Row>
-          <div className="pv1"></div>
+          <div className="pv2"></div>
         </Content>
       </Layout>
     );

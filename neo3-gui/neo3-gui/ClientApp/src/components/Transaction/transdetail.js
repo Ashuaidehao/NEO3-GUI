@@ -137,6 +137,8 @@ const Detail = ({ hashdetail }) => {
 const Translist = ({ transfers }) => {
   const { t } = useTranslation();
   return (
+    <div>
+    {transfers.length > 0 ? (
     <Row>
       <Col span={24}>
         <div className="hash-title pa3 mt4 mb3">{t("blockchain.transaction.transfers")}</div>
@@ -151,6 +153,8 @@ const Translist = ({ transfers }) => {
         })}
       </Col>
     </Row>
+    ):null}
+    </div>
   )
 };
 const Attrlist = ({ attributes }) => {

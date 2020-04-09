@@ -3,7 +3,6 @@ import React from 'react';
 import 'antd/dist/antd.css';
 import axios from 'axios';
 import { message, Input, Row, Col, Button } from 'antd';
-import Topath from '../Common/topath';
 import { walletStore } from "../../store/stores";
 import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";

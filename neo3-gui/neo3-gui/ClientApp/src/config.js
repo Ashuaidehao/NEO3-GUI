@@ -7,6 +7,4 @@ class Config{
 
 const config=new Config();
 
-console.log("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn")
-
 export default config;

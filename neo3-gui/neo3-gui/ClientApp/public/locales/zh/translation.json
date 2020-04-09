@@ -146,7 +146,10 @@
 		"transfer send error":"交易发送失败,请检查后再试",
 		"transfer warning": "安全提示：请勿轻易向陌生人转账。请仔细确认收款账户、转账金额、资产类型。请仔细辨别相同资产名称的资产，避免被骗。请勿向其它区块链的收款账户（地址）转账。",
 		"wallet opened": "钱包文件已打开",
-		"open wallet first": "请先打开钱包"
+		"open wallet first": "请先打开钱包",
+		"private fail": "私钥输入错误,请检查后输入",
+		"encryred fail": "加密私钥输入错误,请检查后输入",
+		"please input twice": "确认密码不可为空"
 	},
 	"contract": {
 		"search contract": "搜索合约",
@@ -179,6 +182,13 @@
 	"input":{
 		"required":"该输入框为必填项",
 		"checked":"请确认已经输入完毕"
+	},
+	"search":{
+		"hash-hint":"输入需要查找的脚本散列",
+		"chain-hint":"输入需要查找的 height",
+		"height unexist":"该高度不存在，请查证后再输入",
+		"hash unexist":"该高度hash不存在，请查证后再输入",
+		"check again":"请检查输入是否正确"
 	},
 	"error code": "错误码",
 	"error msg": "错误信息",
