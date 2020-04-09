@@ -83,6 +83,7 @@
 		"precision": "Precision",
 		"lastest transactions": "Lastest Transactions",
 		"unconfirmed transactions": "Unconfirmed Transactions",
+		"height unexist":"Pelese check the height later",
 		"transaction":{
 			"status": "Status",
 			"confirmed":"Confirmed",

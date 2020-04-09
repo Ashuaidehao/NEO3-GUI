@@ -43,8 +43,8 @@ class Contractdetail extends React.Component{
       this.setState({
         hash:_hash,
         detail:res,
-        storage:res.manifest.features.storage,
-        payable:res.manifest.features.payable,
+        storage:res.hasStorage,
+        payable:res.payable,
         mainarr:_mainarr,
         methodarr:_methodarr,
         eventarr:_eventarr

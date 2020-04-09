@@ -19,7 +19,6 @@ class Blockdetail extends React.Component {
     this.state = {
       blockdetail: {},
       height: 0,
-      witness: "",
       nonce: 0,
     };
   }
@@ -30,8 +29,8 @@ class Blockdetail extends React.Component {
       local: location.pathname
     })
   }
-  getAllblock = () => {
-    var _this = this;
+  getAllblock = callback => {
+    const { t } = this.props;
     let _height = this.state.height;
     axios.post('http://localhost:8081', {
       "id": "1111",
@@ -40,35 +39,36 @@ class Blockdetail extends React.Component {
         "index": _height
       }
     })
-      .then(function (response) {
-        var _data = response.data;
-        console.log(_data);
-        if (_data.msgType === -1) {
-          message.info("请稍后再查询该高度");
-          return;
-        }
-        _this.setState({
-          blockdetail: _data.result,
-          witness: _data.result.witness.scriptHash,
-          nonce: _data.result.consensusData.nonce,
-          translist: _data.result.transactions
-        })
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        message.info(t('blockchain.height unexist'));
+        return;
+      }else{
+        callback(_data);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   setHeight = (h) => {
     return () => {
-      this.setState({
-        height: h
-      }, () => this.getAllblock());
+      this.setState({height: h},() => this.getAllblock(res =>{
+        this.setState({
+          blockdetail: res.result,
+          witness: res.result.witness.scriptHash,
+          nonce: res.result.consensusData.nonce,
+          translist: res.result.transactions
+        })
+      })
+      );
     }
   }
   render() {
     const { t } = this.props;
-    const { blockdetail, witness, nonce } = this.state;
+    const { blockdetail, nonce } = this.state;
     return (
       <Layout className="gui-container">
         <Sync />
@@ -78,6 +78,7 @@ class Blockdetail extends React.Component {
               <PageHeader title={t("blockchain.block info")}></PageHeader>
               <div className="info-detail pv3">
                 <div className="f-1 pa3"><span>Hash: &nbsp;&nbsp;&nbsp;</span>{blockdetail.blockHash}</div>
+                {blockdetail.blockHash?
                 <Row>
                   <Col span={12}>
                     <ul className="detail-ul">
@@ -97,7 +98,7 @@ class Blockdetail extends React.Component {
                       <li><span className="hint">{t("blockchain.next block")}：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight + 1)} onClick={this.setHeight(blockdetail.blockHeight + 1)}>{blockdetail.blockHeight + 1}</Link></li>
                     </ul>
                   </Col>
-                </Row>
+                </Row>:null}
               </div>
             </Col>
           </Row>

@@ -83,6 +83,7 @@
 		"precision": "精度",
 		"last transactions": "最新交易",
 		"unconfirmed transactions": "待确认交易",
+		"height unexist":"请稍后再查询该高度",
 		"transaction":{
 			"status": "交易状态",
 			"confirmed":"已完成",
