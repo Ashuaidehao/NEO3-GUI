@@ -52,6 +52,7 @@ class Contractdetail extends React.Component{
     })
   }
   contractDetail = (hash,callback) => {
+    const {t}=this.props;
     axios.post('http://localhost:8081', {
         "id":"1111",
         "method": "GetContract",
@@ -61,9 +62,8 @@ class Contractdetail extends React.Component{
     })
     .then(function (response) {
       var _data = response.data;
-      console.log(_data);
       if(_data.msgType === -1){
-        message.info("该hash不存在，请检查后再尝试");
+        message.info(t("contract.hash fail"));
         return;
       }else if(_data.msgType === 3){
         callback(_data.result)
@@ -73,7 +73,7 @@ class Contractdetail extends React.Component{
       console.log(error);
       console.log("error");
     });
-}
+  }
   render(){
     const {detail,mainarr,methodarr,eventarr,storage,payable} = this.state;
     const { t } = this.props;
@@ -81,19 +81,19 @@ class Contractdetail extends React.Component{
     <Layout className="gui-container">
         <Sync/> 
         <Content className="mt3">
-        <Row gutter={[30, 0]} type="flex">
+        <Row className="mb2" gutter={[30, 0]} type="flex">
         <Col span={24} className="bg-white pv4">
             <PageHeader title={t('contract.contract detail')}></PageHeader>
             <div className="info-detail pv3">
               <div className="f-1 pa3">
-                <span>脚本散列: &nbsp;&nbsp;&nbsp;</span>{detail.contractHash}
+                <span>{t('contract.script-hash')}: &nbsp;&nbsp;&nbsp;</span>{detail.contractHash}
                 {storage?<Tag className="ml3 ant-tag-green">storage</Tag>:null}
                 {payable?<Tag className="ml3 ant-tag-green">payable</Tag>:null}
               </div>
               <Row>
                 <Col span={12}>
                   <ul className="detail-ul">
-                    <li><span className="hint">合约ID：</span>{detail.contractId}</li>
+                    <li><span className="hint">{t('common.contract')} ID：</span>{detail.contractId}</li>
                   </ul>
                 </Col>
               </Row>
@@ -102,11 +102,11 @@ class Contractdetail extends React.Component{
               dataSource={mainarr}
               pagination={false}
               bordered={true}
-              title={() => "入口"}
+              title={() => t('contract.main')}
             >
-              <Column title="名称" dataIndex="name" key="name" width={150}/>
+              <Column title={t('contract.name')} dataIndex="name" key="name" width={150}/>
               <Column
-                title="参数"
+                title={t('contract.para')}
                 dataIndex="parameters"
                 key="parameters"
                 render={parameters => (
@@ -115,7 +115,7 @@ class Contractdetail extends React.Component{
                   ))
                 )}
               />
-              <Column title="返回值" dataIndex="returnType" key="returnType" width={100}
+              <Column title={t('contract.return')} dataIndex="returnType" key="returnType" width={100}
                 render = {returnType =>(
                   returnType?<span className="para-tag">{returnType}</span>:null
                 )}
@@ -126,11 +126,11 @@ class Contractdetail extends React.Component{
               dataSource={methodarr}
               pagination={false}
               bordered={true}
-              title={() => "方法"}
+              title={() => t('contract.method')}
             >
-              <Column title="名称" dataIndex="name" key="name" width={150}/>
+              <Column title={t('contract.name')} dataIndex="name" key="name" width={150}/>
               <Column
-                title="参数"
+                title={t('contract.para')}
                 dataIndex="parameters"
                 key="parameters"
                 render={(parameters,index) => (
@@ -139,7 +139,7 @@ class Contractdetail extends React.Component{
                   ))
                 )}
               />
-              <Column title="返回值" dataIndex="returnType" key="returnType" width={100}
+              <Column title={t('contract.return')} dataIndex="returnType" key="returnType" width={100}
                 render = {returnType =>(
                   returnType?<span className="para-tag">{returnType}</span>:null
                 )}
@@ -150,11 +150,11 @@ class Contractdetail extends React.Component{
               dataSource={eventarr}
               pagination={false}
               bordered={true}
-              title={() => "通知"}
+              title={() => t('contract.notify')}
             >
-              <Column title="名称" dataIndex="name" key="name" width={150}/>
+              <Column title={t('contract.name')} dataIndex="name" key="name" width={150}/>
               <Column
-                title="参数"
+                title={t('contract.para')}
                 dataIndex="parameters"
                 key="parameters"
                 render={(parameters,index) => (
@@ -163,7 +163,7 @@ class Contractdetail extends React.Component{
                   ))
                 )}
               />
-              <Column title="返回值" dataIndex="returnType" key="returnType" width={100}
+              <Column title={t('contract.return')} dataIndex="returnType" key="returnType" width={100}
                 render = {returnType =>(
                   returnType?<span className="para-tag">{returnType}</span>:null
                 )}

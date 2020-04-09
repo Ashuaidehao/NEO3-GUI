@@ -5,7 +5,8 @@
 		"size": "Size",
 		"count": "Count",
 		"syncing": "Syncing",
-		"load more": "Load More"
+		"load more": "Load More",
+        "contract": "Contract"
 	},
 	"settings":{
 		"network": "Network",
@@ -164,7 +165,15 @@
 		"please select file path": "Please select file path",
 		"select {file} path title": "Select {{file}} file",
 		"search fail": "Please check the hash and try again",
-		"search input check": "Please fill the hash"
+		"search input check": "Please fill the hash",
+		"hash fail":"Hash not exist,please check and try again",
+		"main": "Entrance",
+		"method": "Method",
+		"notify": "Notify",
+		"name": "Name",
+		"para": "Parameter",
+		"return": "Return Type",
+		"script-hash":"Script Hash"
 	},
 	"input":{
 		"required":"This input is required.",

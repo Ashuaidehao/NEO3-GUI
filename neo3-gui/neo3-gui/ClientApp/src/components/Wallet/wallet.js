@@ -82,7 +82,7 @@ class Wallet extends React.Component{
                 <Divider className="t-light">{t("wallet.import wallet")}</Divider>
                 <Row justify="space-between">
                   <Col span={6}><Button  size="small" onClick={this.getInset(2)}>{t("wallet.private key")}</Button></Col>
-                  <Col span={6} offset={3}><Button size="small" disabled>{t("wallet.Nep2 key")}</Button></Col>
+                  <Col span={6} offset={3}><Button size="small" onClick={this.getInset(3)}>{t("wallet.Nep2 key")}</Button></Col>
                   <Col span={6} offset={3}><Button size="small" disabled>{t("wallet.mnemonic")}</Button></Col>
                 </Row>
               </div>

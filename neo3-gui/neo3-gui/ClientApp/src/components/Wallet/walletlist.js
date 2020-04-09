@@ -190,7 +190,7 @@ class Walletlist extends React.Component {
       <Layout className="gui-container">
         <Sync />
         <Content className="mt3">
-          <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
+          <Row className="mb2" gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
             <Col span={13} className="bg-white pv4">
               <div className="in-title">
                 <h2 className="mb0">

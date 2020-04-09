@@ -5,7 +5,8 @@
 		"bytes": "字节",
 		"count": "数量",
         "syncing": "区块同步中",
-		"load more": "加载更多"
+		"load more": "加载更多",
+        "contract": "合约"
 	},
 	"settings":{
 		"network": "网络切换",
@@ -164,7 +165,15 @@
 		"select {file} path title": "选择需要的{{file}}文件",
 		"search fail": "请正确输入需要查找的hash",
 		"search input check": "请输入后再试",
-		"fail title": "运行失败，请检查后再尝试"
+		"fail title": "运行失败，请检查后再尝试",
+		"hash fail":"该hash不存在，请检查后再尝试",
+		"main": "入口",
+		"method": "方法",
+		"notify": "通知",
+		"name": "名称",
+		"para": "参数",
+		"return": "返回值",
+		"script-hash":"脚本散列"
 	},
 	"input":{
 		"required":"该输入框为必填项",
