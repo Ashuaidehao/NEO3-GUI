@@ -73,7 +73,7 @@ class Assetdetail extends React.Component{
       <Layout className="gui-container">
           <Sync/>
           <Content className="mt3">
-          <Transaction content={t("transaction list")} page="assetdetail"/>
+          <Transaction content={t("blockchain.transactions")} page="assetdetail"/>
         </Content>
       </Layout>
     );

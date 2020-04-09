@@ -46,7 +46,7 @@ namespace Neo.Services.ApiServices
             model.Transfers = trans.Select(tx => tx.ToTransferModel()).ToList();
 
             var executeResult = db.GetExecuteLog(txId);
-            if (executeResult.Notifications.NotEmpty())
+            if (executeResult?.Notifications.NotEmpty() == true)
             {
                 model.Notifies.AddRange(
                     executeResult.Notifications.Select(n => new NotifyModel()
@@ -103,7 +103,7 @@ namespace Neo.Services.ApiServices
         }
 
 
-    
+
 
         /// <summary>
         /// query all nep transactions(on chain)

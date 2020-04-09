@@ -89,7 +89,7 @@ class Chain extends React.Component {
     const loadMore =
       !initLoading && !loading ? (
         <div className="text-c mb3">
-          <Button type="primary" onClick={this.loadMore}>{t("load more")}</Button>
+          <Button type="primary" onClick={this.loadMore}>{t("common.load more")}</Button>
         </div>
       ) : null;
     return (
@@ -98,9 +98,9 @@ class Chain extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
             <Col span={24} className="bg-white pv4">
-              <PageHeader title={t("blockchain page.blocks nav")}></PageHeader>
+              <PageHeader title={t("blockchain.blocks")}></PageHeader>
               <List
-                header={<div><span>{t("blockchain page.block info")}</span><span className="float-r ml4"><span className="wa-amount">{t("blockchain page.transaction count")}</span></span><span className="float-r">{t("blockchain page.update time")}</span></div>}
+                header={<div><span>{t("blockchain.block info")}</span><span className="float-r ml4"><span className="wa-amount">{t("blockchain.transaction count")}</span></span><span className="float-r">{t("blockchain.block time")}</span></div>}
                 footer={<span></span>}
                 itemLayout="horizontal"
                 loading={initLoading}

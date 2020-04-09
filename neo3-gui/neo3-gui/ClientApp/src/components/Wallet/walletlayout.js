@@ -47,7 +47,7 @@ class Walletlayout extends React.Component {
       .then(function (response) {
         var _data = response.data;
         if (_data.msgType === -1) {
-          message.info(t("wallet page.please open wallet"), 2);
+          message.info(t("wallet.please open wallet"), 2);
           _this.setState({ topath: "/wallet" });
           return;
         }
@@ -83,18 +83,18 @@ class Walletlayout extends React.Component {
                 title={
                   <span>
                     <WalletOutlined />
-                    <span>{t("wallet")}</span>
+                    <span>{t("sideBar.wallet")}</span>
                   </span>
                 }
               >
                 <Menu.Item key="1">
-                  <Link to="/wallet/walletlist">{t("wallet page.accounts nav")}</Link>
+                  <Link to="/wallet/walletlist">{t("sideBar.accounts")}</Link>
                 </Menu.Item>
                 <Menu.Item key="2">
-                  <Link to="/wallet/transaction">{t("wallet page.transactions nav")}</Link>
+                  <Link to="/wallet/transaction">{t("sideBar.transaction Records")}</Link>
                 </Menu.Item>
                 <Menu.Item key="3">
-                  <Link to="/wallet/transfer">{t("wallet page.transfer nav")}</Link>
+                  <Link to="/wallet/transfer">{t("sideBar.transfer")}</Link>
                 </Menu.Item>
               </SubMenu>
             ) : null}
@@ -104,17 +104,17 @@ class Walletlayout extends React.Component {
                 title={
                   <span>
                     <WalletOutlined />
-                    <span>{t("wallet")}</span>
+                    <span>{t("sideBar.wallet")}</span>
                   </span>
                 }>
                 <Menu.Item key="1">
-                  <Link to="/wallet">{t("wallet page.accounts nav")}</Link>
+                  <Link to="/wallet">{t("sideBar.accounts")}</Link>
                 </Menu.Item>
                 <Menu.Item key="2">
-                  <Link to="/wallet">{t("wallet page.transactions nav")}</Link>
+                  <Link to="/wallet">{t("sideBar.transaction Records")}</Link>
                 </Menu.Item>
                 <Menu.Item key="3">
-                  <Link to="/wallet">{t("wallet page.transfer nav")}</Link>
+                  <Link to="/wallet">{t("sideBar.transfer")}</Link>
                 </Menu.Item>
               </SubMenu>
             ) : null}

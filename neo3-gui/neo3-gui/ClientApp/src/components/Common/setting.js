@@ -80,10 +80,10 @@ class Setting extends React.Component{
         <p className="font-s">{t("settings.version")} 1.0.1</p>
 
         <div className="mt1 mb3 text-c small">
-            <p className="mb5 t-light">NeoGUI @ 2020 Neo-Project {t("copyright")}</p>
+            <p className="mb5 t-light">NeoGUI @ 2020 Neo-Project {t("settings.copyright")}</p>
             <p>
-                <a className="mr3 t-green" onClick={this.openUrl("https://github.com/neo-ngd/Neo3-GUI/issues")}>{t("report issues")}</a>
-                <a className="t-green" onClick={this.openUrl("https://neo.org/")}>Neo{t("official website")}</a>
+                <a className="mr3 t-green" onClick={this.openUrl("https://github.com/neo-ngd/Neo3-GUI/issues")}>{t("settings.report issues")}</a>
+                <a className="t-green" onClick={this.openUrl("https://neo.org/")}>Neo{t("settings.website")}</a>
             </p>
         </div>
       </div>

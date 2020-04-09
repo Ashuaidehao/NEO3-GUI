@@ -193,7 +193,7 @@ class Walletlist extends React.Component {
             <Col span={13} className="bg-white pv4">
               <div className="in-title">
                 <h2 className="mb0">
-                  {t("wallet page.accounts nav")}
+                  {t("wallet.accounts")}
                   <div className="wal-import float-r">
                       <PlusCircleOutlined className=""/>
                       <div className="wal-ul">
@@ -211,7 +211,7 @@ class Walletlist extends React.Component {
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
-                      title={<Link to={"/wallet/walletlist:" + item.address} title={t("wallet page.show detail")}>{item.address}</Link>}
+                      title={<Link to={"/wallet/walletlist:" + item.address} title={t("wallet.show detail")}>{item.address}</Link>}
                       description={
                         <span className="f-s">
                           <span className="mr2">NEO {item.neo}</span>
@@ -223,19 +223,19 @@ class Walletlist extends React.Component {
               />
             </Col>
             <Col span={10} offset={1} className="bg-white pv4">
-              <PageHeader title={t("wallet page.assets")} ></PageHeader>
+              <PageHeader title={t("wallet.assets")} ></PageHeader>
               <List
                 className="asset-list"
                 itemLayout="horizontal"
                 style={{ 'minHeight': 'calc( 100% - 135px )' }}
                 dataSource={assetlist}
-                header={<div><span>{t("asset hash")} <small></small></span><span className="float-r wa-amount">{t("wallet page.balance")}</span></div>}
+                header={<div><span>{t("blockchain.asset info")} <small></small></span><span className="float-r wa-amount">{t("wallet.balance")}</span></div>}
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
                       avatar={
                         // <Avatar src="https://neo3.azureedge.net/images/gui/0x43cf98eddbe047e198a3e5d57006311442a0ca15.png" />
-                        <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                        <Avatar src="https://neo3.azureedge.net/images/gui/0x43cf98eddbe047e198a3e5d57006311442a0ca15.png" />
                         // <Avatar src={"https://neo3.azureedge.net/images/gui/"+item.asset+".png"} />
                       }
                       title={<span className="upcase">{item.symbol}</span>}
@@ -246,7 +246,7 @@ class Walletlist extends React.Component {
                 )}
               />
               <div className="w200 mt4">
-                <Button className="w200" onClick={this.claimGas} loading={this.state.iconLoading}>{t("wallet page.claim")} {this.state.gas} GAS</Button>
+                <Button className="w200" onClick={this.claimGas} loading={this.state.iconLoading}>{t("button.claim")} {this.state.gas} GAS</Button>
               </div>
             </Col>
           </Row>
