@@ -28,8 +28,14 @@
 		"next": "下一步",
 		"ok": "确认",
 		"prev": "上一步",
-		"send": "发送"
+		"send": "发送",
+		"search":"搜索"
 	},
+	"input":{
+		"required":"该输入框为必填项",
+		"checked":"请确认已经输入完毕"
+	},
+	"address book":"地址簿",
 	"byte": "字节",
 	"bytes": "字节",
 	"confirm count": "确认数",
@@ -38,14 +44,23 @@
 		"deploy contract": "部署合约",
 		"deploy contract nav": "部署合约",
 		"deploy success": "交易发送成功，请等待区块确认",
+		"invoke contract": "调用合约",
 		"invoke contract nav": "调用合约",
-		"invoke fail title": "运行失败，请检查后再尝试",
-		"invoke result": "运行结果",
 		"please select file path": "请选择文件后再试",
 		"search contract": "搜索合约",
 		"search contract nav": "搜索合约",
 		"select {file} path title": "选择需要的{{file}}文件",
-		"test invoke": "试运行"
+		"test deploy": "试运行",
+		"test invoke": "试运行",
+		"test result": "运行结果",
+		"search fail": "请正确输入需要查找的hash",
+		"search input check": "请输入后再试",
+		"choose account":"选择账户",
+		"cosigners":"附加签名",
+		"fail title": "运行失败，请检查后再尝试",
+		"invoke method":"调用方法",
+		"select method":"选择方法",
+		"parameters":"参数列表"
 	},
 	"copyright": "保留所有权利",
 	"count": "数量",
@@ -90,6 +105,7 @@
 	"unconfirmed transactions": "待确认交易",
 	"verification script": "验证脚本",
 	"wallet": "钱包",
+	"open wallet first": "请先打开钱包",
 	"wallet page": {
 		"accounts nav": "账户列表",
 		"assets": "资产列表",
@@ -134,8 +150,14 @@
 		"transfer asset": "发送资产",
 		"transfer nav": "转账",
 		"transfer send success": "交易发送成功",
+		"transfer send error":"交易发送失败,请检查后再试",
 		"transfer warning": "安全提示：请勿轻易向陌生人转账。请仔细确认收款账户、转账金额、资产类型。请仔细辨别相同资产名称的资产，避免被骗。请勿向其它区块链的收款账户（地址）转账。",
 		"wallet opened": "钱包文件已打开"
 	},
+	"transaction page":{
+		"confirmed":"已完成",
+		"unconfirmed":"待确认"
+	},
+	"transaction list":"交易列表",
 	"witness": "见证人"
 }

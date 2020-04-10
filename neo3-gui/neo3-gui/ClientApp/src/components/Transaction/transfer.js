@@ -49,20 +49,20 @@ class Transfer extends React.Component {
       "method": "GetMyBalances",
       "params": {}
     })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          console.log("需要先打开钱包再进入页面");
-          return;
-        }
-        _this.setState({
-          addresslist: _data.result
-        })
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        message.error(t("open wallet first"));
+        return;
+      }
+      _this.setState({
+        addresslist: _data.result
       })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error2");
-      });
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error2");
+    });
   }
   setAddress = target => {
     target = target ? target : 0;
@@ -93,30 +93,40 @@ class Transfer extends React.Component {
         "asset": fieldsValue.asset
       }
     })
-      .then(function (response) {
-        var _data = response.data;
-        _this.setState({ iconLoading: false });
-        if (_data.msgType === -1) {
-          message.error("交易失败");
-          message.error("这里需要根据几个不同的情况分析：资金不够、手续费不够、地址错误、其他");
-          return;
-        } else {
-          Modal.info({
-            title:  t('wallet page.transfer send success'),
-            content: (
-              <div className="show-pri">
-                <p>{t("transaction hash")}：{_data.result.txId}</p>
-              </div>
-            ),
-            okText: t("button.ok")
-          });
-          _this.refs.formRef.resetFields()
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (response) {
+      var _data = response.data;
+      _this.setState({ iconLoading: false });
+      if(_data.msgType === -1){
+        let res = _data.error;
+        Modal.error({
+          title: t('wallet page.transfer send error'),
+          width: 400,
+          content: (
+            <div className="show-pri">
+              <p>{t("error code")}: {res.code}</p>
+              <p>{t("error msg")}: {res.message}</p>
+            </div>
+          ),
+          okText:"确认"
+        });
+        return;
+      }else{
+        Modal.info({
+          title: t('wallet page.transfer send success'),
+          content: (
+            <div className="show-pri">
+              <p>{t("transaction hash")}：{_data.result.txId}</p>
+            </div>
+          ),
+          okText:"确认"
+        });
+        _this.refs.formRef.resetFields()
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   render() {
     const { t } = this.props;

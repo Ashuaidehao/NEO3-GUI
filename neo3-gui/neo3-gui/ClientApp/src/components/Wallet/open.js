@@ -46,21 +46,26 @@ class Walletopen extends React.Component {
         "password": pass
       }
     })
-      .then(function (res) {
-        let _data = res.data;
-        _this.setState({ iconLoading: false });
-        if (_data.msgType == 3) {
+    .then(function (res) {
+      let _data = res.data;
+      _this.setState({ iconLoading: false });
+      if (_data.msgType == 3) {
+        walletStore.setWalletState(true);
+        let page = (location.pathname).search(/contract/g);
+        if(page === 1){
+          _this.props.history.push('/contract');
+        }else{
           message.success(t("wallet page.wallet opened"), 3);
-          walletStore.setWalletState(true);
           _this.props.history.push('/wallet/walletlist');
-        } else {
-          message.info(t("wallet page.open wallet failed"), 2);
         }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+      } else {
+        message.info(t("wallet page.open wallet failed"), 2);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   opendialog = () => {
     const { t } = this.props;
@@ -84,7 +89,6 @@ class Walletopen extends React.Component {
     const { t } = this.props;
     return (
       <div className="open">
-        <Topath topath={this.state.topath}></Topath>
         <Row>
           <Col span={18}>
             <Input placeholder={t("please select file location")} ref="path" disabled value={this.state.path} />
