@@ -1,6 +1,9 @@
 const { spawn } = require('child_process');
 const path = require('path');
-
+const isMac = process.platform === "darwin";
+const isWin = process.platform === "win32";
+// const appPath = remote.app.getAppPath();
+// const isPack = remote.app.isPackaged;
 
 class NodeManager {
 
@@ -24,9 +27,20 @@ class NodeManager {
     }
 
     runCommand(command, env) {
-        let startPath = __dirname.replace("app.asar", "");
+        const startPath = __dirname.replace("app.asar", "");
         console.log(startPath);
-        const ps = spawn(command, [], { shell: true, encoding: 'utf8', cwd: path.join(startPath, 'build-neo-node'), env });
+        const parentEnv = process.env;
+        const childEnv = { ...parentEnv, ...env };
+        if (isWin) {
+
+        }
+        else if (isMac) {
+            childEnv.PATH = childEnv.PATH + ":/usr/local/share/dotnet";
+        }
+        else {
+
+        }
+        const ps = spawn(command, [], { shell: true, encoding: 'utf8', cwd: path.join(startPath, 'build-neo-node'), env: childEnv });
         // ps.stdout.setEncoding('utf8');
         ps.stdout.on('data', (data) => {
             // var str = iconv.decode(new Buffer(data), 'gbk')
