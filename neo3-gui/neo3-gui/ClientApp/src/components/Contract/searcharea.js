@@ -46,7 +46,6 @@ class Searcharea extends React.Component{
       e.nativeEvent.stopImmediatePropagation();
     }
     searchContract = () => {
-      
       const { t } = this.props;
       let _hash = (this.refs.sinput.input.value).trim();
       if(!_hash){message.info(t('search.check again'));return;}
