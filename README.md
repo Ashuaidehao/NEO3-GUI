@@ -8,8 +8,8 @@ git clone --recursive https://github.com/neo-ngd/NEO3-GUI.git
 
 ## Required Tools and Dependencies for development
 
-1. [Visual Studio 2019](https://visualstudio.microsoft.com/) and [.NET Core](https://dotnet.microsoft.com/download) 
-2. [Node](https://nodejs.org/) 
+1. [Visual Studio 2019](https://visualstudio.microsoft.com/) and [.NET Core 3.1](https://dotnet.microsoft.com/download) 
+2. [Node.js](https://nodejs.org/) 
 
 ## Build and Run
 
