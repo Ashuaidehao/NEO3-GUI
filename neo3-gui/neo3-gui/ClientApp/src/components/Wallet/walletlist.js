@@ -124,28 +124,30 @@ class Walletlist extends React.Component {
     });
   }
   addAddress = () => {
+    const { t } = this.props;
     var _this = this;
     axios.post('http://localhost:8081', {
-    "id": "1",
-    "method": "CreateAddress"
+      "id": "1",
+      "method": "CreateAddress"
     })
     .then(function (response) {
-    var _data = response.data;
-    console.log(_data)
-    if (_data.msgType === -1) {
-        console.log("需要先打开钱包再进入页面");
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        message.error(t('wallet.open wallet first'));
         return;
-    }
-    message.success("钱包地址新建成功");
-    _this.props.walletStore.addAccount(_data.result);
+      }
+      message.success(t('wallet.add address success'));
+      _this.props.walletStore.addAccount(_data.result);
     })
     .catch(function (error) {
-    console.log(error);
-    console.log("error");
+      console.log(error);
+      console.log("error");
     });
   }
   importPrivate = () => {
+    const { t } = this.props;
     this.handleCancel();
+
     var pass = document.getElementById("privateKey").value;
     axios.post('http://localhost:8081', {
       "id": "20",
@@ -156,9 +158,9 @@ class Walletlist extends React.Component {
       let _data = res.data;
       console.log(_data)
       if (_data.msgType === 3) {
-        message.success("私钥打开成功", 2);
+        message.success(t('wallet.import private success'), 2);
       } else {
-        message.info("私钥输入错误", 2);
+        message.info(t('wallet.private fail'), 2);
       }
     })
     .catch(function (error) {
@@ -199,8 +201,8 @@ class Walletlist extends React.Component {
                       <PlusCircleOutlined className=""/>
                       <div className="wal-ul">
                         <ul>
-                          <li><a onClick={this.addAddress}>创建新地址</a></li>
-                          <li><a onClick={this.showModal}>导入私钥</a></li>
+                          <li><a onClick={this.addAddress}>{t('wallet.add address')}</a></li>
+                          <li><a onClick={this.showModal}>{t('wallet.import private')}</a></li>
                         </ul>
                       </div>
                   </div>

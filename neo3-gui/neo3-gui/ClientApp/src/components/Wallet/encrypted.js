@@ -62,6 +62,8 @@ class Walletencrypted extends React.Component{
   veriNep2Private = () => {
     const{t}=this.props;
     var _this = this;
+    
+    this.setState({ iconLoading: true});
     let _private = document.getElementById("nep2Key").value;
     let _pass = document.getElementById("nep2Pass").value;
     axios.post('http://localhost:8081', {
@@ -74,44 +76,15 @@ class Walletencrypted extends React.Component{
     })
     .then(function (res) {
       let _data = res.data;
-      console.log(_data);
+      _this.setState({iconLoading: false});
       if(_data.msgType === 3){
-        _this.setState({ showElem: true });
-        _this.setState({ private: _data.result});
+        _this.setState({
+          showElem: true,
+          private: _data.result,
+        });
       }else{
         message.info(t("wallet.encryred fail"),2);
       }
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error");
-    });
-  }
-  savePrivate = () =>{
-    const{t}=this.props;
-    var _this = this;
-    if(!this.notNull())return;
-    this.setState({ iconLoading: true });
-    var pass = document.getElementsByClassName("pri-pass")[1].value;
-    axios.post('http://localhost:8081', {
-      "id" : "1",
-      "method" : "CreateWallet",
-      "params" : {
-        "path" : _this.state.path,
-        "password" : pass,
-        "privateKey": _this.state.private
-      }
-    })
-    .then(function (res) {
-      let _data = res.data;
-      console.log(_data);
-      if(_data.msgType === 3){
-        message.success(t('wallet.create wallet success'),2);
-        _this.setState({ iconLoading: false });
-      }else{
-        message.info(t('wallet.open wallet failed'),2);
-      }
-      
     })
     .catch(function (error) {
       console.log(error);
@@ -123,16 +96,16 @@ class Walletencrypted extends React.Component{
     return (
       <div>
         <Input id="nep2Key" disabled={this.state.showElem} placeholder={t("please input Encryped key")} onKeyUp={this.toTrim} data-value="私钥"/>
-        <Input.Password id="nep2Pass" disabled={this.state.showElem} placeholder={t("password")} onKeyUp={this.toTrim} data-value="私钥"/>
         {!this.state.showElem?(
-          <div>
-            <Button className="mt3" onClick={this.veriNep2Private}>{t("button.next")}</Button>
+          <div className="mt3">
+            <Input.Password id="nep2Pass" disabled={this.state.showElem} placeholder={t("password")} onKeyUp={this.toTrim} data-value="私钥"/>
+            <Button className="mt3" loading={this.state.iconLoading} onClick={this.veriNep2Private}>{t("button.next")}</Button>
           </div>
         ):null}
         {this.state.showElem?(
           <div>
               <Button className="mt3" onClick={this.changeTab}>{t("button.prev")}</Button>
-              <Divider>{t("wallet page.private key save wallet title")}</Divider>
+              <Divider>{t("wallet.private key save wallet title")}</Divider>
               <Walletcreate priclass="pri-class" cname="pri-pass" private={this.state.private}/>
           </div>
         ):null}

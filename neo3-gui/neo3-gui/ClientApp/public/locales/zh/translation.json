@@ -149,7 +149,11 @@
 		"open wallet first": "请先打开钱包",
 		"private fail": "私钥输入错误,请检查后输入",
 		"encryred fail": "加密私钥输入错误,请检查后输入",
-		"please input twice": "确认密码不可为空"
+		"please input twice": "确认密码不可为空",
+		"add address":"创建新地址",
+		"import private":"导入私钥",
+		"add address success":"钱包地址新建成功",
+		"import private success":"私钥导入成功"
 	},
 	"contract": {
 		"search contract": "搜索合约",

@@ -149,7 +149,11 @@
 		"open wallet first": "Please open wallet",
 		"private fail": "Private key error, please checked and try again",
 		"encryred fail": "Encryred key error, please checked and try again",
-		"please input twice": "Please confirm password twice"
+		"please input twice": "Please confirm password twice",
+		"add address":"Create new address",
+		"import private":"Import private",
+		"add address success":"Create address success",
+		"import private success":"Import privatesuccess"
 	},
 	"contract": {
 		"search contract": "Search Contract",
