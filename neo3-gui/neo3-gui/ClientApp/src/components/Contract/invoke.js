@@ -90,7 +90,6 @@ class Contractinvoke extends React.Component{
       })
       .then(function (response) {
         var _data = response.data;
-        console.log(_data);
         if(_data.msgType === -1){
           message.info(t("contract.search fail"));
           return;
@@ -147,7 +146,6 @@ class Contractinvoke extends React.Component{
       },this.onFill());
       this.refs.formRef.validateFields().then(data => {
         let params = this.makeParams(data);
-
         this.invokeContract(params,res=>{
           this.setState({
             tresult:JSON.stringify(res),
@@ -286,7 +284,7 @@ class Contractinvoke extends React.Component{
                     placeholder={t("contract.choose account")}
                     mode="tags"
                     style={{ width: '100%'}}>
-                    {accounts.map((item,index)=>{
+                    {accounts.map((item)=>{
                       return(
                       <Option key={item.address}>{item.address}</Option>
                       )

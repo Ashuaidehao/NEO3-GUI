@@ -6,7 +6,6 @@ import axios from 'axios';
 import { Layout, Menu, Icon } from 'antd';
 import { Link } from 'react-router-dom';
 import MenuDown from '../Common/menudown'
-import Topath from '../Common/topath';
 import { walletStore } from "../../store/stores";
 import {
   HomeOutlined,
@@ -25,9 +24,6 @@ const { SubMenu } = Menu;
 class Contractlayout extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      topath: ""
-    };
   }
   componentDidMount() {
     this.getGas()
@@ -37,20 +33,19 @@ class Contractlayout extends React.Component {
       "id": 51,
       "method": "ShowGas"
     })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) { return; }
-        walletStore.setWalletState(true);
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) { return; }
+      walletStore.setWalletState(true);
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   render = () => {
     const { t } = this.props;
     const walletOpen = this.props.walletStore.isOpen;
-    console.log(walletOpen)
     return (
       <div style={{ height: '100%' }}>
         {/* {walletOpen?<Topath topath="/contract"></Topath>:null} */}

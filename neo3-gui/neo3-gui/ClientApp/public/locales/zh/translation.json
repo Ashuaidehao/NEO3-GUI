@@ -8,7 +8,7 @@
 		"load more": "加载更多",
         "contract": "合约"
 	},
-	"settings":{
+	"settings": {
 		"network": "网络切换",
 		"mainnet": "主网",
 		"testnet": "测试网",
@@ -42,7 +42,7 @@
         "contract": "合约",
         "advanced": "高级"
 	},
-	"sideBar":{
+	"sideBar": {
         "home": "主页",
         "logout": "登出钱包",
         "settings": "设置",
@@ -183,6 +183,16 @@
 		"return": "返回值",
 		"script-hash":"脚本散列"
 	},
+	"advanced":{
+		"vote":"投票",
+		"candidate":"选举",
+		"vote for":"为候选共识节点投票",
+		"candidate key":"候选人公钥",
+		"select address":"选择地址",
+		"vote success":"投票成功",
+		"vote fail":"投票失败",
+		"select all":"全选"
+	},
 	"input":{
 		"required":"该输入框为必填项",
 		"checked":"请确认已经输入完毕"
@@ -192,7 +202,9 @@
 		"chain-hint":"输入需要查找的 height",
 		"height unexist":"该高度不存在，请查证后再输入",
 		"hash unexist":"该高度hash不存在，请查证后再输入",
-		"check again":"请检查输入是否正确"
+		"check again":"请检查输入是否正确",
+		"vote success":"投票成功",
+		"vote fail":"投票失败"
 	},
 	"error code": "错误码",
 	"error msg": "错误信息",

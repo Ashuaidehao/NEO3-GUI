@@ -8,7 +8,7 @@
 		"load more": "Load More",
         "contract": "Contract"
 	},
-	"settings":{
+	"settings": {
 		"network": "Network",
 		"mainnet": "Mainnet",
 		"testnet": "Testnet",
@@ -42,7 +42,7 @@
         "contract": "Contract",
         "advanced": "Advanced"
 	},
-	"sideBar":{
+	"sideBar": {
         "home": "Home",
         "logout": "Logout",
         "settings": "Settings",
@@ -84,7 +84,7 @@
 		"lastest transactions": "Lastest Transactions",
 		"unconfirmed transactions": "Unconfirmed Transactions",
 		"height unexist":"Pelese check the height later",
-		"transaction":{
+		"transaction": {
 			"status": "Status",
 			"confirmed":"Confirmed",
 			"unconfirmed":"Unconfirmed",
@@ -183,11 +183,21 @@
 		"return": "Return Type",
 		"script-hash":"Script Hash"
 	},
-	"input":{
+	"advanced":{
+		"vote":"Vote",
+		"candidate":"Candidate",
+		"vote for":"Voting for candidate consensus nodes",
+		"candidate key":"Candidate public key",
+		"select address":"Select address",
+		"vote success":"Vote Success",
+		"vote fail":"Vote failed",
+		"select all":"Select all"
+	},
+	"input": {
 		"required":"This input is required.",
 		"checked":"Please confirm all input."
 	},
-	"search":{
+	"search": {
 		"hash-hint":"Pelese input hash",
 		"chain-hint":"Pelese input height",
 		"height unexist":"The height not exist,please check again",

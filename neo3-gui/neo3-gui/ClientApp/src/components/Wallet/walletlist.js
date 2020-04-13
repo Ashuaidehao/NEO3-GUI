@@ -156,7 +156,6 @@ class Walletlist extends React.Component {
     })
     .then(function (res) {
       let _data = res.data;
-      console.log(_data)
       if (_data.msgType === 3) {
         message.success(t('wallet.import private success'), 2);
       } else {
@@ -169,9 +168,11 @@ class Walletlist extends React.Component {
     });
   }
   showModal = () => {
+    const { t } = this.props;
     this.setState({
       visible: true,
-      modalPanel:<Private func={this.importPrivate}/>
+      modalPanel:<Private func={this.importPrivate}/>,
+      modalTitle:t("wallet.import private")
     });
   };
   handleOk = () => {
@@ -237,7 +238,6 @@ class Walletlist extends React.Component {
                   <List.Item>
                     <List.Item.Meta
                       avatar={
-                        // <Avatar src="https://neo3.azureedge.net/images/gui/0x43cf98eddbe047e198a3e5d57006311442a0ca15.png" />
                         <Avatar src="https://neo3.azureedge.net/images/gui/0x43cf98eddbe047e198a3e5d57006311442a0ca15.png" />
                         // <Avatar src={"https://neo3.azureedge.net/images/gui/"+item.asset+".png"} />
                       }
@@ -254,13 +254,14 @@ class Walletlist extends React.Component {
             </Col>
           </Row>
           <Modal
-            title="Vertically centered modal dialog"
+            width={400}
             centered
+            title={this.state.modalTitle}
             visible={this.state.visible}
-            onOk={this.handleOk}
             onCancel={this.handleCancel}
+            footer={null}
           >
-            {this.state.modalPanel}
+          {this.state.modalPanel}
           </Modal>
         </Content>
       </Layout>
@@ -274,9 +275,10 @@ export default Walletlist;
 const Private = ({func}) => {
   return (
     <div>
-      私钥打开方式
       <Input type="text" id="privateKey" placeholder="请输入WIF格式的私钥" />
-      <Button onClick={func} className="mb1">导入私钥</Button>
+      <p className="text-c mb0">
+        <Button onClick={func} type="primary" className="mt3">导入私钥</Button>
+      </p>
     </div>
   )
 };

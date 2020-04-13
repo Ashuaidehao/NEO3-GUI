@@ -50,9 +50,13 @@ class Walletopen extends React.Component {
       _this.setState({ iconLoading: false });
       if (_data.msgType == 3) {
         walletStore.setWalletState(true);
-        let page = (location.pathname).search(/contract/g);
+
+        let page = (location.pathname).search(/contract/g)?1:-1;
+        page = (location.pathname).search(/advanced/g)?2:-1;
         if(page === 1){
           _this.props.history.push('/contract');
+        }else if(page === 2){
+          _this.props.history.push('/advanced');
         }else{
           message.success(t("wallet.wallet opened"), 3);
           _this.props.history.push('/wallet/walletlist');

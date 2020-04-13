@@ -1,23 +1,26 @@
 /* eslint-disable */
 import React from 'react';
-import 'antd/dist/antd.css';
-import '../../static/css/menu.css'
-import '../../static/css/wallet.css'
+import { observer, inject } from "mobx-react";
+import { withRouter } from "react-router-dom";
+import axios from 'axios';
 import { Layout, Menu, Icon } from 'antd';
 import { Link } from 'react-router-dom';
 import MenuDown from '../Common/menudown'
+import { walletStore } from "../../store/stores";
 import {
   HomeOutlined,
   RadiusUpleftOutlined
 } from '@ant-design/icons';
-import { withTranslation } from 'react-i18next';
-
+import { withTranslation } from "react-i18next";
 
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
 @withTranslation()
+@inject("walletStore")
+@observer
+@withRouter
 class Advancedlayout extends React.Component {
   constructor(props) {
     super(props);
@@ -25,8 +28,27 @@ class Advancedlayout extends React.Component {
       size: 'default'
     };
   }
+  componentDidMount() {
+    this.getGas()
+  }
+  getGas = () => {
+    axios.post('http://localhost:8081', {
+      "id": 51,
+      "method": "ShowGas"
+    })
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) { return; }
+      walletStore.setWalletState(true);
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
+  }
   render = () => {
     const { t } = this.props;
+    const walletOpen = this.props.walletStore.isOpen;
     return (
       <div style={{ height: '100%' }}>
         <Sider style={{ height: '100%' }} >
@@ -40,19 +62,35 @@ class Advancedlayout extends React.Component {
             <Menu.Item>
               <Link to="/"><HomeOutlined />{t("sideBar.home")}</Link>
             </Menu.Item>
-            <SubMenu
+            {walletOpen ? (
+              <SubMenu
               key="sub1"
               title={
                 <span>
                   <RadiusUpleftOutlined />
-                  <span>{t("blockchain")}</span>
+                  <span>{t("home.advanced")}</span>
                 </span>
               }
-            >
-              <Menu.Item key="1" ><Link to="/advanced">{t("blockchain.blocks")}</Link></Menu.Item>
-              <Menu.Item key="2" ><Link to="/advanced/transaction">{t("blockchain.transactions")}</Link></Menu.Item>
-              <Menu.Item key="3" ><Link to="/advanced/asset">{t("blockchain.assets")}</Link></Menu.Item>
-            </SubMenu>
+              >
+                <Menu.Item key="1"><Link to="/advanced/vote">{t("advanced.vote")}</Link></Menu.Item>
+                <Menu.Item key="2"><Link to="/advanced/candidate">{t("advanced.candidate")}</Link></Menu.Item>
+              </SubMenu>
+            ) : null}
+            {!walletOpen ? (
+              <SubMenu
+              key="sub1"
+              title={
+                <span>
+                  <RadiusUpleftOutlined />
+                  <span>{t("home.advanced")}</span>
+                </span>
+              }
+              >
+                <Menu.Item key="1"><Link to="/advanced/wallet">{t("advanced.vote")}</Link></Menu.Item>
+                <Menu.Item key="2"><Link to="/advanced/wallet">{t("advanced.candidate")}</Link></Menu.Item>
+              </SubMenu>
+            ) : null}
+            
           </Menu>
           <MenuDown />
         </Sider>

@@ -29,6 +29,8 @@ import Contractdetail from '../components/Contract/contractdetail';
 
 import Advanced from '../components/Advanced/advanced';
 import Advancedlayout from '../components/Advanced/advancedlayout';
+import Advancedvote from '../components/Advanced/vote';
+
 
 import { Layout } from 'antd';
 
@@ -77,6 +79,8 @@ const BasicRoute = () => (
                 <Layout style={{ height: 'calc( 100vh )'}}>
                     <Route component={Advancedlayout} />
                     <Route exact path="/advanced" component={Advanced} />
+                    <Route exact path="/advanced/vote" component={Advancedvote} />
+                    <Route exact path="/advanced/wallet" component={Wallet} />
                 </Layout>
             </Route>
             <Redirect from="*" to="/" />

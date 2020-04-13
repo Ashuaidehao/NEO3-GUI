@@ -70,12 +70,7 @@ class Home extends Component {
                 </Link>
               </Col>
               <Col span={6}>
-                {/* <Link to='/advanced'>
-                      <div className="home-link">
-                        <span>高 级</span>
-                      </div>
-                    </Link> */}
-                <Link to='/pages'>
+                <Link to='/advanced'>
                   <div className="home-link">
                     <img className="show-img" src={adavancedimg} alt="img" />
                     <img className="hidden-img" src={aniadavancedimg} alt="img" />
