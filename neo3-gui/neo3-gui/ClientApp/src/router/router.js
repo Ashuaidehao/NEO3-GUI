@@ -30,6 +30,8 @@ import Contractdetail from '../components/Contract/contractdetail';
 import Advanced from '../components/Advanced/advanced';
 import Advancedlayout from '../components/Advanced/advancedlayout';
 import Advancedvote from '../components/Advanced/vote';
+import Advancedcandidate from '../components/Advanced/candidate';
+
 
 
 import { Layout } from 'antd';
@@ -80,6 +82,7 @@ const BasicRoute = () => (
                     <Route component={Advancedlayout} />
                     <Route exact path="/advanced" component={Advanced} />
                     <Route exact path="/advanced/vote" component={Advancedvote} />
+                    <Route exact path="/advanced/candidate" component={Advancedcandidate} />
                     <Route exact path="/advanced/wallet" component={Wallet} />
                 </Layout>
             </Route>

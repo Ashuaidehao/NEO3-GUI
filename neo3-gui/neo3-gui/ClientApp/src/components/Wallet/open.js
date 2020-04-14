@@ -51,8 +51,7 @@ class Walletopen extends React.Component {
       if (_data.msgType == 3) {
         walletStore.setWalletState(true);
 
-        let page = (location.pathname).search(/contract/g)?1:-1;
-        page = (location.pathname).search(/advanced/g)?2:-1;
+        let page = (location.pathname).search(/contract/g)>0?1:((location.pathname).search(/advanced/g)>0?2:-1);
         if(page === 1){
           _this.props.history.push('/contract');
         }else if(page === 2){

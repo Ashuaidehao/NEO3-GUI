@@ -29,29 +29,26 @@ const { Content } = Layout;
 @inject("walletStore")
 @observer
 @withRouter
-class Advancedvote extends React.Component {
+class Advancedcandidate extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       size: 'default',
-      checkedList: [],
-      indeterminate: true,
-      checkAll: false,
-      candidates:[],
+      accountlist: [],
     };
   }
   componentDidMount() {
-    this.listCandidate(res=>{
+    this.listPublicKey(res=>{
       this.setState({
-        candidates:res.result
+        accountlist:res.result
       })
     });
   }
-  listCandidate = callback => {
+  listPublicKey = callback => {
     const { t } = this.props;
     axios.post('http://localhost:8081', {
       "id": "1",
-      "method": "ListCandidatePublicKey"
+      "method": "ListPublicKey"
     })
     .then(function (response) {
       var _data = response.data;
@@ -97,20 +94,14 @@ class Advancedvote extends React.Component {
         checkAll: e.target.checked,
     });
   };
-  onVote = fieldsValue =>{
+  onCandidate = fieldsValue =>{
     const { t } = this.props;
-    let {checkedList} = this.state;
-    if(checkedList.length <= 0) {
-      message.error(t('advanced.vote'));
-      return;
-    }
     axios.post('http://localhost:8081', {
       "id": "1",
-      "method": "VoteCN",
-      "params": {
-        "account": fieldsValue.voter,
-        "pubkeys": checkedList
-      }
+      "method": "ApplyForValidator",
+      "params":{
+        "pubkey":fieldsValue.pubkey
+    }
     })
     .then(function (response) {
       var _data = response.data;
@@ -118,7 +109,7 @@ class Advancedvote extends React.Component {
       if (_data.msgType === -1) {
         let res = _data.error;
         Modal.error({
-          title: t('advanced.vote fail'),
+          title: t('advanced.candidate fail'),
           width: 400,
           content: (
             <div className="show-pri">
@@ -131,7 +122,7 @@ class Advancedvote extends React.Component {
         return;
       } else if (_data.msgType === 3) {
         Modal.info({
-          title: t('advanced.vote success'),
+          title: t('advanced.candidate success'),
           width: 400,
           content: (
             <div className="show-pri">
@@ -150,26 +141,24 @@ class Advancedvote extends React.Component {
   }
   render = () => {
     const { t } = this.props;
-    const { disabled, candidates } = this.state;
-    const accounts = this.props.walletStore.accountlist;
+    const { disabled, accountlist } = this.state;
     return (
       <Layout className="gui-container">
         <Sync />
         <Content className="mt3">
           <Row gutter={[30, 0]}>
             <Col span={24} className="bg-white pv4">
-            <PageHeader title={t('advanced.vote')}></PageHeader>
+            <PageHeader title={t('advanced.candidate')}></PageHeader>
             <Alert
                 className="mt3 mb3"
                 type="warning"
                 message={t("advanced.select address")}
                 showIcon
             />
-                                
-            <Form ref="formRef" onFinish={this.onVote}>
-                <h4 className="bolder">{t('advanced.vote for')}</h4>
+            <Form ref="formRef" onFinish={this.onCandidate}>
+                <h4 className="bolder">{t('advanced.be candidate')}</h4>
                 <Form.Item
-                name="voter"
+                name="pubkey"
                 className="select-vote"
                 rules={[
                     {
@@ -182,32 +171,13 @@ class Advancedvote extends React.Component {
                 placeholder={t("advanced.select address")}
                 style={{ width: '100%' }}
                 onChange={this.setAddress}>
-                  {accounts.map((item)=>{
+                  {accountlist.map((item)=>{
                     return(
-                    <Option key={item.address}>{item.address}</Option>
+                    <Option key={item.publicKey}>{item.address}</Option>
                     )
                   })}
                 </Select>
                 </Form.Item>
-                <h4>{t('advanced.candidate key')}</h4>
-                
-                <p>
-                  <Checkbox
-                  indeterminate={this.state.indeterminate}
-                  onChange={this.onCheckAllChange}
-                  checked={this.state.checkAll}
-                  >
-                  {t('advanced.select all')}
-                  </Checkbox>
-                </p>
-                <CheckboxGroup
-                  value={this.state.checkedList}
-                  onChange={this.onChange}
-                >
-                  {candidates.map((item,index)=>{
-                    return <p key={index}><Checkbox value={item.publicKey}>{item.publicKey}</Checkbox></p>
-                  })}
-                </CheckboxGroup>
                 <p className="text-c">
                   <Button type="primary" htmlType="submit" disabled={disabled} loading={this.state.iconLoading}>
                     {t("button.confirm")}
@@ -222,4 +192,4 @@ class Advancedvote extends React.Component {
   }
 }
 
-export default Advancedvote;
+export default Advancedcandidate;

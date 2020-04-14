@@ -187,10 +187,14 @@
 		"vote":"Vote",
 		"candidate":"Candidate",
 		"vote for":"Voting for candidate consensus nodes",
+		"be candidate":"Register as a candidate consensus node",
 		"candidate key":"Candidate public key",
 		"select address":"Select address",
-		"vote success":"Vote Success",
+		"need address":"Address is required",
+		"vote success":"Vote Success, please check transaction list later",
 		"vote fail":"Vote failed",
+		"candidate success":"Candidate success, please check transaction list later",
+		"candidate fail":"Candidate fail",
 		"select all":"Select all"
 	},
 	"input": {
