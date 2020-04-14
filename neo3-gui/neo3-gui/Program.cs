@@ -24,8 +24,14 @@ namespace Neo
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
+            var url = "http://127.0.0.1:8081";
+            var envPort = Environment.GetEnvironmentVariable("NEO_GUI_PORT");
+            if (int.TryParse(envPort, out var port))
+            {
+                url = $"http://127.0.0.1:{port}";
+            }
             return WebHost.CreateDefaultBuilder(args)
-                .UseUrls("http://127.0.0.1:8081")
+                .UseUrls(url)
                 .UseStartup<Startup>();
         }
 

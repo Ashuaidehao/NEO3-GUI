@@ -3,8 +3,7 @@ import { initReactI18next } from "react-i18next";
 import Backend from 'i18next-xhr-backend';
 import Config from "./config";
 
-const language = navigator.language.split(/[-_]/)[0];  // language without region code
-Config.Language = language;
+const language = Config.Language || navigator.language.split(/[-_]/)[0];  // language without region code
 const FALLBACKLNG = "en";
 
 i18n
@@ -16,7 +15,7 @@ i18n
       wait: true
     },
     // resources,
-    lng: Config.Language,
+    lng: language,
     // whitelist: [],
     fallbackLng: FALLBACKLNG,
     // ns: ['translation'],
@@ -33,7 +32,7 @@ i18n
       console.log("loading language fail:", e);
       i18n.language = FALLBACKLNG;
     }
-
   });
+
 
 export default i18n;

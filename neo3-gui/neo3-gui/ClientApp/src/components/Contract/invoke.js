@@ -21,15 +21,13 @@ import {  Layout } from 'antd';
 import Intitle from '../Common/intitle'
 import '../../static/css/wallet.css'
 import Sync from '../sync'
-
 import { SwapOutlined } from '@ant-design/icons';
-
 import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 
+
 const { TextArea } = Input;
 const { Content } = Layout;
-const {dialog} = window.remote;
 const {Option} = Select;
 const layout = {
   labelCol: { span: 4 },

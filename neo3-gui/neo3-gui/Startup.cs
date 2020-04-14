@@ -37,13 +37,7 @@ namespace Neo
 
             if (Directory.Exists(ContentRootPath))
             {
-                CommandLineTool.Run("npm start", ContentRootPath, output =>
-                {
-                    if (output.Contains("development server"))
-                    {
-                        CommandLineTool.Run("npm run start-electron", ContentRootPath);
-                    }
-                });
+                CommandLineTool.Run("npm run dev",ContentRootPath);
             }
 #endif
         }

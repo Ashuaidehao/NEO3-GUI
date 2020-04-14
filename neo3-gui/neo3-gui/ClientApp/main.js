@@ -17,8 +17,7 @@ const url = require('url')
 let mainWindow
 
 function createWindow() {
-    //Hide toolBar
-    //Menu.setApplicationMenu(null)
+
 
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -44,6 +43,8 @@ function createWindow() {
         // Open the DevTools.
         mainWindow.webContents.openDevTools();
     } else {
+        //Hide toolBar
+        Menu.setApplicationMenu(null)
         mainWindow.loadURL(
             url.format({
                 protocol: 'file',

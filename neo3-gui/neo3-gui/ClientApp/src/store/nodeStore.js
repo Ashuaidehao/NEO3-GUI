@@ -11,7 +11,8 @@ class NodeStore {
         }
     }
 
-    @action start(env) {
+    @action start(network, port) {
+        const env = { NEO_NETWORK: network || "", NEO_GUI_PORT: port || "" };
         if (!this.nodeManager.isRunning()) {
             this.nodeManager.start(env);
         }
