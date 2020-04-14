@@ -72,8 +72,9 @@ class Advancedlayout extends React.Component {
                 </span>
               }
               >
-                <Menu.Item key="1"><Link to="/advanced/vote">{t("advanced.vote")}</Link></Menu.Item>
-                <Menu.Item key="2"><Link to="/advanced/candidate">{t("advanced.candidate")}</Link></Menu.Item>
+                <Menu.Item key="1"><Link to="/advanced">{t("advanced.vote")}</Link></Menu.Item>
+                <Menu.Item key="2"><Link to="/advanced/vote">{t("advanced.vote")}</Link></Menu.Item>
+                <Menu.Item key="3"><Link to="/advanced/candidate">{t("advanced.candidate")}</Link></Menu.Item>
               </SubMenu>
             ) : null}
             {!walletOpen ? (
@@ -86,8 +87,9 @@ class Advancedlayout extends React.Component {
                 </span>
               }
               >
-                <Menu.Item key="1"><Link to="/advanced/wallet">{t("advanced.vote")}</Link></Menu.Item>
-                <Menu.Item key="2"><Link to="/advanced/wallet">{t("advanced.candidate")}</Link></Menu.Item>
+                <Menu.Item key="1"><Link to="/advanced">{t("advanced.vote")}</Link></Menu.Item>
+                <Menu.Item key="2"><Link to="/advanced/wallet">{t("advanced.vote")}</Link></Menu.Item>
+                <Menu.Item key="3"><Link to="/advanced/wallet">{t("advanced.candidate")}</Link></Menu.Item>
               </SubMenu>
             ) : null}
             

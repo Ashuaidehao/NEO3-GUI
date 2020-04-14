@@ -32,10 +32,7 @@ import Advancedlayout from '../components/Advanced/advancedlayout';
 import Advancedvote from '../components/Advanced/vote';
 import Advancedcandidate from '../components/Advanced/candidate';
 
-
-
 import { Layout } from 'antd';
-
 
 const BasicRoute = () => (
     <BrowserRouter>
