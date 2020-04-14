@@ -4,9 +4,11 @@ import axios from 'axios';
 import { message, Button, Input,Divider } from 'antd';
 import Walletcreate from '../Wallet/create';
 import { withTranslation } from "react-i18next";
+import { remote } from 'electron';
 
 
-const {dialog} = window.remote;
+
+const {dialog} = remote;
 
 @withTranslation()
 class Walletprivate extends React.Component{

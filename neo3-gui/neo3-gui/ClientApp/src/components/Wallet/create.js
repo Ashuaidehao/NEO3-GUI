@@ -6,9 +6,11 @@ import { Input, message, Button, Row, Col } from 'antd';
 import { walletStore } from "../../store/stores";
 import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
+import { remote } from 'electron';
 
 
-const { dialog } = window.remote;
+
+const { dialog } = remote;
 
 @withTranslation()
 @withRouter
