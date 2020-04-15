@@ -3,10 +3,8 @@ import React from 'react';
 import { observer, inject } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import 'antd/dist/antd.css';
-import { message } from 'antd';
-import { Modal, Button } from 'antd';
+import { message, Modal } from 'antd';
 import axios from 'axios';
-import { Radio } from 'antd';
 import Addressdetail from './addressdetail';
 import Setting from './setting';
 import {

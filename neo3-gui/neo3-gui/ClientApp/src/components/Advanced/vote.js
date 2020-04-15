@@ -51,7 +51,7 @@ class Advancedvote extends React.Component {
     const { t } = this.props;
     axios.post('http://localhost:8081', {
       "id": "1",
-      "method": "ListCandidatePublicKey"
+      "method": "GetValidators"
     })
     .then(function (response) {
       var _data = response.data;
@@ -89,7 +89,7 @@ class Advancedvote extends React.Component {
   onCheckAllChange = e => {
     let checkedlist = new Array();
     this.state.candidates.map(item =>{
-      checkedlist = checkedlist.concat(item.publicKey)
+      checkedlist = checkedlist.concat(item.publickey)
     })
     this.setState({
         checkedList: e.target.checked ? checkedlist : [],
@@ -205,7 +205,7 @@ class Advancedvote extends React.Component {
                   onChange={this.onChange}
                 >
                   {candidates.map((item,index)=>{
-                    return <p key={index}><Checkbox value={item.publicKey}>{item.publicKey}</Checkbox></p>
+                    return <p key={index}><Checkbox value={item.publickey}>{item.publickey}</Checkbox></p>
                   })}
                 </CheckboxGroup>
                 <p className="text-c">

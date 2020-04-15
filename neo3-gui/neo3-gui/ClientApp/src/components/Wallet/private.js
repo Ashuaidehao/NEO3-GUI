@@ -69,10 +69,9 @@ class Walletprivate extends React.Component{
     })
     .then(function (res) {
       let _data = res.data;
-      console.log(_data);
       if(_data.msgType === 3){
         _this.setState({ showElem: true });
-        _this.setState({ private: _private});
+        _this.setState({ private: _data.result});
       }else{
         message.info(t('wallet.private fail'),2);
       }

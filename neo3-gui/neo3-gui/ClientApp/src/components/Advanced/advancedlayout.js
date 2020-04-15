@@ -12,6 +12,7 @@ import {
   RadiusUpleftOutlined
 } from '@ant-design/icons';
 import { withTranslation } from "react-i18next";
+import Datatrans from '../Common/datatrans';
 
 
 const { Sider } = Layout;
@@ -72,7 +73,7 @@ class Advancedlayout extends React.Component {
                 </span>
               }
               >
-                <Menu.Item key="1"><Link to="/advanced">{t("advanced.vote")}</Link></Menu.Item>
+                <Menu.Item key="1"><Link to="/advanced">工具</Link></Menu.Item>
                 <Menu.Item key="2"><Link to="/advanced/vote">{t("advanced.vote")}</Link></Menu.Item>
                 <Menu.Item key="3"><Link to="/advanced/candidate">{t("advanced.candidate")}</Link></Menu.Item>
               </SubMenu>
@@ -87,15 +88,16 @@ class Advancedlayout extends React.Component {
                 </span>
               }
               >
-                <Menu.Item key="1"><Link to="/advanced">{t("advanced.vote")}</Link></Menu.Item>
+                <Menu.Item key="1"><Link to="/advanced">工具</Link></Menu.Item>
                 <Menu.Item key="2"><Link to="/advanced/wallet">{t("advanced.vote")}</Link></Menu.Item>
                 <Menu.Item key="3"><Link to="/advanced/wallet">{t("advanced.candidate")}</Link></Menu.Item>
               </SubMenu>
             ) : null}
-            
           </Menu>
           <MenuDown />
         </Sider>
+        
+        <Datatrans visible={this.state.visible} onClose={this.onClose} />   
       </div>
     );
   }

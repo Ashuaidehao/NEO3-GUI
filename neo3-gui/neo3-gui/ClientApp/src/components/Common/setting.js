@@ -1,33 +1,14 @@
 /* eslint-disable */ 
 //just test replace wallet//
 import React from 'react';
-import axios from 'axios';
-import {Link} from 'react-router-dom';
-import { Layout, Row, Col, Modal,List, Button,Typography, message } from 'antd';
-
 import { observer, inject } from "mobx-react";
-
 import { withRouter } from "react-router-dom";
-import Sync from '../sync';
 import { Radio } from 'antd';
-import Intitle from '../Common/intitle';
-import Transaction from '../Transaction/transaction';
 import '../../static/css/wallet.css';
-import Topath from '../Common/topath';
 import { withTranslation } from 'react-i18next';
 import Config from "../../config";
-import {
-    LogoutOutlined,
-    SettingOutlined
-} from '@ant-design/icons';
-
-import {
-    CloseCircleOutlined 
-} from '@ant-design/icons';
 
 const { shell } = window.electron;
-const { confirm } = Modal;
-const { Content } = Layout;
 
 @withTranslation()
 @inject("walletStore")
@@ -44,7 +25,6 @@ class Setting extends React.Component{
         gas:0,
     };
   }
-
   switchLang = (lng) => {
       const { t, i18n } = this.props;
       console.log("current lang:", Config.Language)
@@ -60,7 +40,6 @@ class Setting extends React.Component{
     }
   }
   render = () =>{
-    const { addresslist,address } = this.state;
     const { t, i18n } = this.props;
     return (
       <div>

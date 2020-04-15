@@ -4,7 +4,6 @@ import 'antd/dist/antd.css';
 import axios from 'axios';
 import { observer, inject } from "mobx-react";
 import { Input,
-    Icon,
     PageHeader,
     Modal,
     Select,
@@ -12,13 +11,11 @@ import { Input,
     Col,
     Form,
     message,
-    Menu,
     Button,
   } from 'antd';
   
 import Datatrans from '../Common/datatrans';
 import {  Layout } from 'antd';
-import Intitle from '../Common/intitle'
 import '../../static/css/wallet.css'
 import Sync from '../sync'
 
@@ -29,7 +26,6 @@ import { withTranslation } from "react-i18next";
 
 const { TextArea } = Input;
 const { Content } = Layout;
-const {dialog} = window.remote;
 const {Option} = Select;
 const layout = {
   labelCol: { span: 4 },
@@ -220,7 +216,6 @@ class Contractinvoke extends React.Component{
       <Content className="mt3">
         <Row gutter={[30, 0]}  className="bg-white pv4" style={{ 'minHeight': 'calc( 100vh - 150px )'}}>
           <Col span={24}>
-            
           <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
           <PageHeader title={t('contract.invoke contract')}></PageHeader>
           <Form ref="formRef" className="trans-form" onFinish={this.invoke}>
