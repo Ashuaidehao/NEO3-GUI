@@ -232,8 +232,8 @@ small,.small{
     padding-right: 20px;
 }
 .pa2{
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: 16px!important;
+    padding-right: 16px!important;
 }
 .pa3{
     padding-left: 12px;

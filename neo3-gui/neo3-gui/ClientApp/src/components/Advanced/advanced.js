@@ -9,11 +9,14 @@ import Sync from '../sync';
 import "../../static/css/advanced.css";
 import Datatrans from '../Common/datatrans';
 import { SwapOutlined, PaperClipOutlined } from '@ant-design/icons';
+import { withTranslation } from "react-i18next";
 
 
 const { shell } = window.electron;
 const { Content } = Layout;
 
+
+@withTranslation()
 class Advanced extends React.Component {
         constructor(props){
         super(props);
@@ -37,28 +40,29 @@ class Advanced extends React.Component {
         }
     }
     render() {
+        const { t } = this.props;
         return (
             <Layout className="gui-container">
             <Sync />
             <Content className="mt3">
               <Row gutter={[30, 0]} style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
                 <Col span={24} className="bg-white pv4">
-                    <PageHeader title="GUI 工具"></PageHeader>
+                    <PageHeader title={'GUI '+t('advanced.tools')}></PageHeader>
                     <Row className="mt3" gutter={[30, 0]}>
                         <Col span={6}>
-                            <Button className="ml3" type="primary" onClick={this.showDrawer}><SwapOutlined /> 数据转换</Button>
+                            <Button className="ml3 pa2" type="primary" onClick={this.showDrawer}><SwapOutlined /> {t('advanced.data trans')}</Button>
                         </Col>
                     </Row>
-                    <PageHeader className="mt2" title="开发者工具"></PageHeader>
+                    <PageHeader className="mt2" title={t('advanced.dev tools')}></PageHeader>
                     <Row className="mt3" gutter={[30, 0]}>
                         <Col span={6}>
-                            <a className="ml3" onClick={this.openUrl("https://neowish.ngd.network/neo3/")}><PaperClipOutlined /> 测试币申请</a>
+                            <a className="ml3" onClick={this.openUrl("https://neowish.ngd.network/neo3/")}><PaperClipOutlined /> {t('advanced.test coin')}</a>
                         </Col>
                         <Col span={6}>
-                            <a className="ml3" onClick={this.openUrl("https://docs.neo.org/")}><PaperClipOutlined /> 开发者文档</a>
+                            <a className="ml3" onClick={this.openUrl("https://docs.neo.org/")}><PaperClipOutlined /> {t('advanced.dev docs')}</a>
                         </Col>
                         <Col span={6}>
-                            <a className="ml3" onClick={this.openUrl("https://neo.org/dev")}><PaperClipOutlined /> 更多</a>
+                            <a className="ml3" onClick={this.openUrl("https://neo.org/dev")}><PaperClipOutlined /> {t('advanced.more')}</a>
                         </Col>
                     </Row>
                 </Col>

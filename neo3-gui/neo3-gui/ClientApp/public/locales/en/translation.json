@@ -195,7 +195,13 @@
 		"vote fail":"Vote failed",
 		"candidate success":"Candidate success, please check transaction list later",
 		"candidate fail":"Candidate fail",
-		"select all":"Select all"
+		"select all":"Select all",
+		"data trans":"Data transform",
+		"tools":"Tools",
+		"dev tools":"Developer tools",
+		"test coin":"Testnet Faucet",
+		"dev docs":"Documentation",
+		"more":"More"
 	},
 	"input": {
 		"required":"This input is required.",
