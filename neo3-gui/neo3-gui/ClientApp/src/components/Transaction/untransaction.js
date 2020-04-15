@@ -163,8 +163,8 @@ class Untransaction extends React.Component {
     const { untranslist, loading, iswa, page, allpage } = this.state;
     const loadUnMore = !loading && page <= allpage ? (
       <div className="text-c mb3">
-        {iswa ? (<Button type="primary" onClick={this.loadMyUnMore}>{ t('load more') }</Button>)
-          : (<Button type="primary" onClick={this.loadUnMore}>{ t('load more') }</Button>)}
+        {iswa ? (<Button type="primary" onClick={this.loadMyUnMore}>{ t('common.load more') }</Button>)
+          : (<Button type="primary" onClick={this.loadUnMore}>{ t('common.load more') }</Button>)}
       </div>
     ) : null;
     return (
@@ -184,7 +184,7 @@ class Untransaction extends React.Component {
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
-                    title={<span className="fail-light">{t('blockchain.transaction.confirmed')}</span>}
+                    title={<span className="fail-light">{t('blockchain.transaction.unconfirmed')}</span>}
                     />
                     <div className="trans-detail">
                         <p className="hash">{item.txId}</p>

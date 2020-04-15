@@ -171,7 +171,7 @@ class Walletlist extends React.Component {
     const { t } = this.props;
     this.setState({
       visible: true,
-      modalPanel:<Private func={this.importPrivate}/>,
+      modalPanel:<Private func={this.importPrivate} t={t}/>,
       modalTitle:t("wallet.import private")
     });
   };
@@ -272,12 +272,12 @@ class Walletlist extends React.Component {
 export default Walletlist;
 
 
-const Private = ({func}) => {
+const Private = ({func,t}) => {
   return (
     <div>
-      <Input type="text" id="privateKey" placeholder="请输入WIF格式的私钥" />
+      <Input type="text" id="privateKey" placeholder={t("please input Hex/WIF private key")} />
       <p className="text-c mb0">
-        <Button onClick={func} type="primary" className="mt3">导入私钥</Button>
+        <Button onClick={func} type="primary" className="mt3">{t("wallet.import private")}</Button>
       </p>
     </div>
   )

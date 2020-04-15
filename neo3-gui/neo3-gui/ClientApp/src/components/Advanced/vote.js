@@ -25,6 +25,9 @@ const { Option } = Select;
 const CheckboxGroup = Checkbox.Group;
 const { Content } = Layout;
 
+
+const { shell } = window.electron;
+
 @withTranslation()
 @inject("walletStore")
 @observer
@@ -81,20 +84,7 @@ class Advancedvote extends React.Component {
   }
   onChange = checkedList => {
     this.setState({
-      checkedList,
-      indeterminate: !!checkedList.length && checkedList.length < this.state.candidates.length,
-      checkAll: checkedList.length === this.state.candidates.length,
-    });
-  };
-  onCheckAllChange = e => {
-    let checkedlist = new Array();
-    this.state.candidates.map(item =>{
-      checkedlist = checkedlist.concat(item.publickey)
-    })
-    this.setState({
-        checkedList: e.target.checked ? checkedlist : [],
-        indeterminate: false,
-        checkAll: e.target.checked,
+      checkedList
     });
   };
   onVote = fieldsValue =>{
@@ -148,6 +138,11 @@ class Advancedvote extends React.Component {
       console.log("error");
     });
   }
+  openUrl (url) {
+    return ()=>{
+      shell.openExternal(url);
+    }
+  }
   render = () => {
     const { t } = this.props;
     const { disabled, candidates } = this.state;
@@ -156,28 +151,38 @@ class Advancedvote extends React.Component {
       <Layout className="gui-container">
         <Sync />
         <Content className="mt3">
-          <Row gutter={[30, 0]}>
+          <Row gutter={[30, 0]} style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
             <Col span={24} className="bg-white pv4">
             <PageHeader title={t('advanced.vote')}></PageHeader>
+            <div className="pa3">
             <Alert
-                className="mt3 mb3"
-                type="warning"
-                message={t("advanced.select address")}
-                showIcon
+              className="mt3 mb3"
+              type="warning"
+              message={<div>
+                <p className="bolder mb5">{t('advanced.vote')}</p>
+                <p className="mb5 font-s">{t('advanced.vote info')}</p>
+                <ul className="list-num mb5">
+                  <li>{t('advanced.vote step1')}</li>
+                  <li>{t('advanced.vote step2')}</li>
+                  <li>{t('advanced.vote step3')}</li>
+                </ul>
+                <p className="mb5 font-s">{t('advanced.vote after')}</p>
+              </div>}
+              showIcon
             />
                                 
             <Form ref="formRef" onFinish={this.onVote}>
-                <h4 className="bolder">{t('advanced.vote for')}</h4>
-                <Form.Item
-                name="voter"
-                className="select-vote"
-                rules={[
-                    {
-                    required: true,
-                    message: t("advanced.need address"),
-                    },
-                ]}
-                >
+              <h4 className="bolder">{t('advanced.vote for')}</h4>
+              <Form.Item
+              name="voter"
+              className="select-vote"
+              rules={[
+                {
+                required: true,
+                message: t("advanced.need address"),
+                },
+              ]}
+              >
                 <Select
                 placeholder={t("advanced.select address")}
                 style={{ width: '100%' }}
@@ -188,32 +193,23 @@ class Advancedvote extends React.Component {
                     )
                   })}
                 </Select>
-                </Form.Item>
-                <h4>{t('advanced.candidate key')}</h4>
-                
-                <p>
-                  <Checkbox
-                  indeterminate={this.state.indeterminate}
-                  onChange={this.onCheckAllChange}
-                  checked={this.state.checkAll}
-                  >
-                  {t('advanced.select all')}
-                  </Checkbox>
-                </p>
-                <CheckboxGroup
-                  value={this.state.checkedList}
-                  onChange={this.onChange}
-                >
-                  {candidates.map((item,index)=>{
-                    return <p key={index}><Checkbox value={item.publickey}>{item.publickey}</Checkbox></p>
-                  })}
-                </CheckboxGroup>
-                <p className="text-c">
-                  <Button type="primary" htmlType="submit" disabled={disabled} loading={this.state.iconLoading}>
-                    {t("button.confirm")}
-                  </Button>
-                </p>
+              </Form.Item>
+                <h4>{t('advanced.candidate key')}<a className="ml2 small t-green" onClick={this.openUrl("https://neo.org/consensus")}> {t('advanced.candidate intro')}</a></h4>
+              <CheckboxGroup
+                value={this.state.checkedList}
+                onChange={this.onChange}
+              >
+                {candidates.map((item,index)=>{
+                  return <p key={index}><Checkbox value={item.publickey}>{item.publickey}</Checkbox></p>
+                })}
+              </CheckboxGroup>
+              <p className="text-c mt4">
+                <Button type="primary" htmlType="submit" disabled={disabled} loading={this.state.iconLoading}>
+                  {t("button.confirm")}
+                </Button>
+              </p>
               </Form>
+            </div>
             </Col>
           </Row>
         </Content>

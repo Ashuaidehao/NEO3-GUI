@@ -293,12 +293,12 @@ small,.small{
     width: 100%;
     min-height: 34px;
     line-height: 34px;
-    padding: 0 16px;
+    padding: 0 24px;
     vertical-align: middle;
     color: #000;
 }
 .menu-down li a:hover{
-    color: #FFFFFF;
+    background: #F0F0F0;
 }
 .menu-down li a .anticon {
     margin-right: 10px;
@@ -387,11 +387,6 @@ small,.small{
     padding: 25px 50px;
     min-height: calc( 100vh );
 }
-
-.info-detail{
-
-}
-.info-detail a{}
 .detail-ul{
     list-style: none;
     font-size: 12px;
@@ -488,10 +483,6 @@ small,.small{
     outline: none;
     box-shadow: none;
 }
-.ant-input-affix-wrapper-focus{
-
-}
-
 .set-modal .ant-modal-content{
     padding-left: 10px;
     padding-right: 10px;
@@ -535,4 +526,9 @@ small,.small{
     margin-bottom: 5px;
     padding-bottom: 5px;
     border-bottom: 1px solid #FCFCFC;
+}
+.list-num{
+    font-size: 12px;
+    padding-left: 15px;
+    list-style: decimal;
 }

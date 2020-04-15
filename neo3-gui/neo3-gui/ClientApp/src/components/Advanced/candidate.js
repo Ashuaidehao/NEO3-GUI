@@ -76,24 +76,6 @@ class Advancedcandidate extends React.Component {
       console.log("error");
     });
   }
-  onChange = checkedList => {
-    this.setState({
-      checkedList,
-      indeterminate: !!checkedList.length && checkedList.length < this.state.candidates.length,
-      checkAll: checkedList.length === this.state.candidates.length,
-    });
-  };
-  onCheckAllChange = e => {
-    let checkedlist = new Array();
-    this.state.candidates.map(item =>{
-      checkedlist = checkedlist.concat(item.publicKey)
-    })
-    this.setState({
-        checkedList: e.target.checked ? checkedlist : [],
-        indeterminate: false,
-        checkAll: e.target.checked,
-    });
-  };
   onCandidate = fieldsValue =>{
     const { t } = this.props;
     axios.post('http://localhost:8081', {
@@ -146,17 +128,27 @@ class Advancedcandidate extends React.Component {
       <Layout className="gui-container">
         <Sync />
         <Content className="mt3">
-          <Row gutter={[30, 0]}>
+          <Row gutter={[30, 0]} style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
             <Col span={24} className="bg-white pv4">
             <PageHeader title={t('advanced.candidate')}></PageHeader>
+            
+            <div className="pa3">
             <Alert
                 className="mt3 mb3"
                 type="warning"
-                message={t("advanced.select address")}
+                message={<div>
+                  <p className="bolder mb5">{t('advanced.candidate')}</p>
+                  <p className="mb5 font-s">{t('advanced.candidate info')}</p>
+                  <ul className="list-num">
+                    <li>{t('advanced.candidate step1')}</li>
+                    <li>{t('advanced.candidate step2')}</li>
+                    <li>{t('advanced.candidate step3')}</li>
+                  </ul>
+                </div>}
                 showIcon
             />
             <Form ref="formRef" onFinish={this.onCandidate}>
-                <h4 className="bolder">{t('advanced.be candidate')}</h4>
+                <h4 className="bolder mb4">{t('advanced.be candidate')}</h4>
                 <Form.Item
                 name="pubkey"
                 className="select-vote"
@@ -178,12 +170,13 @@ class Advancedcandidate extends React.Component {
                   })}
                 </Select>
                 </Form.Item>
-                <p className="text-c">
+                <p className="text-c mt3">
                   <Button type="primary" htmlType="submit" disabled={disabled} loading={this.state.iconLoading}>
                     {t("button.confirm")}
                   </Button>
                 </p>
               </Form>
+              </div>
             </Col>
           </Row>
         </Content>
