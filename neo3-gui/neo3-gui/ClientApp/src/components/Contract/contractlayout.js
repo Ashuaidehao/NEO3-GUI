@@ -48,8 +48,7 @@ class Contractlayout extends React.Component {
     const walletOpen = this.props.walletStore.isOpen;
     return (
       <div style={{ height: '100%' }}>
-        {/* {walletOpen?<Topath topath="/contract"></Topath>:null} */}
-        <Sider style={{ height: '100%' }} >
+        <Sider className="menu-logo" style={{ height: '100%' }} >
           <Menu
             className="menu-scroll"
             theme="light"

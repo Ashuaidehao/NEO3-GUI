@@ -3,7 +3,7 @@ import React from 'react';
 import { observer, inject } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import axios from 'axios';
-import { Layout, Menu, Icon } from 'antd';
+import { Layout, Menu } from 'antd';
 import { Link } from 'react-router-dom';
 import MenuDown from '../Common/menudown'
 import { walletStore } from "../../store/stores";
@@ -13,7 +13,6 @@ import {
 } from '@ant-design/icons';
 import { withTranslation } from "react-i18next";
 import Datatrans from '../Common/datatrans';
-
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
@@ -52,7 +51,7 @@ class Advancedlayout extends React.Component {
     const walletOpen = this.props.walletStore.isOpen;
     return (
       <div style={{ height: '100%' }}>
-        <Sider style={{ height: '100%' }} >
+        <Sider className="menu-logo" style={{ height: '100%' }} >
           <Menu
             className="menu-scroll"
             theme="light"
@@ -73,7 +72,7 @@ class Advancedlayout extends React.Component {
                 </span>
               }
               >
-                <Menu.Item key="1"><Link to="/advanced">工具</Link></Menu.Item>
+                <Menu.Item key="1"><Link to="/advanced">{t('advanced.tools')}</Link></Menu.Item>
                 <Menu.Item key="2"><Link to="/advanced/vote">{t("advanced.vote")}</Link></Menu.Item>
                 <Menu.Item key="3"><Link to="/advanced/candidate">{t("advanced.candidate")}</Link></Menu.Item>
               </SubMenu>
@@ -96,7 +95,6 @@ class Advancedlayout extends React.Component {
           </Menu>
           <MenuDown />
         </Sider>
-        
         <Datatrans visible={this.state.visible} onClose={this.onClose} />   
       </div>
     );

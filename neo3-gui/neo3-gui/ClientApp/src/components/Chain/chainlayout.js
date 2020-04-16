@@ -32,7 +32,7 @@ class Chainlayout extends React.Component {
     const { t } = this.props;
     return (
       <div style={{ height: '100%' }}>
-        <Sider style={{ height: '100%' }} >
+        <Sider className="menu-logo" style={{ height: '100%' }} >
           <Menu
             className="menu-scroll"
             theme="light"

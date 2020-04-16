@@ -66,7 +66,7 @@ class Walletlayout extends React.Component {
     return (
       <div style={{ height: '100%' }}>
         {walletOpen || isopen ? <Topath topath="/wallet/walletlist"></Topath> : <Topath topath="/wallet"></Topath>}
-        <Sider style={{ height: '100%' }} >
+        <Sider className="menu-logo" style={{ height: '100%' }} >
           <Menu
             className="menu-scroll"
             theme="light"
