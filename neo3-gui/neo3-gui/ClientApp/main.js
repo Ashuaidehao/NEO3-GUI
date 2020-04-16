@@ -16,9 +16,18 @@ const url = require('url')
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
+
+// adapted from https://github.com/chentsulin/electron-react-boilerplate
+const installExtensions = () => {
+    const installer = require('electron-devtools-installer') // eslint-disable-line import/no-extraneous-dependencies
+    const extensions = ['REACT_DEVELOPER_TOOLS', 'MOBX_DEVTOOLS']
+
+    return Promise.all(
+        extensions.map(name => installer.default(installer[name])),
+    ).catch(console.error)
+}
+
 function createWindow() {
-
-
     // Create the browser window.
     mainWindow = new BrowserWindow({
         width: 1100,
@@ -66,7 +75,14 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', () => {
+
+    if (process.env.NODE_ENV === 'development') {
+        installExtensions().then(() => createWindow())
+    } else {
+        createWindow()
+    }
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {

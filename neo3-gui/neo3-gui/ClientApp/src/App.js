@@ -4,6 +4,7 @@ import { ConfigProvider } from "antd";
 import { Provider } from "mobx-react";
 import stores from "./store/stores";
 import Config from "./config";
+import neoNode from "./neonode";
 
 
 class App extends React.Component {
@@ -12,8 +13,9 @@ class App extends React.Component {
 
     console.log(window.location.href);
     if (process.env.NODE_ENV !== "development") {
-      stores.nodeStore.start(Config.NETWORK, Config.Port);
+      neoNode.startNode(Config.NETWORK, Config.Port);
     }
+    // neoNode.startNode(Config.NETWORK, Config.Port);
     this.initWebSocket();
   }
 
