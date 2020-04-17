@@ -47,10 +47,10 @@ class Contract extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]} style={{ 'minHeight': 'calc( 100vh - 135px )' }}>
             <Col span={24} className="bg-white pv4">
-              <PageHeader title={t("contract page.search contract")}></PageHeader>
+              <PageHeader title={t("contract.search contract")}></PageHeader>
             </Col>
-          </Row>
           <Searcharea show={this.show()} />
+          </Row>
         </Content>
       </Layout>
     );

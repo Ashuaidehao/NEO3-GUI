@@ -6,7 +6,6 @@ import axios from 'axios';
 import { Layout, Menu, Icon } from 'antd';
 import { Link } from 'react-router-dom';
 import MenuDown from '../Common/menudown'
-import Topath from '../Common/topath';
 import { walletStore } from "../../store/stores";
 import {
   HomeOutlined,
@@ -25,9 +24,6 @@ const { SubMenu } = Menu;
 class Contractlayout extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      topath: ""
-    };
   }
   componentDidMount() {
     this.getGas()
@@ -37,20 +33,19 @@ class Contractlayout extends React.Component {
       "id": 51,
       "method": "ShowGas"
     })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) { return; }
-        walletStore.setWalletState(true);
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) { return; }
+      walletStore.setWalletState(true);
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   render = () => {
     const { t } = this.props;
     const walletOpen = this.props.walletStore.isOpen;
-    console.log(walletOpen)
     return (
       <div style={{ height: '100%' }}>
         {/* {walletOpen?<Topath topath="/contract"></Topath>:null} */}
@@ -63,7 +58,7 @@ class Contractlayout extends React.Component {
             mode="inline"
           >
             <Menu.Item>
-              <Link to="/"><HomeOutlined />{t("home page")}</Link>
+              <Link to="/"><HomeOutlined />{t("sideBar.home")}</Link>
             </Menu.Item>
 
             {walletOpen ? (
@@ -72,18 +67,18 @@ class Contractlayout extends React.Component {
                 title={
                   <span>
                     <FileSyncOutlined />
-                    <span>{t("wallet")}</span>
+                    <span>{t("sideBar.contract")}</span>
                   </span>
                 }
               >
                 <Menu.Item key="1">
-                  <Link to="/contract">{ t('contract page.search contract nav') }</Link>
+                  <Link to="/contract">{ t('sideBar.search contract') }</Link>
                 </Menu.Item>
                 <Menu.Item key="2">
-                  <Link to="/contract/deploy">{ t('contract page.deploy contract nav') }</Link>
+                  <Link to="/contract/deploy">{ t('sideBar.deploy contract') }</Link>
                 </Menu.Item>
                 <Menu.Item key="3">
-                  <Link to="/contract/invoke">{ t('contract page.invoke contract nav') }</Link>
+                  <Link to="/contract/invoke">{ t('sideBar.invoke contract') }</Link>
                 </Menu.Item>
               </SubMenu>
             ) : null}
@@ -94,18 +89,18 @@ class Contractlayout extends React.Component {
                 title={
                   <span>
                     <FileSyncOutlined />
-                    <span>{t("contract")}</span>
+                    <span>{t("sideBar.contract")}</span>
                   </span>
                 }
               >
                 <Menu.Item key="1">
-                  <Link to="/contract">{ t('contract page.search contract nav') }</Link>
+                  <Link to="/contract">{ t('sideBar.search contract') }</Link>
                 </Menu.Item>
                 <Menu.Item key="2">
-                  <Link to="/contract/wallet">{ t('contract page.deploy contract nav') }</Link>
+                  <Link to="/contract/wallet">{ t('sideBar.deploy contract') }</Link>
                 </Menu.Item>
                 <Menu.Item key="3">
-                  <Link to="/contract/wallet">{ t('contract page.invoke contract nav') }</Link>
+                  <Link to="/contract/wallet">{ t('sideBar.invoke contract') }</Link>
                 </Menu.Item>
               </SubMenu>
             ) : null}

@@ -5,7 +5,6 @@ import Transaction from '../Transaction/transaction';
 import Untransaction from '../Transaction/untransaction';
 import { withTranslation } from "react-i18next";
 
-
 @withTranslation()
 class Wallettrans extends React.Component{
   constructor(props){
@@ -20,8 +19,8 @@ class Wallettrans extends React.Component{
     return (
       <Layout className="gui-container">
         <Sync />
-        <Untransaction page="wallet"/>
-        <Transaction content={t("lastest transactions")} page="wallettrans"/>
+        <Untransaction content={t("blockchain.transaction.pending")} page="wallet"/>
+        <Transaction content={t("wallet.lastest transactions")} page="wallettrans"/>
       </Layout>
     );
   }

@@ -41,20 +41,20 @@ class Chainlayout extends React.Component {
             mode="inline"
           >
             <Menu.Item>
-              <Link to="/"><HomeOutlined />{t("home page")}</Link>
+              <Link to="/"><HomeOutlined />{t("sideBar.home")}</Link>
             </Menu.Item>
             <SubMenu
               key="sub1"
               title={
                 <span>
                   <RadiusUpleftOutlined />
-                  <span>{t("blockchain")}</span>
+                  <span>{t("sideBar.blockchain")}</span>
                 </span>
               }
             >
-              <Menu.Item key="1" ><Link to="/chain">{t("blockchain page.blocks nav")}</Link></Menu.Item>
-              <Menu.Item key="2" ><Link to="/chain/transaction">{t("blockchain page.transactions nav")}</Link></Menu.Item>
-              <Menu.Item key="3" ><Link to="/chain/asset">{t("blockchain page.asset nav")}</Link></Menu.Item>
+              <Menu.Item key="1" ><Link to="/chain">{t("sideBar.blocks")}</Link></Menu.Item>
+              <Menu.Item key="2" ><Link to="/chain/transaction">{t("sideBar.transactions")}</Link></Menu.Item>
+              <Menu.Item key="3" ><Link to="/chain/asset">{t("sideBar.assets")}</Link></Menu.Item>
             </SubMenu>
           </Menu>
           <MenuDown />

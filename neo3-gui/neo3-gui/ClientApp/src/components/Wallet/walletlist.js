@@ -3,13 +3,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { observer, inject } from "mobx-react";
 import axios from 'axios';
-import { Layout, message, Row, Col, List, Avatar, Button, Typography } from 'antd';
+import { Layout, message, Row, Col, List, Avatar, Button, Typography,PageHeader,Modal,Input } from 'antd';
 import '../../static/css/wallet.css'
 import Sync from '../sync';
-import Intitle from '../Common/intitle'
-import Topath from '../Common/topath';
 import { withTranslation } from "react-i18next";
 
+import {
+  PlusCircleOutlined
+} from '@ant-design/icons';
 
 const { Content } = Layout;
 
@@ -38,21 +39,21 @@ class Walletlist extends React.Component {
       "method": "GetMyTotalBalance",
       "params": {}
     })
-      .then(function (response) {
-        var _data = response.data;
-        console.log(_data);
-        if (_data.msgType === -1) {
-          console.log("需要先打开钱包再进入页面");
-          return;
-        }
-        _this.setState({
-          assetlist: _data.result
-        })
+    .then(function (response) {
+      var _data = response.data;
+      console.log(_data);
+      if (_data.msgType === -1) {
+        console.log("需要先打开钱包再进入页面");
+        return;
+      }
+      _this.setState({
+        assetlist: _data.result
       })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   getAddress = () => {
     var _this = this;
@@ -63,19 +64,19 @@ class Walletlist extends React.Component {
         "count": 10
       }
     })
-      .then(function (response) {
-        var _data = response.data;
-        console.log(_data);
-        if (_data.msgType === -1) {
-          console.log("需要先打开钱包再进入页面");
-          return;
-        }
-        _this.props.walletStore.setAccounts(_data.result.accounts);
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (response) {
+      var _data = response.data;
+      console.log(_data);
+      if (_data.msgType === -1) {
+        console.log("需要先打开钱包再进入页面");
+        return;
+      }
+      _this.props.walletStore.setAccounts(_data.result.accounts);
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   getGas = () => {
     var _this = this;
@@ -83,102 +84,138 @@ class Walletlist extends React.Component {
       "id": 51,
       "method": "ShowGas"
     })
-      .then(function (response) {
-        var _data = response.data;
-        console.log(_data);
-        if (_data.msgType == -1) {
-          console.log("需要先打开钱包再进入页面");
-          return;
-        }
-        _this.setState({
-          gas: _data.result.unclaimedGas
-        })
+    .then(function (response) {
+      var _data = response.data;
+      console.log(_data);
+      if (_data.msgType == -1) {
+        console.log("需要先打开钱包再进入页面");
+        return;
+      }
+      _this.setState({
+        gas: _data.result.unclaimedGas
       })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   claimGas = () => {
     var _this = this;
+    this.setState({iconLoading:true})
+    setTimeout(this.setState({iconLoading:false}),10000);
     axios.post('http://localhost:8081', {
       "id": 51,
       "method": "ClaimGas"
     })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          console.log("需要先打开钱包再进入页面");
-          return;
-        } else if (_data.msgType = 3) {
-          message.success("GAS 提取成功，请稍后刷新页面查看", 3);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        console.log("需要先打开钱包再进入页面");
+        return;
+      } else if (_data.msgType = 3) {
+
+        message.success("GAS 提取成功，请稍后刷新页面查看", 3);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   addAddress = () => {
+    const { t } = this.props;
     var _this = this;
     axios.post('http://localhost:8081', {
       "id": "1",
       "method": "CreateAddress"
     })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          console.log("需要先打开钱包再进入页面");
-          return;
-        }
-        _this.props.walletStore.addAccount(_data.result);
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        message.error(t('wallet.open wallet first'));
+        return;
+      }
+      message.success(t('wallet.add address success'));
+      _this.props.walletStore.addAccount(_data.result);
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   importPrivate = () => {
-    var _this = this.state;
-    // var pass = document.getElementById("privateKey").value;
-    // console.log(pass);
+    const { t } = this.props;
+    this.handleCancel();
+
+    var pass = document.getElementById("privateKey").value;
     axios.post('http://localhost:8081', {
       "id": "20",
-      "method": "ImportWif",
+      "method": "ImportAccounts",
       "params": [pass]
     })
-      .then(function (res) {
-        let _data = res.data;
-        if (_data.msgType === 3) {
-          message.success("私钥打开成功", 2);
-        } else {
-          message.info("私钥输入错误", 2);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (res) {
+      let _data = res.data;
+      if (_data.msgType === 3) {
+        message.success(t('wallet.import private success'), 2);
+      } else {
+        message.info(t('wallet.private fail'), 2);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
+  showModal = () => {
+    const { t } = this.props;
+    this.setState({
+      visible: true,
+      modalPanel:<Private func={this.importPrivate} t={t}/>,
+      modalTitle:t("wallet.import private")
+    });
+  };
+  handleOk = () => {
+    this.setState({
+      visible: false,
+    });
+  };
+  handleCancel = () => {
+    this.setState({
+      visible: false,
+    });
+  };
   render() {
     const accounts = this.props.walletStore.accountlist;
-    const walletOpen = this.props.walletStore.isOpen;
     const { assetlist } = this.state;
     const { t } = this.props;
     return (
       <Layout className="gui-container">
         <Sync />
         <Content className="mt3">
-          <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
+          <Row className="mb2" gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
             <Col span={13} className="bg-white pv4">
-              <Intitle content={t("wallet page.accounts nav")} show="true" />
+              <div className="in-title">
+                <h2 className="mb0">
+                  {t("wallet.accounts")}
+                  <div className="wal-import float-r">
+                      <PlusCircleOutlined className=""/>
+                      <div className="wal-ul">
+                        <ul>
+                          <li><a onClick={this.addAddress}>{t('wallet.add address')}</a></li>
+                          <li><a onClick={this.showModal}>{t('wallet.import private')}</a></li>
+                        </ul>
+                      </div>
+                  </div>
+                </h2>
+              </div>
               <List
                 itemLayout="horizontal"
                 dataSource={accounts}
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
-                      title={<Link to={"/wallet/walletlist:" + item.address} title={t("wallet page.show detail")}>{item.address}</Link>}
+                      title={<Link to={"/wallet/walletlist:" + item.address} title={t("wallet.show detail")}>{item.address}</Link>}
                       description={
                         <span className="f-s">
                           <span className="mr2">NEO {item.neo}</span>
@@ -190,19 +227,18 @@ class Walletlist extends React.Component {
               />
             </Col>
             <Col span={10} offset={1} className="bg-white pv4">
-              <Intitle content={t("wallet page.assets")} />
+              <PageHeader title={t("wallet.assets")} ></PageHeader>
               <List
                 className="asset-list"
                 itemLayout="horizontal"
                 style={{ 'minHeight': 'calc( 100% - 135px )' }}
                 dataSource={assetlist}
-                header={<div><span>{t("asset hash")} <small></small></span><span className="float-r wa-amount">{t("wallet page.balance")}</span></div>}
+                header={<div><span>{t("blockchain.asset info")} <small></small></span><span className="float-r wa-amount">{t("wallet.balance")}</span></div>}
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
                       avatar={
-                        // <Avatar src="https://neo3.azureedge.net/images/gui/0x43cf98eddbe047e198a3e5d57006311442a0ca15.png" />
-                        <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                        <Avatar src="https://neo3.azureedge.net/images/gui/0x43cf98eddbe047e198a3e5d57006311442a0ca15.png" />
                         // <Avatar src={"https://neo3.azureedge.net/images/gui/"+item.asset+".png"} />
                       }
                       title={<span className="upcase">{item.symbol}</span>}
@@ -213,15 +249,20 @@ class Walletlist extends React.Component {
                 )}
               />
               <div className="w200 mt4">
-                <Button className="w200" onClick={this.claimGas} loading={this.state.iconLoading}>{t("wallet page.claim")} {this.state.gas} GAS</Button>
+                <Button className="w200" onClick={this.claimGas} loading={this.state.iconLoading}>{t("button.claim")} {this.state.gas} GAS</Button>
               </div>
             </Col>
           </Row>
-
-          <Button className="mt3 mb1" type="primary" onClick={this.addAddress}>创建新地址</Button>
-          {/* <br /><br />
-          <Input type="text" ref="private" placeholder="请输入WIF格式的私钥" />
-          <Button onClick={this.importPrivate} className="mb1">导入私钥</Button> */}
+          <Modal
+            width={400}
+            centered
+            title={this.state.modalTitle}
+            visible={this.state.visible}
+            onCancel={this.handleCancel}
+            footer={null}
+          >
+          {this.state.modalPanel}
+          </Modal>
         </Content>
       </Layout>
     );
@@ -229,3 +270,15 @@ class Walletlist extends React.Component {
 }
 
 export default Walletlist;
+
+
+const Private = ({func,t}) => {
+  return (
+    <div>
+      <Input type="text" id="privateKey" placeholder={t("please input Hex/WIF private key")} />
+      <p className="text-c mb0">
+        <Button onClick={func} type="primary" className="mt3">{t("wallet.import private")}</Button>
+      </p>
+    </div>
+  )
+};

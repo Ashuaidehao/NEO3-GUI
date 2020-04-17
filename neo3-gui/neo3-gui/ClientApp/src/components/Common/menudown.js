@@ -3,10 +3,8 @@ import React from 'react';
 import { observer, inject } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import 'antd/dist/antd.css';
-import { message } from 'antd';
-import { Modal, Button } from 'antd';
+import { message, Modal } from 'antd';
 import axios from 'axios';
-import { Radio } from 'antd';
 import Addressdetail from './addressdetail';
 import Setting from './setting';
 import {
@@ -16,8 +14,6 @@ import {
 } from '@ant-design/icons';
 import { withTranslation } from 'react-i18next';
 import { shell } from "electron";
-
-// const { shell } = window.electron;
 
 @withTranslation()
 @inject("walletStore")
@@ -39,15 +35,15 @@ class menuDown extends React.Component {
             "id": "1234",
             "method": "CloseWallet"
         })
-            .then(() => {
-                message.success(t("wallet page.close wallet success"), 2);
-                this.props.walletStore.logout();
-                this.props.history.push('/');
-            })
-            .catch(function (error) {
-                console.log(error);
-                console.log("error");
-            });
+        .then(() => {
+            message.success(t("wallet.close wallet success"), 2);
+            this.props.walletStore.logout();
+            this.props.history.push('/');
+        })
+        .catch(function (error) {
+            console.log(error);
+            console.log("error");
+        });
     }
     showModal = () => {
         this.setState({
@@ -62,12 +58,12 @@ class menuDown extends React.Component {
     };
     getInset = (ele) => {
         const { t } = this.props;
-        return () => {
-            this.setState({ showElem: false })
-            switch (ele) {
-                case 0: this.setState({ title: t("address book"), children: <Addressdetail /> }); break;
-                case 1: this.setState({ title: t("settings"), children: <Setting /> }); break;
-                default: this.setState({ title: t("settings"), children: <Setting /> }); break;
+        return () =>{
+            this.setState({showElem: false})
+            switch(ele){
+                case 0:this.setState({title:t("sideBar.address book"),children: <Addressdetail />});break;
+                case 1:this.setState({title:t("sideBar.settings"),children: <Setting />});break;
+                default:this.setState({title:t("sideBar.settings"),children: <Setting />});break;
             }
             this.setState({
                 visible: true,
@@ -86,23 +82,23 @@ class menuDown extends React.Component {
             <div className="menu-down">
                 <ul>
                     {walletOpen ? (
-                        <li>
-                            <a onClick={this.getInset(0)}>
-                                <ReadOutlined />
-                                <span>{t("address book")}</span>
-                            </a>
-                        </li>) : null}
+                    <li>
+                        <a onClick={this.getInset(0)}>
+                            <ReadOutlined />
+                            <span>{t("sideBar.address book")}</span>
+                        </a>
+                    </li>):null}
                     {walletOpen ? (
-                        <li>
-                            <a onClick={this.logout}>
-                                <LogoutOutlined />
-                                <span>{t("button.close wallet")}</span>
-                            </a>
-                        </li>) : null}
+                    <li>
+                        <a onClick={this.logout}>
+                            <LogoutOutlined />
+                            <span>{t("sideBar.logout")}</span>
+                        </a>
+                    </li>) : null}
                     <li>
                         <a onClick={this.getInset(1)}>
                             <SettingOutlined />
-                            <span>{t("settings")}</span>
+                            <span>{t("sideBar.settings")}</span>
                         </a>
                     </li>
                 </ul>

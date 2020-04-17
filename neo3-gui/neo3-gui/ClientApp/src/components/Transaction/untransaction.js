@@ -3,14 +3,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { Layout, Icon, Row, Col, Modal, List, Button, Typography, message, Tag } from 'antd';
+import { Layout, Icon, Row, Col, PageHeader, List, Button, Typography, message, Tag } from 'antd';
 import Intitle from '../Common/intitle';
 import { withTranslation } from "react-i18next";
 
-
 const { Content } = Layout;
 
-@withTranslation
+@withTranslation()
 class Untransaction extends React.Component {
   constructor(props) {
     super(props);
@@ -58,8 +57,9 @@ class Untransaction extends React.Component {
         data: res.result.list,
         untranslist: res.result.list,
         page: this.state.page + 1,
+        iswa: false,
         allpage: Math.ceil(res.result.totalCount / this.state.limit)
-      }, () => { console.log(this.state) });
+      });
     })
   }
   walletset = params => {
@@ -71,7 +71,7 @@ class Untransaction extends React.Component {
         page: this.state.page + 1,
         iswa: true,
         allpage: Math.ceil(res.result.totalCount / this.state.limit)
-      }, () => { });
+      });
     })
   }
   getMyuntrans = (params, callback) => {
@@ -80,19 +80,19 @@ class Untransaction extends React.Component {
       "method": "GetMyUnconfirmedTransactions",
       "params": params
     })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          message.error("查询失败");
-          return;
-        } else {
-          callback(_data);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        message.error("查询失败");
+        return;
+      } else {
+        callback(_data);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   };
   getAlluntrans = (params, callback) => {
     axios.post('http://localhost:8081', {
@@ -102,8 +102,6 @@ class Untransaction extends React.Component {
     })
       .then(function (response) {
         var _data = response.data;
-        console.log("my")
-        console.log(_data)
         if (_data.msgType === -1) {
           message.error("查询失败");
           return;
@@ -165,8 +163,8 @@ class Untransaction extends React.Component {
     const { untranslist, loading, iswa, page, allpage } = this.state;
     const loadUnMore = !loading && page <= allpage ? (
       <div className="text-c mb3">
-        {iswa ? (<Button type="primary" onClick={this.loadMyUnMore}>加载更多</Button>)
-          : (<Button type="primary" onClick={this.loadUnMore}>加载更多</Button>)}
+        {iswa ? (<Button type="primary" onClick={this.loadMyUnMore}>{ t('common.load more') }</Button>)
+          : (<Button type="primary" onClick={this.loadUnMore}>{ t('common.load more') }</Button>)}
       </div>
     ) : null;
     return (
@@ -174,9 +172,9 @@ class Untransaction extends React.Component {
         <Content className="mt3 mb4">
           <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': '120px' }}>
             <Col span={24} className="bg-white pv4">
-              <Intitle content={this.props.content || "未确认交易"} />
+              <PageHeader title={this.props.content || t("blockchain.transaction.pending")}></PageHeader>
               <List
-                header={<div><span>{t("transaction hash")}</span><span className="float-r ml4"><span className="wa-amount"></span>{t("count")}</span><span className="float-r">{t("time")}</span></div>}
+                header={<div><span className="fail-light">{t("blockchain.transaction.status")}</span><span>{t("blockchain.transaction info")}</span></div>}
                 footer={<span></span>}
                 itemLayout="horizontal"
                 loading={loading}
@@ -186,16 +184,11 @@ class Untransaction extends React.Component {
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
-                      title={<div className="link-style">{item.txId}</div>}
-                      description={
-                        <div className="font-s">
-                          From：<span className="w300 ellipsis">{item.transfers[0].fromAddress ? item.transfers[0].fromAddress : "--"}</span><br></br>
-                        To：<span className="w300 ellipsis" >{item.transfers[0].toAddress ? item.transfers[0].toAddress : "--"}</span>
-                        </div>
-                      }
+                    title={<span className="fail-light">{t('blockchain.transaction.unconfirmed')}</span>}
                     />
-                    <Typography>{item.blockTime}</Typography>
-                    <Typography className="upcase ml4"><span className="wa-amount">{item.transfers[0].amount}</span>{item.transfers[0].symbol}</Typography>
+                    <div className="trans-detail">
+                        <p className="hash">{item.txId}</p>
+                    </div>
                   </List.Item>
                 )}
               />

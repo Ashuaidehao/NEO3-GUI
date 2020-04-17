@@ -2,10 +2,9 @@
 //just test replace wallet//
 import React from 'react';
 import {Link} from 'react-router-dom';
-import { Layout, Row, Col, message,List,Typography } from 'antd';
+import { Layout, Row, Col, message,List,Typography,PageHeader } from 'antd';
 import axios from 'axios';
 import Intitle from '../Common/intitle';
-import Transaction from '../Transaction/transaction';
 import Sync from '../sync';
 
 const { Content } = Layout;
@@ -71,7 +70,7 @@ class Blockdetail extends React.Component{
           <Content className="mt3">
           <Row gutter={[30, 0]} type="flex">
             <Col span={24} className="bg-white pv4">
-              <Intitle className="mb2" content="区块信息"/>
+              <PageHeader className="mb2" content="区块信息"></PageHeader>
               <div className="info-detail pv3">
                 <div className="pa3"><span>Hash: &nbsp;&nbsp;&nbsp;</span>{blockdetail.blockHash}</div>
                 <Row>
@@ -97,7 +96,7 @@ class Blockdetail extends React.Component{
           </Row>
           <Row className="mt3 mb1" gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
             <Col span={24} className="bg-white pv4">
-            <Intitle content="交易"/>
+            <PageHeader title="交易"></PageHeader>
             <List
               header={<div><span>交易hash</span><span className="float-r ml4"><span className="wa-amount"></span>数量</span><span className="float-r">时间</span></div>}
               footer={<span></span>}

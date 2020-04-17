@@ -2,7 +2,7 @@
 //just test replace wallet//
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Layout, Row, Col, List, Typography, message } from 'antd';
+import { Layout, Row, Col, List, Typography, message,PageHeader } from 'antd';
 import axios from 'axios';
 import Intitle from '../Common/intitle';
 import Sync from '../sync';
@@ -53,9 +53,9 @@ class Chainasset extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
             <Col span={24} className="bg-white pv4">
-              <Intitle content={t("blockchain page.asset nav")} />
+              <PageHeader title={t("blockchain.assets")}></PageHeader>
               <List
-                header={<div><span>{t("asset hash")}</span><span className="float-r">{t("precision")}</span></div>}
+                header={<div><span>{t("blockchain.asset info")}</span><span className="float-r">{t("blockchain.precision")}</span></div>}
                 itemLayout="horizontal"
                 dataSource={assetlist}
                 className="font-s"

@@ -1,94 +1,73 @@
 import React from 'react';
-import { Row, Col,Typography,Switch,Skeleton } from 'antd';
-import {Link} from 'react-router-dom';
+import {
+    PageHeader,
+    Button,
+    Row,
+    Col,
+    Layout } from 'antd';
+import Sync from '../sync';
+import "../../static/css/advanced.css";
+import Datatrans from '../Common/datatrans';
+import { SwapOutlined, PaperClipOutlined } from '@ant-design/icons';
+import { withTranslation } from "react-i18next";
+import { shell } from "electron";
 
-const { Title } = Typography;
+const { Content } = Layout;
 
+@withTranslation()
 class Advanced extends React.Component {
-    state = {
-        loading: true,
-    };
-    onChange = (checked,event) => {
-        console.log(`switch to ${checked}`);
-        //修改传参
+        constructor(props){
+        super(props);
+        this.state = {
+            visible: false
+        };
     }
-    componentDidMount(){
-        setTimeout(() => {
-            this.setState({ loading: false });
-        }, 200);
+    showDrawer = () => {
+        this.setState({
+            visible: true,
+        });
+    };
+    onClose = () => {
+        this.setState({
+            visible: false,
+        });
+    };
+    openUrl (url) {
+        return ()=>{
+            shell.openExternal(url);
+        }
     }
     render() {
+        const { t } = this.props;
         return (
-            <div>
-                <Skeleton loading={this.state.loading}>
-                    <p>
-                        <Link to='/'>
-                            回首页
-                        </Link>
-                    </p>
-                    <Title level={4}>链上治理</Title>
-                    <Row gutter={[{ xs: 8, sm: 16, md: 24, lg: 32 }, 20]}>
+            <Layout className="gui-container">
+            <Sync />
+            <Content className="mt3">
+              <Row gutter={[30, 0]} style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
+                <Col span={24} className="bg-white pv4">
+                    <PageHeader title={'GUI '+t('advanced.tools')}></PageHeader>
+                    <Row className="mt3" gutter={[30, 0]}>
                         <Col span={6}>
-                            <span>选举</span>
-                            <Switch defaultChecked className="Candidate"
-                                // checkedChildren={<Icon type="check" />}
-                                // unCheckedChildren={<Icon type="close" />}
-                                onChange={this.onChange}/>
-                        </Col>
-                        <Col span={6}>
-                            <span>投票</span>
-                            <Switch defaultChecked className="Candidate"
-                                // checkedChildren={<Icon type="check" />}
-                                // unCheckedChildren={<Icon type="close" />}
-                                onChange={this.onChange}/>
+                            <Button className="ml3 pa2" type="primary" onClick={this.showDrawer}><SwapOutlined /> {t('advanced.data trans')}</Button>
                         </Col>
                     </Row>
-                    
-                    <Title level={4}>开发工具</Title>
-                    <Row gutter={[{ xs: 8, sm: 16, md: 24, lg: 32 }, 20]}>
+                    <PageHeader className="mt2" title={t('advanced.dev tools')}></PageHeader>
+                    <Row className="mt3" gutter={[30, 0]}>
                         <Col span={6}>
-                            <span>交易签名</span>
-                            <Switch defaultChecked className="Candidate"
-                                // checkedChildren={<Icon type="check" />}
-                                // unCheckedChildren={<Icon type="close" />}
-                                onChange={this.onChange}/>
+                            <a className="ml3" onClick={this.openUrl("https://neowish.ngd.network/neo3/")}><PaperClipOutlined /> {t('advanced.test coin')}</a>
                         </Col>
                         <Col span={6}>
-                            <span>文本签名</span>
-                            <Switch defaultChecked className="Candidate"
-                                // checkedChildren={<Icon type="check" />}
-                                // unCheckedChildren={<Icon type="close" />}
-                                onChange={this.onChange}/>
+                            <a className="ml3" onClick={this.openUrl("https://docs.neo.org/")}><PaperClipOutlined /> {t('advanced.dev docs')}</a>
                         </Col>
                         <Col span={6}>
-                            <span>构造交易</span>
-                            <Switch defaultChecked className="Candidate"
-                                // checkedChildren={<Icon type="check" />}
-                                // unCheckedChildren={<Icon type="close" />}
-                                onChange={this.onChange}/>
-                        </Col>
-                        <Col span={6}>
-                            <span>广播交易</span>
-                            <Switch defaultChecked className="Candidate"
-                                // checkedChildren={<Icon type="check" />}
-                                // unCheckedChildren={<Icon type="close" />}
-                                onChange={this.onChange}/>
+                            <a className="ml3" onClick={this.openUrl("https://neo.org/dev")}><PaperClipOutlined /> {t('advanced.more')}</a>
                         </Col>
                     </Row>
-                    <Row gutter={[{ xs: 8, sm: 16, md: 24, lg: 32 }, 20]}>
-                        <Col span={6}>
-                            <span>数据转换</span>
-                            <Switch defaultChecked className="Candidate"
-                                // checkedChildren={<Icon type="check" />}
-                                // unCheckedChildren={<Icon type="close" />}
-                                onChange={this.onChange}/>
-                        </Col>
-                        <Col span={6}>
-                            <span>更多功能敬请期待</span>
-                        </Col>
-                    </Row>
-                </Skeleton>
-            </div>
+                </Col>
+              </Row>
+            <Datatrans visible={this.state.visible} onClose={this.onClose} />   
+            </Content>
+          </Layout>
         );
     }
 }

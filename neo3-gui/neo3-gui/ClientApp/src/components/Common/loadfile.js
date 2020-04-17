@@ -17,12 +17,11 @@ import {
   Layout
 } from 'antd';
 import Sync from '../sync';
+import {  Layout } from 'antd';
 import { remote } from 'electron';
-
 
 const { Content } = Layout;
 const { dialog } = remote;
-
 
 class Loadfile extends React.Component {
   constructor(props) {
@@ -71,23 +70,23 @@ class Loadfile extends React.Component {
     const { path } = this.state;
     return (
       <Layout className="gui-container">
-        <Sync />
-        <Content className="mt3">
-          <Row gutter={[30, 0]}>
-            <Col span={24} className="bg-white pv4">
-              <Intitle content="部署合约" />
-              <div className="w400 mt1 pv1">
-                <Form className="trans-form" onFinish={this.out}>
-                  <Form.Item
-                    name="sender"
-                    label="Neo Executable File"
-                    value="11111111"
-                    onClick={this.selectNef}
-                  >
-                    <Input placeholder="选择文件" />
-                  </Form.Item>
-                  {path}
-                  {/*             
+      <Sync />
+      <Content className="mt3">
+      <Row gutter={[30, 0]}>
+        <Col span={24} className="bg-white pv4">
+          <PageHeader title="部署合约"></PageHeader>
+          <div className="w400 mt1 pv1">
+            <Form className="trans-form"  onFinish={this.out}>
+            <Form.Item
+                  name="sender"
+                  label="Neo Executable File"
+                  value="11111111"
+                  onClick={this.selectNef}
+                >
+                <Input placeholder="选择文件" />
+            </Form.Item>
+            {path}
+            {/*             
             <Row>
             <Col span={24}>
                 <Input placeholder="选择文件" ref="file" readOnly onClick={this.selectNef} value={this.state.path}/>

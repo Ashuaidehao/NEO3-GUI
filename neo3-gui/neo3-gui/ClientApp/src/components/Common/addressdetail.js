@@ -42,7 +42,7 @@ class Addressdetail extends React.Component{
     const { t } = this.props;
     return (
       <div>
-        <h4>{t("address book")}</h4>
+        <h4>{t("sideBar.address book")}</h4>
         <ul className="add-mark">
         {accounts.map((item,index)=>{
           return(
@@ -55,7 +55,7 @@ class Addressdetail extends React.Component{
         })}
         </ul>
         <div className="mt1 mb3 text-c small">
-            <p className="mb5 t-light">NeoGUI @ 2020 Neo-Project {t("copyright")}</p>
+            <p className="mb5 t-light">NeoGUI @ 2020 Neo-Project {t("settings.copyright")}</p>
         </div>
       </div>
     );

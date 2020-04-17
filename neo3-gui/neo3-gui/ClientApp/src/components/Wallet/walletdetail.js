@@ -2,10 +2,8 @@
 //just test replace wallet//
 import React from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-import { Layout, Row, Col, Modal, List, Button, Typography, message } from 'antd';
+import { Layout, Row, Col, Modal, List, Button, Typography, message,PageHeader } from 'antd';
 import Sync from '../sync';
-import Intitle from '../Common/intitle';
 import Transaction from '../Transaction/transaction';
 import '../../static/css/wallet.css';
 import Topath from '../Common/topath';
@@ -53,7 +51,7 @@ class Walletdetail extends React.Component {
         var _data = response.data;
         console.log(_data)
         if (_data.msgType === -1) {
-          console.log("需要先打开钱包再进入页面");
+          console.log(t('wallet.require open'));
           return;
         } else {
           if (_data.result.length > 0) {
@@ -78,7 +76,7 @@ class Walletdetail extends React.Component {
       .then(function (response) {
         var _data = response.data;
         if (_data.msgType === -1) {
-          console.log("需要先打开钱包再进入页面");
+          console.log(t('wallet.require open'));
           return;
         }
         _this.setState({
@@ -108,6 +106,7 @@ class Walletdetail extends React.Component {
   }
   delAddress = () => {
     var _this = this;
+    const { t } = this.props;
     axios.post('http://localhost:8081', {
       "id": "1",
       "method": "DeleteAddress",
@@ -116,10 +115,10 @@ class Walletdetail extends React.Component {
       .then(function (response) {
         var _data = response.data;
         if (_data.msgType === -1) {
-          console.log("需要先打开钱包再进入页面");
+          console.log(t('wallet.require open'));
           return;
         } else {
-          message.success("删除成功", 2)
+          message.success(t("wallet.delete success"), 2)
           _this.setState({ topath: "/wallet/walletlist" });
         }
       })
@@ -141,16 +140,16 @@ class Walletdetail extends React.Component {
       .then(function (response) {
         var _data = response.data.result;
         if (_data.msgType === -1) {
-          console.log("需要先打开钱包再进入页面");
+          console.log(t('wallet.require open'));
           return;
         } else {
           Modal.info({
             title: t("wallet.private key warning"),
             content: (
               <div className="show-pri">
-                <p>{t("wallet page.private key")}:{_data.privateKey}</p>
+                <p>{t("wallet.private key")}:{_data.privateKey}</p>
                 <p>WIF：{_data.wif}</p>
-                <p>{t("wallet page.public key")}：{_data.publicKey}</p>
+                <p>{t("wallet.public key")}：{_data.publicKey}</p>
               </div>
             ),
             okText: t("button.ok")
@@ -174,7 +173,7 @@ class Walletdetail extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]}>
             <Col span={24} className="bg-white pv4">
-              <Intitle content={t("wallet page.accounts nav")} />
+              <PageHeader title={t("wallet.accounts")}></PageHeader>
               <List
                 header={<div>{address}</div>}
                 footer={<span></span>}
@@ -190,12 +189,12 @@ class Walletdetail extends React.Component {
                 )}
               />
               <div className="mb4 text-r">
-                <Button type="primary" onClick={this.showPrivate}>{t("wallet page.show private key")}</Button>
-                <Button className="ml3" onClick={this.deleteConfirm}>{t("wallet page.delete account")}</Button>
+                <Button type="primary" onClick={this.showPrivate}>{t("button.show details")}</Button>
+                <Button className="ml3" onClick={this.deleteConfirm}>{t("button.delete account")}</Button>
               </div>
             </Col>
           </Row>
-          <Transaction page="walletdetail" content={t("wallet page.transactions nav")} />
+          <Transaction page="walletdetail" content={t("wallet.transactions")} />
         </Content>
       </Layout>
     );
