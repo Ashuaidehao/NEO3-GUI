@@ -1,45 +1,47 @@
-/* eslint-disable */ 
+/* eslint-disable */
 //just test replace wallet//
 import React from 'react';
+import { Layout, Modal, Radio } from 'antd';
 import { observer, inject } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { Radio } from 'antd';
 import '../../static/css/wallet.css';
 import { withTranslation } from 'react-i18next';
 import Config from "../../config";
-
-const { shell } = window.electron;
+import {shell} from "electron";
+const { confirm } = Modal;
+const { Content } = Layout;
 
 @withTranslation()
 @inject("walletStore")
 @observer
 @withRouter
-class Setting extends React.Component{
-  constructor(props){
+class Setting extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
-        size: 'default',
-        address:"",
-        addresslist:[],
-        iconLoading:false,
-        gas:0,
+      size: 'default',
+      address: "",
+      addresslist: [],
+      iconLoading: false,
+      gas: 0,
     };
   }
   switchLang = (lng) => {
-      const { t, i18n } = this.props;
-      console.log("current lang:", Config.Language)
-      if (Config.Language === lng) {
-          return;
-      }
-      Config.Language = lng;
-      i18n.changeLanguage(lng);
+    const { t, i18n } = this.props;
+    console.log("current lang:", Config.Language)
+    if (Config.Language === lng) {
+      return;
+    }
+    i18n.changeLanguage(lng);
+    Config.changeLang(lng);
   }
-  openUrl (url) {
-    return ()=>{
-        shell.openExternal(url);
+  openUrl(url) {
+    return () => {
+      shell.openExternal(url);
     }
   }
-  render = () =>{
+  render = () => {
+    const { addresslist, address } = this.state;
     const { t, i18n } = this.props;
     return (
       <div>
@@ -68,6 +70,6 @@ class Setting extends React.Component{
       </div>
     );
   }
-} 
+}
 
 export default Setting;

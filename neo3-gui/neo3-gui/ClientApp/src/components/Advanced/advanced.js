@@ -10,11 +10,9 @@ import "../../static/css/advanced.css";
 import Datatrans from '../Common/datatrans';
 import { SwapOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { withTranslation } from "react-i18next";
+import { shell } from "electron";
 
-
-const { shell } = window.electron;
 const { Content } = Layout;
-
 
 @withTranslation()
 class Advanced extends React.Component {

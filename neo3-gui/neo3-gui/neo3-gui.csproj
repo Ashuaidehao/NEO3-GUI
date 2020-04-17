@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Neo</RootNamespace>
     <SpaRoot>ClientApp\</SpaRoot>
     <DefaultItemExcludes>$(SpaRoot)node_modules\**;Data*\**</DefaultItemExcludes>
@@ -46,13 +46,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.0" />
+    <PackageReference Include="Neo" Version="3.0.0-preview2-00" />
     <PackageReference Include="Neo.LevelDb.Dev" Version="3.0.0-pre4" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.6.0" />
   </ItemGroup>
 
 
   <ItemGroup>
-    <ProjectReference Include="..\..\neo\src\neo\neo.csproj" />
+    <!--<ProjectReference Include="..\..\neo\src\neo\neo.csproj" />-->
   </ItemGroup>
 
 

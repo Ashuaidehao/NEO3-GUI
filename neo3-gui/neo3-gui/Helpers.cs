@@ -13,7 +13,6 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Akka.Actor;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Neo.Common;
 using Neo.Common.Json;
@@ -601,7 +600,7 @@ namespace Neo
 
         public static bool NotVmByteArray(this StackItem item)
         {
-            return !(item is ByteArray);
+            return !(item is ByteString);
         }
 
         public static bool NotVmNull(this StackItem item)

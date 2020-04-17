@@ -21,12 +21,10 @@ import { Form, DatePicker, TimePicker } from 'antd';
 import Sync from '../sync';
 import { withTranslation } from "react-i18next";
 
-
 const { Option } = Select;
 const { Content } = Layout;
 const AutoCompleteOption = AutoComplete.Option;
 
-const { dialog } = window.remote;
 
 const { MonthPicker, RangePicker } = DatePicker;
 

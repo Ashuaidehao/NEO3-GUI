@@ -18,11 +18,10 @@ import Datatrans from '../Common/datatrans';
 import {  Layout } from 'antd';
 import '../../static/css/wallet.css'
 import Sync from '../sync'
-
 import { SwapOutlined } from '@ant-design/icons';
-
 import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
+
 
 const { TextArea } = Input;
 const { Content } = Layout;

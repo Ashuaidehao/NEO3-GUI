@@ -6,9 +6,11 @@ import { message, Input, Row, Col, Button } from 'antd';
 import { walletStore } from "../../store/stores";
 import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
+import { remote } from 'electron';
 
 
-const { dialog } = window.remote;
+
+const { dialog } = remote;
 
 @withTranslation()
 @withRouter
@@ -45,29 +47,26 @@ class Walletopen extends React.Component {
         "password": pass
       }
     })
-    .then(function (res) {
-      let _data = res.data;
-      _this.setState({ iconLoading: false });
-      if (_data.msgType == 3) {
-        walletStore.setWalletState(true);
-
-        let page = (location.pathname).search(/contract/g)>0?1:((location.pathname).search(/advanced/g)>0?2:-1);
-        if(page === 1){
-          _this.props.history.push('/contract');
-        }else if(page === 2){
-          _this.props.history.push('/advanced');
-        }else{
-          message.success(t("wallet.wallet opened"), 3);
-          _this.props.history.push('/wallet/walletlist');
+      .then(function (res) {
+        let _data = res.data;
+        _this.setState({ iconLoading: false });
+        if (_data.msgType == 3) {
+          walletStore.setWalletState(true);
+          let page = (location.pathname).search(/contract/g);
+          if (page === 1) {
+            _this.props.history.push('/contract');
+          } else {
+            message.success(t("wallet.wallet opened"), 3);
+            _this.props.history.push('/wallet/walletlist');
+          }
+        } else {
+          message.info(t("wallet.open wallet failed"), 2);
         }
-      } else {
-        message.info(t("wallet.open wallet failed"), 2);
-      }
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error");
-    });
+      })
+      .catch(function (error) {
+        console.log(error);
+        console.log("error");
+      });
   }
   opendialog = () => {
     const { t } = this.props;
