@@ -9,7 +9,7 @@ import MenuDown from '../Common/menudown'
 import { walletStore } from "../../store/stores";
 import {
   HomeOutlined,
-  RadiusUpleftOutlined
+  DisconnectOutlined
 } from '@ant-design/icons';
 import { withTranslation } from "react-i18next";
 import Datatrans from '../Common/datatrans';
@@ -67,7 +67,7 @@ class Advancedlayout extends React.Component {
               key="sub1"
               title={
                 <span>
-                  <RadiusUpleftOutlined />
+                  <DisconnectOutlined />
                   <span>{t("home.advanced")}</span>
                 </span>
               }
@@ -82,7 +82,7 @@ class Advancedlayout extends React.Component {
               key="sub1"
               title={
                 <span>
-                  <RadiusUpleftOutlined />
+                  <DisconnectOutlined />
                   <span>{t("home.advanced")}</span>
                 </span>
               }
