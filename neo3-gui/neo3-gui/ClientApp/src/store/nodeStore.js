@@ -1,20 +1,21 @@
 /* eslint-disable */
 import { observable, action } from "mobx";
+import neoNode from "../neonode";
 
 
 class NodeStore {
 
     constructor() {
         console.log("node store init");
-        if (window.nodeManager) {
-            this.nodeManager = window.nodeManager
-        }
+        // if (window.nodeManager) {
+        //     this.nodeManager = window.nodeManager
+        // }
+        this.nodeManager = neoNode;
     }
 
-    @action start(env) {
-        if (!this.nodeManager.isRunning()) {
-            this.nodeManager.start(env);
-        }
+    @action start(network, port) {
+        this.nodeManager.start(network, port);
+
     }
 
 

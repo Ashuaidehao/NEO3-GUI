@@ -1,4 +1,4 @@
-/* eslint-disable */ 
+/* eslint-disable */
 import React from 'react';
 import 'antd/dist/antd.css';
 import axios from 'axios';
@@ -94,6 +94,6 @@ class Searcharea extends React.Component{
         </div>
     );
   }
-} 
+}
 
 export default Searcharea;

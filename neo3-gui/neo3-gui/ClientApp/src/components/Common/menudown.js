@@ -13,9 +13,7 @@ import {
     SettingOutlined
 } from '@ant-design/icons';
 import { withTranslation } from 'react-i18next';
-import Config from "../../config";
-
-const { shell } = window.electron;
+import { shell } from "electron";
 
 @withTranslation()
 @inject("walletStore")
@@ -25,21 +23,14 @@ class menuDown extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            showPass: false,
-            title:"设置",
+            title: "设置",
         };
     }
     componentDidMount() {
-        this.showPass();
     }
-    showPass = () => {
-        let _path = location.href.search(/wallet/g);
-        if (_path <= -1) return;
-        this.setState({ showPass: true });
-    }
+
     logout = () => {
         const { t } = this.props;
-        var _this = this;
         axios.post('http://localhost:8081', {
             "id": "1234",
             "method": "CloseWallet"

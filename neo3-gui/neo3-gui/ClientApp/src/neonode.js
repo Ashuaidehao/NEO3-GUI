@@ -1,14 +1,15 @@
-const { spawn } = require('child_process');
-const path = require('path');
+import { spawn } from 'child_process';
+import path from 'path';
+import { remote } from 'electron';
 const isMac = process.platform === "darwin";
 const isWin = process.platform === "win32";
-// const appPath = remote.app.getAppPath();
+const appPath = remote.app.getAppPath();
 // const isPack = remote.app.isPackaged;
 
-class NodeManager {
+class NeoNode {
 
     constructor() {
-        console.log("node manager creating");
+        console.log("neo node creating");
     }
 
     kill() {
@@ -23,12 +24,19 @@ class NodeManager {
     }
 
     start(env) {
-        this.node = this.runCommand("dotnet neo3-gui.dll", env);
+        if (!this.isRunning()) {
+            this.node = this.runCommand("dotnet neo3-gui.dll", env);
+        }
+    }
+
+    startNode(network, port) {
+        const env = { NEO_NETWORK: network || "", NEO_GUI_PORT: port || "" };
+        this.start(env);
     }
 
     runCommand(command, env) {
-        const startPath = __dirname.replace("app.asar", "");
-        console.log(startPath);
+        const startPath = appPath.replace("app.asar", "");
+        console.log("startPath:", startPath);
         const parentEnv = process.env;
         const childEnv = { ...parentEnv, ...env };
         if (isWin) {
@@ -57,6 +65,5 @@ class NodeManager {
 }
 
 
-module.exports = NodeManager;
-
-// export default NodeManager;
+const singleton = new NeoNode();
+export default singleton;

@@ -10,8 +10,11 @@ import {
   UserOutlined,
   LockOutlined
 } from '@ant-design/icons';
+import { remote } from 'electron';
 
-const { dialog } = window.remote;
+
+
+const { dialog } = remote;
 
 @withTranslation()
 @withRouter

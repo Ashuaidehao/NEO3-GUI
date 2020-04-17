@@ -19,14 +19,12 @@ import { observer, inject } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import "../../static/css/advanced.css";
+import { shell } from "electron";
 
 const { Option } = Select;
 
 const CheckboxGroup = Checkbox.Group;
 const { Content } = Layout;
-
-
-const { shell } = window.electron;
 
 @withTranslation()
 @inject("walletStore")

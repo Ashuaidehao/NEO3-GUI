@@ -23,10 +23,11 @@ import { FolderOpenOutlined } from '@ant-design/icons';
 import { observer, inject } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
+import { remote } from 'electron';
 
 
 const { Content } = Layout;
-const { dialog } = window.remote;
+const { dialog } = remote;
 
 const { TextArea } = Input;
 
