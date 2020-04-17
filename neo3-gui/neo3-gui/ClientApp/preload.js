@@ -1,4 +1,4 @@
-const NodeManager = require('./node-manager');
+// const NodeManager = require('./node-manager');
 const _process = process
 process.once('loaded', function () {
     global.process = _process
@@ -9,4 +9,4 @@ process.once('loaded', function () {
 // window.electron = Electron;
 // window.ipcRenderer = require('electron').ipcRenderer;
 // window.remote = require('electron').remote;
-window.nodeManager = new NodeManager();
+// window.nodeManager = new NodeManager();

@@ -407,7 +407,7 @@ namespace Neo.Services.ApiServices
             }
             try
             {
-                return ContractManifest.Parse(File.ReadAllText(manifestPath));
+                return ContractManifest.Parse(File.ReadAllBytes(manifestPath));
             }
             catch (Exception)
             {
