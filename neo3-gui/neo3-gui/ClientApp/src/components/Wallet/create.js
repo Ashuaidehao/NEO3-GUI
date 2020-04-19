@@ -6,6 +6,10 @@ import { Input, message, Button, Row, Col } from 'antd';
 import { walletStore } from "../../store/stores";
 import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
+import {
+  UserOutlined,
+  LockOutlined
+} from '@ant-design/icons';
 import { remote } from 'electron';
 
 
@@ -114,7 +118,13 @@ class Walletcreate extends React.Component {
       <div className={this.props.priclass} private={this.state.private}>
         <Row>
           <Col span={18}>
-            <Input placeholder={t("please select file location")} ref="file" disabled value={this.state.path} />
+            <Input
+              disabled
+              ref="file"
+              placeholder={t("please select file location")}
+              value={this.state.path}
+              prefix={<UserOutlined />}
+            />
           </Col>
           <Col span={6}>
             <Button type="primary" onClick={this.savedialog}>{t("wallet.select path")}</Button>
@@ -130,6 +140,7 @@ class Walletcreate extends React.Component {
               onKeyUp={this.toTrim}
               onBlur={this.onVerify}
               ref="fPass"
+              prefix={<LockOutlined />}
             />
           </Col>
         </Row>
@@ -143,6 +154,7 @@ class Walletcreate extends React.Component {
               onKeyUp={this.toTrim}
               onBlur={this.onVerify}
               ref="sPass"
+              prefix={<LockOutlined />}
             />
           </Col>
         </Row>
@@ -151,8 +163,6 @@ class Walletcreate extends React.Component {
           <small>
             {t("wallet.create warning")}
           </small>
-          {/* <small>因钱包较为私密，在选择已有文件的情况下，不会进行覆盖操作。<br />
-          如需要删除原始钱包文件，请手动删除。</small> */}
         </p>
       </div>
     )

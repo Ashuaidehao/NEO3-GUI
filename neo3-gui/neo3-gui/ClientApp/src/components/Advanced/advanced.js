@@ -45,7 +45,7 @@ class Advanced extends React.Component {
             <Content className="mt3">
               <Row gutter={[30, 0]} style={{ 'minHeight': 'calc( 100vh - 120px )' }}>
                 <Col span={24} className="bg-white pv4">
-                    <PageHeader title={'GUI '+t('advanced.tools')}></PageHeader>
+                    <PageHeader title={'GUI '+ t('advanced.tools')}></PageHeader>
                     <Row className="mt3" gutter={[30, 0]}>
                         <Col span={6}>
                             <Button className="ml3 pa2" type="primary" onClick={this.showDrawer}><SwapOutlined /> {t('advanced.data trans')}</Button>

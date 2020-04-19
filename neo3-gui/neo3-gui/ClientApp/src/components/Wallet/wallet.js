@@ -4,16 +4,15 @@ import 'antd/dist/antd.css';
 import '../../static/css/menu.css'
 import '../../static/css/wallet.css'
 import {Link} from 'react-router-dom';
-import {  Layout,Row, Col ,message, Button,Tabs,Divider } from 'antd';
-import axios from 'axios';
+import {Layout,Row,Col,Button,Divider } from 'antd';
 import Walletopen from './open'
 import Walletcreate from './create'
 import Walletprivate from './private'
 import Walletencrypted from './encrypted'
-
 import Sync from '../sync';
 import { withTranslation } from "react-i18next";
 import Config from "../../config";
+import img from '../../static/images/logo.svg';
 
 
 
@@ -36,12 +35,8 @@ class Wallet extends React.Component{
         path:'',
         login:false
     };
-
-    console.log(Config.Language)
   }
-  componentDidMount(){
-  }
-  changeTab(e){
+  changeTab(){
     this.setState(prevState => ({
       showElem: !prevState.showElem
     }));
@@ -72,8 +67,8 @@ class Wallet extends React.Component{
             ):null}
             <Link className="close" to="/"><CloseOutlined /></Link>
           </div>
-          <div className="logo mt2 mb3"></div>
-          <div className="wa-open mt2">
+          <div className="logo mt2 mb1"></div>
+          <div className="wa-open">
             {this.state.showElem?(
               <div>
                 <Button type="primary" onClick={this.getInset(0)}>{t("wallet.open wallet file")}</Button>

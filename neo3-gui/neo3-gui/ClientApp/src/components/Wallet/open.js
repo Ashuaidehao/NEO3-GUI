@@ -6,6 +6,10 @@ import { message, Input, Row, Col, Button } from 'antd';
 import { walletStore } from "../../store/stores";
 import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
+import {
+  UserOutlined,
+  LockOutlined
+} from '@ant-design/icons';
 import { remote } from 'electron';
 
 
@@ -92,13 +96,24 @@ class Walletopen extends React.Component {
       <div className="open">
         <Row>
           <Col span={18}>
-            <Input placeholder={t("please select file location")} ref="path" disabled value={this.state.path} />
+            <Input
+              disabled
+              ref="path"
+              placeholder={t("please select file location")}
+              value={this.state.path}
+              prefix={<UserOutlined />}/>
           </Col>
           <Col span={6}>
             <Button type="primary" onClick={this.opendialog}>{t("wallet.select path")}</Button>
           </Col>
         </Row>
-        <Input.Password placeholder={t("please input password")} ref="pass" maxLength={this.state.maxLength} onChange={this.checkinput} onPressEnter={this.openWallet} />
+        <Input.Password
+          ref="pass"
+          placeholder={t("please input password")}
+          maxLength={this.state.maxLength}
+          onChange={this.checkinput}
+          onPressEnter={this.openWallet} 
+          prefix={<LockOutlined />}/>
         <Button className="mt3 mb2" type="primary" onClick={this.verifi} loading={this.state.iconLoading}>{t("button.confirm")}</Button>
       </div>
     );

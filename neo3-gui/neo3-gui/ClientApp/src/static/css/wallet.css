@@ -7,16 +7,16 @@
     padding: 28px;
 }
 .wa-content .logo{
-    background: url(/static/media/logo.0907bca5.svg) no-repeat;
+    background: url(../images/logo.svg) no-repeat;
     background-position: center;
-    height: 40px;
+    height: 48px;
 }
 .wa-open{
     padding: 0 90px;
-    max-width: 580px;
+    max-width: 540px;
     margin-left: auto;
     margin-right: auto;
-    min-height: 280px;
+    min-height: 260px;
 }
 
 /* 路径 */
@@ -46,9 +46,11 @@
 /* 按钮 */
 .wa-open .ant-btn{
     width: 100%;
-    font-size: 14px;
-    padding:6px 0;
-    text-align:center;
+    font-size: 16px;
+    font-weight: 300;
+    letter-spacing: 0.3px;
+    padding: 6px 0;
+    text-align: center;
     border: 1px solid #00AF92;
     color: #00AF92;
 }
@@ -66,7 +68,8 @@
 .wa-open .ant-btn-sm{
     font-size: 12px;
 }
-.wa-open input{
+.wa-open input,
+.wa-open .ant-input-affix-wrapper{
     padding-top: 6px;
     padding-bottom: 6px;
     border-radius: 0;
@@ -90,7 +93,11 @@
     outline: none;
     box-shadow: none;
 }
-
+.ant-input-prefix{
+    color: rgba(0, 0, 0, 0.3);
+    font-size: 16px;
+    margin-right: 10px;
+}
 
 /* list */
 .ant-list-item.wa-half{
