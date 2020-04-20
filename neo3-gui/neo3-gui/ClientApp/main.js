@@ -69,6 +69,10 @@ function createWindow() {
         // when you should delete the corresponding element.
         mainWindow = null
     })
+    
+    mainWindow.webContents.on('new-window',function(event, url){
+        event.preventDefault()
+    })
 }
 
 // This method will be called when Electron has finished
