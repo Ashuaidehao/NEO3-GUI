@@ -96,5 +96,16 @@ app.on('activate', function () {
     if (mainWindow === null) createWindow()
 })
 
+app.on('web-contents-created', (event, wc) => {
+    wc.on('before-input-event', (event, input) => {
+      // Windows/Linux hotkeys
+      if (process.platform !== 'darwin') {
+        if (input.key === 'F12') {
+          mainWindow.webContents.openDevTools()
+          event.preventDefault()
+        }
+      }
+    })
+  })
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

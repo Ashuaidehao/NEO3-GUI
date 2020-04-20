@@ -2,7 +2,7 @@
 
 During development process, Neo3-GUI direcelty referece Neo for faster development experience.  Please use following code to clone Neo3-GUI
 
-```shellhttps://nodejs.org/
+```shell
 git clone --recursive https://github.com/neo-ngd/NEO3-GUI.git
 ```
 
