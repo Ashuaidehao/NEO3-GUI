@@ -18,7 +18,7 @@ class Transaction extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loacl: "",
+      local: "",
       allpage: 0,
       page: 1,
       limit: 50,
@@ -31,7 +31,7 @@ class Transaction extends React.Component {
   }
   componentDidMount() {
     this.setState({
-      loacl: location.pathname.split(":").pop()
+      local: "/chain/transaction:"
     })
     this.selTrans()
   }
@@ -47,15 +47,20 @@ class Transaction extends React.Component {
       this.allset(_params);
     } else if (page === "addressdetail") {
       _params.address = Number(_hash);
-      this.setState({params:_params})
+      this.setState({
+        params:_params,
+        local:"/wallet/transaction:"
+      })
       this.nepset(_params);
     } else if (page === "assetdetail") {
       _params.asset = _hash;
       this.setState({params:_params})
       this.nepset(_params);
     } else if (page === "wallettrans") {
+      this.setState({local:"/wallet/transaction:"});
       this.walletset(_params);
     } else if (page === "walletdetail") {
+      this.setState({local:"/wallet/transaction:"});
       _params.address = _hash;
       this.walletset(_params);
     } else{
@@ -235,7 +240,7 @@ class Transaction extends React.Component {
   }
   render = () => {
     const { t } = this.props;
-    const { translist, loacl, loading, iswa,isnpe, page, allpage } = this.state;
+    const { translist, local, loading, iswa,isnpe, page, allpage } = this.state;
     const loadMore = !loading && page <= allpage ? (
       <div className="text-c mb3">
         {iswa ? (<Button type="primary" onClick={this.loadMyMore}>{ t('load more') }</Button>)
@@ -264,7 +269,7 @@ class Transaction extends React.Component {
                     />
                     <div className="trans-detail">
                         <p>
-                          <Link className="w500 ellipsis hash" to={"/" + loacl + "/transaction:" + item.txId} title={t("show detail")}>{item.txId}</Link>
+                          <Link className="w500 ellipsis hash" to={ local + item.txId} title={t("show detail")}>{item.txId}</Link>
                           <span className="float-r">{item.blockTime}</span>
                         </p>
                         {item.transfers[0]?
