@@ -31,7 +31,7 @@ class Transaction extends React.Component {
   }
   componentDidMount() {
     this.setState({
-      loacl: location.pathname.split("/")[1]
+      loacl: location.pathname.split(":").pop()
     })
     this.selTrans()
   }
