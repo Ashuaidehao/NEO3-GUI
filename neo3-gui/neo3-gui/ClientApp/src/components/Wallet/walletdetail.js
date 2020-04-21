@@ -39,7 +39,7 @@ class Walletdetail extends React.Component {
   getBalances = () => {
     var _this = this;
     let _add = location.pathname.split(":").pop();
-    console.log(_add)
+    let { t } = this.props;
     axios.post('http://localhost:8081', {
       "id": "51",
       "method": "GetMyBalances",
@@ -47,46 +47,45 @@ class Walletdetail extends React.Component {
         "address": _add
       }
     })
-      .then(function (response) {
-        var _data = response.data;
-        console.log(_data)
-        if (_data.msgType === -1) {
-          console.log(t('wallet.require open'));
-          return;
-        } else {
-          if (_data.result.length > 0) {
-            _this.setState({
-              assetlist: _data.result[0]
-            })
-          }
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        console.log(t('wallet.require open'));
+        return;
+      } else {
+        if (_data.result.length > 0) {
+          _this.setState({
+            assetlist: _data.result[0]
+          })
         }
-        console.log(_this.state)
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   getGas = () => {
     var _this = this;
+    let { t } = this.props;
     axios.post('http://localhost:8081', {
       "id": 51,
       "method": "ShowGas"
     })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          console.log(t('wallet.require open'));
-          return;
-        }
-        _this.setState({
-          gas: _data.result.unclaimedGas
-        })
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        console.log(t('wallet.require open'));
+        return;
+      }
+      _this.setState({
+        gas: _data.result.unclaimedGas
       })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   deleteConfirm = () => {
     let _this = this;
@@ -94,8 +93,8 @@ class Walletdetail extends React.Component {
     confirm({
       title: t("wallet.delete account warning"),
       icon: <CloseCircleOutlined />,
-      okText: t("button.delete"),
       cancelText: t("button.cancel"),
+      okText: t("button.delete"),
       onOk() {
         _this.delAddress();
       },
@@ -112,20 +111,20 @@ class Walletdetail extends React.Component {
       "method": "DeleteAddress",
       "params": [_this.state.address]
     })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          console.log(t('wallet.require open'));
-          return;
-        } else {
-          message.success(t("wallet.delete success"), 2)
-          _this.setState({ topath: "/wallet/walletlist" });
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        console.log(t('wallet.require open'));
+        return;
+      } else {
+        message.success(t("wallet.delete success"), 2)
+        _this.setState({ topath: "/wallet/walletlist" });
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   showPrivate = () => {
     var _this = this;
@@ -145,10 +144,11 @@ class Walletdetail extends React.Component {
         } else {
           Modal.info({
             title: t("wallet.private key warning"),
+            width: 650,
             content: (
               <div className="show-pri">
-                <p>{t("wallet.private key")}:{_data.privateKey}</p>
-                <p>WIF：{_data.wif}</p>
+                <p>{t("wallet.private key")}: {_data.privateKey}</p>
+                <p>WIF: {_data.wif}</p>
                 <p>{t("wallet.public key")}：{_data.publicKey}</p>
               </div>
             ),

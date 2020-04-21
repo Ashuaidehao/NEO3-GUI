@@ -43,6 +43,7 @@ class Contractinvoke extends React.Component{
         path:"",
         disabled:false,
         visible: false,
+        loading:false,
         methods:[],
         params:[],
         methodname:""
@@ -68,7 +69,8 @@ class Contractinvoke extends React.Component{
         let methods = list.concat(res.methods);
         this.setState({
           hash:res.contractHash,
-          methods:methods
+          methods:methods,
+          loading:false
         })
       });
     }
@@ -76,6 +78,7 @@ class Contractinvoke extends React.Component{
       const { t } = this.props;
       let _hash = (this.refs.sinput.input.value).trim();
       if(!_hash){message.info(t("contract.search input check"));return;}
+      this.setState({loading:true});
       axios.post('http://localhost:8081', {
           "id":"1111",
           "method": "GetContract",
@@ -159,9 +162,9 @@ class Contractinvoke extends React.Component{
         tresult:"",
       },this.onFill());
       this.invokeContract(params,res=>{
-        Modal.info({
+        Modal.success({
           title: t('contract.invoke contract'),
-          width: 600,
+          width: 650,
           content: (
             <div className="show-pri">
               <p>TxID : {res.result.txId?res.result.txId:"--"}</p>
@@ -173,7 +176,6 @@ class Contractinvoke extends React.Component{
       });
     }
     invokeContract = (params,callback) =>{
-      console.log(params)
       const { t } = this.props;
       axios.post('http://localhost:8081', {
         "id":"1111",
@@ -182,7 +184,6 @@ class Contractinvoke extends React.Component{
       })
       .then(function (res) {
         var _data = res.data;
-        console.log(_data)
         if(_data.msgType === -1){
           Modal.error({
             title: t('contract.fail title'),
@@ -207,8 +208,8 @@ class Contractinvoke extends React.Component{
     }
     render = () =>{
     const {methods,params,disabled} = this.state;
-    const { t } = this.props;
     const accounts = this.props.walletStore.accountlist;
+    const { t } = this.props;
     return (
     <Layout className="gui-container">
       <Sync />
@@ -287,7 +288,7 @@ class Contractinvoke extends React.Component{
                 </Form.Item>
               </Col>
               <Col span={4}>
-                <Button className="w200 form-btn" onClick={this.showDetail}>{t("button.search")}</Button>
+                <Button className="w200 form-btn" onClick={this.showDetail} loading={this.state.loading}>{t("button.search")}</Button>
               </Col>
             </Row>
             <Form.Item className="text-c w200" >

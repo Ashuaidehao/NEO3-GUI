@@ -287,3 +287,7 @@ button,input{
 .wal-ul:hover{
     display: block;
 }
+
+.wa-count{
+    min-width: 80px;
+}

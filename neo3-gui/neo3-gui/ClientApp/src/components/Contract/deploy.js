@@ -122,9 +122,9 @@ class Contractdeploy extends React.Component {
     let _params = fieldsValue;
     _params.sendTx = true;
     this.deployContract(_params, res => {
-      Modal.info({
+      Modal.success({
         title: t('contract.deploy success'),
-        width: 600,
+        width: 650,
         content: (
           <div className="show-pri">
             <p>TxID: {res.result.txId ? res.result.txId : "--"}</p>

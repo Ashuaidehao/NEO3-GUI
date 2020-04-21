@@ -37,6 +37,7 @@
     color: rgba(0,0,0,0.85)!important;
     margin-top: 8px;
     margin-bottom: 10px;
+    font-weight: 600;
 }
 .trans-type{
     display: inline-block;
@@ -93,13 +94,6 @@
     padding-bottom: 12px;
 }
 
-.hash-title{
-    width: 100%;
-    color: rgba(0,0,0,0.85);
-    line-height: 22px;
-    letter-spacing: .05em;
-    margin-bottom: 7px;
-}
 .detail-ul li > p{
     margin-bottom:4px;
 }

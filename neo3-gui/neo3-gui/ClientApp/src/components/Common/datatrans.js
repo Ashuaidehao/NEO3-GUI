@@ -241,20 +241,6 @@ class Datatrans extends React.Component {
                             <Button type="primary" onClick={this.littleTrans}>Transform</Button>
                         </p>
                     </li>
-                    {/* <li>
-                        <p className="trans-title">Number <SwapOutlined className="small"/> Hex Number</p>
-                        <p className="trans-area">
-                            <label>Hex Number:</label><Input id="inHexNum" type="text" placeholder="00e1f505"/>
-                            <label>Number:</label><span className="trans-text">{this.state.outhexnum}</span><br />
-                        </p>
-                        <p className="trans-area">
-                            <label>Number:</label><Input id="inNum" type="Number" placeholder="transfer"/>
-                            <label>Hex String:</label><span id="outNum" className="trans-text"> </span><br />
-                        </p>
-                        <p className="text-r">
-                            <Button type="primary" onClick={this.numTrans}>Transform</Button>
-                        </p>
-                    </li> */}
                 </ul>
             </Drawer>
         )

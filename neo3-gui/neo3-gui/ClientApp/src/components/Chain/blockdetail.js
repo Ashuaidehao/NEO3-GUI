@@ -77,7 +77,7 @@ class Blockdetail extends React.Component {
             <Col span={24} className="bg-white pv4">
               <PageHeader title={t("blockchain.block info")}></PageHeader>
               <div className="info-detail pv3">
-                <div className="f-1 pa3"><span>Hash: &nbsp;&nbsp;&nbsp;</span>{blockdetail.blockHash}</div>
+                <div className="hash-title pa3 mt5 mb4"><span>Hash: &nbsp;&nbsp;&nbsp;</span>{blockdetail.blockHash}</div>
                 {blockdetail.blockHash?
                 <Row>
                   <Col span={12}>

@@ -337,13 +337,15 @@ small,.small{
 .ant-page-header-heading-title{
     color:#222222;
     font-weight: 500;
-    line-height: 22px;
+    line-height: 24px;
 }
 .ant-page-header-heading-extra .anticon {
     font-size: 20px;
     color: #555555;
 }
-
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled){
+    background-color: rgba(12, 221, 186, 0.1);
+}
 /* 列表样式覆盖 */
 .ant-list-header,
 .ant-list-footer,
@@ -409,6 +411,7 @@ small,.small{
 }
 .detail-ul li .hint{
     color: #222222;
+    font-weight: 600;
 }
 .detail-ul li .detail-amount{
     min-width: auto;
@@ -533,4 +536,29 @@ small,.small{
     font-size: 12px;
     padding-left: 15px;
     list-style: decimal;
+}
+
+.hash-title{
+    width: 100%;
+    color: rgba(0,0,0,0.85);
+    line-height: 22px;
+    letter-spacing: .05em;
+    margin-bottom: 7px;
+    font-weight: 600;
+}
+
+.ant-avatar > img{
+    width: 60%;
+    height: auto;
+    line-height: 32px;
+    vertical-align: middle;
+    display: inline-block;
+}
+.ant-modal-confirm-btns .ant-btn {
+    float: right;
+    margin-left: 12px;
+}
+.ant-btn:focus{
+    color: #00AF92;
+    border-color: #00AF92;
 }

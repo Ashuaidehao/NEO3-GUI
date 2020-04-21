@@ -1,12 +1,15 @@
 import React from 'react';
 import '../../static/css/trans.css';
-import { Divider } from 'antd';
+import { Empty, Divider } from 'antd';
 
 class Translog extends React.Component{
   render = () =>{
     const {notifies} = this.props;
     return (
     <div className="info-detail">
+      {notifies.length === 0?
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      :null}
       <ul className="trans-ul">
       {notifies.map((item)=>{
         let _data = item.state?item.state.value:[];
