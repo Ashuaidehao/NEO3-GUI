@@ -50,7 +50,7 @@ class Chainsearch extends React.Component{
       let _this = this;
       
       let _height = Number((this.refs.sinput.input.value).trim());
-      if(!_height){message.info(t('search.check again'));return;}
+      if(!_height && _height!=0){message.info(t('search.check again'));return;}
 
       axios.post('http://localhost:8081', {
         "id": "1111",
