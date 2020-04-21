@@ -90,7 +90,17 @@ class Walletcreate extends React.Component {
         if (_data.msgType === 3) {
           message.success(t("wallet.create wallet success"), 2);
           walletStore.setWalletState(true);
-          _this.props.history.push('/wallet/walletlist');
+
+          
+          let page = (location.pathname).search(/contract/g)>0?1:((location.pathname).search(/advanced/g)>0?2:-1);
+          if(page === 1){
+            _this.props.history.push('/contract');
+          }else if(page === 2){
+            _this.props.history.push('/advanced');
+          }else{
+            message.success(t("wallet.wallet opened"), 3);
+            _this.props.history.push('/wallet/walletlist');
+          }
         } else {
           message.info(t("wallet.create wallet fail"), 2);
         }

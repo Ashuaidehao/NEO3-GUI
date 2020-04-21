@@ -144,7 +144,8 @@ class Datatrans extends React.Component {
         if (inlittleadd) {
             if(inlittleadd.length!=34){message.error("Address 的格式错误，请检查后再试");return;}
             let _hash = this.convert.toScriptHash(inlittleadd);
-            _hash = this.convert.reverseHexString(_hash);
+            
+            _hash = this.convert.reverseHexString(_hash).replace(/0x/g, "");
             _this.setState({
                 outlittleadd: _hash
             })
@@ -211,7 +212,8 @@ class Datatrans extends React.Component {
                         </p>
                     </li>
                     <li>
-                        <p className="trans-title">Address (big endian) <SwapOutlined className="small"/> Script Hash</p>
+                        <p className="trans-title">little endian</p>
+                        <p className="trans-title">Address <SwapOutlined className="small"/> Script Hash</p>
                         <p className="trans-area">
                             <label>Hash:</label><Input id="inBigHash" type="text" placeholder="0xb135cda6d0c707b8fd019cb76f555eb518f94945"/>
                             <label>Address:</label><span className="trans-text">{this.state.outbighash}</span><br />
@@ -225,7 +227,8 @@ class Datatrans extends React.Component {
                         </p>
                     </li>
                     <li>
-                        <p className="trans-title">Address (little endian) <SwapOutlined className="small"/> Hex String</p>
+                        <p className="trans-title">big endian</p>
+                        <p className="trans-title">Address<SwapOutlined className="small"/> Hex String</p>
                         <p className="trans-area">
                             <label>Hash (Little):</label><Input id="inLittleHash" type="text" placeholder="4549f918b55e556fb79c01fdb807c7d0a6cd35b1"/>
                             <label>Address:</label><span id="outLittleHash" className="trans-text">{this.state.outlittlehash}</span><br />

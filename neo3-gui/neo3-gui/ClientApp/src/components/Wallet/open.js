@@ -13,7 +13,6 @@ import {
 import { remote } from 'electron';
 
 
-
 const { dialog } = remote;
 
 @withTranslation()
@@ -56,10 +55,13 @@ class Walletopen extends React.Component {
         _this.setState({ iconLoading: false });
         if (_data.msgType == 3) {
           walletStore.setWalletState(true);
-          let page = (location.pathname).search(/contract/g);
-          if (page === 1) {
+
+          let page = (location.pathname).search(/contract/g)>0?1:((location.pathname).search(/advanced/g)>0?2:-1);
+          if(page === 1){
             _this.props.history.push('/contract');
-          } else {
+          }else if(page === 2){
+            _this.props.history.push('/advanced');
+          }else{
             message.success(t("wallet.wallet opened"), 3);
             _this.props.history.push('/wallet/walletlist');
           }
