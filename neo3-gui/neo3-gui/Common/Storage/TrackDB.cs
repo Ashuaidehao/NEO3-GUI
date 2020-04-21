@@ -221,7 +221,7 @@ namespace Neo.Common.Storage
                         TxId = UInt256.Parse(tx.TxId),
                         BlockHeight = tx.BlockHeight,
                         Sender = tx.Sender != null ? UInt160.Parse(tx.Sender.Address) : null,
-                        Time = tx.Time,
+                        Time = tx.Time.AsUtcTime(),
                     }));
             }
             return pageList;

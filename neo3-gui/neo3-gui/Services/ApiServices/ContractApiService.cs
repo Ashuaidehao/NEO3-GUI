@@ -136,12 +136,21 @@ namespace Neo.Services.ApiServices
             {
                 return Error(ErrorCode.UnknownContract);
             }
-            ContractParameter[] contractParameters = para.Parameters?.Select(p =>
+
+            ContractParameter[] contractParameters = null;
+            try
             {
-                var parameterValue = new ContractParameter(p.Type);
-                parameterValue.SetValue(p.Value);
-                return parameterValue;
-            }).ToArray();
+                contractParameters = para.Parameters?.Select(p =>
+                {
+                    var parameterValue = new ContractParameter(p.Type);
+                    parameterValue.SetValue(p.Value);
+                    return parameterValue;
+                }).ToArray();
+            }
+            catch (Exception e)
+            {
+                return Error(ErrorCode.InvalidPara);
+            }
 
             var signers = new List<Cosigner>();
             if (para.Cosigners.NotEmpty())
