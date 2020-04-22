@@ -49,6 +49,9 @@ class Contractinvoke extends React.Component{
         methodname:""
       };
     }
+    componentDidMount(){
+      Math.random()
+    }
     toHome = () =>{
       location.href=location.origin;
     }
@@ -222,7 +225,7 @@ class Contractinvoke extends React.Component{
             <Row className="mt3">
               <Col span={20}>
                 <Form.Item
-                  name="hash"
+                  name="guihash"
                   label={t("contract.scripthash")}
                   rules={[
                     {

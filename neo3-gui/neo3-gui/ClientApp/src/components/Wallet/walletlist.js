@@ -238,8 +238,7 @@ class Walletlist extends React.Component {
                   <List.Item>
                     <List.Item.Meta
                       avatar={
-                        <Avatar src="https://neo3.azureedge.net/images/gui/0x43cf98eddbe047e198a3e5d57006311442a0ca15.png" />
-                        // <Avatar src={"https://neo3.azureedge.net/images/gui/"+item.asset+".png"} />
+                        <Avatar src={"https://neo.org/images/gui/"+item.asset+".png"}/>
                       }
                       title={<span className="upcase">{item.symbol}</span>}
                       description={<span className="f-xs">{item.asset}</span>}

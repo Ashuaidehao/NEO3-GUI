@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import MenuDown from '../Common/menudown'
 import {
   HomeOutlined,
-  RadiusUpleftOutlined
+  PartitionOutlined
 } from '@ant-design/icons';
 import { withTranslation } from 'react-i18next';
 
@@ -47,7 +47,7 @@ class Chainlayout extends React.Component {
               key="sub1"
               title={
                 <span>
-                  <RadiusUpleftOutlined />
+                  <PartitionOutlined />
                   <span>{t("sideBar.blockchain")}</span>
                 </span>
               }

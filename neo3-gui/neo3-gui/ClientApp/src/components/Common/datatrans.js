@@ -230,12 +230,12 @@ class Datatrans extends React.Component {
                         <p className="trans-title">big endian</p>
                         <p className="trans-title">Address<SwapOutlined className="small"/> Hex String</p>
                         <p className="trans-area">
-                            <label>Hash (Little):</label><Input id="inLittleHash" type="text" placeholder="4549f918b55e556fb79c01fdb807c7d0a6cd35b1"/>
-                            <label>Address:</label><span id="outLittleHash" className="trans-text">{this.state.outlittlehash}</span><br />
+                            <label>Hash:</label><Input id="inLittleHash" type="text" placeholder="4549f918b55e556fb79c01fdb807c7d0a6cd35b1"/>
+                            <label>Address:</label><span className="trans-text">{this.state.outlittlehash}</span><br />
                         </p>
                         <p className="trans-area">
                             <label>Address:</label><Input id="inLittleAdd" type="text" placeholder="Nc4yF2jDZkhrm2EnkRe8KjY6CRkATfn7hm"/>
-                            <label>Hash (Little):</label><span className="trans-text">{this.state.outlittleadd}</span><br />
+                            <label>Hash:</label><span className="trans-text">{this.state.outlittleadd}</span><br />
                         </p>
                         <p className="text-r">
                             <Button type="primary" onClick={this.littleTrans}>Transform</Button>

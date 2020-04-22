@@ -47,7 +47,7 @@ class Addressdetail extends React.Component{
         {accounts.map((item,index)=>{
           return(
             <li key={index}>
-              {item.address} <span className="float-r mr2 small">NEO {item.neo}</span>
+              {item.address} &nbsp;<span className="float-r mr2 small"> NEO {item.neo}</span>
               {/* <span className="mr2 small">NEO {item.neo}</span>
               <span className="small">GAS {item.gas}</span> */}
             </li>

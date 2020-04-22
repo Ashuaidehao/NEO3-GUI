@@ -186,3 +186,9 @@
     -webkit-box-shadow: 0 0 0 2px rgba(0, 175, 146, 0.295);
     box-shadow: 0 0 0 2px rgba(0, 175, 146, 0.295);
 }
+.ant-avatar{
+    height: 25px;
+    width: 25px;
+    line-height: 22px;
+    vertical-align: middle;
+}

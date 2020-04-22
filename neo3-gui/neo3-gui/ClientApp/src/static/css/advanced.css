@@ -24,3 +24,12 @@
 .ant-select-item-option-selected:not(.ant-select-item-option-disabled){
     background-color: rgba(12, 221, 186, 0.1);
 }
+.check-candi,
+.check-candi p{
+    width: 100%;
+}
+.check-candi .small{
+    float: right;
+    line-height: 22px;
+    vertical-align: middle;
+}

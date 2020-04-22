@@ -106,7 +106,6 @@ class Contractdeploy extends React.Component {
       let _params = data;
       _params.sendTx = false;
       this.deployContract(_params, res => {
-        console.log(res);
         this.setState({
           disabled: false,
           tresult: JSON.stringify(res.result),

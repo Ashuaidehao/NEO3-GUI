@@ -1,10 +1,7 @@
-/* eslint-disable */
-//just test replace wallet//
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Layout, Row, Col, List, Typography, message,PageHeader } from 'antd';
 import axios from 'axios';
-import Intitle from '../Common/intitle';
 import Sync from '../sync';
 import { withTranslation } from 'react-i18next';
 
@@ -30,7 +27,6 @@ class Chainasset extends React.Component {
     })
       .then(function (response) {
         var _data = response.data;
-        console.log(_data)
         if (_data.msgType === -1) {
           message.error("查询失败");
           return;

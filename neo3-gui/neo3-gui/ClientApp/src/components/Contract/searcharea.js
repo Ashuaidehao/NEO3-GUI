@@ -86,7 +86,6 @@ class Searcharea extends React.Component{
                     placeholder={t("search.hash-hint")}
                     onPressEnter={this.searchContract}
                     ref="sinput"
-                    defaultValue="0x8c23f196d8a1bfd103a9dcb1f9ccf0c611377d3b"
                     suffix={<ArrowRightOutlined onClick={this.searchContract}/>}
                     />
                 </div>

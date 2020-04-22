@@ -194,11 +194,12 @@ class Advancedvote extends React.Component {
               </Form.Item>
                 <h4>{t('advanced.candidate key')}<a className="ml2 small t-green" onClick={this.openUrl("https://neo.org/consensus")}> {t('advanced.candidate intro')}</a></h4>
               <CheckboxGroup
+                className="check-candi"
                 value={this.state.checkedList}
                 onChange={this.onChange}
               >
                 {candidates.map((item,index)=>{
-                  return <p key={index}><Checkbox value={item.publickey}>{item.publickey}</Checkbox></p>
+                  return <p key={index}><Checkbox value={item.publickey}>{item.publickey}</Checkbox> <em className="small"> {item.votes} </em></p>
                 })}
               </CheckboxGroup>
               <p className="text-c mt4">
