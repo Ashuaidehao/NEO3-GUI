@@ -567,6 +567,3 @@ small,.small{
     color: #00AF92;
     border-color: #00AF92;
 }
-.ant-form-item-label > label.ant-form-item-required::before{
-    color: #00AF92;
-}

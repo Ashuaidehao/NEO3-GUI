@@ -11,7 +11,8 @@ import {
   Col,
   Form,
   Select,
-  Button, 
+  Button,
+  Radio,
   message} from 'antd';
 import { Layout } from 'antd';
 import Sync from '../sync';
@@ -89,7 +90,7 @@ class Advancedvote extends React.Component {
     const { t } = this.props;
     let {checkedList} = this.state;
     if(checkedList.length <= 0) {
-      message.error(t('advanced.vote'));
+      message.error(t('advanced.vote fail info'));
       return;
     }
     axios.post('http://localhost:8081', {
@@ -169,7 +170,8 @@ class Advancedvote extends React.Component {
               showIcon
             />
                                 
-            <Form ref="formRef" onFinish={this.onVote}>
+            {/* <Form ref="formRef" onFinish={this.onVote}> */}
+            <Form ref="formRef" onFinish={this.oneVote}>
               <h4 className="bolder">{t('advanced.vote for')}</h4>
               <Form.Item
               name="voter"
@@ -193,15 +195,24 @@ class Advancedvote extends React.Component {
                 </Select>
               </Form.Item>
                 <h4>{t('advanced.candidate key')}<a className="ml2 small t-green" onClick={this.openUrl("https://neo.org/consensus")}> {t('advanced.candidate intro')}</a></h4>
-              <CheckboxGroup
+              {/* <CheckboxGroup
                 className="check-candi"
                 value={this.state.checkedList}
-                onChange={this.onChange}
+                onChange={this.onChoose}
               >
                 {candidates.map((item,index)=>{
                   return <p key={index}><Checkbox value={item.publickey}>{item.publickey}</Checkbox> <em className="small"> {item.votes} </em></p>
                 })}
-              </CheckboxGroup>
+              </CheckboxGroup> 
+              */}
+              <Radio.Group
+                className="check-candi"
+                onChange={this.onChoose}
+                value={this.state.value}>
+                {candidates.map((item,index)=>{
+                  return <p key={index}><Radio value={item.publickey}>{item.publickey}</Radio> <em className="small"> {item.votes} </em></p>
+                })}
+              </Radio.Group>
               <p className="text-c mt4">
                 <Button type="primary" htmlType="submit" disabled={disabled} loading={this.state.iconLoading}>
                   {t("button.confirm")}
@@ -214,6 +225,63 @@ class Advancedvote extends React.Component {
         </Content>
       </Layout>
     );
+  }
+  onChoose = e =>{
+    console.log('radio checked', e.target.value);
+    this.setState({
+      value:e.target.value
+    });
+  }
+  oneVote = fieldsValue =>{
+    const { t } = this.props;
+    let {value} = this.state;
+    if(!value) {
+      message.error(t('advanced.vote fail info'));
+      return;
+    }
+    axios.post('http://localhost:8081', {
+      "id": "1",
+      "method": "VoteCN",
+      "params": {
+        "account": fieldsValue.voter,
+        "pubkeys": [value]
+      }
+    })
+    .then(function (response) {
+      var _data = response.data;
+      console.log(_data);
+      if (_data.msgType === -1) {
+        let res = _data.error;
+        Modal.error({
+          title: t('advanced.vote fail'),
+          width: 400,
+          content: (
+            <div className="show-pri">
+              <p>{t('error code')}: {res.code}</p>
+              <p>{t('error msg')}: {res.message}</p>
+            </div>
+          ),
+          okText: t("button.ok")
+        });
+        return;
+      } else if (_data.msgType === 3) {
+        Modal.info({
+          title: t('advanced.vote success'),
+          width: 400,
+          content: (
+            <div className="show-pri">
+              <p>TxID : {_data.result.txId?_data.result.txId:"--"}</p>
+            </div>
+          ),
+          okText:t('button.ok')
+        });
+        return;
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
 }
 

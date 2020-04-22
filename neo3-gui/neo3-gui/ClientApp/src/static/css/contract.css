@@ -92,7 +92,9 @@
 }
 .param-title span{
     color: #ff4d4f;
+    font-weight: 900;
     vertical-align: middle;
+    font-family: SimSun, sans-serif;
 }
 .param-input{
     min-height: auto;

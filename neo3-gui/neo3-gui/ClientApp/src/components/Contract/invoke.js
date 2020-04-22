@@ -43,14 +43,18 @@ class Contractinvoke extends React.Component{
         path:"",
         disabled:false,
         visible: false,
+        modal:false,
         loading:false,
         methods:[],
         params:[],
-        methodname:""
+        methodname:"",
+        random:""
       };
     }
     componentDidMount(){
-      Math.random()
+      this.setState({
+        random: Math.random()
+      });
     }
     toHome = () =>{
       location.href=location.origin;
@@ -209,8 +213,29 @@ class Contractinvoke extends React.Component{
         console.log("error");
       });
     }
+    showModal = () => {
+      this.setState({
+        modal: true,
+      });
+    };
+    handleOk = e => {
+      console.log(e);
+      this.setState({
+        modal: false,
+      });
+    };
+    handleCancel = e => {
+      console.log(e);
+      this.setState({
+        modal: false,
+      });
+    };
+    makeArray = () =>{
+      console.log(this)
+      this.showModal();
+    }
     render = () =>{
-    const {methods,params,disabled} = this.state;
+    const {methods,params,disabled,random} = this.state;
     const accounts = this.props.walletStore.accountlist;
     const { t } = this.props;
     return (
@@ -225,7 +250,7 @@ class Contractinvoke extends React.Component{
             <Row className="mt3">
               <Col span={20}>
                 <Form.Item
-                  name="guihash"
+                  name={"guihash"+random}
                   label={t("contract.scripthash")}
                   rules={[
                     {
@@ -257,7 +282,8 @@ class Contractinvoke extends React.Component{
                   </Select>
                 </Form.Item>
                 {params[0]?<div className="param-title"><span>*</span> {t("contract.parameters")} :</div>:null}
-                {params.map((item, index) => {
+                {params.map((item) => {
+                  
                   return(
                     <Form.Item
                       {...layout}
@@ -265,13 +291,14 @@ class Contractinvoke extends React.Component{
                       name={item.name}
                       key={item.name}
                       label={<span>{item.name}</span>}
+                      onClick={item.type.toLowerCase() == 'array' ? this.makeArray: null}
                       rules={[
                         {
                           required: true,
                           message: t("input.required"),
                         },
                       ]}>
-                      <Input placeholder={item.type}/>
+                        <Input placeholder={item.type}/>
                     </Form.Item>
                   )}
                 )}
@@ -311,7 +338,16 @@ class Contractinvoke extends React.Component{
           </Form>
           </Col>
         </Row>
-        
+        <Modal
+          title="Basic Modal"
+          visible={this.state.modal}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+        >
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+        </Modal>
         <Datatrans visible={this.state.visible} onClose={this.onClose} />
       </Content>
     </Layout>
