@@ -243,9 +243,9 @@ class Transaction extends React.Component {
     const { translist, local, loading, iswa,isnpe, page, allpage } = this.state;
     const loadMore = !loading && page <= allpage ? (
       <div className="text-c mb3">
-        {iswa ? (<Button type="primary" onClick={this.loadMyMore}>{ t('load more') }</Button>)
-        :isnpe ? (<Button type="primary" onClick={this.loadNepMore}>{ t('load more') }</Button>):
-        (<Button type="primary" onClick={this.loadMore}>{ t('load more') }</Button>)}
+        {iswa ? (<Button type="primary" onClick={this.loadMyMore}>{ t('common.load more') }</Button>)
+        :isnpe ? (<Button type="primary" onClick={this.loadNepMore}>{ t('common.load more') }</Button>):
+        (<Button type="primary" onClick={this.loadMore}>{ t('common.load more') }</Button>)}
       </div>
     ) : null;
     return (

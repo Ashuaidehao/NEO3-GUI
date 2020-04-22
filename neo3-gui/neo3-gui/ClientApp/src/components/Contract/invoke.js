@@ -87,11 +87,11 @@ class Contractinvoke extends React.Component{
       if(!_hash){message.info(t("contract.search input check"));return;}
       this.setState({loading:true});
       axios.post('http://localhost:8081', {
-          "id":"1111",
-          "method": "GetContract",
-          "params": {
-            "contractHash":_hash
-          }
+        "id":"1111",
+        "method": "GetContract",
+        "params": {
+          "contractHash":_hash
+        }
       })
       .then(function (response) {
         var _data = response.data;
