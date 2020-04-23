@@ -658,6 +658,10 @@ namespace Neo.Services.ApiServices
             }
 
             var addresses = CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
+            if (addresses.IsEmpty())
+            {
+                return new PageList<TransactionPreviewModel>();
+            }
             var tempTransactions = UnconfirmedTransactionCache.GetUnconfirmedTransactions(addresses, pageIndex, limit);
             var result = tempTransactions.Project(t => t.ToTransactionPreviewModel());
             return result;
@@ -675,6 +679,10 @@ namespace Neo.Services.ApiServices
             }
 
             var addresses = address != null ? new List<UInt160>() { address } : CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
+            if (addresses.IsEmpty())
+            {
+                return new PageList<TransactionPreviewModel>();
+            }
             using var db = new TrackDB();
             var trans = db.FindNep5Transactions(new TransferFilter() { FromOrTo = addresses, PageIndex = pageIndex, PageSize = limit });
             var result = new PageList<TransactionPreviewModel>
