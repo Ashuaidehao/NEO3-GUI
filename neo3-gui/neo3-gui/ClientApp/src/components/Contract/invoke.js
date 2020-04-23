@@ -149,10 +149,7 @@ class Contractinvoke extends React.Component{
       },this.onFill());
       this.refs.formRef.validateFields().then(data => {
         let params = this.makeParams(data);
-
-        console.log(params)
-        console.log()
-
+        
         this.invokeContract(params,res=>{
           this.setState({
             tresult:JSON.stringify(res),
@@ -160,7 +157,7 @@ class Contractinvoke extends React.Component{
         });
       }).catch(function(res){
         console.log(res)
-        message.error(t("input.checked"));
+        message.error(t("input.correct"));
       })
     }
     invoke = fieldsValue =>{

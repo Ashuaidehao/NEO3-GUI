@@ -135,6 +135,7 @@
 	},
 	"input": {
 		"checked": "请确认已经输入完毕",
+		"correct": "请确认是否输入正确",
 		"required": "该输入框为必填项"
 	},
 	"input account": "输入账户",

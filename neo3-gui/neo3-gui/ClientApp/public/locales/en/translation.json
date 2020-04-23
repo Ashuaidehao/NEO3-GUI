@@ -135,6 +135,7 @@
 	},
 	"input": {
 		"checked": "Please confirm all input.",
+		"correct":"Please confirm the input correct.",
 		"required": "This input is required."
 	},
 	"input account": "Input Account",
