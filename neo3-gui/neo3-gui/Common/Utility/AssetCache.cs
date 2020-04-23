@@ -75,7 +75,7 @@ namespace Neo.Common.Utility
             sb.EmitAppCall(assetId, "decimals");
             sb.EmitAppCall(assetId, "symbol");
             sb.EmitAppCall(assetId, "name");
-           
+
 
             var contract = snapshot.Contracts.TryGet(assetId);
             if (contract == null)
@@ -86,8 +86,9 @@ namespace Neo.Common.Utility
             var name = engine.ResultStack.Pop().GetString();
             var symbol = engine.ResultStack.Pop().GetString();
             var decimals = (byte)engine.ResultStack.Pop().GetBigInteger();
-            var totalSupply= engine.ResultStack.Pop().GetBigInteger();
+            var totalSupply = engine.ResultStack.Pop().GetBigInteger();
 
+            symbol = symbol == "neo" || symbol == "gas" ? symbol.ToUpper() : symbol;
 
             if (string.IsNullOrWhiteSpace(name))
             {

@@ -15,12 +15,12 @@ namespace Neo.Models.Blocks
             {
                 Hash = consensus.Hash;
                 PrimaryIndex = consensus.PrimaryIndex;
-                Nonce = consensus.Nonce;
+                Nonce = consensus.Nonce.ToString();
             }
         }
 
         public uint PrimaryIndex { get; set; }
-        public ulong Nonce { get; set; }
+        public string Nonce { get; set; }
 
         private UInt256 Hash { get; set; }
     }

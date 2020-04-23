@@ -1,6 +1,8 @@
 import { spawn } from 'child_process';
 import path from 'path';
 import { remote } from 'electron';
+import Config from "./config";
+
 const isMac = process.platform === "darwin";
 const isWin = process.platform === "win32";
 const appPath = remote.app.getAppPath();
@@ -9,8 +11,16 @@ const appPath = remote.app.getAppPath();
 class NeoNode {
 
     constructor() {
-        console.log("neo node creating");
+        this.pendingSwitchTimer = null;
     }
+
+    debounce = (fn, wait) => {
+        if (this.pendingSwitchTimer !== null) {
+            clearTimeout(this.pendingSwitchTimer);
+        }
+        this.pendingSwitchTimer = setTimeout(fn, wait);
+    }
+
 
     kill() {
         if (this.node) {
@@ -19,22 +29,48 @@ class NeoNode {
         }
     }
 
-    isRunning() {
-        return !!this.node;
+    start(env, errorCallback) {
+        this.node = this.runCommand("dotnet neo3-gui.dll", env,
+            errorCallback);
     }
 
-    start(env) {
-        if (!this.isRunning()) {
-            this.node = this.runCommand("dotnet neo3-gui.dll", env);
-        }
-    }
-
-    startNode(network, port) {
+    startNode(network, port, errorCallback) {
         const env = { NEO_NETWORK: network || "", NEO_GUI_PORT: port || "" };
-        this.start(env);
+        this.start(env, errorCallback);
     }
 
-    runCommand(command, env) {
+    /**
+     * force restart node after 1 second (using config file)
+     */
+    switchNode(network) {
+        if (network) {
+            Config.changeNetwork(network);
+        }
+
+        let retryCount = 0;
+        this.delayStartNode(retryCount);
+    }
+
+    delayStartNode(retryCount) {
+        retryCount = retryCount || 0;
+        if (retryCount > 3) {
+            console.log("stop retry");
+            return;
+        }
+        if (this.node) {
+            this.node.kill();
+        }
+        this.debounce(() => {
+            this.startNode(Config.Network, Config.Port,
+                () => {
+                    retryCount++;
+                    console.log(retryCount + ":switch network fail:" + Config.Network);
+                    this.delayStartNode(retryCount);
+                })
+        }, 1000);
+    }
+
+    runCommand(command, env, errorCallback) {
         const startPath = appPath.replace("app.asar", "");
         console.log("startPath:", startPath);
         const parentEnv = process.env;
@@ -59,7 +95,11 @@ class NeoNode {
             // var str = iconv.decode(Buffer.from(data, 'binary'), 'cp936')
             // console.log("error str:", str);
             console.error(data.toString());
+            if (errorCallback) {
+                errorCallback(data.toString());;
+            }
         });
+        ps.env = env;
         return ps;
     }
 }
