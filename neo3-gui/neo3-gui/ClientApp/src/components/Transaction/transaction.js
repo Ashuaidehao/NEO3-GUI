@@ -280,7 +280,6 @@ class Transaction extends React.Component {
                           <span className="float-r"><span className="trans-amount">{item.transfers[0].amount}</span>{item.transfers[0].symbol}</span>
                         </div>
                         :null}
-                        {/* // :<div className="font-s"><Tag color="default">Invoke</Tag></div>}  */}
                     </div>
                   </List.Item>
                 )}

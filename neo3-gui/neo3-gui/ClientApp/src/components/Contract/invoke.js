@@ -15,13 +15,13 @@ import { Input,
   } from 'antd';
   
 import Datatrans from '../Common/datatrans';
-import {  Layout } from 'antd';
+import { Layout } from 'antd';
 import '../../static/css/wallet.css'
 import Sync from '../sync'
 import { SwapOutlined } from '@ant-design/icons';
 import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
-
+import DynamicArray from "./dynamicArray";
 
 const { TextArea } = Input;
 const { Content } = Layout;
@@ -47,14 +47,8 @@ class Contractinvoke extends React.Component{
         loading:false,
         methods:[],
         params:[],
-        methodname:"",
-        random:""
+        methodname:""
       };
-    }
-    componentDidMount(){
-      this.setState({
-        random: Math.random()
-      });
     }
     toHome = () =>{
       location.href=location.origin;
@@ -114,6 +108,7 @@ class Contractinvoke extends React.Component{
       })
     }
     makeParams = (data) =>{
+
       let _params = {
         "contractHash": this.state.hash,
         "method": this.state.methodname,
@@ -125,7 +120,10 @@ class Contractinvoke extends React.Component{
       let inside = new Array();
       this.state.params.map((item)=>{
         item.value = data[item.name];
-        inside = inside.concat(item)
+        if(item.type.toLowerCase() === 'array'){
+          item.value = JSON.parse(item.value);
+        }
+        inside = inside.concat(item);
       })
       if(inside) _params.parameters = inside;
 
@@ -151,6 +149,10 @@ class Contractinvoke extends React.Component{
       },this.onFill());
       this.refs.formRef.validateFields().then(data => {
         let params = this.makeParams(data);
+
+        console.log(params)
+        console.log()
+
         this.invokeContract(params,res=>{
           this.setState({
             tresult:JSON.stringify(res),
@@ -213,34 +215,31 @@ class Contractinvoke extends React.Component{
         console.log("error");
       });
     }
-    showModal = () => {
-      this.setState({
-        modal: true,
-      });
-    };
-    handleOk = e => {
-      console.log(e);
-      this.setState({
-        modal: false,
-      });
-    };
-    handleCancel = e => {
-      console.log(e);
+    handleCancel = () => {
       this.setState({
         modal: false,
       });
     };
     makeArray = () =>{
-      console.log(this)
-      this.showModal();
+      this.setState({
+        modal: true
+      });
+    }
+    handleparam = (val) =>{
+      console.log(val);
+      if(val.arrays.length <= 0) return;
+      this.handleCancel()
     }
     render = () =>{
-    const {methods,params,disabled,random} = this.state;
+    const {methods,params,disabled} = this.state;
     const accounts = this.props.walletStore.accountlist;
     const { t } = this.props;
     return (
     <Layout className="gui-container">
       <Sync />
+        
+      {/* <DynamicArray handleparam={this.handleparam.bind(this)}/> */}
+        
       <Content className="mt3">
         <Row gutter={[30, 0]}  className="bg-white pv4" style={{ 'minHeight': 'calc( 100vh - 150px )'}}>
           <Col span={24}>
@@ -250,7 +249,7 @@ class Contractinvoke extends React.Component{
             <Row className="mt3">
               <Col span={20}>
                 <Form.Item
-                  name={"guihash"+random}
+                  name="guihash"
                   label={t("contract.scripthash")}
                   rules={[
                     {
@@ -261,7 +260,7 @@ class Contractinvoke extends React.Component{
                   <Input ref="sinput" placeholder="Scripthash"/>
                 </Form.Item>
                 <Form.Item
-                  name="method"
+                  name="guimethod"
                   label={t("contract.invoke method")}
                   rules={[
                     {
@@ -283,7 +282,6 @@ class Contractinvoke extends React.Component{
                 </Form.Item>
                 {params[0]?<div className="param-title"><span>*</span> {t("contract.parameters")} :</div>:null}
                 {params.map((item) => {
-                  
                   return(
                     <Form.Item
                       {...layout}
@@ -291,13 +289,19 @@ class Contractinvoke extends React.Component{
                       name={item.name}
                       key={item.name}
                       label={<span>{item.name}</span>}
-                      onClick={item.type.toLowerCase() == 'array' ? this.makeArray: null}
                       rules={[
                         {
                           required: true,
                           message: t("input.required"),
                         },
                       ]}>
+                        {/* {item.type.toLowerCase() == 'array' ?
+                        <Input.Search
+                          placeholder="input search text"
+                          enterButton="Search"
+                          size="large"
+                          onSearch={this.makeArray}
+                        />: <Input placeholder={item.type}/>} */}
                         <Input placeholder={item.type}/>
                     </Form.Item>
                   )}
@@ -341,12 +345,11 @@ class Contractinvoke extends React.Component{
         <Modal
           title="Basic Modal"
           visible={this.state.modal}
-          onOk={this.handleOk}
+          footer={null}
           onCancel={this.handleCancel}
+          width={600}
         >
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
+          <DynamicArray handleparam={this.handleparam.bind(this)}/>
         </Modal>
         <Datatrans visible={this.state.visible} onClose={this.onClose} />
       </Content>
