@@ -87,7 +87,7 @@ class Wallet extends React.Component{
             ):null}
           </div>
         </div>
-        <Footer className="mt1">Copyright © Neo Team 2014-2019</Footer>
+        <Footer className="mt1">Copyright © Neo Team 2014-2020</Footer>
       </Layout>
     );
   }
