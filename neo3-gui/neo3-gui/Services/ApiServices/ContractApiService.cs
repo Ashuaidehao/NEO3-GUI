@@ -142,9 +142,10 @@ namespace Neo.Services.ApiServices
             {
                 contractParameters = para.Parameters?.Select(p =>
                 {
-                    var parameterValue = new ContractParameter(p.Type);
-                    parameterValue.SetValue(p.Value);
-                    return parameterValue;
+                    return ContractParameter.FromJson(p);
+                    //var parameterValue = new ContractParameter(p.Type);
+                    //parameterValue.SetValue(p.Value);
+                    //return parameterValue;
                 }).ToArray();
             }
             catch (Exception e)
