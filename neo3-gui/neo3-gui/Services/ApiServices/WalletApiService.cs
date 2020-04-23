@@ -708,6 +708,10 @@ namespace Neo.Services.ApiServices
                 addresses = new List<UInt160>() { address };
             }
 
+            if (addresses.IsEmpty())
+            {
+                return new List<AddressBalanceModel>();
+            }
             using var db = new TrackDB();
             var balances = db.FindAssetBalance(new BalanceFilter() { Addresses = addresses, Assets = assets });
 
@@ -733,7 +737,10 @@ namespace Neo.Services.ApiServices
             }
 
             var addresses = CurrentWallet.GetAccounts().Select(a => a.ScriptHash).ToList();
-
+            if (addresses.IsEmpty())
+            {
+                return new List<AddressBalanceModel>();
+            }
             using var db = new TrackDB();
             var balances = db.FindAssetBalance(new BalanceFilter() { Addresses = addresses, Assets = assets });
 

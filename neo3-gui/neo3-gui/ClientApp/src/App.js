@@ -13,9 +13,8 @@ class App extends React.Component {
 
     console.log(window.location.href);
     if (process.env.NODE_ENV !== "development") {
-      neoNode.startNode(Config.NETWORK, Config.Port);
+      neoNode.switchNode();
     }
-    // neoNode.startNode(Config.NETWORK, Config.Port);
     this.initWebSocket();
   }
 
