@@ -7,12 +7,14 @@ import { withRouter } from "react-router-dom";
 import '../../static/css/wallet.css';
 import { withTranslation } from 'react-i18next';
 import Config from "../../config";
-import {shell} from "electron";
-const { confirm } = Modal;
-const { Content } = Layout;
+import { shell, remote } from "electron";
+import neonode from "../../neonode";
+
+
 
 @withTranslation()
 @inject("walletStore")
+@inject("blockSyncStore")
 @observer
 @withRouter
 class Setting extends React.Component {
@@ -35,37 +37,46 @@ class Setting extends React.Component {
     i18n.changeLanguage(lng);
     Config.changeLang(lng);
   }
+
+  switchNetwork = (network) => {
+    console.log("changing to network:" + network);
+    neonode.switchNode(network);
+    this.props.blockSyncStore.setHeight({ syncHeight: -1, headerHeight: -1 });
+    this.props.walletStore.logout();
+  }
+
   openUrl(url) {
     return () => {
       shell.openExternal(url);
     }
   }
   render = () => {
-    const { addresslist, address } = this.state;
     const { t, i18n } = this.props;
+    const { Network } = Config;
     return (
       <div>
         <h4>{t("settings.network")}</h4>
-        <Radio.Group name="radiogroup" defaultValue={1}>
-          <Radio value={1}>{t("settings.mainnet")}</Radio>
-          <Radio value={2} disabled>{t("settings.testnet")}</Radio>
+        <Radio.Group name="radiogroup" defaultValue={Network} onChange={(e) => this.switchNetwork(e.target.value)}>
+          <Radio value="mainnet" disabled>{t("settings.mainnet")}</Radio>
+          <Radio value="testnet">{t("settings.testnet")}</Radio>
+          <Radio value="private">{t("settings.privatenet")}</Radio>
         </Radio.Group>
 
         <h4 className="mt3">{t("settings.language")}</h4>
-        <Radio.Group className="setting-ul" defaultValue={i18n.language}>
-          <Radio value="zh" onClick={(e) => this.switchLang("zh")}>中文</Radio>
-          <Radio value="en" onClick={(e) => this.switchLang("en")}>English</Radio>
+        <Radio.Group className="setting-ul" defaultValue={i18n.language} onChange={(e) => this.switchLang(e.target.value)}>
+          <Radio value="zh">中文</Radio>
+          <Radio value="en">English</Radio>
         </Radio.Group>
 
         <h4 className="mt3">{t("settings.about")}</h4>
-        <p className="font-s">{t("settings.version")} 1.0.1</p>
+        <p className="font-s">{t("settings.version")} {remote.app.getVersion()}</p>
 
         <div className="mt1 mb3 text-c small">
-            <p className="mb5 t-light">NeoGUI @ 2020 Neo-Project {t("settings.copyright")}</p>
-            <p>
-                <a className="mr3 t-green" onClick={this.openUrl("https://github.com/neo-ngd/Neo3-GUI/issues")}>{t("settings.report issues")}</a>
-                <a className="t-green" onClick={this.openUrl("https://neo.org/")}>Neo{t("settings.website")}</a>
-            </p>
+          <p className="mb5 t-light">NeoGUI @ 2020 Neo-Project {t("settings.copyright")}</p>
+          <p>
+            <a className="mr3 t-green" onClick={this.openUrl("https://github.com/neo-ngd/Neo3-GUI/issues")}>{t("settings.report issues")}</a>
+            <a className="t-green" onClick={this.openUrl("https://neo.org/")}>Neo{t("settings.website")}</a>
+          </p>
         </div>
       </div>
     );

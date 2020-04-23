@@ -1,7 +1,7 @@
 import fs from "fs";
 
 
-const CONFIG_FILE_NAME="gui-config.json";
+const CONFIG_FILE_NAME = "gui-config.json";
 class Config {
     constructor() {
 
@@ -25,7 +25,7 @@ class Config {
         this.Port = config.Port || 8081;
         this.RPCURL = config.RPCURL || "http://localhost:" + this.Port;
         this.Language = config.Language || "";
-        this.NETWORK = config.NETWORK || "private";
+        this.Network = config.Network || "private";
     }
 
     /**
@@ -47,6 +47,14 @@ class Config {
      */
     changeLang = (lng) => {
         this.Language = lng;
+        this.saveConfig();
+    }
+
+    /**
+     * change current using network and save config
+     */
+    changeNetwork = (network) => {
+        this.Network = network;
         this.saveConfig();
     }
 
