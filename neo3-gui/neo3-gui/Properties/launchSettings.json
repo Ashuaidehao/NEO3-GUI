@@ -22,6 +22,14 @@
         "NEO_NETWORK": "private",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "neo3-gui-testnet": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "NEO_NETWORK": "testnet",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   }
 }

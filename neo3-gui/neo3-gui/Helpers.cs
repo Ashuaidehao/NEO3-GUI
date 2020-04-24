@@ -18,6 +18,7 @@ using Neo.Common;
 using Neo.Common.Json;
 using Neo.Common.Storage;
 using Neo.Common.Utility;
+using Neo.Cryptography.ECC;
 using Neo.IO;
 using Neo.IO.Json;
 using Neo.Ledger;
@@ -33,6 +34,7 @@ using Neo.SmartContract.Native;
 using Neo.VM;
 using Neo.VM.Types;
 using Neo.Wallets;
+using Neo.Wallets.SQLite;
 using VmArray = Neo.VM.Types.Array;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -804,6 +806,17 @@ namespace Neo
                 Transfers = lookup.Select(x => x.ToTransferModel()).ToList(),
             };
             return model;
+        }
+
+
+        public static VerificationContract ToVerificationContract(this ECPoint point)
+        {
+            VerificationContract contract = new VerificationContract
+            {
+                Script = SmartContract.Contract.CreateSignatureRedeemScript(point),
+                ParameterList = new[] { ContractParameterType.Signature }
+            };
+            return contract;
         }
 
     }
