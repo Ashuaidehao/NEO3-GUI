@@ -2,5 +2,5 @@
     "Port": 8081,
     "RPCURL": "http://localhost:8081",
     "Language": "zh",
-    "NETWORK": "private"
+    "Network": "testnet"
 }

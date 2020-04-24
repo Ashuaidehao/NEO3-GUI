@@ -212,17 +212,17 @@ class Contractdeploy extends React.Component {
                   />
                 </Form.Item>
                 <Form.Item className="text-c w200" >
-                  <Button type="primary" htmlType="button" onClick={this.onTest}>
+                  <Button className="mt5" type="primary" htmlType="button" onClick={this.onTest}>
                     {t('button.test deploy')}
                   </Button>
                 </Form.Item>
-                <div className="pa3 mb4">
+                <div className="pa3 mb5">
                   <p className="mb5 bolder">{t('contract.test result')}</p>
                   <TextArea rows={3} value={this.state.tresult} />
                 </div>
                 {/* {cost>=0?<p className="text-c small mt4 mb0">手续费：{cost} GAS</p>:null} */}
                 <Form.Item className="text-c w200">
-                  <Button type="primary" htmlType="submit" disabled={disabled} loading={this.state.iconLoading}>
+                  <Button className="mt3" type="primary" htmlType="submit" disabled={disabled} loading={this.state.iconLoading}>
                     {t("button.send")}
                   </Button>
                 </Form.Item>

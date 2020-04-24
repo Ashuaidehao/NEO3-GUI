@@ -48,7 +48,7 @@ class Advancedcandidate extends React.Component {
     const { t } = this.props;
     axios.post('http://localhost:8081', {
       "id": "1",
-      "method": "ListPublicKey"
+      "method": "ListCandidatePublicKey"
     })
     .then(function (response) {
       var _data = response.data;
@@ -103,7 +103,7 @@ class Advancedcandidate extends React.Component {
         });
         return;
       } else if (_data.msgType === 3) {
-        Modal.info({
+        Modal.success({
           title: t('advanced.candidate success'),
           width: 400,
           content: (

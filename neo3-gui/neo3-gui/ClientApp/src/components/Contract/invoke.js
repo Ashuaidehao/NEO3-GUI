@@ -152,7 +152,7 @@ class Contractinvoke extends React.Component{
         
         this.invokeContract(params,res=>{
           this.setState({
-            tresult:JSON.stringify(res),
+            tresult:JSON.stringify(res.result),
           },this.onFill());
         });
       }).catch(function(res){
@@ -243,7 +243,7 @@ class Contractinvoke extends React.Component{
           <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
           <PageHeader title={t('contract.invoke contract')}></PageHeader>
           <Form ref="formRef" className="trans-form" onFinish={this.invoke}>
-            <Row className="mt3">
+            <Row className="mt3 mb5">
               <Col span={20}>
                 <Form.Item
                   name="guihash"
@@ -327,12 +327,12 @@ class Contractinvoke extends React.Component{
                {t('button.test invoke')}
               </Button>
             </Form.Item>
-            <div className="pa3 mb4">
+            <div className="pa3 mb5">
               <p className="mb5 bolder">{t('contract.test result')}</p>
               <TextArea rows={3} value={this.state.tresult}/>
             </div>
             <Form.Item className="text-c w200">
-              <Button type="primary" htmlType="submit" disabled={disabled} loading={this.state.iconLoading}>
+              <Button className="mt3" type="primary" htmlType="submit" disabled={disabled} loading={this.state.iconLoading}>
                 {t("button.send")}
               </Button>
             </Form.Item>

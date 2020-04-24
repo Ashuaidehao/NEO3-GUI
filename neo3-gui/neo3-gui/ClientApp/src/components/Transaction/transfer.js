@@ -5,7 +5,6 @@ import axios from 'axios';
 import {
   Alert, Input,
   PageHeader,
-  Icon,
   InputNumber,
   Modal,
   Select,
@@ -48,7 +47,6 @@ class Transfer extends React.Component {
     })
     .then(function (response) {
       var _data = response.data;
-      console.log(_data);
       if (_data.msgType === -1) {
         message.error(t("wallet.open wallet first"));
         return;
@@ -109,7 +107,7 @@ class Transfer extends React.Component {
         });
         return;
       }else{
-        Modal.info({
+        Modal.success({
           title: t('wallet.transfer send success'),
           content: (
             <div className="show-pri">
