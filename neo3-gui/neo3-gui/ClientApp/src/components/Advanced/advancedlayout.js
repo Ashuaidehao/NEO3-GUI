@@ -87,7 +87,7 @@ class Advancedlayout extends React.Component {
                 </span>
               }
               >
-                <Menu.Item key="1"><Link to="/advanced">工具</Link></Menu.Item>
+                <Menu.Item key="1"><Link to="/advanced">{t('advanced.tools')}</Link></Menu.Item>
                 <Menu.Item key="2"><Link to="/advanced/wallet">{t("advanced.candidate")}</Link></Menu.Item>
                 <Menu.Item key="3"><Link to="/advanced/wallet">{t("advanced.vote")}</Link></Menu.Item>
               </SubMenu>
