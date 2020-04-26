@@ -13,7 +13,6 @@ import { Input,
     message,
     Button,
   } from 'antd';
-  
 import Datatrans from '../Common/datatrans';
 import { Layout } from 'antd';
 import '../../static/css/wallet.css'
@@ -65,12 +64,12 @@ class Contractinvoke extends React.Component{
     };
     showDetail = () =>{
       this.searchContract(res=>{
-        let list = new Array();
-        list = res.entryPoint?list.concat(res.entryPoint):list;
-        let methods = list.concat(res.methods);
+        // let list = new Array();
+        // list = res.entryPoint?list.concat(res.entryPoint):list;
+        // let methods = list.concat(res.methods);
         this.setState({
           hash:res.contractHash,
-          methods:methods,
+          methods:res.methods,
           loading:false
         })
       });
