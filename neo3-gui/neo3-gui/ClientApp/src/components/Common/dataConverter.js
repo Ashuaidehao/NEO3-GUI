@@ -1,5 +1,6 @@
 /* eslint-disable */
 import bs58check from "bs58check";
+import base64 from "base64-js";
 import { NEO3_ADDRESS_VERSION } from "../../constants";
 
 
@@ -26,9 +27,9 @@ class DataConverter {
      * convert address to scriptHash
      * @param {string} address 
      */
-    toScriptHash(address){
-        var bytes= bs58check.decode(address);
-        return "0x"+ Buffer.from(bytes).toString("hex").slice(2);
+    toScriptHash(address) {
+        var bytes = bs58check.decode(address);
+        return "0x" + Buffer.from(bytes).toString("hex").slice(2);
     }
 
 
@@ -41,6 +42,17 @@ class DataConverter {
             throw new RangeError();
         }
         return hexString.match(/../g).reverse().join("");
+    }
+
+
+    /**
+     * input:'63a3989cb4a99571aa00396d3c7155faea4098ba',output:'Y6OYnLSplXGqADltPHFV+upAmLo='
+     * @param {*} hexString 
+     */
+    toBase64String(hexString) {
+        const bytes = Buffer.from(hexString, 'hex');
+        return base64.fromByteArray(bytes);
+
     }
 }
 
