@@ -64,14 +64,14 @@ class Contractinvoke extends React.Component{
     };
     showDetail = () =>{
       this.searchContract(res=>{
-        // let list = new Array();
-        // list = res.entryPoint?list.concat(res.entryPoint):list;
-        // let methods = list.concat(res.methods);
         this.setState({
           hash:res.contractHash,
           methods:res.methods,
-          loading:false
+          params:res.methods[0].parameters
         })
+        this.refs.formRef.setFieldsValue({
+          guimethod:"0"
+        });
       });
     }
     searchContract = callback => {
@@ -79,6 +79,7 @@ class Contractinvoke extends React.Component{
       let _hash = (this.refs.sinput.input.value).trim();
       if(!_hash){message.info(t("contract.search input check"));return;}
       this.setState({loading:true});
+      var _this = this;
       axios.post('http://localhost:8081', {
         "id":"1111",
         "method": "GetContract",
@@ -94,6 +95,7 @@ class Contractinvoke extends React.Component{
         }else if(_data.msgType === 3){
           callback(_data.result.manifest.abi)
         }
+        _this.setState({loading:false});
       })
       .catch(function (error) {
         console.log(error);

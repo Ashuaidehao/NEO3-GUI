@@ -59,7 +59,6 @@ class Searcharea extends React.Component{
       })
       .then(function (response) {
         var _data = response.data;
-        console.log(_data);
         if(_data.msgType === -1){
           message.info(t('search.hash unexist'));
           return;

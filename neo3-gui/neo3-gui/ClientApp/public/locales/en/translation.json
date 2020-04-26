@@ -125,6 +125,9 @@
 		"select {file} path title": "Select {{file}} file",
 		"test result": "Test Result"
 	},
+	"datatrans":{
+		"input error":"Format is wrong, please check and enter again!"
+	},
 	"error code": "Error Code",
 	"error msg": "Error Message",
 	"home": {

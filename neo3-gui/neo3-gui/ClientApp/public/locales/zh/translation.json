@@ -125,6 +125,9 @@
 		"select {file} path title": "选择需要的{{file}}文件",
 		"test result": "运行结果"
 	},
+	"datatrans":{
+		"input error":"输入格式错误，请检查后再次输入！"
+	},
 	"error code": "错误码",
 	"error msg": "错误信息",
 	"home": {
@@ -177,7 +180,7 @@
 		"invoke contract": "调用",
 		"logout": "登出钱包",
 		"search contract": "搜索",
-		"settings": "设置",
+		"settings": "Settings",
 		"transaction Records": "交易记录",
 		"transactions": "交易",
 		"transfer": "转账",

@@ -14,13 +14,14 @@ import {
     Button,
     AutoComplete,
 } from 'antd';
-
 import '../../static/css/wallet.css'
 import DataConvert from "./dataConverter";
+import { withTranslation } from "react-i18next";
 
 import { SwapOutlined } from '@ant-design/icons';
 
 
+@withTranslation()
 class Datatrans extends React.Component {
     constructor(props) {
         super(props);
@@ -80,9 +81,10 @@ class Datatrans extends React.Component {
         }
     }
     endianTrans = () => {
+        const { t } = this.props;
         let inhash = document.getElementById("inHash").value.replace(/(^\s*)|(\s*$)/g, "");
         if (inhash.length !== 40 && inhash.length !== 42) {
-            message.error("输入格式错误，请检查后再次输入！");
+            message.error(t("datatrans.input error"));
             return;
         }
 
@@ -108,11 +110,12 @@ class Datatrans extends React.Component {
         })
     }
     bigTrans = () =>{
+        const { t } = this.props;
         var _this = this;
         var inbighash = document.getElementById("inBigHash").value.replace(/(^\s*)|(\s*$)/g, "");
         if (inbighash) {
             if(inbighash.substr(0, 2)=="0x")inbighash = inbighash.slice(2);
-            if(inbighash.length!=40){message.error("输入的格式错误，请检查后再试");return;}
+            if(inbighash.length!=40){message.error(t("datatrans.input error"));return;}
             let _address= this.convert.toAddress(inbighash);
             _this.setState({
                 outbighash: _address
@@ -120,20 +123,21 @@ class Datatrans extends React.Component {
         }
         var inbigadd = document.getElementById("inBigAddress").value.replace(/(^\s*)|(\s*$)/g, "");
         if (inbigadd) {
-            if(inbigadd.length!=34){message.error("输入的格式错误，请检查后再试");return;}
+            if(inbigadd.length!=34){message.error(t("datatrans.input error"));return;}
             let _hash = this.convert.toScriptHash(inbigadd);
-            console.log(_hash)
+            _hash = _hash.replace(/0x/g, "");
             _this.setState({
                 outbigadd: _hash
             })
         }
     }
     littleTrans = () =>{
+        const { t } = this.props;
         var _this = this;
         var inlittlehash = document.getElementById("inLittleHash").value.replace(/(^\s*)|(\s*$)/g, "");
         if (inlittlehash) {
             if(inlittlehash.substr(0, 2)=="0x")inlittlehash = inlittlehash.slice(2);
-            if(inlittlehash.length!=40){message.error("Hash (Little)的格式错误，请检查后再试");return;}
+            if(inlittlehash.length!=40){message.error(t("datatrans.input error"));return;}
             let _little = this.convert.reverseHexString(inlittlehash);
             let _address= this.convert.toAddress(_little);
             _this.setState({
@@ -142,10 +146,12 @@ class Datatrans extends React.Component {
         }
         var inlittleadd = document.getElementById("inLittleAdd").value.replace(/(^\s*)|(\s*$)/g, "");
         if (inlittleadd) {
-            if(inlittleadd.length!=34){message.error("Address 的格式错误，请检查后再试");return;}
+            if(inlittleadd.length!=34){message.error(t("datatrans.input error"));return;}
             let _hash = this.convert.toScriptHash(inlittleadd);
-            
+            // NUzp4c7vUidRnUuVV6yQbmiaAh8TtYqxiy
+            // 0xba9840eafa55713c6d3900aa7195a9b49c98a363
             _hash = this.convert.reverseHexString(_hash).replace(/0x/g, "");
+            _hash = "0x" + _hash;
             _this.setState({
                 outlittleadd: _hash
             })
@@ -215,7 +221,7 @@ class Datatrans extends React.Component {
                         <p className="trans-title">little endian</p>
                         <p className="trans-title">Address <SwapOutlined className="small"/> Script Hash</p>
                         <p className="trans-area">
-                            <label>Hash:</label><Input id="inBigHash" type="text" placeholder="0xb135cda6d0c707b8fd019cb76f555eb518f94945"/>
+                            <label>Hash:</label><Input id="inBigHash" type="text" placeholder="b135cda6d0c707b8fd019cb76f555eb518f94945"/>
                             <label>Address:</label><span className="trans-text">{this.state.outbighash}</span><br />
                         </p>
                         <p className="trans-area">
@@ -230,7 +236,7 @@ class Datatrans extends React.Component {
                         <p className="trans-title">big endian</p>
                         <p className="trans-title">Address<SwapOutlined className="small"/> Hex String</p>
                         <p className="trans-area">
-                            <label>Hash:</label><Input id="inLittleHash" type="text" placeholder="4549f918b55e556fb79c01fdb807c7d0a6cd35b1"/>
+                            <label>Hash:</label><Input id="inLittleHash" type="text" placeholder="0x4549f918b55e556fb79c01fdb807c7d0a6cd35b1"/>
                             <label>Address:</label><span className="trans-text">{this.state.outlittlehash}</span><br />
                         </p>
                         <p className="trans-area">

@@ -115,8 +115,8 @@ class Blockdetail extends React.Component {
                       <li><span className="hint">{t("blockchain.timestamp")}：</span>{blockdetail.blockTime}</li>
                       <li><span className="hint">{t("blockchain.network fee")}：</span>{blockdetail.networkFee ? blockdetail.networkFee : '--'}</li>
                       <li><span className="hint">{t("blockchain.confirmations")}：</span>{blockdetail.confirmations}</li>
-                      {height !== 0?
-                      <li><span className="hint">{t("blockchain.prev block")}：</span><Link to={"/chain/detail:" + (height - 1)} onClick={this.setHeight(height - 1)}>{height - 1}</Link></li>
+                      {blockdetail.blockHeight !== 0?
+                      <li><span className="hint">{t("blockchain.prev block")}：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight - 1)} onClick={this.setHeight(blockdetail.blockHeight - 1)}>{blockdetail.blockHeight - 1}</Link></li>
                       :<li><span className="hint">{t("blockchain.prev block")}：</span>--</li>}
                     </ul>
                   </Col>
@@ -126,7 +126,7 @@ class Blockdetail extends React.Component {
                       <li><span className="hint">{t("blockchain.nounce")}：</span>{nonce}</li>
                       <li><span className="hint">{t("blockchain.system fee")}：</span>{blockdetail.networkFee ? blockdetail.networkFee : '--'}</li>
                       <li><span className="hint">{t("blockchain.witness")}：</span>{blockdetail.nextConsensus}</li>
-                      <li><span className="hint">{t("blockchain.next block")}：</span><Link to={"/chain/detail:" + (height + 1)} onClick={this.setHeight(height + 1)}>{height + 1}</Link></li>
+                      <li><span className="hint">{t("blockchain.next block")}：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight + 1)} onClick={this.setHeight(blockdetail.blockHeight + 1)}>{blockdetail.blockHeight + 1}</Link></li>
                     </ul>
                   </Col>
                 </Row>:null}
