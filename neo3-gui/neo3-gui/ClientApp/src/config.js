@@ -1,7 +1,9 @@
 import fs from "fs";
+import path from 'path';
+import { remote } from 'electron';
 
-
-const CONFIG_FILE_NAME = "gui-config.json";
+const appPath = remote.app.getAppPath().replace("app.asar", "");
+const CONFIG_FILE_NAME = path.join(appPath, "gui-config.json");
 class Config {
     constructor() {
 
