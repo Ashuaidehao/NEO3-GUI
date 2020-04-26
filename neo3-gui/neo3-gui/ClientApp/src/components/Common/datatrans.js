@@ -33,7 +33,8 @@ class Datatrans extends React.Component {
             outbigadd: "",
             outlittlehash:"",
             outlittleadd:"",
-            outhexnum:""
+            outhexnum:"",
+            outlittle64:""
         };
     }
     convert = new DataConvert();
@@ -128,6 +129,9 @@ class Datatrans extends React.Component {
             _hash = _hash.replace(/0x/g, "");
             _this.setState({
                 outlittleadd: _hash
+            })
+            _this.setState({
+                outlittle64: _hash
             })
         }
     }
@@ -225,6 +229,7 @@ class Datatrans extends React.Component {
                         <p className="trans-area">
                             <label>Address:</label><Input id="inLittleAddress" type="text" placeholder="Nc4yF2jDZkhrm2EnkRe8KjY6CRkATfn7hm"/>
                             <label>Hash:</label><span className="trans-text">{this.state.outlittleadd}</span><br />
+                            <label>Base 64:</label><span className="trans-text">{this.state.outlittle64}</span><br />
                         </p>
                         <p className="text-r">
                             <Button type="primary" onClick={this.littleTrans}>Transform</Button>

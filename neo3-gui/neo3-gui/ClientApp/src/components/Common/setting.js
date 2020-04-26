@@ -37,14 +37,13 @@ class Setting extends React.Component {
     i18n.changeLanguage(lng);
     Config.changeLang(lng);
   }
-
   switchNetwork = (network) => {
     console.log("changing to network:" + network);
+    console.log(Config.Network);
     neonode.switchNode(network);
     this.props.blockSyncStore.setHeight({ syncHeight: -1, headerHeight: -1 });
     this.props.walletStore.logout();
   }
-
   openUrl(url) {
     return () => {
       shell.openExternal(url);
