@@ -13,7 +13,6 @@ import { Input,
     message,
     Button,
   } from 'antd';
-  
 import Datatrans from '../Common/datatrans';
 import { Layout } from 'antd';
 import '../../static/css/wallet.css'
@@ -65,14 +64,14 @@ class Contractinvoke extends React.Component{
     };
     showDetail = () =>{
       this.searchContract(res=>{
-        let list = new Array();
-        list = res.entryPoint?list.concat(res.entryPoint):list;
-        let methods = list.concat(res.methods);
         this.setState({
           hash:res.contractHash,
-          methods:methods,
-          loading:false
+          methods:res.methods,
+          params:res.methods[0].parameters
         })
+        this.refs.formRef.setFieldsValue({
+          guimethod:"0"
+        });
       });
     }
     searchContract = callback => {
@@ -80,6 +79,7 @@ class Contractinvoke extends React.Component{
       let _hash = (this.refs.sinput.input.value).trim();
       if(!_hash){message.info(t("contract.search input check"));return;}
       this.setState({loading:true});
+      var _this = this;
       axios.post('http://localhost:8081', {
         "id":"1111",
         "method": "GetContract",
@@ -95,6 +95,7 @@ class Contractinvoke extends React.Component{
         }else if(_data.msgType === 3){
           callback(_data.result.manifest.abi)
         }
+        _this.setState({loading:false});
       })
       .catch(function (error) {
         console.log(error);
@@ -152,7 +153,7 @@ class Contractinvoke extends React.Component{
         
         this.invokeContract(params,res=>{
           this.setState({
-            tresult:JSON.stringify(res),
+            tresult:JSON.stringify(res.result),
           },this.onFill());
         });
       }).catch(function(res){
@@ -243,7 +244,7 @@ class Contractinvoke extends React.Component{
           <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
           <PageHeader title={t('contract.invoke contract')}></PageHeader>
           <Form ref="formRef" className="trans-form" onFinish={this.invoke}>
-            <Row className="mt3">
+            <Row className="mt3 mb5">
               <Col span={20}>
                 <Form.Item
                   name="guihash"
@@ -327,12 +328,12 @@ class Contractinvoke extends React.Component{
                {t('button.test invoke')}
               </Button>
             </Form.Item>
-            <div className="pa3 mb4">
+            <div className="pa3 mb5">
               <p className="mb5 bolder">{t('contract.test result')}</p>
               <TextArea rows={3} value={this.state.tresult}/>
             </div>
             <Form.Item className="text-c w200">
-              <Button type="primary" htmlType="submit" disabled={disabled} loading={this.state.iconLoading}>
+              <Button className="mt3" type="primary" htmlType="submit" disabled={disabled} loading={this.state.iconLoading}>
                 {t("button.send")}
               </Button>
             </Form.Item>

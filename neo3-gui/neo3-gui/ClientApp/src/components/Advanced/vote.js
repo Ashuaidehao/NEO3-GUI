@@ -119,7 +119,7 @@ class Advancedvote extends React.Component {
         });
         return;
       } else if (_data.msgType === 3) {
-        Modal.info({
+        Modal.success({
           title: t('advanced.vote success'),
           width: 400,
           content: (
@@ -265,7 +265,7 @@ class Advancedvote extends React.Component {
         });
         return;
       } else if (_data.msgType === 3) {
-        Modal.info({
+        Modal.success({
           title: t('advanced.vote success'),
           width: 400,
           content: (

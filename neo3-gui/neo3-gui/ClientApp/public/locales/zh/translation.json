@@ -125,6 +125,9 @@
 		"select {file} path title": "选择需要的{{file}}文件",
 		"test result": "运行结果"
 	},
+	"datatrans":{
+		"input error":"输入格式错误，请检查后再次输入！"
+	},
 	"error code": "错误码",
 	"error msg": "错误信息",
 	"home": {
@@ -162,7 +165,8 @@
 		"report issues": "问题反馈",
 		"testnet": "测试网",
 		"version": "当前版本",
-		"website": "官网"
+		"website": "官网",
+		"network info":"切换网络后，需重新登录钱包。"
 	},
 	"show detail": "查看详情",
 	"sideBar": {

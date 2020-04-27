@@ -2,12 +2,12 @@
 //just test replace wallet//
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Layout, Row, Col, message, PageHeader, Typography } from 'antd';
+import { Layout, Row, Col, message, PageHeader, List } from 'antd';
 import axios from 'axios';
-import Intitle from '../Common/intitle';
-import Transaction from '../Transaction/transaction';
 import Sync from '../sync';
 import { withTranslation } from 'react-i18next';
+
+import { SwapRightOutlined } from '@ant-design/icons';
 
 
 const { Content } = Layout;
@@ -20,6 +20,7 @@ class Blockdetail extends React.Component {
       blockdetail: {},
       height: 0,
       nonce: 0,
+      translist:[]
     };
   }
   componentDidMount() {
@@ -55,20 +56,48 @@ class Blockdetail extends React.Component {
   }
   setHeight = (h) => {
     return () => {
-      this.setState({height: h},() => this.getAllblock(res =>{
-        this.setState({
-          blockdetail: res.result,
-          witness: res.result.witness.scriptHash,
-          nonce: res.result.consensusData.nonce,
-          translist: res.result.transactions
+      this.setState({height: h},
+        () => this.getAllblock(res =>{
+          this.setState({
+            blockdetail: res.result,
+            witness: res.result.witness.scriptHash,
+            nonce: res.result.consensusData.nonce,
+            height: res.result.blockHeight
+          },()=>{this.getBlocktrans()})
         })
-      })
       );
+      
     }
+  }
+  getBlocktrans = () =>{
+    const { t } = this.props;
+    let _height = this.state.height;
+    let _this = this;
+    axios.post('http://localhost:8081', {
+      "id": "1111",
+      "method": "QueryTransactions",
+      "params": {
+        "blockHeight":_height,
+        "limit":100
+      }
+    })
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        message.info(t('blockchain.height unexist'));
+        return;
+      }else{
+        _this.setState({translist:_data.result.list})
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   render() {
     const { t } = this.props;
-    const { blockdetail, nonce } = this.state;
+    const { blockdetail, nonce, height,translist } = this.state;
     return (
       <Layout className="gui-container">
         <Sync />
@@ -104,7 +133,43 @@ class Blockdetail extends React.Component {
               </div>
             </Col>
           </Row>
-          <Transaction page="blockdetail" content={t("blockchain.transactions")} />
+
+          {/* <Transaction page={this.state.href} content={t("blockchain.transactions")} /> */}
+
+          <Row gutter={[30, 0]} className="mt2" type="flex" style={{ 'minHeight': '120px' }}>
+            <Col span={24} className="bg-white pv4">
+              <PageHeader title={t("blockchain.transactions")}></PageHeader>
+              <List
+                header={<div><span className="succes-light">{t("blockchain.transaction.status")}</span><span>{t("blockchain.transaction info")}</span><span className="float-r">{t("common.time")}</span></div>}
+                footer={<span></span>}
+                itemLayout="horizontal"
+                dataSource={translist}
+                className="font-s"
+                renderItem={item => (
+                  <List.Item>
+                    <List.Item.Meta
+                    title={<span className="succes-light">{t('blockchain.transaction.confirmed')}</span>}
+                    />
+                    <div className="trans-detail">
+                        <p>
+                          <Link className="w500 ellipsis hash" to={ "/chain/transaction:" + item.txId} title={t("show detail")}>{item.txId}</Link>
+                          <span className="float-r">{item.blockTime}</span>
+                        </p>
+                        {item.transfers[0]?
+                        <div >
+                          <span className="w200 ellipsis">{item.transfers[0].fromAddress ? item.transfers[0].fromAddress : "--"}</span>
+                          <SwapRightOutlined />
+                          <span className="w200 ellipsis" >{item.transfers[0].toAddress ? item.transfers[0].toAddress : "--"}</span>
+                          <span className="float-r"><span className="trans-amount">{item.transfers[0].amount}</span>{item.transfers[0].symbol}</span>
+                        </div>
+                        :null}
+                    </div>
+                  </List.Item>
+                )}
+              />
+            </Col>
+            <div className="pv1"></div>
+          </Row>
         </Content>
       </Layout>
     );

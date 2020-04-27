@@ -30,21 +30,17 @@ class Setting extends React.Component {
   }
   switchLang = (lng) => {
     const { t, i18n } = this.props;
-    console.log("current lang:", Config.Language)
     if (Config.Language === lng) {
       return;
     }
     i18n.changeLanguage(lng);
     Config.changeLang(lng);
   }
-
   switchNetwork = (network) => {
-    console.log("changing to network:" + network);
-    neonode.switchNode(network);
-    this.props.blockSyncStore.setHeight({ syncHeight: -1, headerHeight: -1 });
-    this.props.walletStore.logout();
+    // console.log("changing to network:" + network);
+    // console.log(Config.Network);
+    this.props.switchNetwork(network);
   }
-
   openUrl(url) {
     return () => {
       shell.openExternal(url);
@@ -56,11 +52,13 @@ class Setting extends React.Component {
     return (
       <div>
         <h4>{t("settings.network")}</h4>
+        
         <Radio.Group name="radiogroup" defaultValue={Network} onChange={(e) => this.switchNetwork(e.target.value)}>
           <Radio value="mainnet" disabled>{t("settings.mainnet")}</Radio>
           <Radio value="testnet">{t("settings.testnet")}</Radio>
           <Radio value="private">{t("settings.privatenet")}</Radio>
         </Radio.Group>
+        <p className="small mt5">{t("settings.network info")}</p>
 
         <h4 className="mt3">{t("settings.language")}</h4>
         <Radio.Group className="setting-ul" defaultValue={i18n.language} onChange={(e) => this.switchLang(e.target.value)}>

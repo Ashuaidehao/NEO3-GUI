@@ -125,6 +125,9 @@
 		"select {file} path title": "Select {{file}} file",
 		"test result": "Test Result"
 	},
+	"datatrans":{
+		"input error":"Format is wrong, please check and enter again!"
+	},
 	"error code": "Error Code",
 	"error msg": "Error Message",
 	"home": {
@@ -162,7 +165,8 @@
 		"report issues": "Report Issues",
 		"testnet": "Testnet",
 		"version": "Current Version",
-		"website": "WebSite"
+		"website": "WebSite",
+		"network info":"After switching the network, you need to log in to the wallet again."
 	},
 	"show detail": "Show Detail",
 	"sideBar": {

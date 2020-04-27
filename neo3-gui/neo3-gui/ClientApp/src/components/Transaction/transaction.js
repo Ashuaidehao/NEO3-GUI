@@ -45,6 +45,10 @@ class Transaction extends React.Component {
       _params.blockHeight = Number(_hash);
       this.setState({params:_params})
       this.allset(_params);
+    } else if (page === "reblockdetail") {
+      _params.blockHeight = Number(_hash);
+      this.setState({params:_params})
+      this.allset(_params);
     } else if (page === "addressdetail") {
       _params.address = Number(_hash);
       this.setState({
@@ -131,7 +135,6 @@ class Transaction extends React.Component {
     });
   }
   getAlltrans = (params, callback) => {
-    console.log(params)
     axios.post('http://localhost:8081', {
       "id": "51",
       "method": "QueryTransactions",
