@@ -72,6 +72,7 @@ class Contractinvoke extends React.Component{
         this.refs.formRef.setFieldsValue({
           guimethod:"0"
         });
+        console.log(this.refs.formRef)
       });
     }
     searchContract = callback => {
@@ -80,6 +81,7 @@ class Contractinvoke extends React.Component{
       if(!_hash){message.info(t("contract.search input check"));return;}
       this.setState({loading:true});
       var _this = this;
+      console.log("aaaaa")
       axios.post('http://localhost:8081', {
         "id":"1111",
         "method": "GetContract",
@@ -89,13 +91,21 @@ class Contractinvoke extends React.Component{
       })
       .then(function (response) {
         var _data = response.data;
+        _this.setState({loading:false});
+        
         if(_data.msgType === -1){
+          _this.setState({
+            methods:[],
+            params:[]
+          })
+          _this.refs.formRef.setFieldsValue({
+            guimethod:" "
+          });
           message.info(t("contract.search fail"));
           return;
         }else if(_data.msgType === 3){
           callback(_data.result.manifest.abi)
         }
-        _this.setState({loading:false});
       })
       .catch(function (error) {
         console.log(error);
