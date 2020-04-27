@@ -46,7 +46,6 @@ const typeOption = [
 ]
 class DynamicArray extends React.Component{
   handleparam = values => {
-    console.log(values)
     this.props.handleparam(values);
   }
   render = () =>{

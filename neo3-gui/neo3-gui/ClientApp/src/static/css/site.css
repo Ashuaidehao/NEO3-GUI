@@ -115,6 +115,9 @@ h4,.h4,.font-n{
 small,.small{
     font-size: 80%;
 }
+.smaller{
+    font-size: 70%;
+}
 
 .f-1{
     color: #222222;

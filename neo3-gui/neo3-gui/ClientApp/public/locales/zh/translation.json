@@ -165,7 +165,8 @@
 		"report issues": "问题反馈",
 		"testnet": "测试网",
 		"version": "当前版本",
-		"website": "官网"
+		"website": "官网",
+		"network info":"切换网络后，需重新登录钱包。"
 	},
 	"show detail": "查看详情",
 	"sideBar": {
@@ -180,7 +181,7 @@
 		"invoke contract": "调用",
 		"logout": "登出钱包",
 		"search contract": "搜索",
-		"settings": "Settings",
+		"settings": "设置",
 		"transaction Records": "交易记录",
 		"transactions": "交易",
 		"transfer": "转账",

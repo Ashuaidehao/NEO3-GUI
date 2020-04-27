@@ -14,9 +14,12 @@ import {
 } from '@ant-design/icons';
 import { withTranslation } from 'react-i18next';
 import { shell } from "electron";
+import Config from "../../config";
+import neonode from "../../neonode";
 
 @withTranslation()
 @inject("walletStore")
+@inject("blockSyncStore")
 @observer
 @withRouter
 class menuDown extends React.Component {
@@ -25,8 +28,6 @@ class menuDown extends React.Component {
         this.state = {
             title: "设置",
         };
-    }
-    componentDidMount() {
     }
     logout = () => {
         const { t } = this.props;
@@ -49,11 +50,16 @@ class menuDown extends React.Component {
             visible: true,
         });
     };
-
     hideModal = () => {
         this.setState({
             visible: false,
         });
+        if(this.state.change){
+            neonode.switchNode(this.state.network);
+            this.props.blockSyncStore.setHeight({ syncHeight: -1, headerHeight: -1 });
+            this.props.walletStore.logout();
+            this.props.history.push('/');
+        }
     };
     getInset = (ele) => {
         const { t } = this.props;
@@ -61,8 +67,8 @@ class menuDown extends React.Component {
             this.setState({showElem: false})
             switch(ele){
                 case 0:this.setState({title:t("sideBar.address book"),children: <Addressdetail />});break;
-                case 1:this.setState({title:t("sideBar.settings"),children: <Setting />});break;
-                default:this.setState({title:t("sideBar.settings"),children: <Setting />});break;
+                case 1:this.setState({title:"Settings",children: <Setting switchNetwork={this.switchNetwork.bind(this)}/>});break;
+                default:this.setState({title:"Settings",children: <Setting switchNetwork={this.switchNetwork.bind(this)}/>});break;
             }
             this.setState({
                 visible: true,
@@ -73,6 +79,12 @@ class menuDown extends React.Component {
         return () => {
             shell.openExternal(url);
         }
+    }
+    switchNetwork(network) {
+        this.setState({
+            network:network,
+            change: network !== Config.Network
+        });
     }
     render() {
         const walletOpen = this.props.walletStore.isOpen;
