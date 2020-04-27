@@ -130,8 +130,9 @@ class Datatrans extends React.Component {
             _this.setState({
                 outlittleadd: _hash
             })
+            let _base64 = this.convert.toBase64String(_hash);
             _this.setState({
-                outlittle64: _hash
+                outlittle64: _base64
             })
         }
     }

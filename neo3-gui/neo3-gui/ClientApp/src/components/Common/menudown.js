@@ -28,7 +28,6 @@ class menuDown extends React.Component {
     }
     componentDidMount() {
     }
-
     logout = () => {
         const { t } = this.props;
         axios.post('http://localhost:8081', {
