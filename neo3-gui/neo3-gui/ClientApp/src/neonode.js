@@ -53,7 +53,7 @@ class NeoNode {
 
     delayStartNode(retryCount) {
         retryCount = retryCount || 0;
-        if (retryCount > 3) {
+        if (retryCount > 10) {
             console.log("stop retry");
             return;
         }
@@ -63,14 +63,15 @@ class NeoNode {
         this.debounce(() => {
             this.startNode(Config.Network, Config.Port,
                 () => {
+                    console.log(new Date(), retryCount + ":switch network fail:" + Config.Network);
                     retryCount++;
-                    console.log(retryCount + ":switch network fail:" + Config.Network);
                     this.delayStartNode(retryCount);
                 })
         }, 1000);
     }
 
     runCommand(command, env, errorCallback) {
+
         const startPath = appPath.replace("app.asar", "");
         console.log("startPath:", startPath);
         const parentEnv = process.env;
@@ -84,7 +85,9 @@ class NeoNode {
         else {
 
         }
+
         const ps = spawn(command, [], { shell: true, encoding: 'utf8', cwd: path.join(startPath, 'build-neo-node'), env: childEnv });
+        ps.firstError = true;
         // ps.stdout.setEncoding('utf8');
         ps.stdout.on('data', (data) => {
             // var str = iconv.decode(new Buffer(data), 'gbk')
@@ -94,8 +97,9 @@ class NeoNode {
         ps.stderr.on('data', (data) => {
             // var str = iconv.decode(Buffer.from(data, 'binary'), 'cp936')
             // console.log("error str:", str);
-            console.error(data.toString());
-            if (errorCallback) {
+            console.error(ps.pid + ":" + data.toString());
+            if (ps.firstError && errorCallback) {
+                ps.firstError = false;
                 errorCallback(data.toString());;
             }
         });
