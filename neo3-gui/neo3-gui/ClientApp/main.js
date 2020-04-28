@@ -32,9 +32,7 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1100,
         height: 700,
-        minWidth: 1100,
-        minHeight: 700,
-        //resizable: false,
+        resizable: false,
         webPreferences: {
             javascript: true,
             plugins: true,

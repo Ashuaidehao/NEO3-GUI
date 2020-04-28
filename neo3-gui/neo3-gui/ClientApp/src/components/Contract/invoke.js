@@ -64,14 +64,17 @@ class Contractinvoke extends React.Component{
     };
     showDetail = () =>{
       this.searchContract(res=>{
+        this.refs.formRef.resetFields()
         this.setState({
           hash:res.contractHash,
           methods:res.methods,
-          params:res.methods[0].parameters
+          params:[],
+          tresult:""
         })
         this.refs.formRef.setFieldsValue({
-          guimethod:"0"
-        });
+          guihash:this.state.hash
+        })
+        console.log(this.refs.formRef)
       });
     }
     searchContract = callback => {
@@ -89,13 +92,23 @@ class Contractinvoke extends React.Component{
       })
       .then(function (response) {
         var _data = response.data;
+        _this.setState({loading:false});
+        
         if(_data.msgType === -1){
+          _this.setState({
+            methods:[],
+            params:[],
+            tresult:""
+          })
+          _this.refs.formRef.resetFields()
+          _this.refs.formRef.setFieldsValue({
+            guihash:_hash
+          })
           message.info(t("contract.search fail"));
           return;
         }else if(_data.msgType === 3){
           callback(_data.result.manifest.abi)
         }
-        _this.setState({loading:false});
       })
       .catch(function (error) {
         console.log(error);

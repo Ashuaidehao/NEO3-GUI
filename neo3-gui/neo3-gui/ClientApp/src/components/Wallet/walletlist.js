@@ -41,9 +41,9 @@ class Walletlist extends React.Component {
     })
     .then(function (response) {
       var _data = response.data;
-      console.log(_data);
       if (_data.msgType === -1) {
-        console.log("需要先打开钱包再进入页面");
+        console.log("GetMyTotalBalance Error");
+        console.log(_data);
         return;
       }
       _this.setState({
@@ -66,9 +66,9 @@ class Walletlist extends React.Component {
     })
     .then(function (response) {
       var _data = response.data;
-      console.log(_data);
       if (_data.msgType === -1) {
-        console.log("需要先打开钱包再进入页面");
+        console.log("ListAddress Error");
+        console.log(_data);
         return;
       }
       _this.props.walletStore.setAccounts(_data.result.accounts);
@@ -86,9 +86,9 @@ class Walletlist extends React.Component {
     })
     .then(function (response) {
       var _data = response.data;
-      console.log(_data);
       if (_data.msgType == -1) {
-        console.log("需要先打开钱包再进入页面");
+        console.log("ShowGas Error");
+        console.log(_data);
         return;
       }
       _this.setState({
@@ -101,7 +101,7 @@ class Walletlist extends React.Component {
     });
   }
   claimGas = () => {
-    var _this = this;
+    const { t } = this.props;
     this.setState({iconLoading:true})
     setTimeout(this.setState({iconLoading:false}),10000);
     axios.post('http://localhost:8081', {
@@ -111,11 +111,11 @@ class Walletlist extends React.Component {
     .then(function (response) {
       var _data = response.data;
       if (_data.msgType === -1) {
-        console.log("需要先打开钱包再进入页面");
+        console.log("ClaimGas Error");
+        console.log(_data)
         return;
       } else if (_data.msgType = 3) {
-
-        message.success("GAS 提取成功，请稍后刷新页面查看", 3);
+        message.success(t("wallet.gas success"), 3);
       }
     })
     .catch(function (error) {
@@ -134,6 +134,7 @@ class Walletlist extends React.Component {
       var _data = response.data;
       if (_data.msgType === -1) {
         message.error(t('wallet.open wallet first'));
+        console.log(_data)
         return;
       }
       message.success(t('wallet.add address success'));
