@@ -112,7 +112,8 @@ class Walletlist extends React.Component {
       var _data = response.data;
       if (_data.msgType === -1) {
         console.log("ClaimGas Error");
-        console.log(_data)
+        console.log(_data);
+        message.success(t("wallet.gas fail"), 3);
         return;
       } else if (_data.msgType = 3) {
         message.success(t("wallet.gas success"), 3);

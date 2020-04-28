@@ -208,6 +208,7 @@
 		"fee": "Fee",
 		"from": "From",
 		"gas success":"GAS claim succeeded, please check it later",
+		"gas fail":"GAS claim failed, please check it later",
 		"import private": "Import private",
 		"import private success": "Import private success",
 		"import wallet": "Import Wallet",
