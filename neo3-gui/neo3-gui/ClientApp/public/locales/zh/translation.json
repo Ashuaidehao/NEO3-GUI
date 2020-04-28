@@ -207,6 +207,7 @@
 		"estimated time": "预计到账时间",
 		"fee": "手续费",
 		"from": "付款地址",
+		"gas success":"GAS 提取成功，请稍后刷新页面查看",
 		"import private": "导入私钥",
 		"import private success": "私钥导入成功",
 		"import wallet": "导入钱包",

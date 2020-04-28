@@ -117,6 +117,9 @@ class Transfer extends React.Component {
           okText:"确认"
         });
         _this.refs.formRef.resetFields()
+        _this.setState({
+          selectadd:[]
+        })
       }
     })
     .catch(function (error) {
