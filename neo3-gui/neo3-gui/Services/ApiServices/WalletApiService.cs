@@ -421,6 +421,11 @@ namespace Neo.Services.ApiServices
             var addresses = CurrentWallet.GetAccounts().Where(a => !a.Lock && !a.WatchOnly).Select(a => a.ScriptHash).ToList();
 
             var balances = addresses.GetBalanceOf(NativeContract.NEO.Hash);
+            balances = balances.Where(b => b.Value > 0).ToList();
+            if (balances.IsEmpty())
+            {
+                return Error(ErrorCode.NoNeedClaimGas);
+            }
             var outputs = balances.Select((t, index) => new TransferOutput()
             {
                 AssetId = NativeContract.NEO.Hash,

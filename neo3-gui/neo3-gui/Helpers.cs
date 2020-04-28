@@ -625,7 +625,7 @@ namespace Neo
             if (notifyArray[0].NotVmByteArray()) return null;
 
             var eventName = notifyArray[0].GetString();
-            if (eventName != "Transfer") return null;
+            if (!"Transfer".Equals(eventName, StringComparison.OrdinalIgnoreCase)) return null;
 
             var fromItem = notifyArray[1];
             if (fromItem.NotVmByteArray() && fromItem.NotVmNull()) return null;
