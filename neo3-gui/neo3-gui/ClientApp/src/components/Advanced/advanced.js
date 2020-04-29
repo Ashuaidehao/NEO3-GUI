@@ -57,7 +57,7 @@ class Advanced extends React.Component {
                             <a className="ml3" onClick={this.openUrl("https://neowish.ngd.network/neo3/")}><PaperClipOutlined /> {t('advanced.test coin')}</a>
                         </Col>
                         <Col span={6}>
-                            <a className="ml3" onClick={this.openUrl("https://docs.neo.org/")}><PaperClipOutlined /> {t('advanced.dev docs')}</a>
+                            <a className="ml3" onClick={this.openUrl("https://docs.neo.org/v3")}><PaperClipOutlined /> {t('advanced.dev docs')}</a>
                         </Col>
                         <Col span={6}>
                             <a className="ml3" onClick={this.openUrl("https://neo.org/dev")}><PaperClipOutlined /> {t('advanced.more')}</a>
