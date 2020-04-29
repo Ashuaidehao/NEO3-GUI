@@ -30,16 +30,16 @@ namespace Neo
         public Startup(IConfiguration configuration, IHostEnvironment env)
         {
             Configuration = configuration;
+
+#if DEBUG
             var root = env.ContentRootPath;
             ContentRootPath = Path.Combine(root, "ClientApp");
 
-            CommandLineTool.Run("set BROWSER=none&&npm start", ContentRootPath, output =>
+            if (Directory.Exists(ContentRootPath))
             {
-                if (output.Contains("localhost:3000"))
-                {
-                    CommandLineTool.Run("electron .", ContentRootPath);
-                }
-            });
+                CommandLineTool.Run("npm run dev",ContentRootPath);
+            }
+#endif
         }
 
 
@@ -51,7 +51,7 @@ namespace Neo
             services.AddSingleton<JsonRpcMiddleware>();
             services.AddWebSockets(option =>
             {
-                
+
             });
         }
 
@@ -63,7 +63,7 @@ namespace Neo
             app.UseMiddleware<WebSocketHubMiddleware>();
 
             var notify = app.UseNotificationService();
-            notify.Register(new SyncHeightJob(TimeSpan.FromSeconds(15)));
+            notify.Register(new SyncHeightJob(TimeSpan.FromSeconds(5)));
             notify.Register(new SyncWalletJob(TimeSpan.FromSeconds(10)));
 
             //app.UseSpa(spa =>

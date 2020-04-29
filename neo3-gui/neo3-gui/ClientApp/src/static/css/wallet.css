@@ -9,14 +9,14 @@
 .wa-content .logo{
     background: url(../images/logo.svg) no-repeat;
     background-position: center;
-    height: 80px;
+    height: 48px;
 }
 .wa-open{
     padding: 0 90px;
-    max-width: 580px;
+    max-width: 540px;
     margin-left: auto;
     margin-right: auto;
-    min-height: 280px;
+    min-height: 260px;
 }
 
 /* 路径 */
@@ -46,9 +46,11 @@
 /* 按钮 */
 .wa-open .ant-btn{
     width: 100%;
-    font-size: 14px;
-    padding:6px 0;
-    text-align:center;
+    font-size: 16px;
+    font-weight: 300;
+    letter-spacing: 0.3px;
+    padding: 6px 0;
+    text-align: center;
     border: 1px solid #00AF92;
     color: #00AF92;
 }
@@ -66,7 +68,8 @@
 .wa-open .ant-btn-sm{
     font-size: 12px;
 }
-.wa-open input{
+.wa-open input,
+.wa-open .ant-input-affix-wrapper{
     padding-top: 6px;
     padding-bottom: 6px;
     border-radius: 0;
@@ -90,19 +93,28 @@
     outline: none;
     box-shadow: none;
 }
-
+.ant-input-prefix{
+    color: rgba(0, 0, 0, 0.3);
+    font-size: 16px;
+    margin-right: 10px;
+}
 
 /* list */
 .ant-list-item.wa-half{
     width: 49%;
     display: inline-block;
 }
-.ant-list-item.wa-half:nth-child(2){
+.ant-list-item.wa-half:nth-child(2n){
     margin-left: 2%;
     display: inline-block;
 }
 .ant-list-item.wa-half .upcase{
-    margin-right:120px ;
+    width: 120px;
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: text-top;
+    text-overflow: ellipsis;
+    margin-right: 10px;
 }
 
 .show-pri{
@@ -179,6 +191,9 @@
     width: 100%;
     padding: 2px 10px;
 }
+.trans-form .ant-input-number{
+    width: 100%;
+}
 .trans-form .ant-form-item-label > label{
     font-weight:600;
     height: auto;
@@ -191,16 +206,26 @@
 }
 
 .trans-form .ant-select:not(.ant-select-disabled):hover .ant-select-selector,
-.trans-form .ant-input:hover {
+.trans-form .ant-input:hover,.ant-input-number:hover {
     border-color: #00AF92;
 }
 
 .trans-form .ant-select-focused.ant-select-single:not(.ant-select-customize-input) .ant-select-selector,
-.trans-form .ant-input:focus, .ant-input-focused{
+.trans-form .ant-input:focus,.ant-input-number-focused, .ant-input-focused{
     border-color: rgb(0, 175, 146);
     box-shadow: 0 0 0 2px rgba(3, 212, 178, 0.2);
 }
-
+.trans-form .ant-input-number .anticon,
+.trans-form .ant-input-number .anticon{
+    color:rgb(1, 150, 125)!important;
+}
+.trans-symbol{
+    display: inline-block;
+    width: 50px;
+    overflow: hidden;
+    vertical-align: bottom;
+    text-overflow: ellipsis;
+}
 
 /* upload */
 input.wa-upload{
@@ -219,4 +244,50 @@ button,input{
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.wal-import{
+    position: relative;
+    font-size: 12px;
+    text-align: right;
+}
+.wal-ul{
+    position: relative;
+    z-index: 99;
+    display: none;
+    min-width: 50px;
+    padding-top: 10px;
+    text-align: left;
+}
+.wal-import ul{
+    background:#FFFFFF;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
+    position: absolute;
+    right: 0;
+}
+.wal-ul li{
+    list-style: none;
+    padding: 2px 8px;
+    min-width: 160px;
+    cursor: pointer;
+}
+.wal-ul li a{
+    display: inline-block;
+    width: 100%;
+    color: rgba(0, 0, 0, 0.65);
+}
+.wal-ul li:hover{
+    background: rgba(232, 232, 232, 0.65);
+}
+.wal-ul li:hover a{
+    color: rgba(0, 0, 0, 0.90);
+}
+.wal-import:hover .wal-ul,
+.wal-ul:hover{
+    display: block;
+}
+
+.wa-count{
+    min-width: 80px;
 }

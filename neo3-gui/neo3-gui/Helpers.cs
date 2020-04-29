@@ -12,18 +12,21 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using Akka.Actor;
 using Microsoft.Extensions.DependencyInjection;
 using Neo.Common;
 using Neo.Common.Json;
 using Neo.Common.Storage;
 using Neo.Common.Utility;
+using Neo.Cryptography.ECC;
 using Neo.IO;
 using Neo.IO.Json;
 using Neo.Ledger;
 using Neo.Models;
 using Neo.Models.Transactions;
 using Neo.Models.Wallets;
+using Neo.Network.P2P;
+using Neo.Network.P2P.Payloads;
 using Neo.Persistence;
 using Neo.Services;
 using Neo.SmartContract;
@@ -31,6 +34,7 @@ using Neo.SmartContract.Native;
 using Neo.VM;
 using Neo.VM.Types;
 using Neo.Wallets;
+using Neo.Wallets.SQLite;
 using VmArray = Neo.VM.Types.Array;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -51,11 +55,14 @@ namespace Neo
                 new UInt256Converter(),
                 new NumToStringConverter(),
                 new BigDecimalConverter(),
+                new BigIntegerConverter(),
                 new DatetimeJsonConverter(),
                 new ByteArrayConverter(),
                 new JObjectConverter(),
             }
         };
+
+
 
         public static string GetVersion(this Assembly assembly)
         {
@@ -81,6 +88,87 @@ namespace Neo
 
             return input == "yes" || input == "y";
         }
+
+
+        /// <summary>
+        /// broadcast transaction and cache
+        /// </summary>
+        /// <param name="tx"></param>
+        /// <returns></returns>
+        public static async Task Broadcast(this Transaction tx)
+        {
+            Program.Starter.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+            var task = Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
+        }
+
+
+
+        /// <summary>
+        /// safe serialize signContext to avoid encoding issues
+        /// </summary>
+        /// <param name="signContext"></param>
+        /// <returns></returns>
+        public static string SafeSerialize(this ContractParametersContext signContext)
+        {
+            return signContext.ToJson().SerializeJson();
+        }
+
+        /// <summary>
+        /// create tx by script and signer
+        /// </summary>
+        /// <param name="wallet"></param>
+        /// <param name="script"></param>
+        /// <param name="signers"></param>
+        /// <returns></returns>
+        public static Transaction InitTransaction(this Wallet wallet, byte[] script, params UInt160[] signers)
+        {
+            var cosigners = signers.Select(account => new Cosigner { Account = account }).ToArray();
+            return InitTransaction(wallet, script, cosigners);
+        }
+
+        /// <summary>
+        /// create tx by script and signer
+        /// </summary>
+        /// <param name="wallet"></param>
+        /// <param name="script"></param>
+        /// <param name="signers"></param>
+        /// <returns></returns>
+        public static Transaction InitTransaction(this Wallet wallet, byte[] script, params Cosigner[] signers)
+        {
+            var tx = wallet.MakeTransaction(script, null, null, signers);
+            return tx;
+        }
+
+
+        /// <summary>
+        /// append sign to signContext
+        /// </summary>
+        /// <param name="wallet"></param>
+        /// <param name="signContext"></param>
+        /// <returns></returns>
+        public static bool SignContext(this Wallet wallet, ContractParametersContext signContext)
+        {
+            wallet.Sign(signContext);
+            return signContext.Completed;
+        }
+
+        /// <summary>
+        /// sign transaction
+        /// </summary>
+        /// <param name="wallet"></param>
+        /// <param name="tx"></param>
+        /// <returns></returns>
+        public static (bool, ContractParametersContext) TrySignTx(this Wallet wallet, Transaction tx)
+        {
+            var context = new ContractParametersContext(tx);
+            var signResult = wallet.SignContext(context);
+            if (signResult)
+            {
+                tx.Witnesses = context.GetWitnesses();
+            }
+            return (signResult, context);
+        }
+
 
         /// <summary>
         /// 
@@ -208,6 +296,20 @@ namespace Neo
             return null;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static string TryToAddress(this byte[] bytes)
+        {
+            if (bytes?.Length == 20)
+            {
+                return new UInt160(bytes).ToAddress();
+            }
+            return null;
+        }
 
 
         /// <summary>
@@ -500,7 +602,7 @@ namespace Neo
 
         public static bool NotVmByteArray(this StackItem item)
         {
-            return !(item is ByteArray);
+            return !(item is ByteString);
         }
 
         public static bool NotVmNull(this StackItem item)
@@ -523,7 +625,7 @@ namespace Neo
             if (notifyArray[0].NotVmByteArray()) return null;
 
             var eventName = notifyArray[0].GetString();
-            if (eventName != "Transfer") return null;
+            if (!"Transfer".Equals(eventName, StringComparison.OrdinalIgnoreCase)) return null;
 
             var fromItem = notifyArray[1];
             if (fromItem.NotVmByteArray() && fromItem.NotVmNull()) return null;
@@ -612,35 +714,29 @@ namespace Neo
         /// </summary>
         /// <param name="privateKey"></param>
         /// <returns></returns>
-        public static string TryGetPrivateKey(this string privateKey)
+        public static byte[] TryGetPrivateKey(this string privateKey)
         {
             if (privateKey.IsNull())
             {
                 return null;
             }
-
-            byte[] prikey = null;
             try
             {
-                prikey = Wallet.GetPrivateKeyFromWIF(privateKey);
-                return prikey.ToHexString();
+                return Wallet.GetPrivateKeyFromWIF(privateKey);
             }
             catch (FormatException)
             {
             }
-
             if (privateKey.Length == 64)
             {
                 try
                 {
-                    prikey = privateKey.HexToBytes();
-                    return privateKey;
+                    return privateKey.HexToBytes();
                 }
                 catch (Exception e)
                 {
                 }
             }
-
             return null;
         }
 
@@ -710,6 +806,17 @@ namespace Neo
                 Transfers = lookup.Select(x => x.ToTransferModel()).ToList(),
             };
             return model;
+        }
+
+
+        public static VerificationContract ToVerificationContract(this ECPoint point)
+        {
+            VerificationContract contract = new VerificationContract
+            {
+                Script = SmartContract.Contract.CreateSignatureRedeemScript(point),
+                ParameterList = new[] { ContractParameterType.Signature }
+            };
+            return contract;
         }
 
     }

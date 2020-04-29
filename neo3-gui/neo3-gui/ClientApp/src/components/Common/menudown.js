@@ -1,100 +1,133 @@
 /* eslint-disable */
 import React from 'react';
 import { observer, inject } from "mobx-react";
+import { withRouter } from "react-router-dom";
 import 'antd/dist/antd.css';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import axios from 'axios';
+import Addressdetail from './addressdetail';
+import Setting from './setting';
 import {
+    ReadOutlined,
     LogoutOutlined,
-    KeyOutlined,
     SettingOutlined
 } from '@ant-design/icons';
-import { withRouter } from "react-router-dom";
+import { withTranslation } from 'react-i18next';
+import { shell } from "electron";
+import Config from "../../config";
+import neonode from "../../neonode";
 
-
-
+@withTranslation()
 @inject("walletStore")
+@inject("blockSyncStore")
 @observer
 @withRouter
 class menuDown extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            showPass: false
+            title: "设置",
         };
-
     }
-    componentDidMount() {
-        this.showPass();
-    }
-    showPass = () => {
-        let _path = location.href.search(/wallet/g);
-        if (_path <= -1) return;
-        this.setState({ showPass: true });
-    }    
     logout = () => {
+        const { t } = this.props;
         axios.post('http://localhost:8081', {
-            "id": "1",
-            "method": "ShowGas"
-        })
-        .then(function (response) {
-            var _data = response.data;
-            if(_data.msgType === -1){
-                _this.setState({showOut:false})
-            }else{
-                _this.setState({showOut:true})
-            }
-        })
-        .catch(function (error) {
+            "id": "1234",
+            "method": "CloseWallet"
+        }).then(() => {
+            message.success(t("wallet.close wallet success"), 2);
+            this.props.walletStore.logout();
+            this.props.history.push('/');
+        }).catch(function (error) {
             console.log(error);
             console.log("error");
         });
     }
-    logout = () =>{
-        var _this = this;
-        axios.post('http://localhost:8081', {
-          "id": "1234",
-          "method": "CloseWallet"
-        })
-            .then(()=> {
-                message.success("钱包退出成功", 2);
+    showModal = () => {
+        this.setState({
+            visible: true,
+        });
+    };
+    hideModal = () => {
+        this.setState({
+            visible: false,
+        });
+        if (this.state.change) {
+            neonode.switchNode(this.state.network);
+            axios.post('http://localhost:8081', {
+                "id": "1234",
+                "method": "CloseWallet"
+            }).then(() => {
                 this.props.walletStore.logout();
-                this.props.history.push('/');
-            })
-            .catch(function (error) {
+            }).catch(function (error) {
                 console.log(error);
-                console.log("error");
             });
+            this.props.blockSyncStore.setHeight({ syncHeight: -1, headerHeight: -1 });
+            this.props.walletStore.logout();
+            this.props.history.push('/');
+        }
+    };
+    getInset = (ele) => {
+        const { t } = this.props;
+        return () => {
+            this.setState({ showElem: false })
+            switch (ele) {
+                case 0: this.setState({ title: t("sideBar.address book"), children: <Addressdetail /> }); break;
+                case 1: this.setState({ title: "Settings", children: <Setting switchNetwork={this.switchNetwork.bind(this)} /> }); break;
+                default: this.setState({ title: "Settings", children: <Setting switchNetwork={this.switchNetwork.bind(this)} /> }); break;
+            }
+            this.setState({
+                visible: true,
+            });
+        }
+    }
+    openUrl(url) {
+        return () => {
+            shell.openExternal(url);
+        }
+    }
+    switchNetwork(network) {
+        this.setState({
+            network: network,
+            change: network !== Config.Network
+        });
     }
     render() {
         const walletOpen = this.props.walletStore.isOpen;
-
+        const { t } = this.props;
         return (
             <div className="menu-down">
                 <ul>
                     {walletOpen ? (
                         <li>
+                            <a onClick={this.getInset(0)}>
+                                <ReadOutlined />
+                                <span>{t("sideBar.address book")}</span>
+                            </a>
+                        </li>) : null}
+                    {walletOpen ? (
+                        <li>
                             <a onClick={this.logout}>
                                 <LogoutOutlined />
-                                <span>登出钱包</span>
+                                <span>{t("sideBar.logout")}</span>
                             </a>
-                        </li>
-                    ) : null}
-                    {/* {this.state.showOut&&this.state.showPass?(
+                        </li>) : null}
                     <li>
-                        <a>
-                        <KeyOutlined />
-                        <span>修改密码</span>
-                        </a>
-                    </li>
-                    ):null} */}
-                    <li>
-                        <a>
+                        <a onClick={this.getInset(1)}>
                             <SettingOutlined />
-                            <span>设置</span>
+                            <span>{t("sideBar.settings")}</span>
                         </a>
                     </li>
                 </ul>
+                <Modal
+                    className="set-modal"
+                    title={this.state.title}
+                    visible={this.state.visible}
+                    onCancel={this.hideModal}
+                    footer={null}
+                >
+                    {this.state.children}
+                </Modal>
             </div>
         )
     }

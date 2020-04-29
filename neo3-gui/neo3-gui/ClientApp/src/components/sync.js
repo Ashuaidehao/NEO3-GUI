@@ -7,18 +7,26 @@ import {
   SyncOutlined
 } from '@ant-design/icons';
 import { observer, inject } from "mobx-react";
+import { withTranslation } from "react-i18next"
 
 const { Text } = Typography;
 
+@withTranslation()
 @inject("blockSyncStore")
 @observer
 class Sync extends React.Component {
 
   render() {
+    const { t } = this.props;
+    const { syncHeight, headerHeight } = this.props.blockSyncStore;
     return (
       <div className="ml3 mb0">
-        <Text className="t-normal bold"> {this.props.blockSyncStore.syncHeight} / {this.props.blockSyncStore.headerHeight} 区块同步中</Text>
-        <SyncOutlined className="ml3" type="sync" spin/> 
+        {
+          headerHeight < 0
+            ? <Text className="t-normal bold"> - / - {t("common.connecting")}</Text>
+            : <Text className="t-normal bold"> {syncHeight} / {headerHeight} {t("common.syncing")}</Text>
+        }
+        <SyncOutlined className="ml3" type="sync" spin />
       </div>
     );
   }

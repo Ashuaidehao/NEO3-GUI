@@ -3,9 +3,12 @@ import 'antd/dist/antd.css';
 import axios from 'axios';
 import { message, Button, Input,Divider } from 'antd';
 import Walletcreate from '../Wallet/create';
+import { withTranslation } from "react-i18next";
+import { remote } from 'electron';
 
-const {dialog} = window.remote;
+const {dialog} = remote;
 
+@withTranslation()
 class Walletprivate extends React.Component{
   constructor(props){
     super(props);
@@ -27,20 +30,22 @@ class Walletprivate extends React.Component{
     e.target.value = _val.trim()
   }
   notNull = () =>{
+    const { t }=this.props;
     let _finput = document.getElementsByClassName("pri-pass")[0].value;
     let _sinput = document.getElementsByClassName("pri-pass")[1].value;
     if(!_finput){
-        message.error('密码不可为空',2);return false;
+        message.error(t('wallet.please input password'),2);return false;
     }
     if(!_sinput){
-        message.error('确认密码不可为空',2);return false;
+        message.error(t('wallet.please input twice'),2);return false;
     }
     return true;
   }
   savedialog = () => {
+    const { t }=this.props;
     var _this = this;
     dialog.showSaveDialog({
-      title: '保存图像文件',
+      title: t('wallet.save wallet file title'),
       defaultPath: '/',
       filters: [
           {
@@ -55,6 +60,7 @@ class Walletprivate extends React.Component{
     })
   }
   veriPrivate = () => {
+    const { t }=this.props;
     var _this = this;
     let _private = document.getElementById("privateKey").value;
     axios.post('http://localhost:8081', {
@@ -64,12 +70,11 @@ class Walletprivate extends React.Component{
     })
     .then(function (res) {
       let _data = res.data;
-      console.log(_data);
       if(_data.msgType === 3){
         _this.setState({ showElem: true });
-        _this.setState({ private: _private});
+        _this.setState({ private: _data.result});
       }else{
-        message.info("私钥输入错误,请检查后输入",2);
+        message.info(t('wallet.private fail'),2);
       }
     })
     .catch(function (error) {
@@ -78,6 +83,7 @@ class Walletprivate extends React.Component{
     });
   }
   savePrivate = () =>{
+    const { t }=this.props;
     var _this = this;
     if(!this.notNull())return;
     this.setState({ iconLoading: true });
@@ -95,12 +101,11 @@ class Walletprivate extends React.Component{
       let _data = res.data;
       console.log(_data);
       if(_data.msgType === 3){
-        message.success("钱包已创建",2);
+        message.success(t('wallet.create wallet success'),2);
         _this.setState({ iconLoading: false });
       }else{
-        message.info("钱包文件选择错误，请检查后重试",2);
+        message.info(t('wallet.open wallet failed'),2);
       }
-      
     })
     .catch(function (error) {
       console.log(error);
@@ -108,18 +113,19 @@ class Walletprivate extends React.Component{
     });
   }
   render = () =>{
+    const { t }=this.props;
     return (
       <div>
-          <Input id="privateKey" value="L5EiKcecQfapmWKNatnZo1Zi6732kyDUNAZr618mdBAbPVS3M6cL" disabled={this.state.showElem} placeholder="导入HEX/WIF格式私钥" onKeyUp={this.toTrim} data-value="私钥"/>
+          <Input id="privateKey" disabled={this.state.showElem} placeholder={t("please input Hex/WIF private key")} onKeyUp={this.toTrim} data-value="私钥"/>
           {!this.state.showElem?(
             <div>
-              <Button className="mt3" onClick={this.veriPrivate}>下一步</Button>
+              <Button className="mt3" onClick={this.veriPrivate}>{t("button.next")}</Button>
             </div>
           ):null}
           {this.state.showElem?(
             <div>
-                <Button className="mt3" onClick={this.changeTab}>上一步</Button>
-                <Divider>保存钱包</Divider>
+                <Button className="mt3" onClick={this.changeTab}>{t("button.prev")}</Button>
+                <Divider>{t("wallet.private key save wallet title")}</Divider>
                 <Walletcreate priclass="pri-class" cname="pri-pass" private={this.state.private}/>
             </div>
           ):null}

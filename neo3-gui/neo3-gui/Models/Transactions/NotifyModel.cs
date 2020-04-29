@@ -1,8 +1,11 @@
-﻿namespace Neo.Models.Transactions
+﻿using System.Collections.Generic;
+
+namespace Neo.Models.Transactions
 {
     public class NotifyModel
     {
-        public string Type { get; set; }
-        public object Value { get; set; }
+        public UInt160 Contract { get; set; }
+        public JStackItem State { get; set; }
+
     }
 }

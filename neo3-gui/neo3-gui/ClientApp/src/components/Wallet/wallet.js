@@ -4,12 +4,17 @@ import 'antd/dist/antd.css';
 import '../../static/css/menu.css'
 import '../../static/css/wallet.css'
 import {Link} from 'react-router-dom';
-import {  Layout,Row, Col ,message, Button,Tabs,Divider } from 'antd';
-import axios from 'axios';
+import {Layout,Row,Col,Button,Divider } from 'antd';
 import Walletopen from './open'
 import Walletcreate from './create'
 import Walletprivate from './private'
+import Walletencrypted from './encrypted'
 import Sync from '../sync';
+import { withTranslation } from "react-i18next";
+import Config from "../../config";
+import img from '../../static/images/logo.svg';
+
+
 
 import {
   ArrowLeftOutlined,
@@ -18,6 +23,7 @@ import {
 
 const { Footer } = Layout;
 
+@withTranslation()
 class Wallet extends React.Component{
   constructor(props){
     super(props);
@@ -30,9 +36,7 @@ class Wallet extends React.Component{
         login:false
     };
   }
-  componentDidMount(){
-  }
-  changeTab(e){
+  changeTab(){
     this.setState(prevState => ({
       showElem: !prevState.showElem
     }));
@@ -44,13 +48,14 @@ class Wallet extends React.Component{
         case 0:this.setState({children: <Walletopen />});break;
         case 1:this.setState({children: <Walletcreate />});break;
         case 2:this.setState({children: <Walletprivate />});break;
-        case 3:this.setState({children: <Walletopen />});break;
+        case 3:this.setState({children: <Walletencrypted />});break;
         case 4:this.setState({children: <Walletopen />});break;
         default:this.setState({showElem: true});break;
       }
     }
   }
   render = () =>{
+    const{t}=this.props;
     return (
       <Layout className="gui-container">
         <Sync />
@@ -60,20 +65,20 @@ class Wallet extends React.Component{
             {!this.state.showElem?(
               <a className="back" onClick={this.getInset(-1)} key="1"><ArrowLeftOutlined /></a>
             ):null}
-            <a className="close" href="/home"><CloseOutlined /></a>
+            <Link className="close" to="/"><CloseOutlined /></Link>
           </div>
-          <div className="logo mt5"></div>
-          <div className="wa-open mt2">
+          <div className="logo mt2 mb1"></div>
+          <div className="wa-open">
             {this.state.showElem?(
               <div>
-                <Button type="primary" onClick={this.getInset(0)}>打开钱包文件</Button>
-                <Button className="mt3 mb2" type="primary" onClick={this.getInset(1)}>创建钱包文件</Button>
+                <Button type="primary" onClick={this.getInset(0)}>{t("wallet.open wallet file")}</Button>
+                <Button className="mt3 mb2" type="primary" onClick={this.getInset(1)}>{t("wallet.create wallet file")}</Button>
                 
-                <Divider className="t-light">导入钱包</Divider>
+                <Divider className="t-light">{t("wallet.import wallet")}</Divider>
                 <Row justify="space-between">
-                  <Col span={6}><Button  size="small" onClick={this.getInset(2)}>私钥</Button></Col>
-                  <Col span={6} offset={3}><Button size="small" disabled>加密私钥</Button></Col>
-                  <Col span={6} offset={3}><Button size="small" disabled>助记词</Button></Col>
+                  <Col span={6}><Button  size="small" onClick={this.getInset(2)}>{t("wallet.private key")}</Button></Col>
+                  <Col span={6} offset={3}><Button size="small" onClick={this.getInset(3)}>{t("wallet.Nep2 key")}</Button></Col>
+                  <Col span={6} offset={3}><Button size="small" disabled>{t("wallet.mnemonic")}</Button></Col>
                 </Row>
               </div>
             ):null}
@@ -82,7 +87,7 @@ class Wallet extends React.Component{
             ):null}
           </div>
         </div>
-        <Footer className="mt1">Copyright © Neo Team 2014-2019</Footer>
+        <Footer className="mt1">Copyright © Neo Team 2014-2020</Footer>
       </Layout>
     );
   }

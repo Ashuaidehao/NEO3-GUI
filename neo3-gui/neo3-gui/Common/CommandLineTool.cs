@@ -12,7 +12,7 @@ namespace Neo.Common
         public static readonly bool IsMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
         public static readonly bool IsLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
-        public static readonly ConcurrentQueue<Process> CurrentProcesses=new ConcurrentQueue<Process>();
+        public static readonly ConcurrentQueue<Process> CurrentProcesses = new ConcurrentQueue<Process>();
 
         private static string shell
         {
@@ -22,9 +22,37 @@ namespace Neo.Common
             }
         }
 
+        private static string shellArg
+        {
+            get
+            {
+                return IsWindows ? "/c " : "-c ";
+            }
+        }
+        
 
+        public static Process Run(string command, string workDirectory = "")
+        {
+            Process p = new Process();
+            p.StartInfo.FileName = shell;
+            p.StartInfo.Arguments = shellArg + command;
+            p.StartInfo.WorkingDirectory = workDirectory;
+            p.OutputDataReceived += (s, r) =>
+            {
+                if (r.Data == null)
+                {
+                    Console.WriteLine($"close");
+                    p = null;
+                    return;
+                }
+                Console.WriteLine(r.Data);
+            };
+            p.Start();
+            CurrentProcesses.Enqueue(p);
+            return p;
+        }
 
-        public static Process Run(string command,string workDirectory="",Action<string> receiveOutput=null)
+        public static Process Run(string command, string workDirectory = "", Action<string> receiveOutput = null)
         {
             Process p = new Process();
             //设置要启动的应用程序
@@ -50,9 +78,8 @@ namespace Neo.Common
                     p = null;
                     return;
                 }
-
-                Console.WriteLine(r.Data);
-                receiveOutput?.Invoke(r.Data);
+                //Console.WriteLine(r.Data);
+                //receiveOutput?.Invoke(r.Data);
             };
             //启动程序
             p.Start();

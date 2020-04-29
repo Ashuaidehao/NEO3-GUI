@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Query.Internal;
 using Neo.Models.Transactions;
 using Neo.Network.P2P.Payloads;
 using Neo.SmartContract.Native;
+using Neo.Wallets;
 
 namespace Neo.Models.Blocks
 {
@@ -22,16 +23,14 @@ namespace Neo.Models.Blocks
             Version = block.Version;
             PrevHash = block.PrevHash;
             MerkleRoot = block.MerkleRoot;
-            NextConsensus = block.NextConsensus;
+            NextConsensusHash = block.NextConsensus;
             Witness = new WitnessModel(block.Witness);
-            //Transactions = block.Transactions;
             ConsensusData = new ConsensusDataModel(block.ConsensusData);
             if (block.Transactions.NotEmpty())
             {
-                SystemFee = block.Transactions.Sum(t =>t.SystemFee).ToString();
-                NetworkFee= block.Transactions.Sum(t => t.NetworkFee).ToString();
+                SystemFee = new BigDecimal(block.Transactions.Sum(t => t.SystemFee), NativeContract.GAS.Decimals).ToString();
+                NetworkFee = new BigDecimal(block.Transactions.Sum(t => t.NetworkFee), NativeContract.GAS.Decimals).ToString();
             }
-            //block.Transactions[1]
         }
 
         public UInt256 BlockHash { get; set; }
@@ -45,7 +44,8 @@ namespace Neo.Models.Blocks
         public uint Version { get; set; }
         public UInt256 PrevHash { get; set; }
         public UInt256 MerkleRoot { get; set; }
-        public UInt160 NextConsensus { get; set; }
+        public UInt160 NextConsensusHash { get; set; }
+        public string NextConsensus => NextConsensusHash?.ToAddress();
 
         public uint Confirmations { get; set; }
         //public long Nonce { get; set; }
@@ -53,7 +53,7 @@ namespace Neo.Models.Blocks
         public string NetworkFee { get; set; }
         public WitnessModel Witness { get; set; }
         public ConsensusDataModel ConsensusData { get; set; }
-        public List<TransactionPreviewModel> Transactions { get; set; }
+        //public List<TransactionPreviewModel> Transactions { get; set; }
 
     }
 }

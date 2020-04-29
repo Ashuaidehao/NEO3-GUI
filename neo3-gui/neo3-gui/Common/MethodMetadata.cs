@@ -130,7 +130,7 @@ namespace Neo.Common
                     {
                         //not found, set default value
                         //paras.Add(parameterInfo.ParameterType.GetDefaultValue());
-                        paras.Add(parameterInfo.DefaultValue);
+                        paras.Add(parameterInfo.DefaultValue != DBNull.Value ? parameterInfo.DefaultValue : parameterInfo.ParameterType.GetDefaultValue());
                     }
                 }
             }

@@ -71,9 +71,11 @@ namespace Neo.Common.Utility
         public static AssetInfo GetAssetInfoFromChain(UInt160 assetId, StoreView snapshot)
         {
             using var sb = new ScriptBuilder();
+            sb.EmitAppCall(assetId, "totalSupply");
             sb.EmitAppCall(assetId, "decimals");
             sb.EmitAppCall(assetId, "symbol");
             sb.EmitAppCall(assetId, "name");
+
 
             var contract = snapshot.Contracts.TryGet(assetId);
             if (contract == null)
@@ -84,6 +86,9 @@ namespace Neo.Common.Utility
             var name = engine.ResultStack.Pop().GetString();
             var symbol = engine.ResultStack.Pop().GetString();
             var decimals = (byte)engine.ResultStack.Pop().GetBigInteger();
+            var totalSupply = engine.ResultStack.Pop().GetBigInteger();
+
+            symbol = symbol == "neo" || symbol == "gas" ? symbol.ToUpper() : symbol;
 
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -95,6 +100,7 @@ namespace Neo.Common.Utility
                 Decimals = decimals,
                 Symbol = symbol,
                 Name = name,
+                TotalSupply = totalSupply,
             };
             _assets[assetId] = assetInfo;
             return assetInfo;

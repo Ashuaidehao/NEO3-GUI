@@ -55,30 +55,39 @@ namespace Neo.Common
                     message.Result = result;
                 }
 
-                context.Response.ContentType = "application/json-rpc";
-                await context.Response.WriteAsync(message.SerializeJson(), Encoding.UTF8);
             }
             catch (ArgumentException ex)
             {
                 message.MsgType = WsMessageType.Error;
                 message.Error = new WsError()
                 {
-                    Code = (int)ErrorCode.InvalidPara,
+                    Code = (int) ErrorCode.InvalidPara,
                     Message = ex.Message,
                 };
-                await context.Response.WriteAsync(message.SerializeJson(), Encoding.UTF8);
+            }
+            catch (WsException wsEx)
+            {
+                message.MsgType = WsMessageType.Error;
+                message.Error = new WsError()
+                {
+                    Code = wsEx.Code,
+                    Message = wsEx.Message,
+                };
             }
             catch (Exception e)
             {
                 message.MsgType = WsMessageType.Error;
-                message.Error =new WsError()
+                message.Error = new WsError()
                 {
                     Code = -1,
                     Message = e.ToString(),
                 };
+            }
+            finally
+            {
+                context.Response.ContentType = "application/json-rpc";
                 await context.Response.WriteAsync(message.SerializeJson(), Encoding.UTF8);
             }
-
         }
 
 

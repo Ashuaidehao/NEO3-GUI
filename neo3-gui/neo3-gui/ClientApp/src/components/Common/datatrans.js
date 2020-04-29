@@ -1,44 +1,44 @@
-/* eslint-disable */ 
+/* eslint-disable */
 import React from 'react';
 import 'antd/dist/antd.css';
-import {Link} from 'react-router-dom';
 import '../../static/css/trans.css';
 import '../../static/js/bundledemo.js';
-import axios from 'axios';
-import { Alert , Input,
+import {
+    Alert, Input,
     Tooltip,
     Icon,
     Cascader,
     Modal,
     Drawer,
-    Select,
-    Row,
-    Col,
     message,
     Button,
     AutoComplete,
-  } from 'antd';
-  
-import {  Layout } from 'antd';
-import Intitle from '../Common/intitle'
+} from 'antd';
 import '../../static/css/wallet.css'
-
+import DataConvert from "./dataConverter";
+import { withTranslation } from "react-i18next";
 
 import { SwapOutlined } from '@ant-design/icons';
 
 
-class Datatrans extends React.Component{
-    constructor (props){
+@withTranslation()
+class Datatrans extends React.Component {
+    constructor(props) {
         super(props);
         this.state = {
-            outstr:"",
-            outhexstr:"",
-            outhash:"",
-            outbighash:"",
-            outbigadd:""
+            outstr: "",
+            outhexstr: "",
+            outhash: "",
+            outbighash: "",
+            outbigadd: "",
+            outlittlehash:"",
+            outlittleadd:"",
+            outhexnum:"",
+            outlittle64:""
         };
     }
-    componentDidMount(){
+    convert = new DataConvert();
+    componentDidMount() {
     }
     hexToString = (hex) => {
         var trimhex = hex.trim();
@@ -65,12 +65,12 @@ class Datatrans extends React.Component{
         }
         return hexChar;
     }
-    stringTrans = () =>{
+    stringTrans = () => {
         let instr = document.getElementById("inString").value;
         if (instr) {
             var _outStr = this.hexToString(instr);
             this.setState({
-                outstr:_outStr
+                outstr: _outStr
             })
         }
         let inhexstr = document.getElementById("inHexString").value;
@@ -81,59 +81,109 @@ class Datatrans extends React.Component{
             })
         }
     }
-    endianTrans = () =>{
+    endianTrans = () => {
+        const { t } = this.props;
         let inhash = document.getElementById("inHash").value.replace(/(^\s*)|(\s*$)/g, "");
-        if(inhash.length!==40&&inhash.length!==42){
-            message.error("输入格式错误，请检查后再次输入！");
+        if (inhash.length !== 40 && inhash.length !== 42) {
+            message.error(t("datatrans.input error"));
             return;
         }
-        
-        var result=[],num;
-        if(inhash.indexOf("0x")==0){
+
+        var result = [], num;
+        if (inhash.indexOf("0x") == 0) {
             inhash = inhash.slice(2);
-        }else if(inhash){
+        } else if (inhash) {
             result = ['0x'];
         }
 
         var hashArray = inhash.hexToBytes().reverse();
         for (var i = 0; i < hashArray.length; i++) {
             num = hashArray[i];
-            if (num<16) {
+            if (num < 16) {
                 num = hashArray[i].toString(16);
-                num="0"+num;
-            }else {num = hashArray[i].toString(16);}
+                num = "0" + num;
+            } else { num = hashArray[i].toString(16); }
             result.push(num);
         }
-        let _outhash =  result.join("");
+        let _outhash = result.join("");
         this.setState({
-            outhash:_outhash
+            outhash: _outhash
         })
-        
     }
-    // bigTrans = () =>{
+    littleTrans = () =>{
+        const { t } = this.props;
+        var _this = this;
+        var inlittlehash = document.getElementById("inLittleHash").value.replace(/(^\s*)|(\s*$)/g, "");
+        if (inlittlehash) {
+            if(inlittlehash.substr(0, 2)=="0x")inlittlehash = inlittlehash.slice(2);
+            if(inlittlehash.length!=40){message.error(t("datatrans.input error"));return;}
+            let _address= this.convert.toAddress(inlittlehash);
+            _this.setState({
+                outlittlehash: _address
+            })
+        }
+        var inlittleadd = document.getElementById("inLittleAddress").value.replace(/(^\s*)|(\s*$)/g, "");
+        if (inlittleadd) {
+            if(inlittleadd.length!=34){message.error(t("datatrans.input error"));return;}
+            let _hash = this.convert.toScriptHash(inlittleadd);
+            _hash = _hash.replace(/0x/g, "");
+            _this.setState({
+                outlittleadd: _hash
+            })
+            let _base64 = this.convert.toBase64String(_hash);
+            _this.setState({
+                outlittle64: _base64
+            })
+        }
+    }
+    bigTrans = () =>{
+        const { t } = this.props;
+        var _this = this;
+        var inbighash = document.getElementById("inBigHash").value.replace(/(^\s*)|(\s*$)/g, "");
+        if (inbighash) {
+            if(inbighash.substr(0, 2)=="0x")inbighash = inbighash.slice(2);
+            if(inbighash.length!=40){message.error(t("datatrans.input error"));return;}
+            let _little = this.convert.reverseHexString(inbighash);
+            let _address= this.convert.toAddress(_little);
+            _this.setState({
+                outbighash: _address
+            })
+        }
+        var inbigadd = document.getElementById("inBigAdd").value.replace(/(^\s*)|(\s*$)/g, "");
+        if (inbigadd) {
+            if(inbigadd.length!=34){message.error(t("datatrans.input error"));return;}
+            let _hash = this.convert.toScriptHash(inbigadd);
+            _hash = this.convert.reverseHexString(_hash).replace(/0x/g, "");
+            _hash = "0x" + _hash;
+            _this.setState({
+                outbigadd: _hash
+            })
+        }
+    }
+    // numTrans = () =>{
     //     var _this = this;
-    //     var inbighash = document.getElementById("inBigHash").value.replace(/(^\s*)|(\s*$)/g, "");
-    //     if (inbighash) {
-    //         if(inbighash.substr(0, 2)=="0x")inbighash = inbighash.slice(2);
-    //         if(inbighash.length!=40){alert("Illegal Format Script Hash!");return;}
-    //         var hash160 = Neo.Uint160.parse(inbighash);
-    //         Neo.Wallets.Wallet.toAddress(hash160).then(function (val) {
-    //             _this.setState({
-    //                 outbighash: val
-    //             })
-    //         });
+    //     var inhexnum = document.getElementById("inHexNum").value.replace(/(^\s*)|(\s*$)/g, "");
+    //     if (inhexnum) {
+    //         // if(inhexnum.substr(0, 2)=="0x")inhexnum = inhexnum.slice(2);
+    //         // if(inhexnum.length!=40){message.error("Hash (Little)的格式错误，请检查后再试");return;}
+    //         let _num = this.convert.toNumber(inhexnum);
+    //         console.log(_num)
+    //         if(!_num) {message.error("Hash (Little)的格式错误，请检查后再试");return;}
+    //         _this.setState({
+    //             outhexnum: _num
+    //         })
     //     }
-    //     var inbigadd = document.getElementById("inBigAddress").value.replace(/(^\s*)|(\s*$)/g, "");
-    //     if (inbigadd) {
-    //         if(inbigadd.length!=34){message.error("输入的格式错误，请检查后再试");return;}
-    //         Neo.Wallets.Wallet.toScriptHash(inbigadd).then(function (val) {
-    //             _this.setState({
-    //                 outbigadd: val.toString()
-    //             })
-    //         });
+    //     var inlittleadd = document.getElementById("inLittleAdd").value.replace(/(^\s*)|(\s*$)/g, "");
+    //     if (inlittleadd) {
+    //         if(inlittleadd.length!=34){message.error("Address 的格式错误，请检查后再试");return;}
+    //         let _hash = this.convert.toScriptHash(inlittleadd);
+    //         _hash = this.convert.reverseHexString(_hash);
+    //         _this.setState({
+    //             outlittleadd: _hash
+    //         },() => {this.state})
     //     }
     // }
-    render(){
+    render() {
         return (
             <Drawer
                 title="Data Transform"
@@ -147,13 +197,13 @@ class Datatrans extends React.Component{
             >
                 <ul className="trans-ul">
                     <li>
-                        <p className="trans-title">String <SwapOutlined className="small"/> Hex String</p>
+                        <p className="trans-title">String <SwapOutlined className="small" /> Hex String</p>
                         <p className="trans-area">
-                            <label>Hex String:</label><Input id="inString" type="text" placeholder="7472616e73666572"/>
+                            <label>Hex String:</label><Input id="inString" type="text" placeholder="7472616e73666572" />
                             <label>String:</label><span id="outString" className="trans-text">{this.state.outstr}</span><br />
                         </p>
                         <p className="trans-area">
-                            <label>String:</label><Input id="inHexString" type="text" placeholder="transfer"/>
+                            <label>String:</label><Input id="inHexString" type="text" placeholder="transfer" />
                             <label>Hex String:</label><span id="outHexString" className="trans-text">{this.state.outhexstr}</span><br />
                         </p>
                         <p className="text-r">
@@ -161,61 +211,50 @@ class Datatrans extends React.Component{
                         </p>
                     </li>
                     <li>
-                        <p className="trans-title">Script Hash (Big-endian <SwapOutlined className="small"/> Little-endian)</p>
+                        <p className="trans-title">Script Hash (Big-endian <SwapOutlined className="small" /> Little-endian)</p>
                         <p className="trans-area">
-                            <label>Big / Little:</label><Input id="inHash" type="text" placeholder="0xbc99b2a477e28581b2fd04249ba27599ebd736d3"/>
+                            <label>Big / Little:</label><Input id="inHash" type="text" placeholder="0xb135cda6d0c707b8fd019cb76f555eb518f94945" />
                             <label>Result:</label><span className="trans-text">{this.state.outhash}</span><br />
                         </p>
                         <p className="text-r">
                             <Button type="primary" onClick={this.endianTrans}>Transform</Button>
                         </p>
                     </li>
-                    {/* <li>
-                        <p className="trans-title">Address (big endian) <SwapOutlined className="small"/> Script Hash</p>
+                    <li>
+                        <p className="trans-title">little endian</p>
+                        <p className="trans-title">Address <SwapOutlined className="small"/> Script Hash</p>
                         <p className="trans-area">
-                            <label>Script Hash:</label><Input id="inBigHash" type="text" placeholder="0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9" value="0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9"/>
+                            <label>Hash:</label><Input id="inLittleHash" type="text" placeholder="b135cda6d0c707b8fd019cb76f555eb518f94945"/>
+                            <label>Address:</label><span className="trans-text">{this.state.outlittlehash}</span><br />
+                        </p>
+                        <p className="trans-area">
+                            <label>Address:</label><Input id="inLittleAddress" type="text" placeholder="Nc4yF2jDZkhrm2EnkRe8KjY6CRkATfn7hm"/>
+                            <label>Hash:</label><span className="trans-text">{this.state.outlittleadd}</span><br />
+                            <label>Base 64:</label><span className="trans-text">{this.state.outlittle64}</span><br />
+                        </p>
+                        <p className="text-r">
+                            <Button type="primary" onClick={this.littleTrans}>Transform</Button>
+                        </p>
+                    </li>
+                    <li>
+                        <p className="trans-title">big endian</p>
+                        <p className="trans-title">Address<SwapOutlined className="small"/> Hex String</p>
+                        <p className="trans-area">
+                            <label>Hash:</label><Input id="inBigHash" type="text" placeholder="0x4549f918b55e556fb79c01fdb807c7d0a6cd35b1"/>
                             <label>Address:</label><span className="trans-text">{this.state.outbighash}</span><br />
                         </p>
                         <p className="trans-area">
-                            <label>Address:</label><Input id="inBigAddress" type="text" placeholder="AeV59NyZtgj5AMQ7vY6yhr2MRvcfFeLWSb"/>
-                            <label>Script Hash:</label><span className="trans-text">{this.state.outbigadd}</span><br />
+                            <label>Address:</label><Input id="inBigAdd" type="text" placeholder="Nc4yF2jDZkhrm2EnkRe8KjY6CRkATfn7hm"/>
+                            <label>Hash:</label><span className="trans-text">{this.state.outbigadd}</span><br />
                         </p>
                         <p className="text-r">
                             <Button type="primary" onClick={this.bigTrans}>Transform</Button>
                         </p>
                     </li>
-                    <li>
-                        <p className="trans-title">Address (little endian) <SwapOutlined className="small"/> Hex String</p>
-                        <p className="trans-area">
-                            <label>Hex String:</label><Input id="inScriptHash" type="text" placeholder="7472616e73666572"/>
-                            <label>String:</label><span id="outScriptHash" className="trans-text">transfer</span><br />
-                        </p>
-                        <p className="trans-area">
-                            <label>String:</label><Input id="inAddress" type="text" placeholder="transfer"/>
-                            <label>Hex String:</label><span id="outAddress" className="trans-text"> </span><br />
-                        </p>
-                        <p className="text-r">
-                            <Button type="primary">Transform</Button>
-                        </p>
-                    </li>
-                    <li>
-                        <p className="trans-title">Number <SwapOutlined className="small"/> Hex Number</p>
-                        <p className="trans-area">
-                            <label>Hex Number:</label><Input id="inHexNum" type="text" placeholder="00e1f505"/>
-                            <label>Number:</label><span id="outHexNum" className="trans-text">transfer</span><br />
-                        </p>
-                        <p className="trans-area">
-                            <label>Number:</label><Input id="inNum" type="Number" placeholder="transfer"/>
-                            <label>Hex String:</label><span id="outNum" className="trans-text"> </span><br />
-                        </p>
-                        <p className="text-r">
-                            <Button type="primary">Transform</Button>
-                        </p>
-                    </li> */}
                 </ul>
             </Drawer>
         )
     }
-} 
+}
 
 export default Datatrans;

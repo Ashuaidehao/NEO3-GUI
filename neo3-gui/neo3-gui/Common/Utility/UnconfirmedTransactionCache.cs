@@ -17,11 +17,11 @@ namespace Neo.Common.Utility
 
 
 
-        public static void RegisterBlockPersistEvent()
+        public static void RegisterBlockPersistEvent(NeoSystem neoSystem)
         {
             if (_actor == null)
             {
-                _actor = Program.Starter.NeoSystem.ActorSystem.ActorOf(EventWrapper<Blockchain.PersistCompleted>.Props(Blockchain_PersistCompleted));
+                _actor = neoSystem.ActorSystem.ActorOf(EventWrapper<Blockchain.PersistCompleted>.Props(Blockchain_PersistCompleted));
             }
         }
 
@@ -70,13 +70,20 @@ namespace Neo.Common.Utility
             _unconfirmedTransactions.Remove(txId);
         }
 
-        public static IEnumerable<TempTransaction> GetUnconfirmedTransactions(IEnumerable<UInt160> addresses = null)
+        public static PageList<TempTransaction> GetUnconfirmedTransactions(IEnumerable<UInt160> addresses = null, int pageIndex = 1, int pageSize = 10)
         {
-            if (addresses.IsEmpty())
+            IEnumerable<TempTransaction> query = _unconfirmedTransactions.Values;
+            if (addresses.NotEmpty())
             {
-                return _unconfirmedTransactions.Values.Reverse();
+                query = query.Where(tx => tx.Transfers.Any(t => addresses.Contains(t.From) || addresses.Contains(t.To)));
             }
-            return _unconfirmedTransactions.Values.Where(tx => tx.Transfers.Any(t => addresses.Contains(t.From) || addresses.Contains(t.To))).Reverse();
+            var trans = query.Reverse().ToList();
+            var result = new PageList<TempTransaction>();
+            result.TotalCount = trans.Count();
+            result.PageSize = pageSize;
+            result.PageIndex = pageIndex;
+            result.List = trans.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            return result;
         }
 
         private static void Blockchain_PersistCompleted(Blockchain.PersistCompleted e)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,5 +15,6 @@ namespace Neo.Models
         public string Symbol { get; set; }
 
         public byte Decimals { get; set; }
+        public BigInteger TotalSupply { get; set; }
     }
 }

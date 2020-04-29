@@ -1,10 +1,8 @@
 # Neo3-GUI
 
-During development process, Neo3-GUI direcelty referece Neo for faster development experience.  Please use following code to clone Neo3-GUI
+Neo-GUI for neo3 is still under development, we will keep adding features and improving user experience along with the development of neo3. 
 
-```shellhttps://nodejs.org/
-git clone --recursive https://github.com/neo-ngd/NEO3-GUI.git
-```
+Your feedbacks and suggestions are welcome. Please submit issues.
 
 ## Required Tools and Dependencies for development
 

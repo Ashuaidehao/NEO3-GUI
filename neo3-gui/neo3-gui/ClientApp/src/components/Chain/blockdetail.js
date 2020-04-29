@@ -1,61 +1,53 @@
-/* eslint-disable */ 
+/* eslint-disable */
 //just test replace wallet//
 import React from 'react';
-import {Link} from 'react-router-dom';
-import { Layout, Row, Col, message,List,Typography } from 'antd';
+import { Link } from 'react-router-dom';
+import { Layout, Row, Col, message, PageHeader, List } from 'antd';
 import axios from 'axios';
-import Intitle from '../Common/intitle';
-import Transaction from '../Transaction/transaction';
+import Sync from '../sync';
+import { withTranslation } from 'react-i18next';
+
+import { SwapRightOutlined } from '@ant-design/icons';
+
 
 const { Content } = Layout;
 
-class Blockdetail extends React.Component{
-  constructor(props){
+@withTranslation()
+class Blockdetail extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       blockdetail: {},
-      height:0,
-      witness:"",
-      nonce:0,
+      height: 0,
+      nonce: 0,
+      translist:[]
     };
   }
-  componentDidMount(){
-    let _h = Number(location.pathname.split(":")[1])
+  componentDidMount() {
+    let _h = Number(location.pathname.split(":").pop())
     this.setHeight(_h)();
     this.setState({
-      local:location.pathname
+      local: location.pathname
     })
-
   }
-  getAllblock = () =>{
-    var _this = this;
+  getAllblock = callback => {
+    const { t } = this.props;
     let _height = this.state.height;
     axios.post('http://localhost:8081', {
-        "id":"1111",
-        "method": "GetBlock",
-        "params": {
-            "index": _height
-        }
+      "id": "1111",
+      "method": "GetBlock",
+      "params": {
+        "index": _height
+      }
     })
     .then(function (response) {
       var _data = response.data;
-      console.log(_data);
-      if(_data.msgType === -1){
-        message.error("查询失败,该高度错误");
+      if (_data.msgType === -1) {
+        message.info(t('blockchain.height unexist'));
         return;
+      }else{
+        callback(_data);
       }
-      _this.setState({
-        blockdetail:_data.result
-      })
-      _this.setState({
-        witness:_data.result.witness.scriptHash
-      })
-      _this.setState({
-        nonce:_data.result.consensusData.nonce
-      })
-      _this.setState({
-        translist:_data.result.transactions
-      })
     })
     .catch(function (error) {
       console.log(error);
@@ -63,75 +55,125 @@ class Blockdetail extends React.Component{
     });
   }
   setHeight = (h) => {
-    return () =>{
-        this.setState({
-            height: h
-        },() => this.getAllblock());
+    return () => {
+      this.setState({height: h},
+        () => this.getAllblock(res =>{
+          this.setState({
+            blockdetail: res.result,
+            witness: res.result.witness.scriptHash,
+            nonce: res.result.consensusData.nonce,
+            height: res.result.blockHeight
+          },()=>{this.getBlocktrans()})
+        })
+      );
+      
     }
   }
-  render(){
-    const {blockdetail,witness,nonce,translist,local} = this.state;
+  getBlocktrans = () =>{
+    const { t } = this.props;
+    let _height = this.state.height;
+    let _this = this;
+    axios.post('http://localhost:8081', {
+      "id": "1111",
+      "method": "QueryTransactions",
+      "params": {
+        "blockHeight":_height,
+        "limit":100
+      }
+    })
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        message.info(t('blockchain.height unexist'));
+        return;
+      }else{
+        _this.setState({translist:_data.result.list})
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
+  }
+  render() {
+    const { t } = this.props;
+    const { blockdetail, nonce, height,translist } = this.state;
     return (
       <Layout className="gui-container">
-          <Content className="mt3">
+        <Sync />
+        <Content className="mt3">
           <Row gutter={[30, 0]} type="flex">
             <Col span={24} className="bg-white pv4">
-              <Intitle className="mb2" content="区块信息"/>
-              <div className="info-detail pa3 pv3">
-                <Link to={"/chain/detail:" + blockdetail.blockHeight}><span>Hash: &nbsp;&nbsp;&nbsp;</span>{blockdetail.blockHash}</Link>
+              <PageHeader title={t("blockchain.block info")}></PageHeader>
+              <div className="info-detail pv3">
+                <div className="hash-title pa3 mt5 mb4"><span>Hash: &nbsp;&nbsp;&nbsp;</span>{blockdetail.blockHash}</div>
+                {blockdetail.blockHash?
                 <Row>
-                    <Col span={12}>
-                        <ul className="detail-ul">
-                            <li><span>高度：</span>{blockdetail.blockHeight}</li>
-                            <li><span>时间戳：</span>{blockdetail.blockTime}</li>
-                            <li><span>网络费：</span>{blockdetail.networkFee?blockdetail.networkFee:'--'}</li>
-                            <li><span>确认数：</span>{blockdetail.confirmations}</li>
-                            <li><span>上一区块：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight-1)} onClick={this.setHeight(blockdetail.blockHeight-1)}>{blockdetail.blockHeight-1}</Link></li>
-                        </ul>
-                    </Col>
-                    <Col span={12}>
-                        <ul className="detail-ul">
-                            <li><span>大小：</span>{blockdetail.blockHeight}</li>
-                            <li><span>随机数：</span>{nonce}</li>
-                            <li><span>系统费：</span>{blockdetail.networkFee?blockdetail.networkFee:'--'}</li>
-                            <li><span>见证人：</span>{witness}</li>
-                            <li><span>下一区块：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight+1)} onClick={this.setHeight(blockdetail.blockHeight+1)}>{blockdetail.blockHeight+1}</Link></li>
-                        </ul>
-                    </Col>
-                </Row>
+                  <Col span={12}>
+                    <ul className="detail-ul">
+                      <li><span className="hint">{t("blockchain.height")}:</span>{blockdetail.blockHeight}</li>
+                      <li><span className="hint">{t("blockchain.timestamp")}：</span>{blockdetail.blockTime}</li>
+                      <li><span className="hint">{t("blockchain.network fee")}：</span>{blockdetail.networkFee ? blockdetail.networkFee : '--'}</li>
+                      <li><span className="hint">{t("blockchain.confirmations")}：</span>{blockdetail.confirmations}</li>
+                      {blockdetail.blockHeight !== 0?
+                      <li><span className="hint">{t("blockchain.prev block")}：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight - 1)} onClick={this.setHeight(blockdetail.blockHeight - 1)}>{blockdetail.blockHeight - 1}</Link></li>
+                      :<li><span className="hint">{t("blockchain.prev block")}：</span>--</li>}
+                    </ul>
+                  </Col>
+                  <Col span={12}>
+                    <ul className="detail-ul">
+                      <li><span className="hint">{t("common.size")}：</span>{blockdetail.size} {t("common.bytes")}</li>
+                      <li><span className="hint">{t("blockchain.nounce")}：</span>{nonce}</li>
+                      <li><span className="hint">{t("blockchain.system fee")}：</span>{blockdetail.networkFee ? blockdetail.networkFee : '--'}</li>
+                      <li><span className="hint">{t("blockchain.witness")}：</span>{blockdetail.nextConsensus}</li>
+                      <li><span className="hint">{t("blockchain.next block")}：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight + 1)} onClick={this.setHeight(blockdetail.blockHeight + 1)}>{blockdetail.blockHeight + 1}</Link></li>
+                    </ul>
+                  </Col>
+                </Row>:null}
               </div>
             </Col>
           </Row>
-          <Row className="mt3 mb1" gutter={[30, 0]} type="flex" style={{ 'minHeight': 'calc( 100vh - 120px )'}}>
+
+          {/* <Transaction page={this.state.href} content={t("blockchain.transactions")} /> */}
+
+          <Row gutter={[30, 0]} className="mt2" type="flex" style={{ 'minHeight': '120px' }}>
             <Col span={24} className="bg-white pv4">
-            <Intitle content="交易"/>
-            <List
-              header={<div><span>交易hash</span><span className="float-r ml4"><span className="wa-amount"></span>数量</span><span className="float-r">时间</span></div>}
-              footer={<span></span>}
-              itemLayout="horizontal"
-              dataSource={translist}
-              className="font-s"
-              renderItem={item => (
-              <List.Item>
-                  <List.Item.Meta
-                  title={<Link to={"/chain/transaction:"+item.txId} title="查看详情">{item.txId}</Link>}
-                  description={
-                  <div className="font-s">
-                      From：<span className="w300 ellipsis">{item.transfers[0].fromAddress?item.transfers[0].fromAddress:"--"}</span><br></br>
-                      To：<span className="w300 ellipsis" >{item.transfers[0].toAddress?item.transfers[0].toAddress:"--"}</span>
-                  </div>}
-                  />
-                  <Typography>{item.blockTime}</Typography>
-                  <Typography className="upcase ml4"><span className="wa-amount">{item.transfers[0].amount}</span>{item.transfers[0].symbol}</Typography>
-              </List.Item>
-              )}
-            />
+              <PageHeader title={t("blockchain.transactions")}></PageHeader>
+              <List
+                header={<div><span className="succes-light">{t("blockchain.transaction.status")}</span><span>{t("blockchain.transaction info")}</span><span className="float-r">{t("common.time")}</span></div>}
+                footer={<span></span>}
+                itemLayout="horizontal"
+                dataSource={translist}
+                className="font-s"
+                renderItem={item => (
+                  <List.Item>
+                    <List.Item.Meta
+                    title={<span className="succes-light">{t('blockchain.transaction.confirmed')}</span>}
+                    />
+                    <div className="trans-detail">
+                        <p>
+                          <Link className="w500 ellipsis hash" to={ "/chain/transaction:" + item.txId} title={t("show detail")}>{item.txId}</Link>
+                          <span className="float-r">{item.blockTime}</span>
+                        </p>
+                        {item.transfers[0]?
+                        <div >
+                          <span className="w200 ellipsis">{item.transfers[0].fromAddress ? item.transfers[0].fromAddress : "--"}</span>
+                          <SwapRightOutlined />
+                          <span className="w200 ellipsis" >{item.transfers[0].toAddress ? item.transfers[0].toAddress : "--"}</span>
+                          <span className="float-r"><span className="trans-amount">{item.transfers[0].amount}</span>{item.transfers[0].symbol}</span>
+                        </div>
+                        :null}
+                    </div>
+                  </List.Item>
+                )}
+              />
             </Col>
+            <div className="pv1"></div>
           </Row>
         </Content>
       </Layout>
     );
   }
-} 
+}
 
 export default Blockdetail;

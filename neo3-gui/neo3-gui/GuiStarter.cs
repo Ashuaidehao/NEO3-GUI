@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Microsoft.Extensions.Configuration;
@@ -15,22 +16,26 @@ namespace Neo
 {
     public class GuiStarter : MainService
     {
+        public GuiStarter()
+        {
+            ExecuteLogTracker = new ExecuteLogTracker();
+            ExecuteResultScanner = new ExecuteResultScanner();
+            ConsensusScanner = new ConsensusScanner();
+            ConsensusScanner.StartLoop();
+            Task.Run(() => ExecuteResultScanner.Start());
+        }
 
         public override void OnStart(string[] args)
         {
             base.OnStart(args);
-            UnconfirmedTransactionCache.RegisterBlockPersistEvent();
+            UnconfirmedTransactionCache.RegisterBlockPersistEvent(this.NeoSystem);
         }
 
+        public readonly ExecuteResultScanner ExecuteResultScanner;
 
-        public Nep5Tracker Nep5Tracker = new Nep5Tracker();
+        public readonly ExecuteLogTracker ExecuteLogTracker;
 
-        /// <summary>
-        /// close wallet
-        /// </summary>
-        public void CloseWallet()
-        {
-            base.OnCommand(new[] { "close", "wallet" });
-        }
+        public readonly ConsensusScanner ConsensusScanner;
+
     }
 }
