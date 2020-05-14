@@ -40,12 +40,12 @@ namespace Neo.Common
         {
             while (_running)
             {
-                UpdateConsensusGas();
+                UpdateConsensusBalance();
                 await Task.Delay(TimeSpan.FromSeconds(15));
             }
         }
 
-        private static void UpdateConsensusGas()
+        private static void UpdateConsensusBalance()
         {
             if (Blockchain.Singleton.Height > 0)
             {
@@ -62,12 +62,16 @@ namespace Neo.Common
                     addresses.Add(_consensusMap[ecPoint]);
                 }
                 using var db = new TrackDB();
+                var neo = AssetCache.GetAssetInfo(NativeContract.NEO.Hash);
+                var neobalances = addresses.GetBalanceOf(NativeContract.NEO.Hash, snapshot);
+
                 var gas = AssetCache.GetAssetInfo(NativeContract.GAS.Hash);
                 var balances = addresses.GetBalanceOf(NativeContract.GAS.Hash, snapshot);
 
                 for (var index = 0; index < addresses.Count; index++)
                 {
                     var address = addresses[index];
+                    db.UpdateBalance(address, neo, neobalances[index].Value, snapshot.Height);
                     db.UpdateBalance(address, gas, balances[index].Value, snapshot.Height);
                 }
 

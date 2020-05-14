@@ -689,7 +689,7 @@ namespace Neo.Services.ApiServices
                 return new PageList<TransactionPreviewModel>();
             }
             using var db = new TrackDB();
-            var trans = db.FindNep5Transactions(new TransferFilter() { FromOrTo = addresses, PageIndex = pageIndex, PageSize = limit });
+            var trans = db.QueryNep5Transactions(new TransferFilter() { FromOrTo = addresses, PageIndex = pageIndex, PageSize = limit });
             var result = new PageList<TransactionPreviewModel>
             {
                 TotalCount = trans.TotalCount,
