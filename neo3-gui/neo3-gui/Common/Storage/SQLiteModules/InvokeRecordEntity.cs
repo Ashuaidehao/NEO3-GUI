@@ -18,8 +18,8 @@ namespace Neo.Common.Storage.SQLiteModules
         public long Id { get; set; }
         public string TxId { get; set; }
 
-        [ForeignKey(nameof(TxId))]
-        public TransactionEntity Transaction { get; set; }
+        //[ForeignKey(nameof(TxId))]
+        public TransactionEntity Tx { get; set; }
         public long ContractId { get; set; }
         public ContractEntity Contract { get; set; }
 

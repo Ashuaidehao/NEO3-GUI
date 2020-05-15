@@ -10,6 +10,7 @@ using Neo.Models;
 using Neo.Persistence;
 using Neo.SmartContract;
 using Neo.VM;
+using Neo.VM.Types;
 
 namespace Neo.Common.Utility
 {
@@ -128,16 +129,17 @@ namespace Neo.Common.Utility
         }
 
 
-        public static BigInteger GetTotalSupply(UInt160 asset)
+        public static BigInteger? GetTotalSupply(UInt160 asset)
         {
             using var snapshot = Blockchain.Singleton.GetSnapshot();
             using var sb = new ScriptBuilder();
             sb.EmitAppCall(asset, "totalSupply");
             using var engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
-            return engine.ResultStack.FirstOrDefault().GetBigInteger();
+            var total = engine.ResultStack.FirstOrDefault();
+            return ToTotalSupply(total);
         }
 
-        public static List<BigInteger> GetTotalSupply(IEnumerable<UInt160> assets)
+        public static List<BigInteger?> GetTotalSupply(IEnumerable<UInt160> assets)
         {
             using var snapshot = Blockchain.Singleton.GetSnapshot();
             using var sb = new ScriptBuilder();
@@ -146,7 +148,9 @@ namespace Neo.Common.Utility
                 sb.EmitAppCall(asset, "totalSupply");
             }
             using var engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
-            return engine.ResultStack.Select(s => s.GetBigInteger()).ToList();
+            return engine.ResultStack.Select(ToTotalSupply).ToList();
         }
+
+        private static BigInteger? ToTotalSupply(StackItem value) => value is Null ? (BigInteger?)null : value.GetBigInteger();
     }
 }

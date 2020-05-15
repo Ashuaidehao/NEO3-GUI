@@ -90,9 +90,7 @@ namespace Neo.Common
             }
 
             var blockTime = block.Timestamp.FromTimestampMS();
-            SyncContracts(blockHeight, blockTime);
 
-            var transfers = new List<TransferInfo>();
             foreach (var transaction in block.Transactions)
             {
                 _db.AddTransaction(new TransactionInfo()
@@ -102,6 +100,15 @@ namespace Neo.Common
                     Sender = transaction.Sender,
                     Time = blockTime,
                 });
+            }
+
+            SyncContracts(blockHeight, blockTime);
+
+            var transfers = new List<TransferInfo>();
+            var balanceChanges = new HashSet<(UInt160 account, UInt160 asset)>();
+
+            foreach (var transaction in block.Transactions)
+            {
                 var invokeMethods = GetInvokeMethods(transaction);
                 if (invokeMethods.NotEmpty())
                 {
@@ -110,18 +117,11 @@ namespace Neo.Common
                         _db.AddInvokeTransaction(transaction.Hash, invokeMethod.contract, string.Join(',', invokeMethod.methods));
                     }
                 }
-                var executeResult = _levelDb.GetExecuteLog(transaction.Hash);
-                if (executeResult == null || executeResult.VMState.HasFlag(VMState.FAULT) || executeResult.Notifications.IsEmpty())
-                {
-                    continue;
-                }
-
                 var transferItems = _levelDb.GetTransfers(transaction.Hash);
                 if (transferItems.NotEmpty())
                 {
                     foreach (var item in transferItems)
                     {
-                        //var asset = AssetCache.GetAssetInfo(item.Asset);
                         transfers.Add(new TransferInfo()
                         {
                             BlockHeight = blockHeight,
@@ -131,8 +131,15 @@ namespace Neo.Common
                             Amount = item.Amount,
                             TimeStamp = block.Timestamp,
                             Asset = item.Asset,
-                            //AssetInfo = asset,
                         });
+                        if (item.From != null)
+                        {
+                            balanceChanges.Add((item.From, item.Asset));
+                        }
+                        if (item.To != null)
+                        {
+                            balanceChanges.Add((item.To, item.Asset));
+                        }
                     }
                 }
             }
@@ -141,6 +148,16 @@ namespace Neo.Common
             {
                 _db.AddTransfer(transferInfo);
             }
+
+            if (balanceChanges.NotEmpty())
+            {
+                using var snapshot = Blockchain.Singleton.GetSnapshot();
+                foreach (var balanceChange in balanceChanges)
+                {
+                    UpdateBalance(balanceChange.account, balanceChange.asset, snapshot);
+                }
+            }
+
             _db.AddSyncIndex(blockHeight);
             _db.Commit();
             Console.WriteLine($"Synced:{_scanHeight}");
@@ -163,16 +180,17 @@ namespace Neo.Common
         {
             if (blockHeight == 0)
             {
-                // sync native contract info
+                var tx = Blockchain.GenesisBlock.Transactions[0];
+                // create native contract record
                 foreach (NativeContract contract in NativeContract.Contracts)
                 {
                     var newContract = new Nep5ContractInfo()
                     {
                         Hash = contract.Hash,
-                        //CreateTxId = ,
+                        CreateTxId = tx.Hash,
                         CreateTime = blockTime,
                     };
-                    var asset = AssetCache.GetAssetInfo(contract.Hash);
+                    var asset = AssetCache.GetAssetInfoFromDb(newContract.Hash);
                     if (asset != null)
                     {
                         newContract.Name = asset.Name;
@@ -274,5 +292,22 @@ namespace Neo.Common
         }
 
 
+
+        private void UpdateBalance(UInt160 account, UInt160 asset, SnapshotView snapshot)
+        {
+            try
+            {
+                var balance = account.GetBalanceOf(asset, snapshot).Value;
+                _db.UpdateBalance(account, asset, balance, snapshot.Height);
+            }
+            catch
+            {
+                var backupBalance = _levelDb.GetBalance(account, asset);
+                if (backupBalance != null)
+                {
+                    _db.UpdateBalance(account, asset, backupBalance.Balance, backupBalance.Height);
+                }
+            }
+        }
     }
 }

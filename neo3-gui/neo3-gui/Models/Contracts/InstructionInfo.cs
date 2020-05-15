@@ -21,6 +21,6 @@ namespace Neo.Models.Contracts
         /// </summary>
         public string SystemCallMethod { get; set; }
 
-        public string OpDataUtf8String => OpData == null ? "" : Encoding.UTF8.GetString(OpData);
+        public string OpDataUtf8String => OpData == null ? null : Encoding.UTF8.GetString(OpData);
     }
 }

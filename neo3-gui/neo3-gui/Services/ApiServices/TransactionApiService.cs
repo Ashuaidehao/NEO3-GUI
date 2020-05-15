@@ -58,6 +58,31 @@ namespace Neo.Services.ApiServices
             return model;
         }
 
+
+        public async Task<object> GetUnconfirmedTransaction(UInt256 txId)
+        {
+            var transaction = Blockchain.Singleton.GetTransaction(txId);
+            if (transaction == null)
+            {
+                return Error(ErrorCode.TxIdNotFound);
+            }
+
+            var model = new TransactionModel(transaction);
+            var tempTx = UnconfirmedTransactionCache.GetUnconfirmedTransaction(txId);
+            if (tempTx?.Transfers.NotEmpty() == true)
+            {
+                model.Transfers = tempTx.Transfers.Select(n => new TransferModel()
+                {
+                    From = n.From,
+                    To = n.To,
+                    Amount = new BigDecimal(n.Amount, n.Decimals).ToString(),
+                    Symbol = n.Symbol,
+                }).ToList();
+            }
+            return model;
+        }
+
+
         /// <summary>
         /// get all unconfirmed transactions
         /// </summary>

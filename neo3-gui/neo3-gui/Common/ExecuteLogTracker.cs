@@ -24,39 +24,9 @@ using Neo.VM;
 namespace Neo.Common
 {
 
-    public class CloneStoreView : StoreView
-    {
-        public new Block PersistingBlock { get; set; }
-
-        public CloneStoreView(StoreView view, Block block)
-        {
-            this.PersistingBlock = block;
-            this.Blocks = view.Blocks.CreateSnapshot();
-            this.Transactions = view.Transactions.CreateSnapshot();
-            this.Contracts = view.Contracts.CreateSnapshot();
-            this.Storages = view.Storages.CreateSnapshot();
-            this.HeaderHashList = view.HeaderHashList.CreateSnapshot();
-            this.BlockHashIndex = view.BlockHashIndex.CreateSnapshot();
-            this.HeaderHashIndex = view.HeaderHashIndex.CreateSnapshot();
-            this.ContractId = view.ContractId.CreateSnapshot();
-        }
-
-        public override DataCache<UInt256, TrimmedBlock> Blocks { get; }
-        public override DataCache<UInt256, TransactionState> Transactions { get; }
-        public override DataCache<UInt160, ContractState> Contracts { get; }
-        public override DataCache<StorageKey, StorageItem> Storages { get; }
-        public override DataCache<SerializableWrapper<uint>, HeaderHashList> HeaderHashList { get; }
-        public override MetaDataCache<HashIndexState> BlockHashIndex { get; }
-        public override MetaDataCache<HashIndexState> HeaderHashIndex { get; }
-        public override MetaDataCache<ContractIdState> ContractId { get; }
-    }
     public class ExecuteLogTracker : Plugin, IPersistencePlugin
     {
-        //private TrackDB _db = new TrackDB();
-
-
-        private LevelDbContext _levelDb = new LevelDbContext();
-
+        private readonly LevelDbContext _levelDb = new LevelDbContext();
 
         public void OnPersist(StoreView snapshot, IReadOnlyList<Blockchain.ApplicationExecuted> applicationExecutedList)
         {
@@ -91,17 +61,10 @@ namespace Neo.Common
                 _levelDb.SaveContractEvent(snapshot.Height, analyzer.AnalysisResult.ContractEvents);
             }
         }
-        
+
         public void OnCommit(StoreView snapshot)
         {
-            //_db.Commit();
             _levelDb.Commit();
-            //if (_db.LiveTime.TotalSeconds > 15)
-            //{
-            //    //release memory
-            //    _db.Dispose();
-            //    _db = new TrackDB();
-            //}
         }
 
         public bool ShouldThrowExceptionFromCommit(Exception ex)

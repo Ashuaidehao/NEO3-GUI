@@ -206,7 +206,7 @@ namespace Neo.Services.ApiServices
 
 
 
-        public async Task<object> AnalysisScript(byte[] script)
+        public async Task<object> ParseScript(byte[] script)
         {
             return OpCodeConverter.Parse(script);
         }

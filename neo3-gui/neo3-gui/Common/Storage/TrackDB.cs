@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
 using Neo.Common.Storage.LevelDBModules;
 using Neo.Common.Storage.SQLiteModules;
@@ -128,7 +130,7 @@ namespace Neo.Common.Storage
         {
             var from = GetOrCreateAddress(newTransaction.From);
             var to = GetOrCreateAddress(newTransaction.To);
-            var asset = GetOrCreateAsset(newTransaction.Asset);
+            var asset = GetAsset(newTransaction.Asset);
 
             var tran = new Nep5TransferEntity
             {
@@ -150,14 +152,18 @@ namespace Neo.Common.Storage
         /// new record will save immediately
         /// </summary>
         /// <param name="addressHash"></param>
-        /// <param name="assetInfo"></param>
+        /// <param name="assetHash"></param>
         /// <param name="balance"></param>
         /// <param name="height"></param>
-        public void UpdateBalance(UInt160 addressHash, AssetInfo assetInfo, BigInteger balance, uint height)
+        public void UpdateBalance(UInt160 addressHash, UInt160 assetHash, BigInteger balance, uint height)
         {
-            if (addressHash == null) return;
+            if (addressHash == null || assetHash == null) return;
+            var asset = GetAsset(assetHash);
+            if (asset == null)
+            {
+                throw new Exception($"Unkown asset:{assetHash}");
+            }
             var address = GetOrCreateAddress(addressHash);
-            var asset = GetOrCreateAsset(assetInfo.Asset);
             var balanceRecord = GetOrCreateBalance(address, asset, balance, height);
 
             if (balanceRecord.BlockHeight >= height)
@@ -184,7 +190,7 @@ namespace Neo.Common.Storage
         {
             if (addressHash == null) return;
             var address = GetOrCreateAddress(addressHash);
-            var asset = GetOrCreateAsset(assetInfo.Asset);
+            var asset = GetAsset(assetInfo.Asset);
             var balanceRecord = GetOrCreateBalance(address, asset, balance, height);
 
             if (balanceRecord.BlockHeight >= height)
@@ -246,6 +252,9 @@ namespace Neo.Common.Storage
             {
                 var contracts = filter.Contracts.Select(a => a.ToBigEndianHex()).Distinct().ToList();
                 query = query.Where(tx => tx.InvokeContracts.Any(c => contracts.Contains(c.Contract.Hash)));
+
+                //query = query.Join(_sqldb.InvokeRecords,tx=>tx.TxId,r=>r.TxId,(tx,r)=>new{tx,r}).Where(tx => tx.Any(c => contracts.Contains(c.Contract.Hash)));
+
             }
             var pageList = new PageList<TransactionInfo>();
             var pageIndex = filter.PageIndex <= 0 ? 0 : filter.PageIndex - 1;
@@ -294,7 +303,7 @@ namespace Neo.Common.Storage
             }).ToList()
         };
 
-    
+
 
         /// <summary>
         ///  Paged by Transactions
@@ -393,15 +402,22 @@ namespace Neo.Common.Storage
         }
 
         #endregion
+        
 
         #region Transaction
 
         public void AddTransaction(TransactionInfo transaction)
         {
+            var txId = transaction.TxId.ToBigEndianHex();
+            var old = _sqldb.Transactions.FirstOrDefault(t => t.TxId == txId);
+            if (old != null)
+            {
+                return;
+            }
             var sender = GetOrCreateAddress(transaction.Sender);
             _sqldb.Transactions.Add(new TransactionEntity()
             {
-                TxId = transaction.TxId.ToBigEndianHex(),
+                TxId = txId,
                 BlockHeight = transaction.BlockHeight,
                 Time = transaction.Time,
                 SenderId = sender?.Id,
@@ -422,18 +438,25 @@ namespace Neo.Common.Storage
                     Methods = method,
                 });
             }
-
         }
         #endregion
 
 
+        #region Contract
+
+
+
+        /// <summary>
+        /// Create contract, save immediately
+        /// </summary>
+        /// <param name="newContract"></param>
         public void CreateContract(Nep5ContractInfo newContract)
         {
             var contractHash = newContract.Hash.ToBigEndianHex();
             var old = _sqldb.Contracts.FirstOrDefault(c => c.Hash == contractHash);
             if (old == null)
             {
-                _sqldb.Contracts.Add(new ContractEntity()
+                var contract = new ContractEntity()
                 {
                     Hash = contractHash,
                     Name = newContract.Name,
@@ -441,12 +464,27 @@ namespace Neo.Common.Storage
                     Decimals = newContract.Decimals,
                     CreateTime = newContract.CreateTime,
                     CreateTxId = newContract.CreateTxId?.ToBigEndianHex(),
+                };
+                _sqldb.Contracts.Add(contract);
+                _sqldb.SaveChanges();
+
+                //save create contract transaction record
+                _sqldb.InvokeRecords.Add(new InvokeRecordEntity()
+                {
+                    ContractId = contract.Id,
+                    TxId = contract.CreateTxId,
                 });
                 _sqldb.SaveChanges();
             }
         }
 
 
+        /// <summary>
+        /// Destroy contract, save immediately
+        /// </summary>
+        /// <param name="contractHash"></param>
+        /// <param name="txId"></param>
+        /// <param name="time"></param>
         public void DeleteContract(UInt160 contractHash, UInt256 txId, DateTime time)
         {
             var contract = contractHash.ToBigEndianHex();
@@ -459,34 +497,54 @@ namespace Neo.Common.Storage
             }
         }
 
-
+        /// <summary>
+        /// Migrate contract, save immediately
+        /// </summary>
+        /// <param name="contract"></param>
+        /// <param name="migrateContract"></param>
+        /// <param name="txId"></param>
+        /// <param name="time"></param>
         public void MigrateContract(UInt160 contract, Nep5ContractInfo migrateContract, UInt256 txId, DateTime time)
         {
             var contractHash = contract.ToBigEndianHex();
             var migrateContractHash = migrateContract.Hash.ToBigEndianHex();
+            var tx = txId.ToBigEndianHex();
             var old = _sqldb.Contracts.FirstOrDefault(c => c.Hash == contractHash);
             if (old != null)
             {
-                old.DeleteOrMigrateTxId = txId.ToBigEndianHex();
+                old.DeleteOrMigrateTxId = tx;
                 old.MigrateTo = migrateContractHash;
                 old.MigrateTime = time;
-                _sqldb.Contracts.Add(new ContractEntity()
+                var newContract = new ContractEntity()
                 {
                     Hash = migrateContractHash,
                     Name = migrateContract.Name,
                     Symbol = migrateContract.Symbol,
                     Decimals = migrateContract.Decimals,
                     CreateTime = migrateContract.CreateTime,
-                    CreateTxId = migrateContract.CreateTxId?.ToBigEndianHex(),
+                    CreateTxId = tx,
+                };
+                _sqldb.Contracts.Add(newContract);
+                _sqldb.SaveChanges();
+
+                _sqldb.InvokeRecords.Add(new InvokeRecordEntity()
+                {
+                    ContractId = newContract.Id,
+                    TxId = tx,
                 });
                 _sqldb.SaveChanges();
+                // migrate balance records to new contract
+                _sqldb.AssetBalances.Where(a => a.AssetId == old.Id).BatchUpdate(new AssetBalanceEntity() { AssetId = newContract.Id });
             }
         }
+
+
+        #endregion
 
         #region Private
 
 
-        private readonly Dictionary<UInt160, AddressEntity> _addressCache = new Dictionary<UInt160, AddressEntity>();
+        private readonly ConcurrentDictionary<UInt160, AddressEntity> _addressCache = new ConcurrentDictionary<UInt160, AddressEntity>();
         private AddressEntity GetOrCreateAddress(UInt160 address)
         {
             if (address == null) return null;
@@ -506,8 +564,8 @@ namespace Neo.Common.Storage
             return old;
         }
 
-        private readonly Dictionary<UInt160, ContractEntity> _assetCache = new Dictionary<UInt160, ContractEntity>();
-        private ContractEntity GetOrCreateAsset(UInt160 asset)
+        private readonly ConcurrentDictionary<UInt160, ContractEntity> _assetCache = new ConcurrentDictionary<UInt160, ContractEntity>();
+        private ContractEntity GetAsset(UInt160 asset)
         {
             if (_assetCache.ContainsKey(asset))
             {

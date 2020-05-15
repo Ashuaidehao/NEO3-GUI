@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -609,7 +610,7 @@ namespace Neo
         }
 
 
-        private static readonly Dictionary<ErrorCode, string> _errorMap = new Dictionary<ErrorCode, string>();
+        private static readonly ConcurrentDictionary<ErrorCode, string> _errorMap = new ConcurrentDictionary<ErrorCode, string>();
 
         public static WsError ToError(this ErrorCode code)
         {
