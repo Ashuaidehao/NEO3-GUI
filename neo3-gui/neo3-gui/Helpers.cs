@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -242,6 +243,25 @@ namespace Neo
             return JsonSerializer.Deserialize(json, targetType, SerializeOptions);
         }
 
+
+
+        /// <summary>
+        /// deserialize from json string
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="jsonBytes"></param>
+        /// <returns></returns>
+        public static T DeserializeJson<T>(this byte[] jsonBytes)
+        {
+            if (jsonBytes.IsEmpty())
+            {
+                return default(T);
+            }
+
+            return JsonSerializer.Deserialize<T>(jsonBytes, SerializeOptions);
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -296,6 +316,20 @@ namespace Neo
             return null;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static UInt160 ToUInt160(this byte[] bytes)
+        {
+            if (bytes?.Length == 20)
+            {
+                return new UInt160(bytes);
+            }
+            return null;
+        }
 
         /// <summary>
         /// 
@@ -576,7 +610,7 @@ namespace Neo
         }
 
 
-        private static readonly Dictionary<ErrorCode, string> _errorMap = new Dictionary<ErrorCode, string>();
+        private static readonly ConcurrentDictionary<ErrorCode, string> _errorMap = new ConcurrentDictionary<ErrorCode, string>();
 
         public static WsError ToError(this ErrorCode code)
         {
@@ -817,6 +851,51 @@ namespace Neo
                 ParameterList = new[] { ContractParameterType.Signature }
             };
             return contract;
+        }
+
+
+        public static bool ToBigInteger(this JStackItem item, out BigInteger amount)
+        {
+            amount = 0;
+            if (item.TypeCode == ContractParameterType.Integer)
+            {
+                amount = (BigInteger)item.Value;
+                return true;
+            }
+            if (item.TypeCode == ContractParameterType.ByteArray)
+            {
+                amount = new BigInteger((byte[])item.Value);
+                return true;
+            }
+            return false;
+        }
+
+
+        public static byte[] Append(this byte[] source, params byte[][] bytes)
+        {
+            IEnumerable<byte> data = source;
+            foreach (var b in bytes)
+            {
+                data = data.Concat(b);
+            }
+            return data.ToArray();
+        }
+
+
+
+        public static NotificationInfo ToNotificationInfo(this NotifyEventArgs notify)
+        {
+            var notification = new NotificationInfo();
+            notification.Contract = notify.ScriptHash.ToString();
+            try
+            {
+                notification.State = notify.State.ToParameter().ToJson();
+            }
+            catch (InvalidOperationException)
+            {
+                notification.State = "error: recursive reference";
+            }
+            return notification;
         }
 
     }
