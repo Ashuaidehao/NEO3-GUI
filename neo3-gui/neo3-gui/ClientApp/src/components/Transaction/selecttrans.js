@@ -16,7 +16,7 @@ import {
 import { Layout } from 'antd';
 import '../../static/css/wallet.css';
 import Multitomulti from './multitomulti';
-import Multitrans from './multitrans';
+import Onetomulti from './onetomulti';
 import Sync from '../sync';
 
 import { withTranslation } from "react-i18next";
@@ -126,10 +126,10 @@ class Transfer extends React.Component {
             <Col span={24} className="bg-white pv4">
               <Tabs className="tran-title" defaultActiveKey="1">
                 <TabPane tab={t("转账")} key="1">
-                  <Multitrans account={account}  />
+                  <Multitomulti account={addresslist}  />
                 </TabPane>
                 <TabPane tab={t("批量转账")} key="2">
-                  <Multitomulti account={addresslist}  />
+                  <Onetomulti account={addresslist}  />
                 </TabPane>
               </Tabs>
             </Col>

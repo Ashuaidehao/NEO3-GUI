@@ -9,13 +9,15 @@ let blockSyncStore = new BlockSyncStore();
 let walletStore = new WalletStore();
 let nodeStore=new NodeStore();
 let pathStore = new PathStore();
+let transStore = new TransStore();
 
 const Stores = {
     nodeStore,
     walletStore,
     blockSyncStore,
-    pathStore
+    pathStore,
+    transStore
 };
 
-export { blockSyncStore, walletStore ,nodeStore,pathStore}
+export { blockSyncStore, walletStore ,nodeStore,pathStore,transStore}
 export default Stores;

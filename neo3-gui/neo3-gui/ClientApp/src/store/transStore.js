@@ -1,20 +1,22 @@
 /* eslint-disable */
 import { observable, action } from "mobx";
-import neoNode from "../neonode";
 
 class transStore {
-    constructor() {
-        console.log("node store init");
-        this.nodeManager = neoNode;
-    }
+    
+    @observable isOpen = false;
+    @observable res = [];
 
-    @action start(network, port) {
+    @action getAsset(network, port) {
         this.nodeManager.start(network, port);
     }
 
-    @action kill(data) {
-        this.nodeManager.kill();
+    @action sendtoMulti(method,data) {
+        this.res = sendTo(method,data);
     }
+}
+
+function sendTo(method,data){
+
 }
 
 export default transStore;
