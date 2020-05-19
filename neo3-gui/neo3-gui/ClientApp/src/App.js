@@ -60,7 +60,8 @@ class App extends React.Component {
         stores.blockSyncStore.setHeight(msg.result);
         break;
       case "getWalletBalance":
-        stores.walletStore.setAccounts(msg.result);
+        stores.walletStore.setAccounts(msg.result.accounts);
+        stores.walletStore.setUnclaimedGas(msg.result.unclaimedGas);
         break;
       default:
         break;
