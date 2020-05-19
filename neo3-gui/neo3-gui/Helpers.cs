@@ -32,6 +32,7 @@ using Neo.Persistence;
 using Neo.Services;
 using Neo.SmartContract;
 using Neo.SmartContract.Native;
+using Neo.SmartContract.Native.Tokens;
 using Neo.VM;
 using Neo.VM.Types;
 using Neo.Wallets;
@@ -436,6 +437,24 @@ namespace Neo
         }
 
         /// <summary>
+        /// query neo/gas balance quickly
+        /// </summary>
+        /// <param name="addresses"></param>
+        /// <param name="asset"></param>
+        /// <param name="snapshot"></param>
+        /// <returns></returns>
+        public static List<BigDecimal> GetNativeBalanceOf<T>(this IEnumerable<UInt160> addresses, Nep5Token<T> asset, StoreView snapshot) where T : Nep5AccountState, new()
+        {
+            var balances = new List<BigDecimal>();
+            foreach (var account in addresses)
+            {
+                var balance = asset.BalanceOf(snapshot, account);
+                balances.Add(new BigDecimal(balance, asset.Decimals));
+            }
+            return balances;
+        }
+
+        /// <summary>
         /// query balance
         /// </summary>
         /// <param name="addresses"></param>
@@ -464,6 +483,14 @@ namespace Neo
                 throw new ArgumentException($"invalid assetId:[{assetId}]");
             }
 
+            if (assetInfo.Asset == NativeContract.NEO.Hash)
+            {
+                return GetNativeBalanceOf(addresses, NativeContract.NEO, snapshot);
+            }
+            if (assetInfo.Asset == NativeContract.GAS.Hash)
+            {
+                return GetNativeBalanceOf(addresses, NativeContract.GAS, snapshot);
+            }
             using var sb = new ScriptBuilder();
             foreach (var address in addresses)
             {
