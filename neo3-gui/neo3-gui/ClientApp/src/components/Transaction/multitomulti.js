@@ -53,9 +53,13 @@ class Multitomulti extends React.Component{
     }
     transfer = values =>{
         const {t}=this.props;
+        var _this = this;
+        
+        this.setState({ iconLoading: true });
         post("SendTo",values.params).then(res =>{
             var _data = res.data;
             var result = res.data.result;
+            _this.setState({ iconLoading: true });
             if(_data.msgType === -1){
                 let res = _data.error;
                 Modal.error({

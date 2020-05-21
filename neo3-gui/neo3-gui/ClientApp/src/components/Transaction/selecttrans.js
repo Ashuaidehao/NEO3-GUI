@@ -6,6 +6,7 @@ import {
   Alert,
   Tabs,
   Row,
+  message,
   Col
 } from 'antd';
 import { Layout } from 'antd';
