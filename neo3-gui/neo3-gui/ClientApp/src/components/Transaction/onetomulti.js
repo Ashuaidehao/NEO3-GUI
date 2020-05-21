@@ -21,7 +21,6 @@ import { post } from "../../core/request";
 const { Option } = Select;
 const { Content } = Layout;
 
-
 @withTranslation()
 class Onetomulti extends React.Component{
     constructor(props) {
@@ -32,6 +31,8 @@ class Onetomulti extends React.Component{
       };
     }
     setAddress = target => {
+      console.log(this.refs.formRef)
+
       target = target ? target : 0;
       let _detail = this.props.account[target].balances;
       this.setState({
@@ -40,6 +41,7 @@ class Onetomulti extends React.Component{
     }
     transfer = values =>{
         var _this = this;
+        const {t}=this.props;
         if(values.receiver.trim() === ""){
             message.error("收款地址为空");
             return false;
@@ -74,8 +76,8 @@ class Onetomulti extends React.Component{
                 width: 400,
                 content: (
                     <div className="show-pri">
-                    <p>{t("error code")}: {result.code}</p>
-                    <p>{t("error msg")}: {result.message}</p>
+                        <p>{t("error code")}: {res.code}</p>
+                        <p>{t("error msg")}: {res.message}</p>
                     </div>
                 ),
                 okText:"确认"

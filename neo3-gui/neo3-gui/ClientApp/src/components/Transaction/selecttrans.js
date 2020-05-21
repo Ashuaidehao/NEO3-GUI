@@ -2,13 +2,8 @@
 import React from 'react';
 import { observer, inject } from "mobx-react";
 import 'antd/dist/antd.css';
-import axios from 'axios';
 import {
   Alert,
-  Input,
-  PageHeader,
-  InputNumber,
-  Modal,
   Tabs,
   Row,
   Col
@@ -18,6 +13,7 @@ import '../../static/css/wallet.css';
 import Multitomulti from './multitomulti';
 import Onetomulti from './onetomulti';
 import Sync from '../sync';
+import { post } from "../../core/request";
 
 import { withTranslation } from "react-i18next";
 
@@ -31,93 +27,26 @@ class Transfer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      size: 'default',
-      iconLoading: false,
-      addresslist: [],
-      selectadd: []
+      addresslist: []
     };
   }
   componentDidMount() {
     var _this = this;
-    axios.post('http://localhost:8081', {
-      "id": "1234",
-      "method": "GetMyBalances",
-      "params": {}
-    })
-    .then(function (response) {
-      var _data = response.data;
+    const { t } = this.props;
+    post("GetMyBalances",{}).then(res =>{
+      var _data = res.data;
       if (_data.msgType === -1) {
         message.error(t("wallet.open wallet first"));
-        return;
+        return false;
       }
       _this.setState({
         addresslist: _data.result
       })
     })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error2");
-    });
-  }
-  transfer = fieldsValue => {
-    // let _sender = this.state.addresslist[fieldsValue.sender].address;
-    // let _this = this;
-    // const{t}=this.props;
-    // this.setState({
-    //   iconLoading: true
-    // })
-    // axios.post('http://localhost:8081', {
-    //   "id": "5",
-    //   "method": "SendToAddress",
-    //   "params": {
-    //     "sender": _sender,
-    //     "receiver": fieldsValue.receiver.trim(),
-    //     "amount": fieldsValue.amount,
-    //     "asset": fieldsValue.asset
-    //   }
-    // })
-    // .then(function (response) {
-    //   var _data = response.data;
-    //   _this.setState({ iconLoading: false });
-    //   if(_data.msgType === -1){
-    //     let res = _data.error;
-    //     Modal.error({
-    //       title: t('wallet.transfer send error'),
-    //       width: 400,
-    //       content: (
-    //         <div className="show-pri">
-    //           <p>{t("error code")}: {res.code}</p>
-    //           <p>{t("error msg")}: {res.message}</p>
-    //         </div>
-    //       ),
-    //       okText:"确认"
-    //     });
-    //     return;
-    //   }else{
-    //     Modal.success({
-    //       title: t('wallet.transfer send success'),
-    //       content: (
-    //         <div className="show-pri">
-    //           <p>{t("blockchain.transaction hash")}：{_data.result.txId}</p>
-    //         </div>
-    //       ),
-    //       okText:"确认"
-    //     });
-    //     _this.refs.formRef.resetFields()
-    //     _this.setState({
-    //       selectadd:[]
-    //     })
-    //   }
-    // })
-    // .catch(function (error) {
-    //   console.log(error);
-    //   console.log("error");
-    // });
   }
   render() {
     const { t } = this.props;
-    const {addresslist} = this.state;
-    const account = this.props.walletStore.accountlist;
+    const { addresslist } = this.state;
     return (
       <Layout className="gui-container">
         <Sync />
@@ -132,6 +61,12 @@ class Transfer extends React.Component {
                   <Onetomulti account={addresslist}  />
                 </TabPane>
               </Tabs>
+              <Alert
+                className="mt2 mb4"
+                showIcon
+                type="info"
+                message={t("wallet.transfer warning")}
+              />
             </Col>
           </Row>
         </Content>
