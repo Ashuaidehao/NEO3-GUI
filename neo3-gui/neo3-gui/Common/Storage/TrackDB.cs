@@ -387,7 +387,24 @@ namespace Neo.Common.Storage
 
         public IEnumerable<Nep5ContractInfo> GetAllContracts()
         {
-            return _sqldb.Contracts.Select(c => new Nep5ContractInfo()
+            return _sqldb.Contracts.ToList().Select(ToNep5ContractInfo);
+        }
+
+        public Nep5ContractInfo GetContract(UInt160 asset)
+        {
+            var assetHash = asset.ToBigEndianHex();
+            var assetInfo = _sqldb.Contracts.FirstOrDefault(c => c.Hash == assetHash);
+            if (assetInfo == null)
+            {
+                return null;
+            }
+            return ToNep5ContractInfo(assetInfo);
+        }
+
+
+        private Nep5ContractInfo ToNep5ContractInfo(ContractEntity c)
+        {
+            return new Nep5ContractInfo()
             {
                 Hash = UInt160.Parse(c.Hash),
                 Name = c.Name,
@@ -398,11 +415,11 @@ namespace Neo.Common.Storage
                 DeleteOrMigrateTxId = c.DeleteOrMigrateTxId != null ? UInt256.Parse(c.DeleteOrMigrateTxId) : null,
                 DeleteTime = c.DeleteTime,
                 MigrateTime = c.MigrateTime,
-            }).ToList();
+            };
         }
 
         #endregion
-        
+
 
         #region Transaction
 
