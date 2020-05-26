@@ -1,9 +1,8 @@
 /* eslint-disable */
 import React from 'react';
 import '../../static/css/trans.css';
-import { Link } from 'react-router-dom';
-import { Layout, Row, Col, Tabs, message, PageHeader, Divider } from 'antd';
-import { Hashdetail, Attrlist, Translist, Witlist, Notifies} from './translog';
+import { Layout, Row, Col, Tabs, message } from 'antd';
+import Translog , { Hashdetail, Attrlist, Translist, Witlist } from './translog';
 import Datatrans from '../Common/datatrans';
 import { withRouter } from "react-router-dom";
 import Sync from '../sync';
@@ -12,11 +11,12 @@ import { useTranslation, withTranslation } from "react-i18next";
 import { post } from "../../core/request";
 
 const { Content } = Layout;
+
 const { TabPane } = Tabs;
 
 @withTranslation()
 @withRouter
-class Transcon extends React.Component {
+class Untransdetail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -55,7 +55,7 @@ class Transcon extends React.Component {
     let params = {
       "txId": location.pathname.split(":").pop()
     };
-    post("GetTransaction",params).then(res =>{
+    post("GetUnconfirmedTransaction",params).then(res =>{
       var _data = res.data;
       console.log(_data)
       if (_data.msgType === -1) {
@@ -86,9 +86,6 @@ class Transcon extends React.Component {
                   <Attrlist attributes={attributes} />
                   <Witlist witnesses={witnesses} />
                 </TabPane>
-                <TabPane tab={t("blockchain.transaction.log")} key="2">
-                  <Notifies notifies={this.state.notifies} />
-                </TabPane>
               </Tabs>
             </Col>
           </Row>
@@ -99,4 +96,4 @@ class Transcon extends React.Component {
   }
 }
 
-export default Transcon;
+export default Untransdetail;

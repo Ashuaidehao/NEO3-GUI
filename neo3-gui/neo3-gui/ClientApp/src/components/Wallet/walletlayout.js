@@ -17,7 +17,6 @@ import {
 } from '@ant-design/icons';
 import { withTranslation } from "react-i18next";
 
-
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
@@ -44,20 +43,20 @@ class Walletlayout extends React.Component {
       "id": 51,
       "method": "ShowGas"
     })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          message.info(t("wallet.please open wallet"), 2);
-          _this.setState({ topath: "/wallet" });
-          return;
-        }
-        walletStore.setWalletState(true);
-        _this.setState({ isopen: true });
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        message.info(t("wallet.please open wallet"), 2);
+        _this.setState({ topath: "/wallet" });
+        return;
+      }
+      walletStore.setWalletState(true);
+      _this.setState({ isopen: true });
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   }
   render = () => {
     const walletOpen = this.props.walletStore.isOpen;
