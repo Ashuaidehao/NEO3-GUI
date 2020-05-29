@@ -12,5 +12,7 @@ namespace Neo.Models.Blocks
         public DateTime? CreateTime { get; set; }
         public BigInteger? TotalSupply { get; set; }
 
+        public int TransactionCount { get; set; }
+
     }
 }
