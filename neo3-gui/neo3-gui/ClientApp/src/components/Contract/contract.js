@@ -78,7 +78,6 @@ class Contract extends React.Component {
                         <Avatar src={"https://neo.org/images/gui/"+item.asset+".png"}/>
                       }
                       title={<span>{item.name}</span>}
-
                     />
                     <Typography>{item.asset}</Typography>
                     <Typography>{item.balance}</Typography>

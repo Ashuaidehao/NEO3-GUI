@@ -40,6 +40,7 @@
 		"confirmations": "Confirmations",
 		"height": "Height",
 		"height unexist": "Pelese check the height later",
+		"initial time":"Initial time",
 		"lastest transactions": "Lastest Transactions",
 		"network fee": "Network Fee",
 		"next block": "Next Block",
@@ -48,6 +49,7 @@
 		"prev block": "Prev Block",
 		"system fee": "System Fee",
 		"timestamp": "TimeStamp",
+		"total": "Total",
 		"transaction": {
 			"amount": "Amount",
 			"attributes": "Attributes",

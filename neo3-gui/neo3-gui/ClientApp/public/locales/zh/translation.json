@@ -40,6 +40,7 @@
 		"confirmations": "确认数",
 		"height": "高度",
 		"height unexist": "请稍后再查询该高度",
+		"initial time":"创建时间",
 		"lastest transactions": "最新交易",
 		"network fee": "网络费",
 		"next block": "下一区块",
@@ -48,6 +49,7 @@
 		"prev block": "上一区块",
 		"system fee": "系统费",
 		"timestamp": "时间戳",
+		"total": "总量",
 		"transaction": {
 			"amount": "金额",
 			"attributes": "属性",
