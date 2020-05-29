@@ -16,8 +16,7 @@ import '../../static/css/wallet.css'
 import { withTranslation } from "react-i18next";
 import { post } from "../../core/request";
 
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-
+import { MinusSquareOutlined, PlusOutlined } from '@ant-design/icons';
 const { Option } = Select;
 
 
@@ -71,7 +70,7 @@ class Multitomulti extends React.Component{
                         <p>{t("error msg")}: {res.message}</p>
                     </div>
                 ),
-                okText:"确认"
+                okText:t("button.confirm")
                 });
                 return;
             }else{
@@ -82,7 +81,7 @@ class Multitomulti extends React.Component{
                     <p>{t("blockchain.transaction hash")}：{result.txId}</p>
                     </div>
                 ),
-                okText:"确认"
+                okText:t("button.confirm")
                 });
                 _this.refs.formRef.resetFields()
                 _this.setState({
@@ -96,7 +95,7 @@ class Multitomulti extends React.Component{
         const { account, t } = this.props;
         const { assetlist } = this.state;
         return (
-        <div className="w500 info-detail">
+        <div className="w500 info-detail mt3">
         <Form ref="formRef" className="trans-form" onFinish={this.transfer}>
             <Form.List name="params">
                 {(fields, { add, remove }) => {
@@ -105,7 +104,7 @@ class Multitomulti extends React.Component{
                     <div>
                     {fields.map((field) => (
                       <Row key={field.key}>
-                        <Col span="18">
+                        <Col span="15">
                         <Form.Item
                             name={[field.name, "sender"]}
                             label={t("wallet.from")}
@@ -128,19 +127,19 @@ class Multitomulti extends React.Component{
                             </Select>
                         </Form.Item>
                         </Col>
-                        <Col span="6">
+                        <Col span="9">
                             <Form.Item
                                 name={[field.name, "asset"]}
                                 label={t("wallet.asset")}
                                 rules={[
                                 {
                                     required: true,
-                                    message: t("wallet.please input a account"),
+                                    message: t("wallet.required"),
                                 },
                                 ]}
                             >
                             <Select
-                                placeholder={t("select account")}
+                                placeholder={t("wallet.select")}
                                 style={{ width: '100%' }}>
                                 {!!assetlist[field.key]?assetlist[field.key].map((item) => {
                                     return (
@@ -150,46 +149,39 @@ class Multitomulti extends React.Component{
                             </Select>
                             </Form.Item>
                         </Col>
-                        <Col span="18">
+                        <Col span="15">
                         <Form.Item
                             name={[field.name, "receiver"]}
                             label={t("wallet.to")}
                             rules={[
                             {
                                 required: true,
-                                message: t("wallet.please select a account"),
+                                message: t("wallet.please input a correct amount"),
                             },
                             ]}
                         >
                             <Input placeholder={t("input account")} />
                         </Form.Item>
                         </Col>
-                        <Col span="6">
+                        <Col span="9">
                         <Form.Item
                             name={[field.name, "amount"]}
                             label={t("wallet.amount")}
                             rules={[
                             {
                                 required: true,
-                                message: t("wallet.please input a correct amount"),
+                                message: t("wallet.required"),
                             },
                             ]}>
                             <InputNumber min={0} step={1} placeholder={t("wallet.amount")} />
                         </Form.Item>
                         </Col>
                         {fields.length > 1 ? (
-                            <div>
-                                <MinusCircleOutlined
-                                className="delete-btn"
-                                onClick={() => {
-                                    remove(field.name);
-                                }}
-                                />
-                            </div>
+                            <div className="delete-btn" onClick={ () => { remove(field.name); }}></div>
                         ) : null}
                       </Row>
                     ))}
-                    <Form.Item>
+                    <Form.Item class="mb0">
                       <Button
                         type="dashed"
                         onClick={() => {
@@ -197,7 +189,7 @@ class Multitomulti extends React.Component{
                         }}
                         style={{ width: "100%" }}
                       >
-                        <PlusOutlined /> Add field
+                        <PlusOutlined /> {t("wallet.transfer add")}
                       </Button>
                     </Form.Item>
                   </div>
@@ -207,7 +199,7 @@ class Multitomulti extends React.Component{
 
             <Form.Item>
                 <Button type="primary" htmlType="submit">
-                Submit
+                    {t("wallet.transfer bulk")}
                 </Button>
             </Form.Item>
         </Form>

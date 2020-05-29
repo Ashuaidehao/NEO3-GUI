@@ -43,7 +43,7 @@ class Onetomulti extends React.Component{
         var _this = this;
         const {t}=this.props;
         if(values.receiver.trim() === ""){
-            message.error("收款地址为空");
+            message.error(t("wallet.payment empty"));
             return false;
         }
 
@@ -52,7 +52,7 @@ class Onetomulti extends React.Component{
         addlist.map(item=>{
             let _item = item.trim().split(/\s+/);
             _item.filter(cur => {return cur !== null && cur !== undefined;})
-            if(_item.length !== 2){message.error("输入错误请重新输入");return false;}
+            if(_item.length !== 2){message.error(t("wallet.input error"));return false;}
             
             let receiver = {};
             receiver.address = _item[0];
@@ -80,7 +80,7 @@ class Onetomulti extends React.Component{
                         <p>{t("error msg")}: {res.message}</p>
                     </div>
                 ),
-                okText:"确认"
+                okText:t("button.confirm")
                 });
                 return;
             }else{
@@ -91,7 +91,7 @@ class Onetomulti extends React.Component{
                     <p>{t("blockchain.transaction hash")}：{result.txId}</p>
                     </div>
                 ),
-                okText:"确认"
+                okText:t("button.confirm")
                 });
                 _this.refs.formRef.resetFields()
                 _this.setState({
@@ -113,7 +113,7 @@ class Onetomulti extends React.Component{
                       <Col span={15}>
                       <Form.Item
                         name="sender"
-                        label={t("付款账户")}
+                        label={t("wallet.from")}
                         rules={[
                             {
                             required: true,
@@ -163,11 +163,11 @@ class Onetomulti extends React.Component{
                     rules={[
                         {
                         required: true,
-                        message: t("wallet.please input a account"),
+                        message: t("wallet.required"),
                         },
                     ]}
                     >
-                    <Input.TextArea placeholder={t("输入地址和金额，用空格分隔 例如：AKMqDy51FuMnc4poiGBczQvPh6819hQuLH 10 AKMqDy51FuMnc4poiGBczQvPh6819hQuLH 10")} />
+                    <Input.TextArea placeholder={t("wallet.payment bulk")} />
                     </Form.Item>
                     <div className="text-c lighter">
                         <small>{t("wallet.estimated time")}：12s </small>

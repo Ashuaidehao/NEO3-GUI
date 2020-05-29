@@ -209,6 +209,7 @@
 		"from": "From",
 		"gas success":"GAS claim succeeded, please check it later",
 		"gas fail":"GAS claim failed, please check it later",
+		"input error": "Input error, please check and enter",
 		"import private": "Import private",
 		"import private success": "Import private success",
 		"import wallet": "Import Wallet",
@@ -218,6 +219,8 @@
 		"open wallet file": "Open Wallet File",
 		"open wallet first": "Please open wallet",
 		"password not match": "The two passwords you typed do not match",
+		"payment empty":"The payment address is empty",
+		"payment bulk":"Enter the address and the amount, separated by spaces For example: AKMqDy51FuMnc4poiGBczQvPh6819hQuLH 10",
 		"please confirm password": "Please confirm password",
 		"please input a account": "please input a account",
 		"please input a correct amount": "Please input a correct amount",
@@ -244,6 +247,8 @@
 		"transfer send error": "Send failed, please try again later",
 		"transfer send success": "Send Success",
 		"transfer warning": "Safety tip: Do not transfer money to strangers easily.Please confirm the receiving account, transfer amount and asset type carefully.Please carefully identify assets with the same name to avoid being cheated.Do not transfer money to the receiving account (address) of other blockchain.",
+		"transfer add": "Add transfer",
+		"transfer bulk": "Bulk transfer",
 		"wallet opened": "Wallet is opened"
 	}
 }

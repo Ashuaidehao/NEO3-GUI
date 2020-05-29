@@ -209,6 +209,7 @@
 		"from": "付款地址",
 		"gas success":"GAS 提取成功，请稍后刷新页面查看",
 		"gas fail":"GAS 提取失败，请检查后再试",
+		"input error": "输入错误,请检查后输入",
 		"import private": "导入私钥",
 		"import private success": "私钥导入成功",
 		"import wallet": "导入钱包",
@@ -218,6 +219,8 @@
 		"open wallet file": "打开钱包文件",
 		"open wallet first": "请先打开钱包",
 		"password not match": "两次输入不一致，请确认后输入",
+		"payment empty":"收款地址为空",
+		"payment bulk":"输入地址和金额，用空格分隔 例如：AKMqDy51FuMnc4poiGBczQvPh6819hQuLH 10 ",
 		"please confirm password": "确认密码不可为空",
 		"please input a account": "请填写需要转入的 NEO3 地址",
 		"please input a correct amount": "请填写正确的转账金额",
@@ -244,6 +247,8 @@
 		"transfer send error": "交易发送失败,请检查后再试",
 		"transfer send success": "交易发送成功",
 		"transfer warning": "安全提示：请勿轻易向陌生人转账。请仔细确认收款账户、转账金额、资产类型。请仔细辨别相同资产名称的资产，避免被骗。请勿向其它区块链的收款账户（地址）转账。",
+		"transfer add": "添加转账",
+		"transfer bulk": "批量转账",
 		"wallet opened": "钱包文件已打开"
 	}
 }
