@@ -23,7 +23,6 @@ class Chainasset extends React.Component {
     const { t } = this.props;
     post("GetAllAssets",{}).then(res =>{
       var _data = res.data;
-      console.log(_data);
       if (_data.msgType === -1) {
         message.error("查询失败");
         return;

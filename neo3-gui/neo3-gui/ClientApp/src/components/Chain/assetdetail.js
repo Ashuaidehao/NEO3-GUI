@@ -2,12 +2,13 @@
 //just test replace wallet//
 import React from 'react';
 import {Link} from 'react-router-dom';
-import { Layout, Row, Col, message,List,Typography } from 'antd';
+import { Layout, Row, Col, message,List,PageHeader } from 'antd';
 import axios from 'axios';
 import Intitle from '../Common/intitle';
 import Transaction from '../Transaction/transaction';
 import Sync from '../sync';
 import { withTranslation } from 'react-i18next';
+import { post } from "../../core/request";
 
 const { Content } = Layout;
 
@@ -16,48 +17,37 @@ class Assetdetail extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      blockdetail: {},
+      assetdetail: {},
       height:0,
       witness:"",
       nonce:0,
     };
   }
   componentDidMount(){
-    let _h = Number(location.pathname.split(":").pop())
-    this.setHash(_h)();
-    this.setState({
-      local:location.pathname
-    })
+    this.getAsset(res => {
+      console.log(res)
+      this.setState({
+        assetdetail: res
+      });
+    });
   }
-  getAsset = () =>{
-      // console.log("数据暂无")
-    // var _this = this;
-    // let _height = this.state.height;
-    // axios.post('http://localhost:8081', {
-    //   "id":"1111",
-    //     "method": "GetBlock",
-    //     "params": {
-    //       "index": _height
-    //     }
-    //   })
-    // .then(function (response) {
-    //   var _data = response.data;
-    //   console.log(_data);
-    //   if(_data.msgType === -1){
-    //     message.info("查询失败,该高度错误");
-    //     return;
-    //   }
-    //   _this.setState({
-    //     blockdetail:_data.result,
-    //     witness:_data.result.witness.scriptHash,
-    //     nonce:_data.result.consensusData.nonce,
-    //     translist:_data.result.transactions
-    //   })
-    // })
-    // .catch(function (error) {
-    //   console.log(error);
-    //   console.log("error");
-    // });
+  getAsset = callback =>{
+    var _this = this;
+    let params = {
+      "asset": location.pathname.split(":").pop()
+    };
+    post("GetAsset",params).then(res =>{
+      var _data = res.data;
+      
+      if (_data.msgType === -1) {
+        message.error("查询失败");
+        return;
+      } else {
+        callback(_data.result);
+      }
+    }).catch(function (error) {
+      console.log("error");
+    });
   }
   setHash = (h) => {
     return () =>{
@@ -67,12 +57,38 @@ class Assetdetail extends React.Component{
     }
   }
   render(){
-    const {blockdetail,witness,nonce} = this.state;
+    const { assetdetail } = this.state;
     const { t } = this.props;
     return (
       <Layout className="gui-container">
-          <Sync/>
-          <Content className="mt3">
+        <Sync/>
+        <Content className="mt3">
+          <Row gutter={[30, 0]} type="flex">
+            <Col span={24} className="bg-white pv4">
+              <PageHeader title={t("blockchain.block info")}></PageHeader>
+              <div className="info-detail pv3">
+                <div className="hash-title pa3 mt5 mb4"><span>Hash: &nbsp;&nbsp;&nbsp;</span>{assetdetail.asset}</div>
+                {assetdetail.asset?
+                <Row>
+                  <Col span={12}>
+                    <ul className="detail-ul">
+                      <li><span className="hint">{t("名称")}:</span>{assetdetail.name}</li>
+                      <li><span className="hint">{t("发行时间")}：</span>{(assetdetail.createTime).substr(0,10)}</li>
+                      <li><span className="hint">{t("发行量")}：</span>{assetdetail.totalSupply?assetdetail.totalSupply:"--"}</li>
+                    </ul>
+                  </Col>
+                  <Col span={12}>
+                    <ul className="detail-ul">
+                      <li><span className="hint">{t("缩写")}：</span>{assetdetail.symbol}</li>
+                      <li><span className="hint">{t("精度")}：</span>{assetdetail.decimals ? assetdetail.decimals : '--'}</li>
+                      <li><span className="hint">{t("交易数量")}：</span>{assetdetail.transactionCount ? assetdetail.transactionCount : '--'}</li>
+                    </ul>
+                  </Col>
+                </Row>:null}
+              </div>
+            </Col>
+          </Row>
+
           <Transaction content={t("blockchain.transactions")} page="assetdetail"/>
         </Content>
       </Layout>

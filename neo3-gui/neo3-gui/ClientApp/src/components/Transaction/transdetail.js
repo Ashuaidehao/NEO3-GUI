@@ -30,7 +30,6 @@ class Transcon extends React.Component {
   }
   componentDidMount() {
     this.getTransdetail(res => {
-      console.log(res);
       this.setState({
         hashdetail: res,
         transfers: res.transfers,
