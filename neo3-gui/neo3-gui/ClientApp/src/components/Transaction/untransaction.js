@@ -2,10 +2,9 @@
 //just test replace wallet//
 import React from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import { Layout, Icon, Row, Col, PageHeader, List, Button, Typography, message, Tag } from 'antd';
-import Intitle from '../Common/intitle';
+import { Layout, Row, Col, PageHeader, List, Button, message } from 'antd';
 import { withTranslation } from "react-i18next";
+import { post } from "../../core/request";
 
 const { Content } = Layout;
 
@@ -14,7 +13,7 @@ class Untransaction extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loacl: "",
+      local: "",
       allpage: 0,
       page: 1,
       limit: 3,
@@ -26,10 +25,8 @@ class Untransaction extends React.Component {
     };
   }
   componentDidMount() {
-    let path = location.pathname.split("/");
-    path.pop()
     this.setState({
-      loacl: path
+      local: "/chain/untransaction:"
     })
     this.selTrans()
   }
@@ -40,6 +37,9 @@ class Untransaction extends React.Component {
       this.allset(_params);
     } else if (page === "wallet") {
       this.walletset(_params);
+      this.setState({
+        local:"/wallet/untransaction:"
+      })
     } else {
       this.allset(_params);
     }
@@ -75,44 +75,26 @@ class Untransaction extends React.Component {
     })
   }
   getMyuntrans = (params, callback) => {
-    axios.post('http://localhost:8081', {
-      "id": "51",
-      "method": "GetMyUnconfirmedTransactions",
-      "params": params
-    })
-    .then(function (response) {
-      var _data = response.data;
+    post("GetMyUnconfirmedTransactions",params).then(res =>{
+      var _data = res.data;
       if (_data.msgType === -1) {
         message.error("查询失败");
         return;
       } else {
         callback(_data);
       }
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error");
     });
   };
   getAlluntrans = (params, callback) => {
-    axios.post('http://localhost:8081', {
-      "id": "51",
-      "method": "GetUnconfirmTransactions",
-      "params": params
-    })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          message.error("查询失败");
-          return;
-        } else {
-          callback(_data);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    post("GetUnconfirmTransactions",params).then(res =>{
+      var _data = res.data;
+      if (_data.msgType === -1) {
+        message.error("查询失败");
+        return;
+      } else {
+        callback(_data);
+      }
+    });
   };
   loadUnMore = () => {
     this.setState({
@@ -160,7 +142,7 @@ class Untransaction extends React.Component {
   }
   render = () => {
     const { t } = this.props;
-    const { untranslist, loading, iswa, page, allpage } = this.state;
+    const { untranslist, loading, iswa, page, allpage,local } = this.state;
     const loadUnMore = !loading && page <= allpage ? (
       <div className="text-c mb3">
         {iswa ? (<Button type="primary" onClick={this.loadMyUnMore}>{ t('common.load more') }</Button>)
@@ -187,7 +169,10 @@ class Untransaction extends React.Component {
                     title={<span className="fail-light">{t('blockchain.transaction.unconfirmed')}</span>}
                     />
                     <div className="trans-detail">
-                        <p className="hash">{item.txId}</p>
+                        <p>
+                          <Link className="w500 ellipsis hash" to={ local + item.txId} title={t("show detail")}>{item.txId}</Link>
+                          <span className="float-r">{item.blockTime}</span>
+                        </p>
                     </div>
                   </List.Item>
                 )}

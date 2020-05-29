@@ -125,7 +125,10 @@
     font-size: 12px;
     word-break: break-all;
 }
-
+.amount{
+    display: inline-block;
+    min-width:100px;
+}
 
 .wa-detail .ant-list-item{
     padding-top: 8px;

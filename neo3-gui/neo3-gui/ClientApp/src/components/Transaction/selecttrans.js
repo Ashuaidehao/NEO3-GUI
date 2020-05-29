@@ -6,6 +6,7 @@ import {
   Alert,
   Tabs,
   Row,
+  message,
   Col
 } from 'antd';
 import { Layout } from 'antd';
@@ -54,10 +55,10 @@ class Transfer extends React.Component {
           <Row gutter={[30, 0]} className="mb1">
             <Col span={24} className="bg-white pv4">
               <Tabs className="tran-title" defaultActiveKey="1">
-                <TabPane tab={t("转账")} key="1">
+                <TabPane tab={t("wallet.transfer")} key="1">
                   <Multitomulti account={addresslist}  />
                 </TabPane>
-                <TabPane tab={t("批量转账")} key="2">
+                <TabPane tab={t("wallet.transfer bulk")} key="2">
                   <Onetomulti account={addresslist}  />
                 </TabPane>
               </Tabs>

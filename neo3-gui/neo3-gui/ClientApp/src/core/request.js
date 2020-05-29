@@ -13,7 +13,7 @@ const request = async (method , params) => {
             "id":"1",
             "method": method,
         },
-        { "params": {...params} }
+        { "params": params }
     )
     
     return await axios.post(url,options);

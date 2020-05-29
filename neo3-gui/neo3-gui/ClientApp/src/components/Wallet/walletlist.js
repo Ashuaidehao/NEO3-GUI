@@ -221,7 +221,7 @@ class Walletlist extends React.Component {
                       title={<Link to={"/wallet/walletlist:" + item.address} title={t("wallet.show detail")}>{item.address}</Link>}
                       description={
                         <span className="f-s">
-                          <span className="mr2">NEO <span className="wa-count">{item.neo}</span></span>
+                          <span className="amount mr2">NEO <span className="wa-count">{item.neo}</span></span>
                           <span>GAS <span className="wa-count">{item.gas}</span></span>
                         </span>}
                     />
