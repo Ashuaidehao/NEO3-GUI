@@ -114,6 +114,8 @@ namespace Neo.Services.ApiServices
             var totalSupply = AssetCache.GetTotalSupply(asset);
             using var db =new TrackDB();
             var record = db.GetContract(asset);
+            var trans = db.QueryTransactions(new TransactionFilter()
+                {Contracts = new List<UInt160>() {asset}, PageSize = 0});
             return new AssetInfoModel()
             {
                 Asset = assetInfo.Asset,
@@ -122,6 +124,7 @@ namespace Neo.Services.ApiServices
                 Symbol = assetInfo.Symbol,
                 TotalSupply = totalSupply,
                 CreateTime = record?.CreateTime,
+                TransactionCount = trans.TotalCount,
             };
         }
 
