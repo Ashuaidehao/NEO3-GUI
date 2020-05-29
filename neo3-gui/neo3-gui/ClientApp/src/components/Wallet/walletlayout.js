@@ -20,7 +20,6 @@ import { withTranslation } from "react-i18next";
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
-
 @withTranslation()
 @inject("walletStore")
 @observer
