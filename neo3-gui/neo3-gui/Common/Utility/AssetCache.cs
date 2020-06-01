@@ -159,7 +159,5 @@ namespace Neo.Common.Utility
             }
             return results;
         }
-
-        private static BigInteger? ToTotalSupply(StackItem value) => value is Null ? (BigInteger?)null : value.GetBigInteger();
     }
 }

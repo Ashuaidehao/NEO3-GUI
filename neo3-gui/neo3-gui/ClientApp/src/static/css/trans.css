@@ -171,3 +171,24 @@
     display: inline-block;
     vertical-align: bottom;
 }
+
+.delete-btn{
+    position: relative;
+    cursor: pointer;
+    top: 29px;
+}
+
+.delete-btn::after{
+    content: "—";
+    position: absolute;
+    color: #999999;
+    border: 1px solid #999999;
+    border-radius: 25px;
+    line-height: 18px;
+    height: 22px;
+    width: 22px;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+}
