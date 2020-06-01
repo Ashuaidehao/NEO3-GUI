@@ -10,7 +10,7 @@ namespace Neo.Models.Blocks
     public class AssetInfoModel : AssetInfo
     {
         public DateTime? CreateTime { get; set; }
-        public BigInteger? TotalSupply { get; set; }
+        public BigDecimal? TotalSupply { get; set; }
 
         public int TransactionCount { get; set; }
 

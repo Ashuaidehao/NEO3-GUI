@@ -129,28 +129,35 @@ namespace Neo.Common.Utility
         }
 
 
-        public static BigInteger? GetTotalSupply(UInt160 asset)
+        public static BigDecimal? GetTotalSupply(UInt160 asset)
         {
             using var snapshot = Blockchain.Singleton.GetSnapshot();
             using var sb = new ScriptBuilder();
             sb.EmitAppCall(asset, "totalSupply");
             using var engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
-            var total = engine.ResultStack.FirstOrDefault();
-            return ToTotalSupply(total);
+            var total = engine.ResultStack.FirstOrDefault().ToBigInteger();
+            var assetInfo = GetAssetInfo(asset);
+            return total.HasValue ? new BigDecimal(total.Value, assetInfo.Decimals) : (BigDecimal?)null;
         }
 
-        public static List<BigInteger?> GetTotalSupply(IEnumerable<UInt160> assets)
+        public static List<BigDecimal?> GetTotalSupply(IEnumerable<UInt160> assets)
         {
             using var snapshot = Blockchain.Singleton.GetSnapshot();
             using var sb = new ScriptBuilder();
+            var assetInfos = new List<AssetInfo>();
             foreach (var asset in assets)
             {
+                assetInfos.Add(GetAssetInfo(asset));
                 sb.EmitAppCall(asset, "totalSupply");
             }
             using var engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
-            return engine.ResultStack.Select(ToTotalSupply).ToList();
+            var values = engine.ResultStack.Select(s => s.ToBigInteger()).ToList();
+            var results = new List<BigDecimal?>();
+            for (var i = 0; i < values.Count; i++)
+            {
+                results.Add(values[i].HasValue ? new BigDecimal(values[i].Value, assetInfos[i].Decimals) : (BigDecimal?)null);
+            }
+            return results;
         }
-
-        private static BigInteger? ToTotalSupply(StackItem value) => value is Null ? (BigInteger?)null : value.GetBigInteger();
     }
 }
