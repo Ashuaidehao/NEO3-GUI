@@ -5,6 +5,7 @@ using Neo.Common;
 using Neo.Common.Storage;
 using Neo.Common.Storage.LevelDBModules;
 using Neo.Common.Utility;
+using Neo.IO;
 using Neo.IO.Json;
 using Neo.Ledger;
 using Neo.Models;
@@ -56,6 +57,38 @@ namespace Neo.Services.ApiServices
                     }));
             }
             return model;
+        }
+
+
+
+        /// <summary>
+        /// query transaction info
+        /// </summary>
+        /// <param name="txId"></param>
+        /// <param name="showJson"></param>
+        /// <returns></returns>
+        public async Task<object> GetRawTransaction(UInt256 txId, bool showJson = false)
+        {
+            var transaction = Blockchain.Singleton.GetTransaction(txId);
+            if (transaction == null)
+            {
+                return Error(ErrorCode.TxIdNotFound);
+            }
+            if (showJson)
+            {
+                JObject json = transaction.ToJson();
+                TransactionState txState = Blockchain.Singleton.View.Transactions.TryGet(txId);
+                if (txState != null)
+                {
+                    Header header = Blockchain.Singleton.GetHeader(txState.BlockIndex);
+                    json["blockhash"] = header.Hash.ToString();
+                    json["confirmations"] = Blockchain.Singleton.Height - header.Index + 1;
+                    json["blocktime"] = header.Timestamp;
+                    json["vm_state"] = txState.VMState;
+                }
+                return json.ToString();
+            }
+            return transaction.ToArray().ToHexString();
         }
 
 

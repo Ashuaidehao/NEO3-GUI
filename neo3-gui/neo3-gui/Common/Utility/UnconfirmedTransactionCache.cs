@@ -3,6 +3,7 @@ using System.Linq;
 using Akka.Actor;
 using Neo.Ledger;
 using Neo.Models;
+using Neo.Models.Jobs;
 using Neo.Network.P2P.Payloads;
 using Neo.SmartContract;
 using VmArray = Neo.VM.Types.Array;
@@ -67,7 +68,12 @@ namespace Neo.Common.Utility
 
         public static void RemoveUnconfirmedTransactions(UInt256 txId)
         {
-            _unconfirmedTransactions.Remove(txId);
+            if (_unconfirmedTransactions.ContainsKey(txId))
+            {
+                var confirmTransaction = _unconfirmedTransactions[txId];
+                TransactionConfirmJob.AddConfirmedTransaction(confirmTransaction);
+                _unconfirmedTransactions.Remove(txId);
+            }
         }
 
 

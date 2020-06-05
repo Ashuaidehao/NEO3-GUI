@@ -141,13 +141,7 @@ namespace Neo.Services.ApiServices
             ContractParameter[] contractParameters = null;
             try
             {
-                contractParameters = para.Parameters?.Select(p =>
-                {
-                    return ContractParameter.FromJson(p);
-                    //var parameterValue = new ContractParameter(p.Type);
-                    //parameterValue.SetValue(p.Value);
-                    //return parameterValue;
-                }).ToArray();
+                contractParameters = para.Parameters?.Select(JsonToContractParameter).ToArray();
             }
             catch (Exception e)
             {
@@ -157,7 +151,7 @@ namespace Neo.Services.ApiServices
             var signers = new List<Cosigner>();
             if (para.Cosigners.NotEmpty())
             {
-                signers.AddRange(para.Cosigners.Select(s => new Cosigner() { Account = s.Account, Scopes = s.Scopes }));
+                signers.AddRange(para.Cosigners.Select(s => new Cosigner() { Account = s.Account, Scopes = s.Scopes, AllowedContracts = new UInt160[0] }));
             }
 
             Transaction tx = null;
@@ -202,6 +196,62 @@ namespace Neo.Services.ApiServices
             await tx.Broadcast();
             result.TxId = tx.Hash;
             return result;
+        }
+
+
+
+        public static ContractParameter JsonToContractParameter(JObject json)
+        {
+            ContractParameter parameter = new ContractParameter
+            {
+                Type = json["type"].TryGetEnum<ContractParameterType>()
+            };
+            if (json["value"] == null)
+            {
+                return parameter;
+            }
+            if (json["type"].AsString() == "Address")
+            {
+                parameter.Type = ContractParameterType.Hash160;
+                parameter.Value = json["value"].AsString().ToScriptHash();
+                return parameter;
+            }
+            switch (parameter.Type)
+            {
+                case ContractParameterType.Signature:
+                case ContractParameterType.ByteArray:
+                    parameter.Value = Convert.FromBase64String(json["value"].AsString());
+                    break;
+                case ContractParameterType.Boolean:
+                    parameter.Value = json["value"].AsBoolean();
+                    break;
+                case ContractParameterType.Integer:
+                    parameter.Value = BigInteger.Parse(json["value"].AsString());
+                    break;
+                case ContractParameterType.Hash160:
+                    parameter.Value = UInt160.Parse(json["value"].AsString());
+                    break;
+                case ContractParameterType.Hash256:
+                    parameter.Value = UInt256.Parse(json["value"].AsString());
+                    break;
+                case ContractParameterType.PublicKey:
+                    parameter.Value = ECPoint.Parse(json["value"].AsString(), ECCurve.Secp256r1);
+                    break;
+                case ContractParameterType.String:
+                    parameter.Value = json["value"].AsString();
+                    break;
+                case ContractParameterType.Array:
+                    parameter.Value = ((JArray)json["value"]).Select(p => JsonToContractParameter(p)).ToList();
+                    break;
+                case ContractParameterType.Map:
+                    parameter.Value = ((JArray)json["value"]).Select(p =>
+                       new KeyValuePair<ContractParameter, ContractParameter>(JsonToContractParameter(p["key"]),
+                           JsonToContractParameter(p["value"]))).ToList();
+                    break;
+                default:
+                    throw new ArgumentException();
+            }
+            return parameter;
         }
 
 
