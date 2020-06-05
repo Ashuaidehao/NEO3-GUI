@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Neo.Ledger;
+using Neo.Network.P2P;
 
 namespace Neo.Models.Jobs
 {
@@ -19,7 +20,7 @@ namespace Neo.Models.Jobs
             {
                 MsgType = WsMessageType.Push,
                 Method = "getSyncHeight",
-                Result = new HeightStateModel { SyncHeight = Blockchain.Singleton.Height, HeaderHeight = Blockchain.Singleton.HeaderHeight }
+                Result = new HeightStateModel { SyncHeight = Blockchain.Singleton.Height, HeaderHeight = Blockchain.Singleton.HeaderHeight,ConnectedCount = LocalNode.Singleton.ConnectedCount }
             };
         }
     }

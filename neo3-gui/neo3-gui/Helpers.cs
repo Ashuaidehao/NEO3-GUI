@@ -881,6 +881,8 @@ namespace Neo
         }
 
 
+        public static BigInteger? ToBigInteger(this StackItem value) => value == null || value is Null ? (BigInteger?)null : value.GetBigInteger();
+
         public static bool ToBigInteger(this JStackItem item, out BigInteger amount)
         {
             amount = 0;

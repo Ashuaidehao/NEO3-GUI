@@ -64,7 +64,8 @@ namespace Neo
 
             var notify = app.UseNotificationService();
             notify.Register(new SyncHeightJob(TimeSpan.FromSeconds(5)));
-            notify.Register(new SyncWalletJob(TimeSpan.FromSeconds(10)));
+            notify.Register(new SyncWalletJob(TimeSpan.FromSeconds(11)));
+            notify.Register(new TransactionConfirmJob(TimeSpan.FromSeconds(7)));
 
             //app.UseSpa(spa =>
             //{

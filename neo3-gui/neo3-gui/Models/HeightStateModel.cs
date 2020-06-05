@@ -11,6 +11,8 @@ namespace Neo.Models
         public uint SyncHeight { get; set; }
         public uint HeaderHeight { get; set; }
 
+        public int ConnectedCount { get; set; }
+
         public DateTime Time { get; set; } = DateTime.Now;
     }
 }

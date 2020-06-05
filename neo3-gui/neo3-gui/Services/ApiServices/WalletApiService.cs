@@ -135,6 +135,24 @@ namespace Neo.Services.ApiServices
             return result;
         }
 
+
+        public async Task<object> ChangePassword(string oldPassword, string newPassword)
+        {
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            if (CurrentWallet.ChangePassword(oldPassword, newPassword))
+            {
+                if (CurrentWallet is NEP6Wallet wallet)
+                {
+                    wallet.Save();
+                }
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// create new standard address
         /// </summary>
@@ -401,7 +419,7 @@ namespace Neo.Services.ApiServices
             }
             BigInteger gas = BigInteger.Zero;
             using (SnapshotView snapshot = Blockchain.Singleton.GetSnapshot())
-                foreach (UInt160 account in CurrentWallet.GetAccounts().Where(a=>!a.WatchOnly).Select(p => p.ScriptHash))
+                foreach (UInt160 account in CurrentWallet.GetAccounts().Where(a => !a.WatchOnly).Select(p => p.ScriptHash))
                 {
                     gas += NativeContract.NEO.UnclaimedGas(snapshot, account, snapshot.Height + 1);
                 }
@@ -549,10 +567,6 @@ namespace Neo.Services.ApiServices
         /// <summary>
         /// send asset
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="receiver"></param>
-        /// <param name="amount"></param>
-        /// <param name="asset"></param>
         /// <returns></returns>
         public async Task<object> SendTo(TransferRequest[] transfers)
         {
@@ -777,6 +791,34 @@ namespace Neo.Services.ApiServices
             }
             return Error(ErrorCode.SignFail, context.SafeSerialize());
         }
+
+
+        /// <summary>
+        /// Broadcast complete signed transaction
+        /// </summary>
+        /// <param name="signContext"></param>
+        /// <returns></returns>
+        public async Task<object> BroadcastTransaction(string signContext)
+        {
+            Transaction transaction = null;
+            try
+            {
+                ContractParametersContext context = ContractParametersContext.FromJson(signContext.DeserializeJson<JObject>());
+                if (!context.Completed)
+                {
+                    return Error(ErrorCode.SignFail, signContext);
+                }
+                transaction = (Transaction)context.Verifiable;
+                transaction.Witnesses = context.GetWitnesses();
+            }
+            catch (Exception e)
+            {
+                return Error(ErrorCode.InvalidPara);
+            }
+            await transaction.Broadcast();
+            return transaction.Hash;
+        }
+
 
         /// <summary>
         /// get my wallet unconfirmed transactions
