@@ -100,7 +100,7 @@
 		"time": "Time"
 	},
 	"contract": {
-		"choose account": "Choose account",
+		"choose account": "Choose address",
 		"contract detail": "Contract Detail",
 		"cosigners": "Cosigners",
 		"deploy contract": "Deploy Contract",
@@ -143,7 +143,7 @@
 		"correct":"Please confirm the input correct.",
 		"required": "This input is required."
 	},
-	"input account": "Input Account",
+	"input account": "Input Address",
 	"please confirm your password": "Please confirm your password",
 	"please input Hex/WIF private key": "Please input Hex/WIF private key",
 	"please input password": "Please input password",
@@ -155,7 +155,7 @@
 		"hash-hint": "Pelese input hash",
 		"height unexist": "The height not exist,please check again"
 	},
-	"select account": "Select Account",
+	"select account": "Select Address",
 	"select path": "Select Path",
 	"settings": {
 		"about": "About",
@@ -172,7 +172,7 @@
 	},
 	"show detail": "Show Detail",
 	"sideBar": {
-		"accounts": "Accounts",
+		"accounts": "Address",
 		"address book": "Address",
 		"assets": "Assets",
 		"blockchain": "BlockChain",
@@ -191,7 +191,7 @@
 	},
 	"wallet": {
 		"Nep2 key": "Nep2 Key",
-		"accounts": "Accounts",
+		"accounts": "Address",
 		"add address": "Create new address",
 		"add address success": "Create address success",
 		"amount": "Amount",
@@ -224,12 +224,12 @@
 		"payment empty":"The payment address is empty",
 		"payment bulk":"Enter the address and the amount, separated by spaces For example: AKMqDy51FuMnc4poiGBczQvPh6819hQuLH 10",
 		"please confirm password": "Please confirm password",
-		"please input a account": "please input a account",
+		"please input a account": "please input a address",
 		"please input a correct amount": "Please input a correct amount",
 		"please input password": "Please input password",
 		"please input twice": "Please confirm password twice",
 		"please open wallet": "Please open wallet",
-		"please select a account": "Please select a account",
+		"please select a account": "Please select a address",
 		"please select file and input password": "Please select wallet file and input password",
 		"please select file path": "Please select wallet file path",
 		"private fail": "Private key error, please checked and try again",
@@ -248,7 +248,7 @@
 		"transfer": "Transfer",
 		"transfer send error": "Send failed, please try again later",
 		"transfer send success": "Send Success",
-		"transfer warning": "Safety tip: Do not transfer money to strangers easily.Please confirm the receiving account, transfer amount and asset type carefully.Please carefully identify assets with the same name to avoid being cheated.Do not transfer money to the receiving account (address) of other blockchain.",
+		"transfer warning": "Safety tip: Do not transfer money to strangers easily.Please confirm the receiving address, transfer amount and asset type carefully.Please carefully identify assets with the same name to avoid being cheated.Do not transfer money to the receiving account (address) of other blockchain.",
 		"transfer add": "Add transfer",
 		"transfer bulk": "Bulk transfer",
 		"wallet opened": "Wallet is opened"

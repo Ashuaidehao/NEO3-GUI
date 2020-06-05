@@ -124,7 +124,7 @@ class Blockdetail extends React.Component {
                     <ul className="detail-ul">
                       <li><span className="hint">{t("common.size")}：</span>{blockdetail.size} {t("common.bytes")}</li>
                       <li><span className="hint">{t("blockchain.nounce")}：</span>{nonce}</li>
-                      <li><span className="hint">{t("blockchain.system fee")}：</span>{blockdetail.networkFee ? blockdetail.networkFee : '--'}</li>
+                      <li><span className="hint">{t("blockchain.system fee")}：</span>{blockdetail.systemFee ? blockdetail.systemFee : '--'}</li>
                       <li><span className="hint">{t("blockchain.witness")}：</span>{blockdetail.nextConsensus}</li>
                       <li><span className="hint">{t("blockchain.next block")}：</span><Link to={"/chain/detail:" + (blockdetail.blockHeight + 1)} onClick={this.setHeight(blockdetail.blockHeight + 1)}>{blockdetail.blockHeight + 1}</Link></li>
                     </ul>

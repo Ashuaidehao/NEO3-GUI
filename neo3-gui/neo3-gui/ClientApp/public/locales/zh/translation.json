@@ -100,7 +100,7 @@
 		"time": "时间"
 	},
 	"contract": {
-		"choose account": "选择账户",
+		"choose account": "选择地址",
 		"contract detail": "合约详情",
 		"cosigners": "附加签名",
 		"deploy contract": "部署合约",
@@ -143,7 +143,7 @@
 		"correct": "请确认是否输入正确",
 		"required": "该输入框为必填项"
 	},
-	"input account": "输入账户",
+	"input account": "输入地址",
 	"please confirm your password": "请确认密码",
 	"please input Hex/WIF private key": "导入HEX/WIF格式私钥",
 	"please input password": "请输入密码",
@@ -155,7 +155,7 @@
 		"hash-hint": "输入需要查找的脚本散列",
 		"height unexist": "该高度不存在，请查证后再输入"
 	},
-	"select account": "选择账户",
+	"select account": "选择地址",
 	"select path": "选择路径",
 	"settings": {
 		"about": "关于",
@@ -172,7 +172,7 @@
 	},
 	"show detail": "查看详情",
 	"sideBar": {
-		"accounts": "账户列表",
+		"accounts": "地址列表",
 		"address book": "地址簿",
 		"assets": "资产",
 		"blockchain": "区块链",
@@ -191,7 +191,7 @@
 	},
 	"wallet": {
 		"Nep2 key": "加密私钥",
-		"accounts": "账户列表",
+		"accounts": "地址列表",
 		"add address": "创建新地址",
 		"add address success": "钱包地址新建成功",
 		"amount": "转账金额",

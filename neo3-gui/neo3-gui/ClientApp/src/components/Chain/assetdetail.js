@@ -73,8 +73,8 @@ class Assetdetail extends React.Component{
                   <Col span={12}>
                     <ul className="detail-ul">
                       <li><span className="hint">{t("名称")}:</span>{assetdetail.name}</li>
-                      <li><span className="hint">{t("发行时间")}：</span>{(assetdetail.createTime).substr(0,10)}</li>
                       <li><span className="hint">{t("发行量")}：</span>{assetdetail.totalSupply?assetdetail.totalSupply:"--"}</li>
+                      <li><span className="hint">{t("发行时间")}：</span>{(assetdetail.createTime).substr(0,10)}</li>
                     </ul>
                   </Col>
                   <Col span={12}>
