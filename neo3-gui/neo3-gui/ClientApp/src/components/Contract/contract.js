@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React from 'react';
+import { withRouter, Link } from 'react-router-dom';
 import 'antd/dist/antd.css';
 import '../../static/css/menu.css'
 import '../../static/css/contract.css'
@@ -77,7 +78,7 @@ class Contract extends React.Component {
                       avatar={
                         <Avatar src={"https://neo.org/images/gui/"+item.asset+".png"}/>
                       }
-                      title={<span>{item.name}</span>}
+                      title={<Link className="asset-link w450 ellipsis" to={"/contract/detail:" + item.asset} title={t("show detail")}>{item.name}</Link>}
                     />
                     <Typography>{item.asset}</Typography>
                     <Typography>{item.balance}</Typography>

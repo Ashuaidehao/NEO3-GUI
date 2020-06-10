@@ -12,6 +12,7 @@ import { Input,
     Form,
     message,
     Button,
+    InputNumber
   } from 'antd';
 import Datatrans from '../Common/datatrans';
 import { Layout } from 'antd';
@@ -22,13 +23,22 @@ import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import DynamicArray from "./dynamicArray";
 
+
+import { MinusSquareOutlined, PlusOutlined } from '@ant-design/icons';
+const { Option } = Select;
+
 const { TextArea } = Input;
 const { Content } = Layout;
-const {Option} = Select;
+
 const layout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 20 },
+  labelCol: { span: 0 },
+  wrapperCol: { span: 0 },
 };
+const typeOption = [
+  "ByteArray",
+  "Address",
+  "Hash160"
+]
 
 @withTranslation()
 @inject("walletStore")
@@ -93,7 +103,7 @@ class Contractinvoke extends React.Component{
       .then(function (response) {
         var _data = response.data;
         _this.setState({loading:false});
-        
+        console.log(_data)
         if(_data.msgType === -1){
           _this.setState({
             methods:[],
@@ -162,7 +172,10 @@ class Contractinvoke extends React.Component{
         tresult:"",
       },this.onFill());
       this.refs.formRef.validateFields().then(data => {
+        console.log(data);
         let params = this.makeParams(data);
+
+        console.log(params);
         
         this.invokeContract(params,res=>{
           this.setState({
@@ -238,7 +251,7 @@ class Contractinvoke extends React.Component{
     }
     handleparam = (val) =>{
       console.log(val);
-      if(val.arrays.length <= 0) return;
+      if(val.length <= 0) return;
       this.handleCancel()
     }
     render = () =>{
@@ -249,7 +262,7 @@ class Contractinvoke extends React.Component{
     <Layout className="gui-container">
       <Sync />
         
-      {/* <DynamicArray handleparam={this.handleparam.bind(this)}/> */}
+      <DynamicArray handleparam={this.handleparam.bind(this)}/>
         
       <Content className="mt3">
         <Row gutter={[30, 0]}  className="bg-white pv4" style={{ 'minHeight': 'calc( 100vh - 150px )'}}>
@@ -294,7 +307,51 @@ class Contractinvoke extends React.Component{
                 {params[0]?<div className="param-title"><span>*</span> {t("contract.parameters")} :</div>:null}
                 {params.map((item) => {
                   return(
-                    <Form.Item
+                    <div>
+                      {item.type.toLowerCase() == 'bytearray'?
+                      <Form.List name={item.name}>
+                        <Row>
+                          <Col span="8">
+                          <Form.Item
+                            name={item.name}
+                            key={item.name}
+                            label={<span>{item.name}</span>}
+                            rules={[
+                            {
+                              required: true,
+                              message: t("请选择正确的类型"),
+                            },
+                            ]}
+                          >
+                            <Select
+                            placeholder={t("select account")}
+                            style={{ width: '100%' }}>
+                            {typeOption.map((item) => {
+                              return (
+                              <Option key={item}>{item}</Option>
+                              )
+                            })}
+                            </Select>
+                          </Form.Item>
+                          </Col>
+                          <Col span="16">
+                            <Form.Item
+                              name={item.name}
+                              key={item.name}
+                              label={<span>{item.name}</span>}
+                              rules={[
+                              {
+                                  required: true,
+                                  message: t("wallet.required"),
+                              },
+                              ]}>
+                              <Input placeholder="JSON" />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </Form.List>
+                      :
+                      <Form.Item
                       {...layout}
                       className="param-input"
                       name={item.name}
@@ -306,15 +363,18 @@ class Contractinvoke extends React.Component{
                           message: t("input.required"),
                         },
                       ]}>
-                        {/* {item.type.toLowerCase() == 'array' ?
+                        {item.type.toLowerCase() == 'array' ?
                         <Input.Search
                           placeholder="input search text"
                           enterButton="Search"
                           size="large"
                           onSearch={this.makeArray}
-                        />: <Input placeholder={item.type}/>} */}
-                        <Input placeholder={item.type}/>
-                    </Form.Item>
+                        />:<Input placeholder={item.type}/>}
+                      </Form.Item>
+                      }
+                      
+                    </div>
+                    
                   )}
                 )}
                 <Form.Item

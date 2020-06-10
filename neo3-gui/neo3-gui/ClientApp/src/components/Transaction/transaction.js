@@ -6,7 +6,7 @@ import { withRouter, Link } from 'react-router-dom';
 import axios from 'axios';
 import { Layout, Row, Col, List, Button, PageHeader, message } from 'antd';
 import { withTranslation } from "react-i18next";
-
+import Searcharea from './searcharea'
 import { SwapRightOutlined } from '@ant-design/icons';
 
 const { Content } = Layout;
@@ -27,6 +27,7 @@ class Transaction extends React.Component {
       translist: [],
       loading: true,
       iswa: false,
+      show:false
     };
   }
   componentDidMount() {
@@ -241,6 +242,16 @@ class Transaction extends React.Component {
       );
     });
   }
+  visi = () =>{
+    this.setState({
+      show: !this.state.show,
+    });
+  }
+  show = (e) => {
+    return () => {
+      console.log(this.state.show)
+    }
+  }
   render = () => {
     const { t } = this.props;
     const { translist, local, loading, iswa,isnpe, page, allpage } = this.state;
@@ -288,6 +299,7 @@ class Transaction extends React.Component {
                 )}
               />
             </Col>
+            <Searcharea show={this.show()} />
             <div className="pv1"></div>
           </Row>
         </Content>

@@ -1,8 +1,8 @@
 import React from 'react';
 import 'antd/dist/antd.css';
 import axios from 'axios';
-
-import { Form, Input, Button,Select } from 'antd';
+import { withTranslation } from "react-i18next";
+import { Form, Input, Button,Select,Row,Col } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 
@@ -21,18 +21,10 @@ const formItemLayout = {
 const formItemLayoutWithOutLabel = {
   wrapperCol: {
     xs: { span: 24, offset: 0 },
-    sm: { span: 20, offset: 4 },
+    sm: { span: 20, offset: 0 },
   },
 };
 
-const prefixSelector = (
-  <Form.Item noStyle>
-    <Select style={{ width: 70 }}>
-      <Option value="86">+86</Option>
-      <Option value="87">+87</Option>
-    </Select>
-  </Form.Item>
-);
 const typeOption = [
 "Signature",
 "Boolean",
@@ -41,89 +33,74 @@ const typeOption = [
 "Hash256",
 "ByteArray",
 "PublicKey",
-"String",
-"Array"
+"String"
 ]
+
+
+@withTranslation()
 class DynamicArray extends React.Component{
   handleparam = values => {
     this.props.handleparam(values);
   }
   render = () =>{
+    const { t } = this.props;
     return (
         <Form name="dynamic_form" {...formItemLayoutWithOutLabel} onFinish={this.handleparam}>
-          <Form.List name="arrays">
+          <Form.List name="guiarray">
             {(fields, { add, remove }) => {
-              console.log(fields)
               return (
-                <div>
-                  {fields.map((field, index) => (
-                    <div key={field.key}>
-                      {/* <Form.Item
-                        {...field}
-                        label="Type"
-                        key={"type"+field.key}
+                  <div>
+                  {fields.map((field) => (
+                    <Row key={field.key}>
+                      <Col span="8">
+                      <Form.Item
+                        name={[field.name, "type"]}
+                        label={t("Type")}
                         rules={[
-                          {
-                            required: true,
-                            message: "qqqq",
-                          },
+                        {
+                          required: true,
+                          message: t("wallet.please select a account"),
+                        },
                         ]}
                       >
-                        <Select placeholder="type选择">
-                            {typeOption.map((item)=>{
-                              return(
-                              <Option key={item}>{item}</Option>
-                              )
-                            })}
+                        <Select
+                        placeholder={t("select account")}
+                        style={{ width: '100%' }}>
+                        {typeOption.map((item) => {
+                          return (
+                          <Option key={item}>{item}</Option>
+                          )
+                        })}
                         </Select>
-                      </Form.Item> */}
-                      <Form.Item
-                        {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-                        label={index === 0 ? 'Passengers' : ''}
-                        required={false}
-                        key={field.key}
-                      >
-                        {/* <Form.Item
-                          {...field}
-                          validateTrigger={['onChange', 'onBlur']}
-                          rules={[
-                            {
-                              required: true,
-                              whitespace: true,
-                              message: "Please input passenger's name or delete this field.",
-                            },
-                          ]}
-                          noStyle
-                        >
-                          <Input placeholder="passenger name" style={{ width: '60%' }} />
-                        </Form.Item> */}
-                        <Form.Item
-                          label="Phone Number"
-                          rules={[{ required: true, message: 'Please input your phone number!' }]}
-                        >
-                          <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
-                        </Form.Item>
-                        {fields.length > 1 ? (
-                          <MinusCircleOutlined
-                            className="dynamic-delete-button"
-                            style={{ margin: '0 8px' }}
-                            onClick={() => {
-                              remove(field.name);
-                            }}
-                          />
-                        ) : null}
                       </Form.Item>
-                    </div>
+                      </Col>
+                      <Col span="16">
+                      <Form.Item
+                          name={[field.name, "amount"]}
+                          label={t("Array 类型")}
+                          rules={[
+                          {
+                              required: true,
+                              message: t("wallet.required"),
+                          },
+                          ]}>
+                          <Input placeholder="JSON" />
+                      </Form.Item>
+                      </Col>
+                      {fields.length > 1 ? (
+                          <div className="delete-btn" onClick={ () => { remove(field.name); }}></div>
+                      ) : null}
+                    </Row>
                   ))}
-                  <Form.Item>
+                  <Form.Item className="mb0">
                     <Button
                       type="dashed"
                       onClick={() => {
                         add();
                       }}
-                      style={{ width: '60%' }}
+                      style={{ width: "100%" }}
                     >
-                      <PlusOutlined /> Add field
+                      <PlusOutlined /> {t("wallet.transfer add")}
                     </Button>
                   </Form.Item>
                 </div>
