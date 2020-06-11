@@ -1,7 +1,6 @@
 /* eslint-disable */ 
 import React from 'react';
 import 'antd/dist/antd.css';
-import axios from 'axios';
 import { observer, inject } from "mobx-react";
 import { Input,
     PageHeader,
@@ -22,7 +21,7 @@ import { SwapOutlined } from '@ant-design/icons';
 import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import DynamicArray from "./dynamicArray";
-
+import { post } from "../../core/request";
 
 import { MinusSquareOutlined, PlusOutlined } from '@ant-design/icons';
 const { Option } = Select;
@@ -56,7 +55,7 @@ class Contractinvoke extends React.Component{
         loading:false,
         methods:[],
         params:[],
-        methodname:""
+        methodselect:""
       };
     }
     toHome = () =>{
@@ -93,17 +92,12 @@ class Contractinvoke extends React.Component{
       if(!_hash){message.info(t("contract.search input check"));return;}
       this.setState({loading:true});
       var _this = this;
-      axios.post('http://localhost:8081', {
-        "id":"1111",
-        "method": "GetContract",
-        "params": {
-          "contractHash":_hash
-        }
-      })
+      var params = {"contractHash":_hash};
+      post("GetContract",params)
       .then(function (response) {
         var _data = response.data;
         _this.setState({loading:false});
-        console.log(_data)
+
         if(_data.msgType === -1){
           _this.setState({
             methods:[],
@@ -122,35 +116,50 @@ class Contractinvoke extends React.Component{
       })
       .catch(function (error) {
         console.log(error);
-        console.log("error");
       });
     }
     showPara = e => {
       this.setState({
         params:this.state.methods[e].parameters,
-        methodname:this.state.methods[e].name
+        methodselect:this.state.methods[e]
       })
     }
     makeParams = (data) =>{
 
+      let method = this.state.methodselect;
+
       let _params = {
         "contractHash": this.state.hash,
-        "method": this.state.methodname,
+        "method": method.name,
         "parameters":[],
         "cosigners":[],
         "sendTx": false
       };
       
       let inside = new Array();
-      this.state.params.map((item)=>{
-        item.value = data[item.name];
-        if(item.type.toLowerCase() === 'array'){
-          item.value = JSON.parse(item.value);
+      this.state.params.map((item,index)=>{
+
+
+        //深拷贝
+        let _item = JSON.parse(JSON.stringify(item));
+
+        let _type = method.parameters[index].type.toLowerCase();
+        _item.value = data[_item.name];
+
+        //检测字符串中是否包含两种类型值
+        if(_type.search(/(hash160)|(bytearray)/g) !== -1 && typeof _item.value  === "object"){
+          _item.type = _item.value.type;
+          _item.value = _item.value.string;
         }
-        inside = inside.concat(item);
+        
+        if(_type === 'array'){
+          _item.value = JSON.parse(_item.value);
+        }
+        inside = inside.concat(_item);
       })
       if(inside) _params.parameters = inside;
 
+      //构造consigners
       let cosigners = new Array();
       data.cosigners?data.cosigners.map((item)=>{
         let _list = {};
@@ -172,7 +181,6 @@ class Contractinvoke extends React.Component{
         tresult:"",
       },this.onFill());
       this.refs.formRef.validateFields().then(data => {
-        console.log(data);
         let params = this.makeParams(data);
 
         console.log(params);
@@ -182,8 +190,8 @@ class Contractinvoke extends React.Component{
             tresult:JSON.stringify(res.result),
           },this.onFill());
         });
-      }).catch(function(res){
-        console.log(res)
+      }).catch(function(error){
+        console.log(error)
         message.error(t("input.correct"));
       })
     }
@@ -210,12 +218,7 @@ class Contractinvoke extends React.Component{
     }
     invokeContract = (params,callback) =>{
       const { t } = this.props;
-      axios.post('http://localhost:8081', {
-        "id":"1111",
-        "method": "InvokeContract",
-        "params": params
-      })
-      .then(function (res) {
+      post("InvokeContract",params).then(function (res) {
         var _data = res.data;
         if(_data.msgType === -1){
           Modal.error({
@@ -236,7 +239,6 @@ class Contractinvoke extends React.Component{
       })
       .catch(function (error) {
         console.log(error);
-        console.log("error");
       });
     }
     handleCancel = () => {
@@ -251,6 +253,7 @@ class Contractinvoke extends React.Component{
     }
     handleparam = (val) =>{
       console.log(val);
+      console.log(JSON.stringify(val))
       if(val.length <= 0) return;
       this.handleCancel()
     }
@@ -262,13 +265,13 @@ class Contractinvoke extends React.Component{
     <Layout className="gui-container">
       <Sync />
         
-      <DynamicArray handleparam={this.handleparam.bind(this)}/>
-        
+      {/* <DynamicArray handleparam={this.handleparam.bind(this)}/> */}
       <Content className="mt3">
         <Row gutter={[30, 0]}  className="bg-white pv4" style={{ 'minHeight': 'calc( 100vh - 150px )'}}>
           <Col span={24}>
           <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
           <PageHeader title={t('contract.invoke contract')}></PageHeader>
+
           <Form ref="formRef" className="trans-form" onFinish={this.invoke}>
             <Row className="mt3 mb5">
               <Col span={20}>
@@ -305,57 +308,42 @@ class Contractinvoke extends React.Component{
                   </Select>
                 </Form.Item>
                 {params[0]?<div className="param-title"><span>*</span> {t("contract.parameters")} :</div>:null}
-                {params.map((item) => {
+                {params.map((item,index) => {
                   return(
-                    <div>
-                      {item.type.toLowerCase() == 'bytearray'?
-                      <Form.List name={item.name}>
-                        <Row>
-                          <Col span="8">
+                    <div key={index}>
+                      {item.type.toLowerCase() === 'bytearray' || item.type.toLowerCase() == 'hash160'?
+                      <Form.Item className="spec-row" label={<span>{item.name}</span>}>
+                        <Input.Group compact>
                           <Form.Item
-                            name={item.name}
-                            key={item.name}
-                            label={<span>{item.name}</span>}
-                            rules={[
-                            {
-                              required: true,
-                              message: t("请选择正确的类型"),
-                            },
-                            ]}
+                            name={[item.name, 'type']}
+                            style={{
+                              display: 'inline-block',
+                              width: '30%',
+                            }}
+                            rules={[{ required: true, message: 'type' }]}
                           >
-                            <Select
-                            placeholder={t("select account")}
-                            style={{ width: '100%' }}>
-                            {typeOption.map((item) => {
-                              return (
-                              <Option key={item}>{item}</Option>
-                              )
-                            })}
+                            <Select placeholder="Select Type" style={{ width: '100%' }}>
+                              <Option value="ByteArray">ByteArray</Option>
+                              <Option value="Hash160">Hash160</Option>
+                              <Option value="Address">Address</Option>
                             </Select>
                           </Form.Item>
-                          </Col>
-                          <Col span="16">
-                            <Form.Item
-                              name={item.name}
-                              key={item.name}
-                              label={<span>{item.name}</span>}
-                              rules={[
-                              {
-                                  required: true,
-                                  message: t("wallet.required"),
-                              },
-                              ]}>
-                              <Input placeholder="JSON" />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                      </Form.List>
+                          <Form.Item
+                            name={[item.name,'string']}
+                            style={{
+                              display: 'inline-block',
+                              width: '70%',
+                            }}
+                            rules={[{ required: true, message: 'String' }]}
+                          >
+                            <Input style={{ width: '100%' }} placeholder="String" />
+                          </Form.Item>
+                        </Input.Group>
+                      </Form.Item>
                       :
                       <Form.Item
-                      {...layout}
                       className="param-input"
                       name={item.name}
-                      key={item.name}
                       label={<span>{item.name}</span>}
                       rules={[
                         {
@@ -372,11 +360,26 @@ class Contractinvoke extends React.Component{
                         />:<Input placeholder={item.type}/>}
                       </Form.Item>
                       }
-                      
                     </div>
-                    
                   )}
                 )}
+                {/* <Form.Item
+                  className="param-input"
+                  name="array"
+                  label={<span>array</span>}
+                  rules={[
+                    {
+                      required: true,
+                      message: t("input.required"),
+                    },
+                  ]}>
+                  <Input.Search
+                    placeholder="input search text"
+                    enterButton="Search"
+                    size="large"
+                    onSearch={this.makeArray}
+                  />
+                </Form.Item> */}
                 <Form.Item
                   name="cosigners"
                   label={t("contract.cosigners")}>
@@ -413,7 +416,7 @@ class Contractinvoke extends React.Component{
           </Form>
           </Col>
         </Row>
-        <Modal
+        {/* <Modal
           title="Basic Modal"
           visible={this.state.modal}
           footer={null}
@@ -421,7 +424,7 @@ class Contractinvoke extends React.Component{
           width={600}
         >
           <DynamicArray handleparam={this.handleparam.bind(this)}/>
-        </Modal>
+        </Modal> */}
         <Datatrans visible={this.state.visible} onClose={this.onClose} />
       </Content>
     </Layout>

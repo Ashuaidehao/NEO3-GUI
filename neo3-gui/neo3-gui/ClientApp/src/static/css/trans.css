@@ -192,3 +192,18 @@
     font-size: 12px;
     font-weight: 600;
 }
+
+.spec-row,
+.spec-row .ant-row{
+    min-height: 0px;
+    margin-bottom: 0px!important;
+}
+
+.spec-row label {
+    font-weight: 400!important;
+    padding-left: 15px!important;
+}
+
+.spec-row .ant-form-item-control{
+    padding:1px 5px;
+}

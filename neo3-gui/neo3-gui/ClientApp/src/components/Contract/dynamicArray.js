@@ -1,41 +1,28 @@
 import React from 'react';
 import 'antd/dist/antd.css';
-import axios from 'axios';
 import { withTranslation } from "react-i18next";
 import { Form, Input, Button,Select,Row,Col } from 'antd';
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 
 
 const {Option} = Select;
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 4 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 20 },
-  },
-};
 
 const formItemLayoutWithOutLabel = {
   wrapperCol: {
-    xs: { span: 24, offset: 0 },
-    sm: { span: 20, offset: 0 },
+    sm: { span: 24, offset: 0 },
   },
 };
 
 const typeOption = [
-"Signature",
-"Boolean",
-"Integer",
-"Hash160",
-"Hash256",
-"ByteArray",
-"PublicKey",
-"String"
+  "Signature",
+  "Boolean",
+  "Integer",
+  "Hash160",
+  "Hash256",
+  "ByteArray",
+  "PublicKey",
+  "String"
 ]
-
 
 @withTranslation()
 class DynamicArray extends React.Component{
@@ -64,7 +51,7 @@ class DynamicArray extends React.Component{
                         ]}
                       >
                         <Select
-                        placeholder={t("select account")}
+                        placeholder={t("类型选择")}
                         style={{ width: '100%' }}>
                         {typeOption.map((item) => {
                           return (
@@ -77,7 +64,7 @@ class DynamicArray extends React.Component{
                       <Col span="16">
                       <Form.Item
                           name={[field.name, "amount"]}
-                          label={t("Array 类型")}
+                          label={t("参数")}
                           rules={[
                           {
                               required: true,
