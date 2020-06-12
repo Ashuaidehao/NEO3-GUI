@@ -3,7 +3,8 @@ import React from 'react';
 import '../../static/css/trans.css';
 import { Link } from 'react-router-dom';
 import { Layout, Row, Col, Tabs, message, PageHeader, Divider } from 'antd';
-import { Hashdetail, Attrlist, Translist, Witlist, Notifies} from './translog';
+import { Hashdetail, Attrlist, Translist, Witlist} from './translog';
+import Notifies from './translog';
 import Datatrans from '../Common/datatrans';
 import { withRouter } from "react-router-dom";
 import Sync from '../sync';
@@ -56,7 +57,6 @@ class Transcon extends React.Component {
     };
     post("GetTransaction",params).then(res =>{
       var _data = res.data;
-      console.log(_data)
       if (_data.msgType === -1) {
         message.error("查询失败");
         return;
@@ -67,6 +67,9 @@ class Transcon extends React.Component {
       console.log("error");
       _this.props.history.goBack();
     });
+  }
+  notifiesData = () =>{
+    console.log(this.state.notifies)
   }
   render = () => {
     const { t } = this.props;

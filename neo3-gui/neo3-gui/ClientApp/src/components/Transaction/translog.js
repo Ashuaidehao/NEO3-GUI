@@ -1,9 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Row, Col, Divider } from 'antd';
+import { Row, Col, Divider,Select } from 'antd';
 import { Empty } from 'antd';
-import { useTranslation } from "react-i18next";
+import { useTranslation,withTranslation } from "react-i18next";
 import '../../static/css/trans.css';
+import { useState } from 'react';
+
+const { Option } = Select;
 
 const Hashdetail = ({ hashdetail }) => {
   const { t } = useTranslation();
@@ -120,27 +123,70 @@ const Witlist = ({ witnesses }) => {
   )
 };
 
-const Notifies = ({notifies}) =>{
-  return (
-    <div className="info-detail">
-      {notifies.length === 0?
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-      :null}
-      <ul className="trans-ul">
-      {notifies.map((item)=>{
-        let _data = item.state?item.state.value:[];
-        var html=[];
-        html.push(<li className="trans-title pa3" key="title"><span>ScriptHash: &nbsp;&nbsp;&nbsp;</span>{item.contract}</li>);
-        for(var i = 0;i<_data.length;i++){
-          html.push(<li className="pa3" key={i}><span className="trans-type">{_data[i].type}</span>{_data[i].value? JSON.stringify(_data[i].value).replace(/"/g,' '):"--"}</li>);
-        }
-        html.push(<Divider key="divider"></Divider>)
-        return html;
-      })}    
-      </ul>
-    </div>
-  );
+@withTranslation()
+class Notifies extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+    };
+  }
+  changeType = e => {
+    // this.setState({ size: e.target.value });
+    console.log(e);
+    console.log(e.target);
+  };
+  render = ()=> {
+    const {t}=this.props;
+    const {notifies} = this.props;
+    return(
+      <div className="info-detail">
+        {notifies.length === 0?
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        :null}
+        <ul className="trans-ul">
+
+        {notifies.map((item)=>{
+          let _data = item.state?item.state.value:[];
+          var html=[];
+          html.push(<li className="trans-title pa3" key="title"><span>ScriptHash: &nbsp;&nbsp;&nbsp;</span>{item.contract}</li>);
+          for(var i = 0;i<_data.length;i++){
+            html.push(<li className="pa3" key={i}><span className="trans-type">{_data[i].type}</span>{_data[i].value? JSON.stringify(_data[i].value).replace(/"/g,' '):"--"}</li>);
+//             html.push(<Select
+//               key={"select"+i}
+//               placeholder={t("select account")}
+//               style={{ width: '100%' }}
+//               defaultValue={_data[i].type}
+//               onChange={this.changeType}>
+// {/* 
+// 0x00	Signature
+// 0x01	Boolean
+// 0x02	Integer
+// 0x03	Hash160
+// 0x04	Hash256
+// 0x05	ByteArray
+// 0x06	PublicKey
+// 0x07	String
+// 0x10 （16）	Array
+// 0x12 （18）	Map
+// 0xf0 （240）	InteropInterface
+// 0xfe （254）	Any
+// 0xff （255）	Void */}
+//               <Option value="ByteArray">ByteArray</Option>
+//               <Option value="Integer">Integer</Option>
+//               <Option value="Hash160">Hash160</Option>
+//               <Option value="Hash256">Hash256</Option>
+//               <Option value="Any">Any</Option>
+//             </Select>)
+          }
+
+          html.push(<Divider key="divider"></Divider>)
+          return html;
+        })}    
+        </ul>
+      </div>
+    );
+  }
 }
 
-
-export { Hashdetail,Attrlist,Translist,Witlist,Notifies}
+export { Hashdetail,Attrlist,Translist,Witlist}
+export default Notifies;
