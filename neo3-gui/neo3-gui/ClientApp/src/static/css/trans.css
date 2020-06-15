@@ -62,6 +62,10 @@
     font-weight: 400;
 }
 
+.trans-list-title .ant-tabs-top-bar{
+    margin-bottom: 0px!important;
+}
+
 .tran-title{
     /* background: #333333; */
 }
