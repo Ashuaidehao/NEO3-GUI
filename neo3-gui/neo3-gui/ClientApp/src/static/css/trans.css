@@ -41,10 +41,8 @@
 }
 .trans-type{
     display: inline-block;
-    min-width: 96px;
-    border:1px solid #DDD;
-    padding-left: 11px;
-    margin-right: 12px;
+    min-width: 80px;
+    margin-right: 15px;
 }
 .trans-area{
     margin-top: 5px;
@@ -83,7 +81,10 @@
 .tran-title .ant-tabs-ink-bar {
     background-color:#00AF92;
 }
-
+.detail-ul ul{
+    list-style: none;
+    padding: 0;
+}
 .detail-ul li{
     padding-left: 12px;
     padding-right: 12px;
@@ -107,7 +108,7 @@
 }
 .detail-ul .trans-table .trans-type{
     margin-right: 12px;
-    min-width: 96px;
+    min-width: 90px;
 }
 .ant-list-item .hash,
 .ant-list-item a{

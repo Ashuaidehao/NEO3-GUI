@@ -34,6 +34,7 @@ const Hashdetail = ({ hashdetail }) => {
     </Row>
   )
 };
+
 const Translist = ({ transfers }) => {
   const { t } = useTranslation();
   transfers = transfers?transfers:[];
@@ -58,6 +59,7 @@ const Translist = ({ transfers }) => {
     </div>
   )
 };
+
 const Attrlist = ({ attributes }) => {
   const { t } = useTranslation();
   attributes = attributes?attributes:[];
@@ -87,39 +89,97 @@ const Attrlist = ({ attributes }) => {
     </div>
   )
 };
+
 const Witlist = ({ witnesses }) => {
   const { t } = useTranslation();
+  const [opClass,changeOP] = useState(true);
   witnesses = witnesses?witnesses:[];
+  if(witnesses.length <= 0) return null;
   return (
-    <div>
-    {witnesses.length > 0 ? (
-      <Row>
-        <Col span={24}>
-          <div className="hash-title pa3 mt4 mb4">{t("blockchain.witness")}</div>
-          {witnesses.map((item, index) => {
-            return (
-              <ul className="detail-ul border-under" key={index}>
+    <Row>
+      <Col span={24}>
+        <div className="hash-title pa3 mt4 mb4">{t("blockchain.witness")}</div>
+        <button onClick={() => changeOP(!opClass)}>click me! {opClass?"Hex":"Opcode"}</button>
+        {witnesses.map((item, index) => {
+          return (
+            <div className="detail-ul border-under op-content" key={index}>
+              <ul className={opClass.toString()}>
                 <li>
                   <p>{t("blockchain.transaction.invocation script")}</p>
-                  <p className="trans-table">
-                    <span><span className="trans-type">HEX</span></span>
-                    <span>{item.invocationScript}</span>
-                  </p>
+                  <p className="trans-table"><span>{item.invocationScript}</span></p>
                 </li>
                 <li>
                   <p>{t("blockchain.transaction.verification script")}</p>
-                  <p className="trans-table">
-                    <span><span className="trans-type">HEX</span></span>
-                    <span>{item.verificationScript}</span>
-                  </p>
+                  <p className="trans-table"><span>{item.verificationScript}</span></p>
                 </li>
               </ul>
-            )
-          })}
-        </Col>
-      </Row>
-    ) : null}
-    </div>
+
+              <ul className={(!opClass).toString()}>
+                <li>
+                  <p>{t("blockchain.transaction.invocation script")}</p>
+                </li>
+                {item.invocationOpCode.map((i,index)=>{
+                return(
+                  <li key={index}>
+                    <p className="trans-table">
+                      <span className="trans-type gray">{i.opCodeName}</span>
+                      <span>{i.opDataPossibleString}</span>
+                    </p>
+                  </li>
+                )})}
+                <li>
+                  <p>{t("blockchain.transaction.verification script")}</p>
+                </li>
+                {item.verificationOpCode.map((i,index)=>{
+                return(
+                  <li key={index}>
+                    <p className="trans-table">
+                      <span className="trans-type gray">{i.opCodeName}</span>
+                      <span>{i.opDataPossibleString}</span>
+                    </p>
+                  </li>
+                )})}
+              </ul>
+
+            </div>
+          )
+        })}
+      </Col>
+    </Row>
+  )
+};
+
+const Scriptlist = ({ script,scriptcode }) => {
+  const { t } = useTranslation();
+  const [opClass,changeOP] = useState(true);
+  script = script?script:"";
+  if(script==="") return null;
+
+  return (
+    <Row>
+      <Col span={24}>
+        <div className="hash-title pa3 mt4 mb4">{t("脚本-未翻译")}</div>
+        <button onClick={() => changeOP(!opClass)}>click me! {opClass?"Hex":"Opcode"}</button>
+        <div className="detail-ul border-under op-content">
+          <ul className={opClass.toString()}>
+            <li>{script}</li>
+          </ul>
+
+          <ul className={(!opClass).toString()}>
+            {scriptcode.map((i,index)=>{
+            return(
+              <li key={index}>
+                <p className="trans-table">
+                  <span className="trans-type gray">{i.opCodeName}</span>
+                  <span>{i.opDataPossibleString}</span>
+                </p>
+              </li>
+            )})}
+          </ul>
+          
+        </div>
+      </Col>
+    </Row>
   )
 };
 
@@ -188,5 +248,5 @@ class Notifies extends React.Component{
   }
 }
 
-export { Hashdetail,Attrlist,Translist,Witlist}
+export { Hashdetail,Attrlist,Translist,Witlist,Scriptlist}
 export default Notifies;

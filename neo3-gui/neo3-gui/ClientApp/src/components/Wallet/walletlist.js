@@ -162,8 +162,7 @@ class Walletlist extends React.Component {
       } else {
         message.info(t('wallet.private fail'), 2);
       }
-    })
-    .catch(function (error) {
+    }).catch(function (error) {
       console.log(error);
       console.log("error");
     });
