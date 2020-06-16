@@ -1,11 +1,9 @@
 /* eslint-disable */
 import bs58check from "bs58check";
-import base64 from "base64-js";
 import { NEO3_ADDRESS_VERSION } from "../../constants";
 
 
 class DataConverter {
-
     /**
      * convert scriptHash to address
      *  @param {string} scriptHashHex 
@@ -39,7 +37,7 @@ class DataConverter {
      */
     reverseHexString(hexString) {
         if (hexString.length & 1) {
-            throw new RangeError();
+            throw new RangeError(hexString);
         }
         return hexString.match(/../g).reverse().join("");
     }
@@ -50,9 +48,34 @@ class DataConverter {
      * @param {*} hexString 
      */
     toBase64String(hexString) {
-        const bytes = Buffer.from(hexString, 'hex');
-        return base64.fromByteArray(bytes);
+        return Buffer.from(hexString, 'hex').toString("base64");
+    }
 
+    /**
+     * Encode hex string to utf8 string,input:'7472616e73666572',output:'transfer' 
+     * @param {*} hexString 
+     */
+    toUtf8String(hexString) {
+        return Buffer.from(hexString, 'hex').toString("utf8")
+    }
+
+    /**
+     * Decode utf8 string to hex string,input:'transfer',output:'7472616e73666572' 
+     * @param {*} text 
+     */
+    fromUtf8String(text) {
+        return Buffer.from(text, "utf8").toString("hex")
+    }
+
+    /**
+     * Hex string to BigInt
+     * @param {*} hexString 
+     */
+    toBigInt(hexString) {
+        if (!hexString.startsWith("0x")) {
+            hexString = "0x" + this.reverseHexString(hexString);
+        }
+        return BigInt(hexString)
     }
 }
 
