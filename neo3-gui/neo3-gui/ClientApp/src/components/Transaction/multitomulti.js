@@ -95,7 +95,7 @@ class Multitomulti extends React.Component{
         const { account, t } = this.props;
         const { assetlist } = this.state;
         return (
-        <div className="w500 info-detail mt3">
+        <div className="w600 info-detail mt3">
         <Form ref="formRef" className="trans-form" onFinish={this.transfer}>
             <Form.List name="params">
                 {(fields, { add, remove }) => {
@@ -181,7 +181,7 @@ class Multitomulti extends React.Component{
                         ) : null}
                       </Row>
                     ))}
-                    <Form.Item class="mb0">
+                    <Form.Item className="mb0">
                       <Button
                         type="dashed"
                         onClick={() => {

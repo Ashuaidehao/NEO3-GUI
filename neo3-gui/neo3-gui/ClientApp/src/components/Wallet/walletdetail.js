@@ -194,7 +194,13 @@ class Walletdetail extends React.Component {
               </div>
             </Col>
           </Row>
-          <Transaction page="walletdetail" content={t("wallet.transactions")} />
+          
+          <Row gutter={[30, 0]} className="mt2 mb2" type="flex" style={{ 'minHeight': '120px' }}>
+            <Col span={24} className="bg-white pv4">
+              <PageHeader title={t("blockchain.transactions")}></PageHeader>
+                <Transaction page="walletdetail" content={t("wallet.transactions")} />
+            </Col>
+          </Row>
         </Content>
       </Layout>
     );

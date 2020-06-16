@@ -294,3 +294,9 @@ button,input{
 .wa-count{
     min-width: 80px;
 }
+
+.wallet-tag{
+    font-size:12px;
+    line-height: 22px;
+    width: 75px;
+}

@@ -126,7 +126,7 @@ class Chain extends React.Component {
                 )}
               />
             </Col>
-          <Chainsearch show={this.show()} />
+            <Chainsearch show={this.show()} />
           </Row>
           <div className="pv2"></div>
         </Content>

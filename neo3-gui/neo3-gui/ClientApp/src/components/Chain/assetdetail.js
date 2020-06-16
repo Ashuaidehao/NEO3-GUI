@@ -89,7 +89,12 @@ class Assetdetail extends React.Component{
             </Col>
           </Row>
 
-          <Transaction content={t("blockchain.transactions")} page="assetdetail"/>
+          <Row gutter={[30, 0]} className="mt2 mb1" type="flex" style={{ 'minHeight': '120px' }}>
+            <Col span={24} className="bg-white pv4">
+              <PageHeader title={t("blockchain.transactions")}></PageHeader>
+                <Transaction content={t("blockchain.transactions")} page="assetdetail"/>
+            </Col>
+          </Row>
         </Content>
       </Layout>
     );

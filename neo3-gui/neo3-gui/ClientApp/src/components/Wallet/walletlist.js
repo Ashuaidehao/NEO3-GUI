@@ -6,7 +6,7 @@ import axios from 'axios';
 import { Layout, message, Row, Col, List, Avatar, Button, Typography,PageHeader,Modal,Input } from 'antd';
 import '../../static/css/wallet.css'
 import Sync from '../sync';
-import { withTranslation } from "react-i18next";
+import { withTranslation,useTranslation } from "react-i18next";
 
 import {
   PlusCircleOutlined
@@ -188,9 +188,20 @@ class Walletlist extends React.Component {
   render() {
     const accounts = this.props.walletStore.accountlist;
     const unclaimedGas = this.props.walletStore.unclaimedGas;
-
     const { assetlist } = this.state;
     const { t } = this.props;
+
+    let unnoadd = [],normaladd = [], mutiadd = [],contractadd = [];
+    Array.call([],...accounts).map(function (item) {
+      let _item = {...item};
+      switch(_item.accountType){
+        case 0:unnoadd.push(_item);break;
+        case 1:normaladd.push(_item);break;
+        case 2:mutiadd.push(_item);break;
+        case 3:contractadd.push(_item);break;
+      }
+    });
+
     return (
       <Layout className="gui-container">
         <Sync />
@@ -201,32 +212,20 @@ class Walletlist extends React.Component {
                 <h2 className="mb0">
                   {t("wallet.accounts")}
                   <div className="wal-import float-r">
-                      <PlusCircleOutlined className=""/>
-                      <div className="wal-ul">
-                        <ul>
-                          <li><a onClick={this.addAddress}>{t('wallet.add address')}</a></li>
-                          <li><a onClick={this.showModal}>{t('wallet.import private')}</a></li>
-                        </ul>
-                      </div>
+                    <PlusCircleOutlined className=""/>
+                    <div className="wal-ul">
+                      <ul>
+                        <li><a onClick={this.addAddress}>{t('wallet.add address')}</a></li>
+                        <li><a onClick={this.showModal}>{t('wallet.import private')}</a></li>
+                      </ul>
+                    </div>
                   </div>
                 </h2>
               </div>
-              <List
-                itemLayout="horizontal"
-                dataSource={accounts}
-                renderItem={item => (
-                  <List.Item>
-                    <List.Item.Meta
-                      title={<Link to={"/wallet/walletlist:" + item.address} title={t("wallet.show detail")}>{item.address}</Link>}
-                      description={
-                        <span className="f-s">
-                          <span className="amount mr2">NEO <span className="wa-count">{item.neo}</span></span>
-                          <span>GAS <span className="wa-count">{item.gas}</span></span>
-                        </span>}
-                    />
-                  </List.Item>
-                )}
-              />
+              <Accounts accounts={normaladd} name="标准地址-未翻译"/>
+              <Accounts accounts={mutiadd} name="多签地址"/>
+              <Accounts accounts={contractadd} name="合约地址"/>
+              <Accounts accounts={unnoadd} name="非标准地址"/>
             </Col>
             <Col span={10} offset={1} className="bg-white pv4">
               <PageHeader title={t("wallet.assets")} ></PageHeader>
@@ -283,3 +282,27 @@ const Private = ({func,t}) => {
     </div>
   )
 };
+
+const Accounts = ({accounts,name}) => {
+  const { t } = useTranslation();
+  if(accounts.length === 0) return null;
+  return(
+    <List
+    itemLayout="horizontal"
+    dataSource={accounts}
+    header={<div>{name}</div>}
+    renderItem={item => (
+      <List.Item>
+        <List.Item.Meta
+          title={<Link to={"/wallet/walletlist:" + item.address} title={t("wallet.show detail")}>{item.address}</Link>}
+          description={
+            <span className="f-s">
+              <span className="amount mr2">NEO <span className="wa-count">{item.neo}</span></span>
+              <span>GAS <span className="wa-count">{item.gas}</span></span>
+            </span>}
+        />
+      </List.Item>
+    )}
+  />
+  )
+}
