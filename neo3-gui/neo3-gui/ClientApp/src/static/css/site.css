@@ -436,7 +436,7 @@ small,.small{
 }
 .detail-ul li span{
     display: inline-block;
-    min-width: 65px;
+    min-width: 60px;
     overflow: hidden;
     text-overflow: ellipsis;
     vertical-align: bottom;
@@ -453,7 +453,8 @@ small,.small{
     text-transform:uppercase;
 }
 .detail-ul .detail-add{
-    width: 280px;
+    width: 295px;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     vertical-align: bottom;
@@ -549,8 +550,14 @@ small,.small{
 .ant-radio-inner::after{
     background-color: #00AF92;
 }
+.ant-radio-checked .ant-radio-inner{
+    border-color: #00AF92;
+}
 .ant-radio-checked::after{
-    border: 1px solid #00AF92;
+    border: 1px solid #00af92;
+}
+.ant-radio-input:focus + .ant-radio-inner{
+    box-shadow: 0 0 0 3px rgba(0, 173, 145, 0.08);
 }
 
 .add-mark{
@@ -603,12 +610,15 @@ small,.small{
 }
 
 /* OPCode展示切换 */
-.op-content{
-
-}
-.op-content .true{
+.showhex .hex{
     display: block;
 }
-.op-content .false{
+.showhex .opcode{
     display: none;
+}
+.showopcode .hex{
+    display: none;
+}
+.showopcode .opcode{
+    display: block;
 }

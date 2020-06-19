@@ -182,8 +182,6 @@ class Contractinvoke extends React.Component{
       },this.onFill());
       this.refs.formRef.validateFields().then(data => {
         let params = this.makeParams(data);
-
-        console.log(params);
         
         this.invokeContract(params,res=>{
           this.setState({
@@ -254,9 +252,16 @@ class Contractinvoke extends React.Component{
     handleparam = (val) =>{
       console.log(val);
       console.log(JSON.stringify(val))
-      if(val.length <= 0) return;
+      if(val.length <= 0) return "";
+      // this.refs.formRef.setFieldsValue({
+      //   tresult:this.state.tresult
+      // });
       this.handleCancel()
+      return JSON.stringify(val);
     }
+    onOk = () => {
+      form.submit();
+    };
     render = () =>{
     const {methods,params,disabled} = this.state;
     const accounts = this.props.walletStore.accountlist;
@@ -265,27 +270,84 @@ class Contractinvoke extends React.Component{
     <Layout className="gui-container">
       <Sync />
         
-      {/* <DynamicArray handleparam={this.handleparam.bind(this)}/> */}
+      
       <Content className="mt3">
         <Row gutter={[30, 0]}  className="bg-white pv4" style={{ 'minHeight': 'calc( 100vh - 150px )'}}>
           <Col span={24}>
           <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
           <PageHeader title={t('contract.invoke contract')}></PageHeader>
-
+          <Form.Provider
+            onFormFinish={(name, { values, forms }) => {
+              if (name === 'dynamic_form') {
+                const { basicForm } = forms;
+                console.log(basicForm)
+              }
+            }}
+          >
+            {/* <DynamicArray handleparam={this.handleparam.bind(this)}/> */}
+            <Form layout="vertical" name="userForm"  onFinish={this.onOK}>
+        <Form.Item
+          name="name"
+          label="User Name"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="age"
+          label="User Age"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <InputNumber />
+        </Form.Item>
+        <Button htmlType="submit" type="primary">
+              Submit
+            </Button>
+      </Form>
           <Form ref="formRef" className="trans-form" onFinish={this.invoke}>
             <Row className="mt3 mb5">
               <Col span={20}>
+                
                 <Form.Item
                   name="guihash"
                   label={t("contract.scripthash")}
+                  
                   rules={[
                     {
                       required: true,
                       message: t('contract.search fail'),
                     },
                   ]}>
-                  <Input ref="sinput" placeholder="Scripthash"/>
+                  <Input defaultValue="0x9bde8f209c88dd0e7ca3bf0af0f476cdd8207789" ref="sinput" placeholder="Scripthash"/>
                 </Form.Item>
+                <Form.Item
+            label="User List"
+            shouldUpdate={(prevValues, curValues) => prevValues.users !== curValues.users}
+          >
+            {({ getFieldValue }) => {
+              const users = getFieldValue('users') || [];
+              return users.length ? (
+                <ul>
+                  {users.map((user, index) => (
+                    <li key={index} className="user">
+                      {user.name} - {user.age}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div>
+                  ( No user yet. )
+                </div>
+              );
+            }}</Form.Item>
                 <Form.Item
                   name="guimethod"
                   label={t("contract.invoke method")}
@@ -340,10 +402,10 @@ class Contractinvoke extends React.Component{
                           </Form.Item>
                         </Input.Group>
                       </Form.Item>
-                      :
-                      <Form.Item
+                      :<Form.Item
                       className="param-input"
                       name={item.name}
+                      getValueFromEvent={this.handleparam}
                       label={<span>{item.name}</span>}
                       rules={[
                         {
@@ -353,9 +415,10 @@ class Contractinvoke extends React.Component{
                       ]}>
                         {item.type.toLowerCase() == 'array' ?
                         <Input.Search
-                          placeholder="input search text"
-                          enterButton="Search"
-                          size="large"
+                          defaultValue="11111"
+                          placeholder="请点击Button构造array - 未翻译"
+                          enterButton="构造Array"
+                          // getValueFromEvent={this.handleparam}
                           onSearch={this.makeArray}
                         />:<Input placeholder={item.type}/>}
                       </Form.Item>
@@ -363,23 +426,6 @@ class Contractinvoke extends React.Component{
                     </div>
                   )}
                 )}
-                {/* <Form.Item
-                  className="param-input"
-                  name="array"
-                  label={<span>array</span>}
-                  rules={[
-                    {
-                      required: true,
-                      message: t("input.required"),
-                    },
-                  ]}>
-                  <Input.Search
-                    placeholder="input search text"
-                    enterButton="Search"
-                    size="large"
-                    onSearch={this.makeArray}
-                  />
-                </Form.Item> */}
                 <Form.Item
                   name="cosigners"
                   label={t("contract.cosigners")}>
@@ -414,17 +460,18 @@ class Contractinvoke extends React.Component{
               </Button>
             </Form.Item>
           </Form>
+          </Form.Provider>
           </Col>
         </Row>
-        {/* <Modal
-          title="Basic Modal"
+        <Modal
+          title="构造Array-未翻译"
           visible={this.state.modal}
           footer={null}
           onCancel={this.handleCancel}
           width={600}
         >
           <DynamicArray handleparam={this.handleparam.bind(this)}/>
-        </Modal> */}
+        </Modal>
         <Datatrans visible={this.state.visible} onClose={this.onClose} />
       </Content>
     </Layout>
