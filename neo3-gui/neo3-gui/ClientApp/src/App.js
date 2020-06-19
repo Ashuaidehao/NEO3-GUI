@@ -5,6 +5,7 @@ import { Provider } from "mobx-react";
 import stores from "./store/stores";
 import Config from "./config";
 import neoNode from "./neonode";
+import neoWebSocket from "./components/WebSocket/neoWebSocket";
 
 
 class App extends React.Component {
@@ -15,55 +16,26 @@ class App extends React.Component {
     if (process.env.NODE_ENV !== "development") {
       neoNode.switchNode();
     }
-    this.initWebSocket();
-  }
 
-  initWebSocket = () => {
-    console.log("connecting");
-    this.ws = new WebSocket('ws://127.0.0.1:8081');
-
-    this.ws.onopen = () => {
-      console.log('opened');
-    };
-
-    this.ws.onclose = (e) => {
-      console.log("closed:", e);
-      this.reconnectWebSocket();
-    }
-
-    this.ws.onerror = (e) => {
-      console.log("error:", e);
-    }
-
-    this.ws.onmessage = this.processMessage;
-  };
-
-  reconnectWebSocket = () => {
-    let self = this;
-    if (self.lock) {
-      return;
-    }
-    self.lock = true;
-    setTimeout(() => {
-      self.initWebSocket();
-      self.lock = false;
-    }, 3000);
+    neoWebSocket.initWebSocket();
+    neoWebSocket.registMethod("getSyncHeight", this.processGetSyncHeight);
+    neoWebSocket.registMethod("getWalletBalance", this.processGetWalletBalance);
   }
 
 
-  processMessage = (message) => {
-    var msg = JSON.parse(message.data);
-    switch (msg.method) {
-      case "getSyncHeight":
-        stores.blockSyncStore.setHeight(msg.result);
-        break;
-      case "getWalletBalance":
-        stores.walletStore.setAccounts(msg.result.accounts);
-        stores.walletStore.setUnclaimedGas(msg.result.unclaimedGas);
-        break;
-      default:
-        break;
-    }
+  componentWillUnmount = () => {
+    neoWebSocket.unregistMethod("getSyncHeight", this.processGetSyncHeight);
+    neoWebSocket.unregistMethod("getWalletBalance", this.processGetWalletBalance);
+  }
+
+  processGetSyncHeight(msg) {
+    stores.blockSyncStore.setHeight(msg.result);
+  }
+
+
+  processGetWalletBalance(msg) {
+    stores.walletStore.setAccounts(msg.result.accounts);
+    stores.walletStore.setUnclaimedGas(msg.result.unclaimedGas);
   }
 
   render() {
