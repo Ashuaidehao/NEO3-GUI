@@ -47,7 +47,7 @@ class Chainasset extends React.Component {
               <PageHeader title={t("blockchain.assets")}></PageHeader>
               <div>
                 <List
-                  header={<div><span>{t("blockchain.asset info")}</span><span className="float-r w-time ml4">{t("blockchain.initial time")}</span><span className="float-r">{t("blockchain.total")}</span></div>}
+                  header={<div><span>{t("blockchain.asset info")}</span><span className="float-r w-time ml3">{t("blockchain.initial time")}</span><span className="float-r">{t("blockchain.total")}</span></div>}
                   itemLayout="horizontal"
                   dataSource={assetlist}
                   className="font-s"
@@ -57,10 +57,10 @@ class Chainasset extends React.Component {
                         avatar={
                           <Avatar src={"https://neo.org/images/gui/"+item.asset+".png"}/>
                         }
-                        title={<Link className="asset-link w450 ellipsis" to={"/chain/asset:" + item.asset} title={t("show detail")}><span className="w-symbol mr4">{item.symbol}</span>{item.asset}</Link>}
+                        title={<Link className="asset-link w500 ellipsis" to={"/chain/asset:" + item.asset} title={t("show detail")}><span className="w-symbol mr3">{item.symbol}</span>{item.asset}</Link>}
                       />
                       <Typography className="w-total">{item.totalSupply?item.totalSupply:"--"}</Typography>
-                      <Typography className="w-time ml4">{(item.createTime).substr(0,10)}</Typography>
+                      <Typography className="w-time ml3">{(item.createTime).substr(0,10)}</Typography>
                     </List.Item>
                   )}
                 />
