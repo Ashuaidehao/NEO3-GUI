@@ -4,12 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Util.Internal;
 using Neo.Common;
 using Neo.Common.Storage;
 using Neo.Common.Utility;
+using Neo.Cryptography;
 using Neo.IO;
 using Neo.IO.Json;
 using Neo.Ledger;
@@ -793,6 +795,34 @@ namespace Neo.Services.ApiServices
         }
 
 
+        /// <summary>
+        /// append signature for text
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        public async Task<object> AppendTextSignature(string text, UInt160 address)
+        {
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            var account = CurrentWallet.GetAccount(address);
+            if (!account.HasKey)
+            {
+                return Error(ErrorCode.AddressNotFoundPrivateKey);
+            }
+            try
+            {
+                KeyPair key = account.GetKey();
+                byte[] signature = Crypto.Sign(Encoding.UTF8.GetBytes(text), key.PrivateKey, key.PublicKey.EncodePoint(false)[1..]);
+                return signature;
+            }
+            catch (Exception e)
+            {
+                return Error(ErrorCode.InvalidPara, e.ToString());
+            }
+        }
         /// <summary>
         /// Broadcast complete signed transaction
         /// </summary>
