@@ -44,84 +44,16 @@ function error(data) {
     });
 }
 
-const Signtrans = () =>{
-    const { t } = useTranslation();
-    const [broad,changeBroad] = useState("");
-    const onSign  = values => {
-        let params = {signContext:values.sign};
-        post("AppendSignature",params).then(res =>{
-            var _data = res.data;
-            if(_data.msgType === -1){
-                error(_data);
-                changeBroad(values.sign)
-            }else if(_data.msgType === 3){
-                success(_data);
-                changeBroad(_data.result)
-            }
-        })
-    };
-    const onBroad = values =>{
-        let params = {signContext:values.broadcast};
-        post("BroadcastTransaction",params).then(res =>{
-            var _data = res.data;
-            if(_data.msgType === -1){
-                error(_data);
-            }else if(_data.msgType === 3){
-                success(_data);
-            }
-        })
-    }
-    return (
-        <div>
-            <Form
-                name="form"
-                onFinish={onSign}
-            >
-                <h4>交易json</h4>
-                <Form.Item
-                    name="sign"
-                    rules={[
-                        {
-                        required: true,
-                        message: 'Please input your json!',
-                        },
-                    ]}
-                >
-                    <TextArea />
-                </Form.Item>
-                <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                        签名
-                    </Button>
-                </Form.Item>
-            </Form>
-            <Form
-                name="form"
-                onFinish={onBroad}
-            >
-                <div>{broad}</div>
-                <h4>签名结果</h4>
-                <Form.Item
-                    name="broadcast"
-                    rules={[
-                        {
-                        required: true,
-                        message: 'Please input your json!',
-                        },
-                    ]}
-                >
-                    <TextArea/>
-                </Form.Item>
-        
-                <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                        广播交易
-                    </Button>
-                </Form.Item>
-            </Form>
-        </div>
-    );
-}
+// const Signtrans = () =>{
+//     const { t } = useTranslation();
+//     const [broad,changeBroad] = useState("");
+    
+//     return (
+//         <div>
+
+//         </div>
+//     );
+// }
 
 @withTranslation()
 class Advancedsignature extends React.Component {
@@ -131,6 +63,37 @@ class Advancedsignature extends React.Component {
             visible: false,
             signres: ""
         };
+    }
+    onSign = values => {
+        let params = {signContext:values.sign};
+        var _this = this;
+        post("AppendSignature",params).then(res =>{
+            var _data = res.data;
+            if(_data.msgType === -1){
+                error(_data);
+                // changeBroad(values.sign)
+                // _this.refs.broadform.setFieldsValue({
+                //     broadcast:values.sign
+                // });
+            }else if(_data.msgType === 3){
+                success(_data);
+                // changeBroad(_data.result)
+                _this.refs.broadform.setFieldsValue({
+                    broadcast:_data.result
+                });
+            }
+        })
+    };
+    onBroad = values =>{
+        let params = {signContext:values.broadcast};
+        post("BroadcastTransaction",params).then(res =>{
+            var _data = res.data;
+            if(_data.msgType === -1){
+                error(_data);
+            }else if(_data.msgType === 3){
+                success(_data);
+            }
+        })
     }
     render() {
         const { t } = this.props;
@@ -146,11 +109,58 @@ class Advancedsignature extends React.Component {
                       <div>文本签名</div>
                     </TabPane> */}
                     <TabPane tab={t("交易签名")} key="2">
-                      <Signtrans/>
+                        <div>
+                        <Form
+                            name="form"
+                            onFinish={this.onSign}
+                        >
+                            <h4>交易json</h4>
+                            <Form.Item
+                                name="sign"
+                                rules={[
+                                    {
+                                    required: true,
+                                    message: 'Please input your json!',
+                                    },
+                                ]}
+                            >
+                                <TextArea />
+                            </Form.Item>
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit">
+                                    签名
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                        <Form
+                            name="form"
+                            onFinish={this.onBroad}
+                            ref="broadform"
+                        >
+                            <h4>签名结果</h4>
+                            <Form.Item
+                                name="broadcast"
+                                rules={[
+                                    {
+                                    required: true,
+                                    message: 'Please input your json!',
+                                    },
+                                ]}
+                            >
+                                <TextArea/>
+                            </Form.Item>
+                    
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit">
+                                    广播交易
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                        </div>
                     </TabPane>
-                    <TabPane tab={t("验证签名")} key="3">
+                    {/* <TabPane tab={t("验证签名")} key="3">
                       <div>验证签名</div>
-                    </TabPane>
+                    </TabPane> */}
                   </Tabs>
                 </Col>
               </Row>
