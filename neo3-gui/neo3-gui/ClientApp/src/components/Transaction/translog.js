@@ -106,7 +106,6 @@ const Witlist = ({ witnesses }) => {
         </div>
 
 
-
         {witnesses.map((item, index) => {
           return (
             <div className={"detail-ul border-under " + opClass} key={index}>
@@ -158,7 +157,7 @@ const Witlist = ({ witnesses }) => {
 
 const Scriptlist = ({ script,scriptcode }) => {
   const { t } = useTranslation();
-  const [opClass,changeOP] = useState(true);
+  const [opClass,changeOP] = useState("showhex");
   script = script?script:"";
   if(script==="") return null;
   return (
@@ -172,7 +171,7 @@ const Scriptlist = ({ script,scriptcode }) => {
           </Radio.Group>
         </div>
         
-        <div className={"detail-ul border-under "+opClass}>
+        <div className={"detail-ul border-under " + opClass}>
           <ul className="hex">
             <li>{script}</li>
           </ul>

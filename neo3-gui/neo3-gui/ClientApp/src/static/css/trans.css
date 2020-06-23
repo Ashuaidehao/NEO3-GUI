@@ -177,14 +177,11 @@
     vertical-align: bottom;
 }
 
-.delete-btn{
-    position: absolute;
-    right: 0px;
-    top: 66px;
-    font-size: 15px;
+.delete-line{
+    font-size: 12px;
     color: #ff4d4f;
 }
-.delete-btn .font-s{
+/* .delete-btn .font-s{
     vertical-align: text-top;
     letter-spacing: 0.8px;
     padding-left: 4px;
@@ -204,7 +201,7 @@
     background-color: transparent;
     color: #ff4d4f!important;
     text-shadow: 0 0 0px #ff4d4f;
-}
+} */
 
 
 .spec-row,
