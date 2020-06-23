@@ -196,7 +196,7 @@ class Datatrans extends React.Component {
                 getContainer={false}
                 style={{ position: 'absolute' }}
             >
-                <ul className="trans-ul">
+                <ul className="trans-ul datatrans">
                     <li>
                         <Divider className="font-n">String <SwapOutlined className="small" /> Hex String</Divider>
                         <p className="trans-area">
