@@ -182,7 +182,7 @@ class Multitomulti extends React.Component{
                         </Col>
                         {fields.length > 1 ? (
                             <Divider orientation="right">
-                                <a className="delete-line" onClick={ () => { remove(field.name); }}><MinusSquareOutlined /> <span className="font-s">删除参数</span></a>
+                                <a className="delete-line" onClick={ () => { remove(field.name); }}><MinusSquareOutlined /> <span className="font-s">{t("wallet.delete add")}</span></a>
                             </Divider>
                             // <div className="delete-btn" onClick={ () => { remove(field.name); }}></div>
                         ) : null}

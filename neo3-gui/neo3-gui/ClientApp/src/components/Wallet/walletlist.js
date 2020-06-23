@@ -222,10 +222,10 @@ class Walletlist extends React.Component {
                   </div>
                 </h2>
               </div>
-              <Accounts accounts={normaladd} name="标准地址-未翻译"/>
-              <Accounts accounts={mutiadd} name="多签地址"/>
-              <Accounts accounts={contractadd} name="合约地址"/>
-              <Accounts accounts={unnoadd} name="非标准地址"/>
+              <Accounts accounts={normaladd} name={t("wallet.address standard")}/>
+              <Accounts accounts={mutiadd} name={t("wallet.address multi sign")}/>
+              <Accounts accounts={contractadd} name={t("wallet.address contract")}/>
+              <Accounts accounts={unnoadd} name={t("wallet.address non")}/>
             </Col>
             <Col span={10} offset={1} className="bg-white pv4">
               <PageHeader title={t("wallet.assets")} ></PageHeader>

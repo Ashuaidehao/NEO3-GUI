@@ -164,7 +164,7 @@ const Scriptlist = ({ script,scriptcode }) => {
     <Row>
       <Col span={24}>
         <div className="hash-title pa3 mt4 mb4">
-          {t("脚本-未翻译")}
+          {t("blockchain.transaction.script")}
           <Radio.Group onChange={e => changeOP(e.target.value)} defaultValue="showhex">
             <Radio className="font-s ml1" value="showhex">Hex</Radio>
             <Radio className="font-s" value="showopcode">Opcode</Radio>
@@ -235,32 +235,6 @@ class Notifies extends React.Component{
           html.push(<li className="trans-title pa3" key="title"><span>ScriptHash: &nbsp;&nbsp;&nbsp;</span>{item.contract}</li>);
           for(var i = 0;i<_data.length;i++){
             html.push(<li className="pa3" key={i}><span className="trans-type">{_data[i].type}</span>{_data[i].value? JSON.stringify(_data[i].value).replace(/"/g,' '):"--"}</li>);
-//             html.push(<Select
-//               key={"select"+i}
-//               placeholder={t("select account")}
-//               style={{ width: '100%' }}
-//               defaultValue={_data[i].type}
-//               onChange={this.changeType}>
-// {/* 
-// 0x00	Signature
-// 0x01	Boolean
-// 0x02	Integer
-// 0x03	Hash160
-// 0x04	Hash256
-// 0x05	ByteArray
-// 0x06	PublicKey
-// 0x07	String
-// 0x10 （16）	Array
-// 0x12 （18）	Map
-// 0xf0 （240）	InteropInterface
-// 0xfe （254）	Any
-// 0xff （255）	Void */}
-//               <Option value="ByteArray">ByteArray</Option>
-//               <Option value="Integer">Integer</Option>
-//               <Option value="Hash160">Hash160</Option>
-//               <Option value="Hash256">Hash256</Option>
-//               <Option value="Any">Any</Option>
-//             </Select>)
           }
 
           html.push(<Divider key="divider"></Divider>)

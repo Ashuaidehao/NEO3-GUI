@@ -128,7 +128,7 @@ class Advancedsignature extends React.Component {
                             </Form.Item>
                             <Form.Item>
                                 <Button type="primary" htmlType="submit">
-                                    签名
+                            {t('advanced.signature')}
                                 </Button>
                             </Form.Item>
                         </Form>
@@ -152,7 +152,7 @@ class Advancedsignature extends React.Component {
                     
                             <Form.Item>
                                 <Button type="primary" htmlType="submit">
-                                    广播交易
+                            {t('advanced.broadcast')}
                                 </Button>
                             </Form.Item>
                         </Form>
