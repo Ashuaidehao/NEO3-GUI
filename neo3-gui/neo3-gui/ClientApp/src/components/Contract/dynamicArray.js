@@ -2,8 +2,7 @@ import React from 'react';
 import 'antd/dist/antd.css';
 import { withTranslation } from "react-i18next";
 import { Form, Input, Button,Select,Row,Col } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-
+import { PlusOutlined,MinusSquareOutlined } from '@ant-design/icons';
 
 const {Option} = Select;
 
@@ -75,26 +74,27 @@ class DynamicArray extends React.Component{
                       </Form.Item>
                       </Col>
                       {fields.length > 1 ? (
-                          <div className="delete-btn" onClick={ () => { remove(field.name); }}></div>
+                        <Button type="link" className="delete-btn" onClick={ () => { remove(field.name); }}>
+                          <MinusSquareOutlined /> <span className="font-s">删除参数</span>
+                        </Button>
                       ) : null}
                     </Row>
                   ))}
-                  <Form.Item className="mb0">
+                  <Form.Item className="mt3 mb0">
                     <Button
                       type="dashed"
                       onClick={() => {
                         add();
                       }}
-                      style={{ width: "100%" }}
                     >
-                      <PlusOutlined /> {t("wallet.transfer add")}
+                      <PlusOutlined /> {t("添加参数")}
                     </Button>
                   </Form.Item>
                 </div>
               );
             }}
           </Form.List>
-    
+
           <Form.Item>
             <Button type="primary" htmlType="submit">
               构造

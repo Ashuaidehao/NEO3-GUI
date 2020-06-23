@@ -33,3 +33,21 @@
     line-height: 22px;
     vertical-align: middle;
 }
+
+.ant-form-item textarea.ant-input{
+    word-break: break-all;
+    min-height: 100px;
+}
+
+textarea.ant-input::-webkit-scrollbar{
+    height: 7px;
+    width: 7px;
+    background:transparent;
+}
+
+textarea.ant-input::-webkit-scrollbar-thumb{
+    height: 7px;
+    width: 7px;
+    background:rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}

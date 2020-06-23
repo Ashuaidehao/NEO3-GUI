@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Row, Col, Divider,Select } from 'antd';
+import { Row, Col, Divider,Select,Radio } from 'antd';
 import { Empty } from 'antd';
 import { useTranslation,withTranslation } from "react-i18next";
 import '../../static/css/trans.css';
@@ -47,8 +47,7 @@ const Translist = ({ transfers }) => {
         {transfers.map((item, index) => {
           return (
             <ul className="detail-ul border-under" key={index}>
-              <li><span className="gray">{t("blockchain.transaction.from")}</span><span className="detail-add">{item.fromAddress ? item.fromAddress : "--"}</span></li>
-              <li><span className="gray">{t("blockchain.transaction.to")}</span><span className="detail-add">{item.toAddress ? item.toAddress : "--"}</span></li>
+              <li><span className="gray">{t("blockchain.transaction.from")}</span><span className="detail-add">{item.fromAddress ? item.fromAddress : "--"}</span><span className="gray">{t("blockchain.transaction.to")}</span><span className="detail-add">{item.toAddress ? item.toAddress : "--"}</span></li>
               <li><span className="gray">{t("blockchain.transaction.amount")}</span><span className="detail-amount">{item.amount} {item.symbol}</span></li>
             </ul>
           )
@@ -92,18 +91,25 @@ const Attrlist = ({ attributes }) => {
 
 const Witlist = ({ witnesses }) => {
   const { t } = useTranslation();
-  const [opClass,changeOP] = useState(true);
+  const [opClass,changeOP] = useState("showhex");
   witnesses = witnesses?witnesses:[];
   if(witnesses.length <= 0) return null;
   return (
     <Row>
       <Col span={24}>
-        <div className="hash-title pa3 mt4 mb4">{t("blockchain.witness")}</div>
-        <button onClick={() => changeOP(!opClass)}>click me! {opClass?"Hex":"Opcode"}</button>
+        <div className="hash-title pa3 mt4 mb4">
+          {t("blockchain.witness")}
+          <Radio.Group onChange={e => changeOP(e.target.value)} defaultValue="showhex">
+            <Radio className="font-s ml1" value="showhex">Hex</Radio>
+            <Radio className="font-s" value="showopcode">Opcode</Radio>
+          </Radio.Group>
+        </div>
+
+
         {witnesses.map((item, index) => {
           return (
-            <div className="detail-ul border-under op-content" key={index}>
-              <ul className={opClass.toString()}>
+            <div className={"detail-ul border-under " + opClass} key={index}>
+              <ul className="hex">
                 <li>
                   <p>{t("blockchain.transaction.invocation script")}</p>
                   <p className="trans-table"><span>{item.invocationScript}</span></p>
@@ -114,7 +120,7 @@ const Witlist = ({ witnesses }) => {
                 </li>
               </ul>
 
-              <ul className={(!opClass).toString()}>
+              <ul className="opcode">
                 <li>
                   <p>{t("blockchain.transaction.invocation script")}</p>
                 </li>
@@ -151,21 +157,26 @@ const Witlist = ({ witnesses }) => {
 
 const Scriptlist = ({ script,scriptcode }) => {
   const { t } = useTranslation();
-  const [opClass,changeOP] = useState(true);
+  const [opClass,changeOP] = useState("showhex");
   script = script?script:"";
   if(script==="") return null;
-
   return (
     <Row>
       <Col span={24}>
-        <div className="hash-title pa3 mt4 mb4">{t("脚本-未翻译")}</div>
-        <button onClick={() => changeOP(!opClass)}>click me! {opClass?"Hex":"Opcode"}</button>
-        <div className="detail-ul border-under op-content">
-          <ul className={opClass.toString()}>
+        <div className="hash-title pa3 mt4 mb4">
+          {t("脚本-未翻译")}
+          <Radio.Group onChange={e => changeOP(e.target.value)} defaultValue="showhex">
+            <Radio className="font-s ml1" value="showhex">Hex</Radio>
+            <Radio className="font-s" value="showopcode">Opcode</Radio>
+          </Radio.Group>
+        </div>
+        
+        <div className={"detail-ul border-under " + opClass}>
+          <ul className="hex">
             <li>{script}</li>
           </ul>
 
-          <ul className={(!opClass).toString()}>
+          <ul className="opcode">
             {scriptcode.map((i,index)=>{
             return(
               <li key={index}>
@@ -182,6 +193,19 @@ const Scriptlist = ({ script,scriptcode }) => {
     </Row>
   )
 };
+
+
+const options = [
+  { label: 'Signature', value: 'Signature' },
+  { label: 'Boolean', value: 'Boolean' },
+  { label: 'Integer', value: 'Integer' },
+  { label: 'Hash160', value: 'Hash160' },
+  { label: 'Hash256', value: 'Hash256' },
+  { label: 'ByteArray', value: 'ByteArray' },
+  { label: 'PublicKey', value: 'PublicKey' },
+  { label: 'String', value: 'String' },
+  { label: 'Array', value: 'Array' },
+];
 
 @withTranslation()
 class Notifies extends React.Component{

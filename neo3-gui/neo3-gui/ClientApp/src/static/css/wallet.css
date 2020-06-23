@@ -153,15 +153,16 @@
     line-height: 14px;
 }
 .asset-list .ant-list-item-meta-title{
-    line-height: 1.1;
+    /* line-height: 1.1; */
     color:#222222;
 }
-.asset-list .ant-list-item-meta-description{
+/* .asset-list .ant-list-item-meta-description{
     line-height: 1.1;
     word-break: break-all;
-}
+} */
 .asset-list .ant-typography{
-    width: 70px;
+    /* width: 70px; */
+    width: 110px;
     text-align: right;
     white-space: nowrap;
     overflow: hidden;

@@ -6,6 +6,7 @@ import '../../static/css/wallet.css'
 import {Link} from 'react-router-dom';
 import {Layout,Row,Col,Button,Divider } from 'antd';
 import Walletopen from './open'
+// import {Walletopen} from './allwallet'
 import Walletcreate from './create'
 import Walletprivate from './private'
 import Walletencrypted from './encrypted'
@@ -13,8 +14,6 @@ import Sync from '../sync';
 import { withTranslation } from "react-i18next";
 import Config from "../../config";
 import img from '../../static/images/logo.svg';
-
-
 
 import {
   ArrowLeftOutlined,

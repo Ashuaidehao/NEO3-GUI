@@ -9,6 +9,7 @@ import {
   Row,
   Col,
   message,
+  Divider,
   Button,
 } from 'antd';
 import { Layout } from 'antd';
@@ -103,6 +104,7 @@ class Multitomulti extends React.Component{
                 return (
                     <div>
                     {fields.map((field) => (
+                      <div>
                       <Row key={field.key}>
                         <Col span="15">
                         <Form.Item
@@ -149,6 +151,8 @@ class Multitomulti extends React.Component{
                             </Select>
                             </Form.Item>
                         </Col>
+                        </Row>
+                        <Row>
                         <Col span="15">
                         <Form.Item
                             name={[field.name, "receiver"]}
@@ -177,9 +181,13 @@ class Multitomulti extends React.Component{
                         </Form.Item>
                         </Col>
                         {fields.length > 1 ? (
-                            <div className="delete-btn" onClick={ () => { remove(field.name); }}></div>
+                            <Divider orientation="right">
+                                <a className="delete-line" onClick={ () => { remove(field.name); }}><MinusSquareOutlined /> <span className="font-s">删除参数</span></a>
+                            </Divider>
+                            // <div className="delete-btn" onClick={ () => { remove(field.name); }}></div>
                         ) : null}
                       </Row>
+                      </div>
                     ))}
                     <Form.Item className="mb0">
                       <Button
