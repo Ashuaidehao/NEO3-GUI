@@ -20,13 +20,13 @@ const { TextArea } = Input;
 
 function success(data) {
     Modal.success({
-        title: <Trans>签名成功</Trans>,
+        title: <Trans>advanced.signature trans</Trans>,
         content: (
             <div className="show-pri">
             <p><Trans>blockchain.transaction hash</Trans>：{data.result}</p>
             </div>
         ),
-        okText:"确认"
+        okText:<Trans>button.ok</Trans>
     });
 }
 
@@ -40,7 +40,7 @@ function error(data) {
             <p><Trans>error msg</Trans>: {data.error.message}</p>
           </div>
         ),
-        okText:<Trans>确认</Trans>
+        okText:<Trans>button.ok</Trans>
     });
 }
 
@@ -105,16 +105,16 @@ class Advancedsignature extends React.Component {
                 <Col span={24} className="bg-white pv4">
                   <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
                   <Tabs className="tran-title" defaultActiveKey="1">
-                    {/* <TabPane tab={t("文本签名")} key="1">
+                    {/* <TabPane tab={t("advanced.signature text")} key="1">
                       <div>文本签名</div>
                     </TabPane> */}
-                    <TabPane tab={t("交易签名")} key="2">
+                    <TabPane tab={t("advanced.signature trans")} key="2">
                         <div>
                         <Form
                             name="form"
                             onFinish={this.onSign}
                         >
-                            <h4>交易json</h4>
+                            <h4>{t("advanced.trans")} Json</h4>
                             <Form.Item
                                 name="sign"
                                 rules={[
@@ -128,7 +128,7 @@ class Advancedsignature extends React.Component {
                             </Form.Item>
                             <Form.Item>
                                 <Button type="primary" htmlType="submit">
-                            {t('advanced.signature')}
+                                    {t('advanced.signature')}
                                 </Button>
                             </Form.Item>
                         </Form>
@@ -137,7 +137,7 @@ class Advancedsignature extends React.Component {
                             onFinish={this.onBroad}
                             ref="broadform"
                         >
-                            <h4>签名结果</h4>
+                            <h4>{t('advanced.signature result')}</h4>
                             <Form.Item
                                 name="broadcast"
                                 rules={[
@@ -152,13 +152,13 @@ class Advancedsignature extends React.Component {
                     
                             <Form.Item>
                                 <Button type="primary" htmlType="submit">
-                            {t('advanced.broadcast')}
+                                    {t('advanced.broadcast')}
                                 </Button>
                             </Form.Item>
                         </Form>
                         </div>
                     </TabPane>
-                    {/* <TabPane tab={t("验证签名")} key="3">
+                    {/* <TabPane tab={t("advanced.signature verify")} key="3">
                       <div>验证签名</div>
                     </TabPane> */}
                   </Tabs>
