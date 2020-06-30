@@ -18,6 +18,9 @@
     margin-right: auto;
     min-height: 260px;
 }
+.wa-open .ant-row{
+    min-height: 40px;
+}
 
 /* 路径 */
 .wa-link{

@@ -20,6 +20,20 @@ import { withTranslation } from "react-i18next";
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
+// function requireAuth(nextState, replace) {
+//   let loggedIn = store.getState().AppReducer.UserReducer.loggedIn;
+
+//   if(!loggedIn) {
+//       replace({
+//           pathname: '/wallet',
+//           state: {
+//               nextpathname: nextState.location.pathname
+//           }
+//       });
+//   }
+// }
+
+
 @withTranslation()
 @inject("walletStore")
 @observer
@@ -46,7 +60,7 @@ class Walletlayout extends React.Component {
       var _data = response.data;
       if (_data.msgType === -1) {
         message.info(t("wallet.please open wallet"), 2);
-        _this.setState({ topath: "/wallet" });
+        // _this.setState({ topath: "/wallet" });
         return;
       }
       walletStore.setWalletState(true);
@@ -63,7 +77,6 @@ class Walletlayout extends React.Component {
     const { t } = this.props;
     return (
       <div style={{ height: '100%' }}>
-        {walletOpen || isopen ? <Topath topath="/wallet/walletlist"></Topath> : <Topath topath="/wallet"></Topath>}
         <Sider className="menu-logo" style={{ height: '100%' }} >
           <Menu
             className="menu-scroll"
@@ -75,47 +88,25 @@ class Walletlayout extends React.Component {
             <Menu.Item>
               <Link to="/"><HomeOutlined />{t("sideBar.home")}</Link>
             </Menu.Item>
-            {walletOpen || isopen ? (
-              <SubMenu
-                key="sub1"
-                title={
-                  <span>
-                    <WalletOutlined />
-                    <span>{t("sideBar.wallet")}</span>
-                  </span>
-                }
-              >
-                <Menu.Item key="1">
-                  <Link to="/wallet/walletlist">{t("sideBar.accounts")}</Link>
-                </Menu.Item>
-                <Menu.Item key="2">
-                  <Link to="/wallet/transaction">{t("sideBar.transaction Records")}</Link>
-                </Menu.Item>
-                <Menu.Item key="3">
-                  <Link to="/wallet/transfer">{t("sideBar.transfer")}</Link>
-                </Menu.Item>
-              </SubMenu>
-            ) : null}
-            {!walletOpen && !isopen ? (
-              <SubMenu
-                key="sub1"
-                title={
-                  <span>
-                    <WalletOutlined />
-                    <span>{t("sideBar.wallet")}</span>
-                  </span>
-                }>
-                <Menu.Item key="1">
-                  <Link to="/wallet">{t("sideBar.accounts")}</Link>
-                </Menu.Item>
-                <Menu.Item key="2">
-                  <Link to="/wallet">{t("sideBar.transaction Records")}</Link>
-                </Menu.Item>
-                <Menu.Item key="3">
-                  <Link to="/wallet">{t("sideBar.transfer")}</Link>
-                </Menu.Item>
-              </SubMenu>
-            ) : null}
+            <SubMenu
+              key="sub1"
+              title={
+                <span>
+                  <WalletOutlined />
+                  <span>{t("sideBar.wallet")}</span>
+                </span>
+              }
+            >
+              <Menu.Item key="1">
+                <Link to="/wallet/walletlist">{t("sideBar.accounts")}</Link>
+              </Menu.Item>
+              <Menu.Item key="2">
+                <Link to="/wallet/transaction">{t("sideBar.transaction Records")}</Link>
+              </Menu.Item>
+              <Menu.Item key="3">
+                <Link to="/wallet/transfer">{t("sideBar.transfer")}</Link>
+              </Menu.Item>
+            </SubMenu>
           </Menu>
           <MenuDown isl={this.state.isopen} />
         </Sider>
@@ -123,5 +114,110 @@ class Walletlayout extends React.Component {
     );
   }
 }
+
+
+// @withTranslation()
+// @inject("walletStore")
+// @observer
+// @withRouter
+// class Walletlayout extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = {
+//       size: 'default',
+//       isopen: false
+//     };
+//   }
+//   componentDidMount = () => {
+//     this.getGas()
+//   }
+//   getGas = () => {
+//     var _this = this;
+//     const { t } = this.props;
+//     axios.post('http://localhost:8081', {
+//       "id": 51,
+//       "method": "ShowGas"
+//     })
+//     .then(function (response) {
+//       var _data = response.data;
+//       if (_data.msgType === -1) {
+//         message.info(t("wallet.please open wallet"), 2);
+//         _this.setState({ topath: "/wallet" });
+//         return;
+//       }
+//       walletStore.setWalletState(true);
+//       _this.setState({ isopen: true });
+//     })
+//     .catch(function (error) {
+//       console.log(error);
+//       console.log("error");
+//     });
+//   }
+//   render = () => {
+//     const walletOpen = this.props.walletStore.isOpen;
+//     const { isopen } = this.state;
+//     const { t } = this.props;
+//     return (
+//       <div style={{ height: '100%' }}>
+//         {walletOpen || isopen ? <Topath topath="/wallet/walletlist"></Topath> : <Topath topath="/wallet"></Topath>}
+//         <Sider className="menu-logo" style={{ height: '100%' }} >
+//           <Menu
+//             className="menu-scroll"
+//             theme="light"
+//             defaultSelectedKeys={['1']}
+//             defaultOpenKeys={['sub1']}
+//             mode="inline"
+//           >
+//             <Menu.Item>
+//               <Link to="/"><HomeOutlined />{t("sideBar.home")}</Link>
+//             </Menu.Item>
+//             {walletOpen || isopen ? (
+//               <SubMenu
+//                 key="sub1"
+//                 title={
+//                   <span>
+//                     <WalletOutlined />
+//                     <span>{t("sideBar.wallet")}</span>
+//                   </span>
+//                 }
+//               >
+//                 <Menu.Item key="1">
+//                   <Link to="/wallet/walletlist">{t("sideBar.accounts")}</Link>
+//                 </Menu.Item>
+//                 <Menu.Item key="2">
+//                   <Link to="/wallet/transaction">{t("sideBar.transaction Records")}</Link>
+//                 </Menu.Item>
+//                 <Menu.Item key="3">
+//                   <Link to="/wallet/transfer">{t("sideBar.transfer")}</Link>
+//                 </Menu.Item>
+//               </SubMenu>
+//             ) : null}
+//             {!walletOpen && !isopen ? (
+//               <SubMenu
+//                 key="sub1"
+//                 title={
+//                   <span>
+//                     <WalletOutlined />
+//                     <span>{t("sideBar.wallet")}</span>
+//                   </span>
+//                 }>
+//                 <Menu.Item key="1">
+//                   <Link to="/wallet">{t("sideBar.accounts")}</Link>
+//                 </Menu.Item>
+//                 <Menu.Item key="2">
+//                   <Link to="/wallet">{t("sideBar.transaction Records")}</Link>
+//                 </Menu.Item>
+//                 <Menu.Item key="3">
+//                   <Link to="/wallet">{t("sideBar.transfer")}</Link>
+//                 </Menu.Item>
+//               </SubMenu>
+//             ) : null}
+//           </Menu>
+//           <MenuDown isl={this.state.isopen} />
+//         </Sider>
+//       </div>
+//     );
+//   }
+// }
 
 export default Walletlayout;

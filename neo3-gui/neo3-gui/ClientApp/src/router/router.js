@@ -36,6 +36,7 @@ import Advancedvote from '../components/Advanced/vote';
 import Advancedcandidate from '../components/Advanced/candidate';
 import Advancedsignature from '../components/Advanced/signature';
 
+import { Authenticated } from '../core/authentication';
 
 import { Layout } from 'antd';
 
@@ -61,15 +62,15 @@ const BasicRoute = () => (
             <Route path="/wallet">
                 <Layout style={{ height: 'calc( 100vh )'}}>
                     <Route component={Walletlayout} />
-                    <Route exact path="/wallet" component={Wallet} />
-                    <Route exact path="/wallet/walletlist" component={Walletlist} />
-                    <Route exact path="/wallet/walletlist:address" component={Walletdetail} />
-                    <Route exact path="/wallet/address:address" component={Walletdetail} />
-                    <Route exact path="/wallet/transaction" component={Wallettrans} />
-                    <Route exact path="/wallet/transaction:hash" component={Transdetail} />
-                    <Route exact path="/wallet/untransaction:hash" component={Untransdetail} />
+                    {/* <Route exact path="/wallet" component={Wallet} /> */}
+                    <Route exact path="/wallet/walletlist" component={Authenticated(Walletlist)} />
+                    <Route exact path="/wallet/walletlist:address" component={Authenticated(Walletdetail)} />
+                    <Route exact path="/wallet/address:address" component={Authenticated(Walletdetail)} />
+                    <Route exact path="/wallet/transaction" component={Authenticated(Wallettrans)} />
+                    <Route exact path="/wallet/transaction:hash" component={Authenticated(Transdetail)} />
+                    <Route exact path="/wallet/untransaction:hash" component={Authenticated(Untransdetail)} />
                     {/* <Route exact path="/wallet/transfer" component={Transfer} /> */}
-                    <Route exact path="/wallet/transfer" component={Selecttrans} />
+                    <Route exact path="/wallet/transfer" component={Authenticated(Selecttrans)} />
                 </Layout>
             </Route>
             <Route path="/contract">
@@ -86,10 +87,9 @@ const BasicRoute = () => (
                 <Layout style={{ height: 'calc( 100vh )'}}>
                     <Route component={Advancedlayout} />
                     <Route exact path="/advanced" component={Advanced} />
-                    <Route exact path="/advanced/vote" component={Advancedvote} />
-                    <Route exact path="/advanced/candidate" component={Advancedcandidate} />
-                    <Route exact path="/advanced/signature" component={Advancedsignature} />
-                    <Route exact path="/advanced/wallet" component={Wallet} />
+                    <Route exact path="/advanced/vote" component={Authenticated(Advancedvote)} />
+                    <Route exact path="/advanced/candidate" component={Authenticated(Advancedcandidate)} />
+                    <Route exact path="/advanced/signature" component={Authenticated(Advancedsignature)} />
                 </Layout>
             </Route>
             <Redirect from="*" to="/" />

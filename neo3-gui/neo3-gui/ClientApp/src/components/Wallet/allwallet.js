@@ -1,13 +1,14 @@
 /* eslint-disable */
 import React, { useState, useEffect, useRef } from 'react';
 import 'antd/dist/antd.css';
-import axios from 'axios';
-import { Form, message, Input, Row, Col, Button } from 'antd';
+import { Form, message, Input, Row, Col, Button,Typography } from 'antd';
 import { walletStore } from "../../store/stores";
 import { withRouter } from "react-router-dom";
 import { withTranslation, useTranslation } from "react-i18next";
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { UserOutlined, FolderOpenOutlined,LockOutlined } from '@ant-design/icons';
+import { post } from "../../core/request";
 import { remote } from 'electron';
+
 
 const { dialog } = remote;
 
@@ -16,79 +17,55 @@ const Walletopen = () => {
     const { t } = useTranslation();
     const [path,changePath] = useState("");
     const opendialog = () => {
-        dialog.showOpenDialog({
-            title: t("wallet.open wallet file"),
-            defaultPath: '/',
-            filters: [{
-                name: 'JSON',
-                extensions: ['json']
-            }]
-        }).then(function (res) {
-            changePath(res.filePaths[0]);
-        }).catch(function (error) {
-            console.log(error);
-        })
+      dialog.showOpenDialog({
+        title: t("wallet.open wallet file"),
+        defaultPath: '/',
+        filters: [{
+          name: 'JSON',
+          extensions: ['json']
+        }]
+      }).then(function (res) {
+        changePath(res.filePaths[0]);
+        form.setFieldsValue({
+          path: res.filePaths[0]
+        });
+      }).catch(function (error) {
+        console.log(error);
+      })
     }
     const onFinish = values => {
         console.log('Received values of form: ', values);
+        let params = {
+          "path": values.path,
+          "password": values.password
+        };
+        post("OpenWallet",params).then(res =>{
+          var _data = res.data;
+          console.log(_data)
+          if (_data.msgType === -1) {
+            message.error("查询s失败");
+            return;
+          } else {
+          }
+        }).catch(function () {
+          console.log("error");
+          _this.props.history.goBack();
+        });
     };
     return (
       <div className="open">
-        <Row>
-          <Col span={18}>
-
-          </Col>
-          <Col span={6}>
-            <Button type="primary" onClick={opendialog}>{t("wallet.select path")}</Button>
-          </Col>
-        </Row>
-
-        {/* <Button className="mt3 mb2" type="primary" onClick={this.verifi} loading={this.state.iconLoading}>{t("button.confirm")}</Button> */}
-        <Form form={form} initialValues={{ remember: true }} onFinish={onFinish}>
-            <Form.Item
-                name="path"
-                defaultValue={path} 
-                onClick={opendialog}
-                rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}
-            >
-                <Input
-                defaultValue={path} 
-                prefix={<UserOutlined />}
-                placeholder={t("please select file location")}/>
-            </Form.Item>
-            <div>{path}</div>
-            <Form.Item
-            name="nefPath"
-            label="Neo Executable File (.nef)"
+        <Form form={form} onFinish={onFinish}>
+          <Form.Item
+            name="path"
             onClick={opendialog}
-            defaultValue={path} 
-            rules={[{
-                required: true,
-                message: t("contract.please select file path")
-            },]}>
-                <Input className="dis-file" placeholder={t('select file')} defaultValue={path} disabled suffix={<LockOutlined />}/>
-            </Form.Item>
-            <Form.Item
-            label="User List"
-            shouldUpdate={(prevValues, curValues) => prevValues.users !== curValues.users}
+            rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}
           >
-            {({ getFieldValue }) => {
-              const users = getFieldValue('users') || [];
-              return users.length ? (
-                <ul>
-                  {users.map((user, index) => (
-                    <li key={index} className="user">
-                      <Avatar icon={<UserOutlined />} />
-                      {user.name} - {user.age}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <Typography.Text className="ant-form-text" type="secondary">
-                  ( <SmileOutlined /> No user yet. )
-                </Typography.Text>
-              );
-            }}
+            <Input
+              className="dis-file"
+              prefix={<UserOutlined />}
+              // suffix={<FolderOpenOutlined />}
+              disabled
+              placeholder={t("please select file location")}/>
           </Form.Item>
           <Form.Item
             name="password"
@@ -98,13 +75,9 @@ const Walletopen = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" className="login-form-button">
-            Log in
-            </Button>
-            Or <a href="">register now!</a>
+            <Button type="primary" htmlType="submit">{t("button.confirm")}</Button>
           </Form.Item>
-          </Form>
-      
+        </Form>
       </div>
     )
 };
