@@ -101,8 +101,9 @@ class Walletlist extends React.Component {
   }
   claimGas = () => {
     const { t } = this.props;
+    var _this = this;
     this.setState({iconLoading:true})
-    setTimeout(this.setState({iconLoading:false}),10000);
+    setTimeout(function(){_this.setState({iconLoading:false});_this.getGas()},15000);
     axios.post('http://localhost:8081', {
       "id": 51,
       "method": "ClaimGas"
@@ -110,8 +111,6 @@ class Walletlist extends React.Component {
     .then(function (response) {
       var _data = response.data;
       if (_data.msgType === -1) {
-        console.log("ClaimGas Error");
-        console.log(_data);
         message.success(t("wallet.gas fail"), 3);
         return;
       } else if (_data.msgType = 3) {

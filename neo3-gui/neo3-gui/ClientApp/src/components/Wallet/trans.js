@@ -1,5 +1,5 @@
 import React from 'react';
-import {  Layout, Row, Col,Tabs } from 'antd';
+import { Layout, Row, Col,Tabs } from 'antd';
 import Transaction from '../Transaction/transaction';
 import Untransaction from '../Transaction/untransaction';
 import Sync from '../sync';
@@ -27,10 +27,10 @@ class Wallettrans extends React.Component{
             <Col span={24} className="bg-white pv4">
               <Tabs className="tran-title trans-list-title" defaultActiveKey="1">
                 <TabPane tab={t("blockchain.transactions")} key="1">
-                  <Transaction content={t("blockchain.transactions")} page="wallet" />
+                  <Transaction page="wallet" />
                 </TabPane>
                 <TabPane tab={t("blockchain.transaction.pending")} key="2">
-                  <Untransaction content={t("blockchain.transaction.pending")} page="wallet"/>
+                  <Untransaction page="wallet"/>
                 </TabPane>
               </Tabs>
             </Col>
