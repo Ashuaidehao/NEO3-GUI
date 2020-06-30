@@ -102,7 +102,8 @@ class Walletlist extends React.Component {
   claimGas = () => {
     const { t } = this.props;
     this.setState({iconLoading:true})
-    setTimeout(this.setState({iconLoading:false}),10000);
+    var _this = this;
+    setTimeout(function(){_this.setState({iconLoading:false});_this.getGas()},15000);
     axios.post('http://localhost:8081', {
       "id": 51,
       "method": "ClaimGas"
