@@ -17,6 +17,7 @@ import { shell } from "electron";
 import Config from "../../config";
 import neonode from "../../neonode";
 import { post } from "../../core/request";
+import { walletStore } from "../../store/stores";
 
 @withTranslation()
 @observer
@@ -116,7 +117,7 @@ class menuDown extends React.Component {
         });
     }
     render() {
-        const walletOpen = this.props.walletStore.isOpen;
+        const walletOpen = walletStore.isOpen;
         console.log(walletOpen);
         const { t } = this.props;
         return (
