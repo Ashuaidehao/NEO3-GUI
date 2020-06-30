@@ -2,9 +2,10 @@
 import React from 'react';
 import 'antd/dist/antd.css';
 import axios from 'axios';
+import { observer, inject } from "mobx-react";
+import { withRouter } from "react-router-dom";
 import { message, Input, Row, Col, Button } from 'antd';
 import { walletStore } from "../../store/stores";
-import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import {
   UserOutlined,
@@ -16,6 +17,8 @@ import { remote } from 'electron';
 const { dialog } = remote;
 
 @withTranslation()
+@inject("walletStore")
+@observer
 @withRouter
 class Walletopen extends React.Component {
   constructor(props) {
@@ -56,7 +59,7 @@ class Walletopen extends React.Component {
       let _data = res.data;
       _this.setState({ iconLoading: false });
       if (_data.msgType == 3) {
-        walletStore.setWalletState(true);
+        _this.props.walletStore.setWalletState(true);
 
         // let page = (location.pathname).search(/contract/g)>0?1:((location.pathname).search(/advanced/g)>0?2:-1);
         // if(page === 1){

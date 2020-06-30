@@ -16,11 +16,12 @@ import { withTranslation } from 'react-i18next';
 import { shell } from "electron";
 import Config from "../../config";
 import neonode from "../../neonode";
+import { post } from "../../core/request";
 
 @withTranslation()
+@observer
 @inject("walletStore")
 @inject("blockSyncStore")
-@observer
 @withRouter
 class menuDown extends React.Component {
     constructor(props) {
@@ -28,6 +29,28 @@ class menuDown extends React.Component {
         this.state = {
             title: "设置",
         };
+    }
+    componentDidMount() {
+        this.setWallet()
+    }
+    setWallet = () => {
+        var _this = this;
+        post("ListAddress",{}).then(res =>{
+            var _data = res.data;
+            console.log(_data)
+            console.log("_data")
+            if (_data.msgType === -1) {
+                // message.error("请先打开钱包");
+                return;
+            } else {
+                _this.props.walletStore.setWalletState(true);
+                _this.props.walletStore.setAccounts(_data.result.accounts);
+            }
+        }).catch(function (error) {
+            console.log(error);
+            console.log("error");
+            // _this.props.history.goBack();
+        });
     }
     logout = () => {
         const { t } = this.props;
@@ -94,6 +117,7 @@ class menuDown extends React.Component {
     }
     render() {
         const walletOpen = this.props.walletStore.isOpen;
+        console.log(walletOpen);
         const { t } = this.props;
         return (
             <div className="menu-down">
