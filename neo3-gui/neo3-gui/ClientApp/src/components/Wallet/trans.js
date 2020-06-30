@@ -27,10 +27,10 @@ class Wallettrans extends React.Component{
             <Col span={24} className="bg-white pv4">
               <Tabs className="tran-title trans-list-title" defaultActiveKey="1">
                 <TabPane tab={t("blockchain.transactions")} key="1">
-                  <Transaction content={t("blockchain.transactions")} page="all" />
+                  <Transaction content={t("blockchain.transactions")} page="wallet" />
                 </TabPane>
                 <TabPane tab={t("blockchain.transaction.pending")} key="2">
-                  <Untransaction content={t("blockchain.transaction.pending")}/>
+                  <Untransaction content={t("blockchain.transaction.pending")} page="wallet"/>
                 </TabPane>
               </Tabs>
             </Col>
