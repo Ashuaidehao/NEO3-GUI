@@ -20,10 +20,10 @@ import { post } from "../../core/request";
 import { walletStore } from "../../store/stores";
 
 @withTranslation()
-@observer
 @inject("walletStore")
 @inject("blockSyncStore")
 @withRouter
+@observer
 class menuDown extends React.Component {
     constructor(props) {
         super(props);
@@ -118,7 +118,6 @@ class menuDown extends React.Component {
     }
     render() {
         const walletOpen = walletStore.isOpen;
-        console.log(walletOpen);
         const { t } = this.props;
         return (
             <div className="menu-down">

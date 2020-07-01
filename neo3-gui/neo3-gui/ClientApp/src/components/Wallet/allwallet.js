@@ -1,6 +1,7 @@
 /* eslint-disable */
 import React, { useState, useEffect, useRef } from 'react';
 import 'antd/dist/antd.css';
+import { observer, inject } from "mobx-react";
 import { Form, message, Input, Row, Col, Button,Typography } from 'antd';
 import { walletStore } from "../../store/stores";
 import { withRouter } from "react-router-dom";
@@ -8,6 +9,7 @@ import { withTranslation, useTranslation } from "react-i18next";
 import { UserOutlined, FolderOpenOutlined,LockOutlined } from '@ant-design/icons';
 import { post } from "../../core/request";
 import { remote } from 'electron';
+import { action } from 'mobx';
 
 
 const { dialog } = remote;
@@ -43,9 +45,13 @@ const Walletopen = () => {
           var _data = res.data;
           console.log(_data)
           if (_data.msgType === -1) {
-            message.error("查询s失败");
+            message.error("查询失败");
             return;
           } else {
+            message.success("登录成功");
+            
+            walletStore.setWalletState(true);
+            walletStore.setWalletState(true);
           }
         }).catch(function () {
           console.log("error");
@@ -63,7 +69,6 @@ const Walletopen = () => {
             <Input
               className="dis-file"
               prefix={<UserOutlined />}
-              // suffix={<FolderOpenOutlined />}
               disabled
               placeholder={t("please select file location")}/>
           </Form.Item>
@@ -80,6 +85,84 @@ const Walletopen = () => {
         </Form>
       </div>
     )
+};
+
+const Walletcreate = () => {
+  const [form] = Form.useForm();
+  const { t } = useTranslation();
+  const [path,changePath] = useState("");
+  const opendialog = () => {
+    dialog.showOpenDialog({
+      title: t("wallet.open wallet file"),
+      defaultPath: '/',
+      filters: [{
+        name: 'JSON',
+        extensions: ['json']
+      }]
+    }).then(function (res) {
+      changePath(res.filePaths[0]);
+      form.setFieldsValue({
+        path: res.filePaths[0]
+      });
+    }).catch(function (error) {
+      console.log(error);
+    })
+  }
+  const onFinish = values => {
+      console.log('Received values of form: ', values);
+      let params = {
+        "path": values.path,
+        "password": values.password
+      };
+      post("OpenWallet",params).then(res =>{
+        var _data = res.data;
+        console.log(_data)
+        if (_data.msgType === -1) {
+          message.error("查询失败");
+          return;
+        } else {
+          message.success("登录成功");
+          
+          walletStore.setWalletState(true);
+        }
+      }).catch(function () {
+        console.log("error");
+        _this.props.history.goBack();
+      });
+  };
+  return (
+    <div className="open">
+      <Form form={form} onFinish={onFinish}>
+        <Form.Item
+          name="path"
+          onClick={opendialog}
+          rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}
+        >
+          <Input
+            className="dis-file"
+            prefix={<UserOutlined />}
+            disabled
+            placeholder={t("please select file location")}/>
+        </Form.Item>
+        <Form.Item
+          name="password"
+          rules={[{ required: true, message: 'Please input your Password!-未翻译' }]}
+        >
+          <Input.Password placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />}/>
+        </Form.Item>
+        <Form.Item
+          name="password"
+          rules={[{ required: true, message: 'Please input your Password!-未翻译' }]}
+        >
+          <Input.Password placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />}/>
+        </Form.Item>
+
+        <Form.Item>
+          <Button type="primary" htmlType="submit">{t("button.confirm")}</Button>
+        </Form.Item>
+      </Form>
+    </div>
+  )
 };
 
 // @withTranslation()
@@ -190,5 +273,5 @@ const Walletopen = () => {
 //   }
 // }
 
-export { Walletopen }
+export { Walletopen,Walletcreate }
 // export default Notifies;

@@ -41,8 +41,8 @@ const typeOption = [
 
 @withTranslation()
 @inject("walletStore")
-@observer
 @withRouter
+@observer
 class Contractinvoke extends React.Component{
   constructor(props){
     super(props);

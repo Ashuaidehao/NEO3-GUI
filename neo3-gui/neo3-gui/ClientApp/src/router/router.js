@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter, Route, Switch,Redirect} from 'react-router-dom';
+import {BrowserRouter, Route , Switch,Redirect} from 'react-router-dom';
 import Home from '../pages/home'
 import Sync from '../components/sync';
 import Addressdetail from '../components/Common/addressdetail';
@@ -61,7 +61,7 @@ const BasicRoute = () => (
             </Route>
             <Route path="/wallet">
                 <Layout style={{ height: 'calc( 100vh )'}}>
-                    <Route component={Walletlayout} />
+                    <Route  component={Walletlayout} />
                     {/* <Route exact path="/wallet" component={Wallet} /> */}
                     <Route exact path="/wallet/walletlist" component={Authenticated(Walletlist)} />
                     <Route exact path="/wallet/walletlist:address" component={Authenticated(Walletdetail)} />
@@ -78,9 +78,9 @@ const BasicRoute = () => (
                     <Route component={Contractlayout} />
                     <Route exact path="/contract" component={Contract} />
                     <Route exact path="/contract/detail:hash" component={Contractdetail} />
-                    <Route exact path="/contract/deploy" component={Contractdeploy} />
-                    <Route exact path="/contract/invoke" component={Contractinvoke} />
-                    <Route exact path="/contract/wallet" component={Wallet} />
+                    <Route exact path="/contract/deploy" component={Authenticated(Contractdeploy)} />
+                    <Route exact path="/contract/invoke" component={Authenticated(Contractinvoke)} />
+                    {/* <Route exact path="/contract/wallet" component={Wallet} /> */}
                 </Layout>
             </Route>
             <Route path="/advanced">
