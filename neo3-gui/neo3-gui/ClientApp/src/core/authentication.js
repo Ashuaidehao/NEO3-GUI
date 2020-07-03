@@ -17,7 +17,7 @@ function Authenticated(Component) {
         render() {
             const walletOpen = walletStore.isOpen;
             return (
-                <div style={{ width: '100%'}}>
+                <div style={{width: '100%',overflowY:'auto'}}>
                     {walletOpen ? <Component {...this.props}/>: <Wallet/>}
                 </div>
             )

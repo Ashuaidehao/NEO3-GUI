@@ -104,8 +104,8 @@ class Multitomulti extends React.Component{
                 return (
                     <div>
                     {fields.map((field) => (
-                      <div>
-                      <Row key={field.key}>
+                      <div key={field.key}>
+                      <Row>
                         <Col span="15">
                         <Form.Item
                             name={[field.name, "sender"]}

@@ -1,162 +1,28 @@
 /* eslint-disable */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import 'antd/dist/antd.css';
-import { observer, inject } from "mobx-react";
-import { Form, message, Input, Row, Col, Button,Typography } from 'antd';
+import { Form, message, Input, Button,Divider } from 'antd';
 import { walletStore } from "../../store/stores";
-import { withRouter } from "react-router-dom";
-import { withTranslation, useTranslation } from "react-i18next";
-import { UserOutlined, FolderOpenOutlined,LockOutlined } from '@ant-design/icons';
+import { useTranslation } from "react-i18next";
+import { UserOutlined,LockOutlined } from '@ant-design/icons';
 import { post } from "../../core/request";
 import { remote } from 'electron';
-import { action } from 'mobx';
-
 
 const { dialog } = remote;
 
-const Walletopen = () => {
-    const [form] = Form.useForm();
-    const { t } = useTranslation();
-    const [path,changePath] = useState("");
-    const opendialog = () => {
-      dialog.showOpenDialog({
-        title: t("wallet.open wallet file"),
-        defaultPath: '/',
-        filters: [{
-          name: 'JSON',
-          extensions: ['json']
-        }]
-      }).then(function (res) {
-        changePath(res.filePaths[0]);
-        form.setFieldsValue({
-          path: res.filePaths[0]
-        });
-      }).catch(function (error) {
-        console.log(error);
-      })
-    }
-    const onFinish = values => {
-        console.log('Received values of form: ', values);
-        let params = {
-          "path": values.path,
-          "password": values.password
-        };
-        post("OpenWallet",params).then(res =>{
-          var _data = res.data;
-          console.log(_data)
-          if (_data.msgType === -1) {
-            message.error("查询失败");
-            return;
-          } else {
-            message.success("登录成功");
-            
-            walletStore.setWalletState(true);
-            walletStore.setWalletState(true);
-          }
-        }).catch(function () {
-          console.log("error");
-          _this.props.history.goBack();
-        });
-    };
-    return (
-      <div className="open">
-        <Form form={form} onFinish={onFinish}>
-          <Form.Item
-            name="path"
-            onClick={opendialog}
-            rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}
-          >
-            <Input
-              className="dis-file"
-              prefix={<UserOutlined />}
-              disabled
-              placeholder={t("please select file location")}/>
-          </Form.Item>
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: 'Please input your Password!-未翻译' }]}
-          >
-            <Input.Password placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />}/>
-          </Form.Item>
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit">{t("button.confirm")}</Button>
-          </Form.Item>
-        </Form>
-      </div>
-    )
-};
-
-const Walletcreate = () => {
+const Walletopen = ({feedback}) => {
+  feedback = feedback ? feedback:onOpen;
   const [form] = Form.useForm();
   const { t } = useTranslation();
-  const [path,changePath] = useState("");
-  const opendialog = () => {
-    dialog.showOpenDialog({
-      title: t("wallet.open wallet file"),
-      defaultPath: '/',
-      filters: [{
-        name: 'JSON',
-        extensions: ['json']
-      }]
-    }).then(function (res) {
-      changePath(res.filePaths[0]);
-      form.setFieldsValue({
-        path: res.filePaths[0]
-      });
-    }).catch(function (error) {
-      console.log(error);
-    })
-  }
-  const onFinish = values => {
-      console.log('Received values of form: ', values);
-      let params = {
-        "path": values.path,
-        "password": values.password
-      };
-      post("OpenWallet",params).then(res =>{
-        var _data = res.data;
-        console.log(_data)
-        if (_data.msgType === -1) {
-          message.error("查询失败");
-          return;
-        } else {
-          message.success("登录成功");
-          
-          walletStore.setWalletState(true);
-        }
-      }).catch(function () {
-        console.log("error");
-        _this.props.history.goBack();
-      });
-  };
   return (
     <div className="open">
-      <Form form={form} onFinish={onFinish}>
-        <Form.Item
-          name="path"
-          onClick={opendialog}
-          rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}
-        >
-          <Input
-            className="dis-file"
-            prefix={<UserOutlined />}
-            disabled
-            placeholder={t("please select file location")}/>
+      <Form form={form} onFinish={feedback}>
+        <Form.Item name="path" onClick={opendialog(form)} rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}>
+          <Input disabled className="dis-file" prefix={<UserOutlined />} placeholder={t("please select file location")}/>
         </Form.Item>
-        <Form.Item
-          name="password"
-          rules={[{ required: true, message: 'Please input your Password!-未翻译' }]}
-        >
+        <Form.Item name="password" rules={[{ required: true, message: 'Please input your Password!-未翻译' }]} >
           <Input.Password placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />}/>
         </Form.Item>
-        <Form.Item
-          name="password"
-          rules={[{ required: true, message: 'Please input your Password!-未翻译' }]}
-        >
-          <Input.Password placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />}/>
-        </Form.Item>
-
         <Form.Item>
           <Button type="primary" htmlType="submit">{t("button.confirm")}</Button>
         </Form.Item>
@@ -165,113 +31,204 @@ const Walletcreate = () => {
   )
 };
 
-// @withTranslation()
-// @withRouter
-// class Walletopen extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       iconLoading: false,
-//       islogin: false,
-//       path: "",
-//       maxLength: 30
-//     };
-//   }
-//   verifi = () => {
-//     const { t } = this.props;
-//     var path = this.refs.path.input.value;
-//     var pass = this.refs.pass.input.value;
-//     if (!path || !pass) {
-//       message.error(t("wallet.please select file and input password"), 3);
-//       return;
-//     }
-//     this.setState({ iconLoading: true });
-//     this.openWallet();
-//   }
-//   openWallet = () => {
-//     const { t } = this.props;
-//     var _this = this;
-//     var pass = this.refs.pass.input.value;
-//     axios.post('http://localhost:8081', {
-//       "id": "1",
-//       "method": "OpenWallet",
-//       "params": {
-//         "path": _this.state.path,
-//         "password": pass
-//       }
-//     })
-//     .then(function (res) {
-//       let _data = res.data;
-//       _this.setState({ iconLoading: false });
-//       if (_data.msgType == 3) {
-//         walletStore.setWalletState(true);
+const Walletcreate = ({feedback}) => {
+  const [form] = Form.useForm();
+  const { t } = useTranslation();
+  feedback = feedback ? feedback:onCreate;
+  return (
+    <div className="open">
+      <Form form={form} onFinish={feedback}>
+        <Form.Item name="path" onClick={opensavedialog(form)} rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}>
+          <Input disabled className="dis-file" prefix={<UserOutlined />} placeholder={t("please select file location")}/>
+        </Form.Item>
+        <Form.Item name="pass" rules={[{ required: true, message: 'Please input your Password!-未翻译' }]} hasFeedback >
+          <Input.Password placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />}/>
+        </Form.Item>
+        <Form.Item name="veripass" dependencies={['pass']}
+        hasFeedback
+        rules={[
+          {
+            required: true,
+            message: 'Please confirm your password!',
+          },
+          ({ getFieldValue }) => ({
+            validator(rule, value) {
+              if (!value || getFieldValue('pass') === value) return Promise.resolve();
+              return Promise.reject('The two passwords that you entered do not match!');
+            },
+          }),
+        ]}
+        >
+          <Input.Password placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />}/>
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">{t("button.confirm")}</Button>
+        </Form.Item>
+      </Form>
+    </div>
+  )
+};
 
-//         let page = (location.pathname).search(/contract/g)>0?1:((location.pathname).search(/advanced/g)>0?2:-1);
-//         if(page === 1){
-//           _this.props.history.push('/contract');
-//         }else if(page === 2){
-//           _this.props.history.push('/advanced');
-//         }else{
-//           message.success(t("wallet.wallet opened"), 3);
-//           _this.props.history.push('/wallet/walletlist');
-//         }
-//       } else {
-//         console.log(_data)
-//         message.info(t("wallet.open wallet failed"), 2);
-//       }
-//     })
-//     .catch(function (error) {
-//       console.log(error);
-//       console.log("error");
-//     });
-//   }
-//   opendialog = () => {
-//     const { t } = this.props;
-//     var _this = this;
-//     dialog.showOpenDialog({
-//       title: t("wallet.open wallet file"),
-//       defaultPath: '/',
-//       filters: [
-//         {
-//           name: 'JSON',
-//           extensions: ['json']
-//         }
-//       ]
-//     }).then(function (res) {
-//       _this.setState({ path: res.filePaths[0] });
-//     }).catch(function (error) {
-//       console.log(error);
-//     })
-//   }
-//   render() {
-//     const { t } = this.props;
-//     return (
-//       <div className="open">
-//         <Row>
-//           <Col span={18}>
-//             <Input
-//               disabled
-//               ref="path"
-//               placeholder={t("please select file location")}
-//               value={this.state.path}
-//               prefix={<UserOutlined />}/>
-//           </Col>
-//           <Col span={6}>
-//             <Button type="primary" onClick={this.opendialog}>{t("wallet.select path")}</Button>
-//           </Col>
-//         </Row>
-//         <Input.Password
-//           ref="pass"
-//           placeholder={t("please input password")}
-//           maxLength={this.state.maxLength}
-//           onChange={this.checkinput}
-//           onPressEnter={this.openWallet} 
-//           prefix={<LockOutlined />}/>
-//         <Button className="mt3 mb2" type="primary" onClick={this.verifi} loading={this.state.iconLoading}>{t("button.confirm")}</Button>
-//       </div>
-//     );
-//   }
-// }
+const Walletprivate = () => {
+  const [form] = Form.useForm();
+  const { t } = useTranslation();
+  const [showElem, changeShow] = useState(false);
+  const veriPrivate = () =>{
+    let params = {"privateKey":"L2tDYRq9g1gkWACZrw1Qu7BsAFufwArNgodYTvPjF8Ar7u34rBUf"};
+    post("VerifyPrivateKey",params).then(res =>{
+      var _data = res.data;
+      if (_data.msgType === -1) {
+        message.error("私钥验证失败");
+        return;
+      } else {
+        message.success("私钥验证成功");
+        changeShow(true)
+        // walletStore.setWalletState(true);
+      }
+    }).catch(function (error) {
+      console.log("error");
+      console.log(error);
+      // _this.props.history.goBack();
+    });
+  }
+  return (
+    <div className="open">
+      <Form form={form} onFinish={veriPrivate}>
+        <Form.Item name="private" rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}>
+          <Input disabled={showElem} placeholder={t("please input Hex/WIF private key")}/>
+        </Form.Item>
+        {!showElem?(
+        <Form.Item>
+          <Button type="primary" htmlType="submit">{t("button.next")}</Button>
+        </Form.Item>
+        ):null}
+      </Form>
+      {showElem?(
+        <div>
+            <Button onClick={() => changeShow(false)}>{t("button.prev")}</Button>
+            <Divider>{t("wallet.private key save wallet title")}</Divider>
+            <Walletcreate feedback={onPrivate("priva")}></Walletcreate>
+        </div>
+      ):null}
+    </div>
+  )
+};
 
-export { Walletopen,Walletcreate }
-// export default Notifies;
+// wallet操作方法
+// 打开钱包
+const onOpen = values => {
+  let params = {
+    "path": values.path,
+    "password": values.password
+  };
+  post("OpenWallet",params).then(res =>{
+    var _data = res.data;
+    if (_data.msgType === -1) {
+      message.error("钱包打开失败，路径or密码错误");
+      return;
+    } else {
+      message.success("登录成功");
+      walletStore.setWalletState(true);
+    }
+    return;
+  }).catch(function () {
+    console.log("error");
+    _this.props.history.goBack();
+  });
+};
+
+const onCreate = values => {
+  let params = {
+    "path": values.path,
+    "password": values.veripass,
+    "privateKey": values.private || ""
+  };
+  post("CreateWallet",params).then(res =>{
+    var _data = res.data;
+    if (_data.msgType === -1) {
+      message.error("钱包创建失败");
+      return;
+    } else {
+      message.success("钱包创建成功");
+      walletStore.setWalletState(true);
+    }
+  }).catch(function () {
+    console.log("error");
+    _this.props.history.goBack();
+  });
+};
+
+// 私钥打开方式
+const onPrivate = (priva) => {
+  priva = "444ad6089aea71e7d3d5f3ed274a977055af2d40ad140f8ce4eb135122bea68d";
+  return (values)=>{
+    values.private = priva;
+    onCreate(values);
+  }
+  // let params = {
+  //   "path": values.path,
+  //   "password": values.veripass,
+  //   "privateKey": values.privateKey
+  // };
+  // post("CreateWallet",params).then(res =>{
+  //   var _data = res.data;
+  //   if (_data.msgType === -1) {
+  //     message.error("钱包创建失败");
+  //     return;
+  //   } else {
+  //     message.success("钱包创建成功");
+  //     walletStore.setWalletState(true);
+  //   }
+  // }).catch(function () {
+  //   console.log("error");
+  //   _this.props.history.goBack();
+  // });
+};
+
+
+//打开弹窗
+const opendialog = (form) => {
+  return ()=>{
+    dialog.showOpenDialog({
+      title: 't("wallet.open wallet file")',
+      defaultPath: '/',
+      filters: [{
+        name: 'JSON',
+        extensions: ['json']
+      }]
+    }).then(function (res) {
+      form.setFieldsValue({
+        path: res.filePaths[0]
+      });
+    }).catch(function (error) {
+      console.log(error);
+      console.log("文件打开错误");
+    })
+  }
+}
+
+//保存弹窗
+const opensavedialog = (form) => {
+  return ()=>{
+    dialog.showSaveDialog({
+      title: 't("wallet.save wallet file title")',
+      defaultPath: '/',
+      filters: [
+        {
+          name: 'JSON',
+          extensions: ['json']
+        }
+      ]
+    }).then(function (res) {
+      form.setFieldsValue({
+        path: res.filePath
+      });
+    }).catch(function (error) {
+      console.log(error);
+      console.log("钱包存储错误");
+    })
+  }
+}
+
+
+export { Walletopen,Walletcreate,Walletprivate }
