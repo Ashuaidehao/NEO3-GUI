@@ -12,7 +12,7 @@ import {
     LogoutOutlined,
     SettingOutlined
 } from '@ant-design/icons';
-import { withTranslation } from 'react-i18next';
+import { withTranslation,Trans } from 'react-i18next';
 import { shell } from "electron";
 import Config from "../../config";
 import neonode from "../../neonode";
@@ -96,9 +96,9 @@ class menuDown extends React.Component {
         return () => {
             this.setState({ showElem: false })
             switch (ele) {
-                case 0: this.setState({ title: t("sideBar.address book"), children: <Addressdetail /> }); break;
-                case 1: this.setState({ title: "Settings", children: <Setting switchNetwork={this.switchNetwork.bind(this)} /> }); break;
-                default: this.setState({ title: "Settings", children: <Setting switchNetwork={this.switchNetwork.bind(this)} /> }); break;
+                case 0: this.setState({ title: "sideBar.address book", children: <Addressdetail /> }); break;
+                case 1: this.setState({ title: "sideBar.settings", children: <Setting switchNetwork={this.switchNetwork.bind(this)} /> }); break;
+                default: this.setState({ title: "sideBar.Settings", children: <Setting switchNetwork={this.switchNetwork.bind(this)} /> }); break;
             }
             this.setState({
                 visible: true,
@@ -145,7 +145,7 @@ class menuDown extends React.Component {
                 </ul>
                 <Modal
                     className="set-modal"
-                    title={this.state.title}
+                    title={<Trans>{this.state.title}</Trans>}
                     visible={this.state.visible}
                     onCancel={this.hideModal}
                     footer={null}
