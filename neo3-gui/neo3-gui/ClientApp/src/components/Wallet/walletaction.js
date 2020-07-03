@@ -4,9 +4,9 @@ import 'antd/dist/antd.css';
 import { Form, message, Input, Button,Divider } from 'antd';
 import { walletStore } from "../../store/stores";
 import { useTranslation } from "react-i18next";
-import { UserOutlined,LockOutlined } from '@ant-design/icons';
 import { post } from "../../core/request";
 import { remote } from 'electron';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
 const { dialog } = remote;
 
@@ -73,8 +73,9 @@ const Walletprivate = () => {
   const [form] = Form.useForm();
   const { t } = useTranslation();
   const [showElem, changeShow] = useState(false);
-  const veriPrivate = () =>{
-    let params = {"privateKey":"L2tDYRq9g1gkWACZrw1Qu7BsAFufwArNgodYTvPjF8Ar7u34rBUf"};
+  const [priva, changePrivate] = useState("");
+  const veriPrivate = values =>{
+    let params = {"privateKey":values.private};
     post("VerifyPrivateKey",params).then(res =>{
       var _data = res.data;
       if (_data.msgType === -1) {
@@ -82,13 +83,12 @@ const Walletprivate = () => {
         return;
       } else {
         message.success("私钥验证成功");
-        changeShow(true)
-        // walletStore.setWalletState(true);
+        changeShow(true);
+        changePrivate(values.private);
       }
     }).catch(function (error) {
       console.log("error");
       console.log(error);
-      // _this.props.history.goBack();
     });
   }
   return (
@@ -107,15 +107,67 @@ const Walletprivate = () => {
         <div>
             <Button onClick={() => changeShow(false)}>{t("button.prev")}</Button>
             <Divider>{t("wallet.private key save wallet title")}</Divider>
-            <Walletcreate feedback={onPrivate("priva")}></Walletcreate>
+            <Walletcreate feedback={onPrivate(priva)}></Walletcreate>
         </div>
       ):null}
     </div>
   )
 };
 
-// wallet操作方法
-// 打开钱包
+const Walletencrypted = () => {
+  const [form] = Form.useForm();
+  const { t } = useTranslation();
+  const [showElem, changeShow] = useState(false);
+  const [encrypt, changeEncrypted] = useState("");
+  const veriPrivate = values =>{
+    let params = {"nep2Key":values.private,"password":values.pass};
+    post("VerifyNep2Key",params).then(res =>{
+      var _data = res.data;
+      if (_data.msgType === -1) {
+        message.error("私钥验证失败");
+        return;
+      } else {
+        message.success("私钥验证成功");
+        changeShow(true);
+        changeEncrypted(_data.result);
+      }
+    }).catch(function (error) {
+      console.log("error");
+      console.log(error);
+    });
+  }
+  return (
+    <div className="open">
+      <Form form={form} onFinish={veriPrivate}>
+        <Form.Item name="private" rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}>
+          <Input disabled={showElem} placeholder={t("please input Hex/WIF private key")}/>
+        </Form.Item>
+        {!showElem?(
+        <Form.Item name="pass" rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}>
+          <Input.Password disabled={showElem} placeholder={t("password")}/>
+        </Form.Item>
+        ):null}
+        {!showElem?(
+        <Form.Item>
+          <Button type="primary" htmlType="submit">{t("button.next")}</Button>
+        </Form.Item>
+        ):null}
+      </Form>
+      {showElem?(
+        <div>
+            <Button onClick={() => changeShow(false)}>{t("button.prev")}</Button>
+            <Divider>{t("wallet.private key save wallet title")}</Divider>
+            <Walletcreate feedback={onPrivate(encrypt)}></Walletcreate>
+        </div>
+      ):null}
+    </div>
+  )
+};
+
+
+/* 
+ * Walletopen
+ */
 const onOpen = values => {
   let params = {
     "path": values.path,
@@ -137,6 +189,10 @@ const onOpen = values => {
   });
 };
 
+/* 
+ * Walletcreate
+ * 私钥导入/加密私钥通用
+ */
 const onCreate = values => {
   let params = {
     "path": values.path,
@@ -154,37 +210,20 @@ const onCreate = values => {
     }
   }).catch(function () {
     console.log("error");
-    _this.props.history.goBack();
+    // _this.props.history.goBack();
   });
 };
 
-// 私钥打开方式
+/* 
+ * Walletprivate/Walletencrypted
+ * 私钥/加密私钥打开
+ */
 const onPrivate = (priva) => {
-  priva = "444ad6089aea71e7d3d5f3ed274a977055af2d40ad140f8ce4eb135122bea68d";
   return (values)=>{
     values.private = priva;
     onCreate(values);
   }
-  // let params = {
-  //   "path": values.path,
-  //   "password": values.veripass,
-  //   "privateKey": values.privateKey
-  // };
-  // post("CreateWallet",params).then(res =>{
-  //   var _data = res.data;
-  //   if (_data.msgType === -1) {
-  //     message.error("钱包创建失败");
-  //     return;
-  //   } else {
-  //     message.success("钱包创建成功");
-  //     walletStore.setWalletState(true);
-  //   }
-  // }).catch(function () {
-  //   console.log("error");
-  //   _this.props.history.goBack();
-  // });
 };
-
 
 //打开弹窗
 const opendialog = (form) => {
@@ -230,5 +269,4 @@ const opensavedialog = (form) => {
   }
 }
 
-
-export { Walletopen,Walletcreate,Walletprivate }
+export { Walletopen, Walletcreate, Walletprivate, Walletencrypted }
