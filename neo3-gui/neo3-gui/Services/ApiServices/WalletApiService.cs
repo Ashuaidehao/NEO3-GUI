@@ -188,7 +188,17 @@ namespace Neo.Services.ApiServices
             {
                 return Error(ErrorCode.WalletNotOpen);
             }
-            var points = publicKeys.Select(p => ECPoint.DecodePoint(Helper.HexToBytes(p), ECCurve.Secp256r1)).ToArray();
+
+            ECPoint[] points = null;
+            try
+            {
+                points = publicKeys.Select(p => ECPoint.DecodePoint(Helper.HexToBytes(p), ECCurve.Secp256r1)).ToArray();
+
+            }
+            catch (FormatException ex)
+            {
+                return Error(ErrorCode.InvalidPara, ex.Message);
+            }
             Contract contract = Contract.CreateMultiSigContract(limit, points);
             if (contract == null)
             {
