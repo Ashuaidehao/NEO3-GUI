@@ -1,18 +1,22 @@
 /* eslint-disable */
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { observer, inject } from "mobx-react";
 import axios from 'axios';
-import { Layout, message, Row, Col, List, Avatar, Button, Typography,PageHeader,Modal,Input } from 'antd';
+import { Layout, message, Row, Col, List, Avatar, Button, Typography,PageHeader,Modal,Input,Select,Form } from 'antd';
 import '../../static/css/wallet.css'
 import Sync from '../sync';
 import { withTranslation,useTranslation } from "react-i18next";
+import { post } from "../../core/request";
+import { walletStore } from "../../store/stores";
 
 import {
   PlusCircleOutlined
 } from '@ant-design/icons';
+import { values } from 'mobx';
 
 const { Content } = Layout;
+const { Option } = Select;
 
 @withTranslation()
 @inject("walletStore")
@@ -144,35 +148,16 @@ class Walletlist extends React.Component {
       console.log("error");
     });
   }
-  importPrivate = () => {
+  showModal = (ele) => {
     const { t } = this.props;
-    this.handleCancel();
-
-    var pass = document.getElementById("privateKey").value;
-    axios.post('http://localhost:8081', {
-      "id": "20",
-      "method": "ImportAccounts",
-      "params": [pass]
-    })
-    .then(function (res) {
-      let _data = res.data;
-      if (_data.msgType === 3) {
-        message.success(t('wallet.import private success'), 2);
-      } else {
-        message.info(t('wallet.private fail'), 2);
+    return () =>{
+      this.setState({visible: true})
+      switch(ele){
+        case 0:this.setState({modalPanel:<Private func={this.handleCancel}/>,modalTitle:t("wallet.import private")});break;
+        case 1:this.setState({modalPanel:<Multiaddress func={this.handleCancel}/>,modalTitle:t("wallet.import private")});break;
+        default:this.setState({visible: false});break;
       }
-    }).catch(function (error) {
-      console.log(error);
-      console.log("error");
-    });
-  }
-  showModal = () => {
-    const { t } = this.props;
-    this.setState({
-      visible: true,
-      modalPanel:<Private func={this.importPrivate} t={t}/>,
-      modalTitle:t("wallet.import private")
-    });
+    }
   };
   handleOk = () => {
     this.setState({
@@ -215,7 +200,8 @@ class Walletlist extends React.Component {
                     <div className="wal-ul">
                       <ul>
                         <li><a onClick={this.addAddress}>{t('wallet.add address')}</a></li>
-                        <li><a onClick={this.showModal}>{t('wallet.import private')}</a></li>
+                        <li><a onClick={this.showModal(0)}>{t('wallet.import private')}</a></li>
+                        <li><a onClick={this.showModal(1)}>{t('多方签名-未翻译')}</a></li>
                       </ul>
                     </div>
                   </div>
@@ -271,16 +257,106 @@ class Walletlist extends React.Component {
 export default Walletlist;
 
 
-const Private = ({func,t}) => {
+const Private = ({func}) => {
+  const [form] = Form.useForm();
+  const { t } = useTranslation();
+  const importPrivate = values =>{
+    post("ImportAccounts",[values.private]).then(res =>{
+      let _data = res.data;
+      if (_data.msgType === 3) {
+        message.success(t('wallet.import private success'), 2);
+      } else {
+        message.info(t('wallet.private fail'), 2);
+      }
+      func();
+    }).catch(function (error) {
+      console.log("error");
+      console.log(error);
+    });
+  }
   return (
-    <div>
-      <Input type="text" id="privateKey" placeholder={t("please input Hex/WIF private key")} />
-      <p className="text-c mb0">
-        <Button onClick={func} type="primary" className="mt3">{t("wallet.import private")}</Button>
-      </p>
-    </div>
+    <Form className="neo-form" form={form} onFinish={importPrivate}>
+      <Form.Item name="private" rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}>
+        <Input placeholder={t("please input Hex/WIF private key")}/>
+      </Form.Item>
+      <Form.Item>
+        <Button type="primary" htmlType="submit">{t("wallet.import private")}</Button>
+      </Form.Item>
+    </Form>
   )
 };
+
+const Multiaddress = ({func}) => {
+  const [form] = Form.useForm();
+  const { t } = useTranslation();
+  const [accounts, changeList] = useState([]);
+  const getPublic = () =>{
+    post("ListPublicKey",{}).then(res =>{
+      var _data = res.data;
+      if (_data.msgType === -1) {
+        message.error("公钥获取失败");
+      }else{
+        changeList(_data.result);
+      }
+      return;
+    }).catch(function (error) {
+      console.log("error");
+      console.log(error);
+    });
+  }
+  const addMulti = values =>{
+    console.log(values);
+    // let params = {"nep2Key":values.private,"password":values.pass};
+    // post("VerifyNep2Key",params).then(res =>{
+    //   var _data = res.data;
+    //   if (_data.msgType === -1) {
+    //     message.error("私钥验证失败");
+    //     return;
+    //   } else {
+    //     message.success("私钥验证成功");
+    //   }
+    // }).catch(function (error) {
+    //   console.log("error");
+    //   console.log(error);
+    // });
+  }
+  const handleChange = value => {
+    let last = value.pop().trim();
+    var regex = new RegExp("^0[23][0-9a-f]{64}$");
+    if(!regex.test(last)){
+      message.error("公钥格式错误，请确认后重新输入");
+      return;
+    }
+    value.push(last);
+  }
+  if(accounts.length === 0) getPublic();
+  return(
+    <Form className="neo-form" form={form} onFinish={addMulti}>
+      {console.log(accounts)}
+      <h4>{t("创建多方签名地址")}</h4>
+      <Form.Item name="cosigners">
+        <Select
+          placeholder={t("选择想要进行多签的公钥或者输入")}
+          mode="tags"
+          onChange={handleChange}
+          style={{ width: '100%'}}>
+          {accounts.length>0?accounts.map((item)=>{
+            console.log({...item})
+            return(
+            <Option key={item.publicKey}>{item.address}</Option>
+            )
+          }):null}
+        </Select>
+      </Form.Item>
+      <Form.Item name="private" rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}>
+        <Input placeholder={t("please input Hex/WIF private key")}/>
+      </Form.Item>
+      <Form.Item>
+        <Button type="primary" htmlType="submit">{t("wallet.import private")}</Button>
+      </Form.Item>
+    </Form>
+  )
+}
 
 const Accounts = ({accounts,name}) => {
   const { t } = useTranslation();

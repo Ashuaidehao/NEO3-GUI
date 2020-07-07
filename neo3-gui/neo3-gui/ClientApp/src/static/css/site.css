@@ -622,3 +622,7 @@ small,.small{
 .showopcode .opcode{
     display: block;
 }
+
+.neo-form .ant-row{
+    min-height: 38px;
+}

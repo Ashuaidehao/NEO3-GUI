@@ -3,6 +3,7 @@ import { Layout, Row, Col,Tabs } from 'antd';
 import Transaction from '../Transaction/transaction';
 import Untransaction from '../Transaction/untransaction';
 import Sync from '../sync';
+import Searcharea from '../Common/searcharea';
 import { withTranslation } from 'react-i18next';
 
 const { Content } = Layout;
@@ -27,12 +28,13 @@ class Wallettrans extends React.Component{
             <Col span={24} className="bg-white pv4">
               <Tabs className="tran-title trans-list-title" defaultActiveKey="1">
                 <TabPane tab={t("blockchain.transactions")} key="1">
-                  <Transaction page="wallet" />
+                  <Transaction page="wallettrans" />
                 </TabPane>
                 <TabPane tab={t("blockchain.transaction.pending")} key="2">
                   <Untransaction page="wallet"/>
                 </TabPane>
               </Tabs>
+              <Searcharea />
             </Col>
           </Row>
         </Content>

@@ -3,15 +3,12 @@ import React from 'react';
 import 'antd/dist/antd.css';
 import '../../static/css/menu.css';
 import '../../static/css/wallet.css';
-import {Link} from 'react-router-dom';
-import {Layout,Row,Col,Button,Divider } from 'antd';
-import {Walletopen,Walletcreate,Walletprivate,Walletencrypted} from './walletaction';
+import { Link } from 'react-router-dom';
+import { Layout, Row, Col, Button, Divider } from 'antd';
+import { Walletopen, Walletcreate, Walletprivate, Walletencrypted } from './walletaction';
 import Sync from '../sync';
 import { withTranslation } from "react-i18next";
-import {
-  ArrowLeftOutlined,
-  CloseOutlined
-} from '@ant-design/icons';
+import { ArrowLeftOutlined, CloseOutlined } from '@ant-design/icons';
 
 const { Footer } = Layout;
 

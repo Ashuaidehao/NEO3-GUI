@@ -76,6 +76,9 @@ class Transcon extends React.Component {
   notifiesData = () =>{
     console.log(this.state.notifies)
   }
+  back=()=>{
+    this.props.history.goBack();
+  }
   render = () => {
     const { t } = this.props;
     const { hashdetail, transfers, witnesses, attributes,script,scriptcode } = this.state;
@@ -85,6 +88,7 @@ class Transcon extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]} className="mb1">
             <Col span={24} className="bg-white pv4">
+              <a className="fix-btn" onClick={this.back}>返回</a>
               <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
               <Tabs className="tran-title" defaultActiveKey="1">
                 <TabPane tab={t("blockchain.transaction.content")} key="1">
