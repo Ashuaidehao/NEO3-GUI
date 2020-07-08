@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { observer, inject } from "mobx-react";
 import axios from 'axios';
-import { Layout, message, Row, Col, List, Avatar, Button, Typography,PageHeader,Modal,Input,Select,Form } from 'antd';
+import { Layout, message, Row, Col, List, Avatar, Button, Typography,PageHeader,Modal,Input,Select,Form,InputNumber } from 'antd';
 import '../../static/css/wallet.css'
 import Sync from '../sync';
-import { withTranslation,useTranslation } from "react-i18next";
+import { withTranslation,useTranslation,Trans } from "react-i18next";
 import { post } from "../../core/request";
 import { walletStore } from "../../store/stores";
 
@@ -257,6 +257,7 @@ class Walletlist extends React.Component {
 export default Walletlist;
 
 
+
 const Private = ({func}) => {
   const [form] = Form.useForm();
   const { t } = useTranslation();
@@ -290,8 +291,10 @@ const Multiaddress = ({func}) => {
   const [form] = Form.useForm();
   const { t } = useTranslation();
   const [accounts, changeList] = useState([]);
+  const [maxnum, changeNum] = useState(1);
   const getPublic = () =>{
-    post("ListPublicKey",{}).then(res =>{
+    //列出所有可选举公钥
+    post("ListCandidatePublicKey",{}).then(res =>{
       var _data = res.data;
       if (_data.msgType === -1) {
         message.error("公钥获取失败");
@@ -306,21 +309,38 @@ const Multiaddress = ({func}) => {
   }
   const addMulti = values =>{
     console.log(values);
-    // let params = {"nep2Key":values.private,"password":values.pass};
-    // post("VerifyNep2Key",params).then(res =>{
-    //   var _data = res.data;
-    //   if (_data.msgType === -1) {
-    //     message.error("私钥验证失败");
-    //     return;
-    //   } else {
-    //     message.success("私钥验证成功");
-    //   }
-    // }).catch(function (error) {
-    //   console.log("error");
-    //   console.log(error);
-    // });
+    let params = {
+      "limit":values.limit,
+      "publicKeys":values.publicKeys
+    };
+    post("CreateMultiAddress",params).then(res =>{
+      var _data = res.data;
+      console.log(_data);
+      if (_data.msgType === -1) {
+        message.error("多签创建失败，请检查后再试");
+        return;
+      } else {
+        func();
+        Modal.success({
+          width:600,
+          title: <Trans>多签创建成功</Trans>,
+          content: (
+              <div className="show-pri">
+              <p><Trans>hash</Trans>：{_data.result.scriptHash}</p>
+              <p><Trans>多签地址</Trans>：{_data.result.address}</p>
+              </div>
+          ),
+          okText:<Trans>button.ok</Trans>
+        });
+        form.resetFields();
+      }
+    }).catch(function (error) {
+      console.log("error");
+      console.log(error);
+    });
   }
   const handleChange = value => {
+    if(value.length<=0) return;
     let last = value.pop().trim();
     var regex = new RegExp("^0[23][0-9a-f]{64}$");
     if(!regex.test(last)){
@@ -328,28 +348,35 @@ const Multiaddress = ({func}) => {
       return;
     }
     value.push(last);
+    changeNum(value.length);
   }
   if(accounts.length === 0) getPublic();
   return(
     <Form className="neo-form" form={form} onFinish={addMulti}>
       {console.log(accounts)}
       <h4>{t("创建多方签名地址")}</h4>
-      <Form.Item name="cosigners">
+      <Form.Item name="publicKeys" rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}>
         <Select
           placeholder={t("选择想要进行多签的公钥或者输入")}
           mode="tags"
           onChange={handleChange}
+          className="multiadd"
           style={{ width: '100%'}}>
           {accounts.length>0?accounts.map((item)=>{
             console.log({...item})
             return(
-            <Option key={item.publicKey}>{item.address}</Option>
+            <Option className="add-list" key={item.publicKey}>{item.publicKey}<span className="add-show">{item.address}</span></Option>
             )
           }):null}
         </Select>
       </Form.Item>
-      <Form.Item name="private" rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}>
-        <Input placeholder={t("please input Hex/WIF private key")}/>
+      <h4>{t("最小签名数量")}</h4>
+      <Form.Item name="limit" rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}>
+        <InputNumber
+          placeholder={t("请输入最小签名数量")}
+          parser={value => value.replace(/[^0-9]/g, '')}
+          step={1}  min={1}  max={maxnum}
+          style={{ width: '100%'}}/>
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit">{t("wallet.import private")}</Button>

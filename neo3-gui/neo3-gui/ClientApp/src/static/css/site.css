@@ -380,6 +380,9 @@ small,.small{
 .ant-select-item-option-selected:not(.ant-select-item-option-disabled){
     background-color: rgba(12, 221, 186, 0.1);
 }
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled) .ant-select-item-option-state{
+    color:#00af92;
+}
 /* 列表样式覆盖 */
 .ant-list-header,
 .ant-list-footer,
@@ -624,5 +627,5 @@ small,.small{
 }
 
 .neo-form .ant-row{
-    min-height: 38px;
+    min-height: 32px;
 }
