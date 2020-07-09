@@ -38,6 +38,10 @@
 		"vote step3": "Confirm vote",
 		"vote success": "Vote Success, please check transaction list later"
 	},
+	"alert msg":{
+		"no find":"No information found",
+		"":""
+	},
 	"blockchain": {
 		"abbreviation":"Abbreviation",
 		"asset info": "Asset Info",

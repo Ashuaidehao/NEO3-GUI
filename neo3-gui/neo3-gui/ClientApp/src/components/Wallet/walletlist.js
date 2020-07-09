@@ -322,7 +322,7 @@ const Multiaddress = ({func}) => {
       } else {
         func();
         Modal.success({
-          width:600,
+          width: 600,
           title: <Trans>多签创建成功</Trans>,
           content: (
               <div className="show-pri">

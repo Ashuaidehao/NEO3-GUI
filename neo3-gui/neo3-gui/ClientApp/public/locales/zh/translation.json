@@ -38,6 +38,10 @@
 		"vote step3": "确认投票",
 		"vote success": "投票成功，请稍后再查看"
 	},
+	"alert msg":{
+		"no find":"信息展示失败",
+		"":""
+	},
 	"blockchain": {
 		"abbreviation":"缩写",
 		"asset info": "资产信息",
