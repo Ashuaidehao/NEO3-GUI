@@ -8,9 +8,10 @@ import Notifies from './translog';
 import Datatrans from '../Common/datatrans';
 import { withRouter } from "react-router-dom";
 import Sync from '../sync';
-import { SwapOutlined } from '@ant-design/icons';
 import { useTranslation, withTranslation } from "react-i18next";
 import { post } from "../../core/request";
+
+import { SwapOutlined,ArrowLeftOutlined } from '@ant-design/icons';
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -88,9 +89,8 @@ class Transcon extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]} className="mb1">
             <Col span={24} className="bg-white pv4">
-              <a className="fix-btn" onClick={this.back}>返回</a>
               <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
-              <Tabs className="tran-title" defaultActiveKey="1">
+              <Tabs className="tran-title" defaultActiveKey="1" tabBarExtraContent={<ArrowLeftOutlined className="h2" onClick={this.back}/>}>
                 <TabPane tab={t("blockchain.transaction.content")} key="1">
                   <Hashdetail hashdetail={hashdetail} />
                   <Translist transfers={transfers} />

@@ -185,7 +185,7 @@ const onOpen = values => {
     return;
   }).catch(function () {
     console.log("error");
-    _this.props.history.goBack();
+    // _this.props.history.goBack();
   });
 };
 

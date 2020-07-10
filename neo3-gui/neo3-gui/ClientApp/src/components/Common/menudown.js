@@ -38,8 +38,6 @@ class menuDown extends React.Component {
         var _this = this;
         post("ListAddress",{}).then(res =>{
             var _data = res.data;
-            console.log(_data)
-            console.log("_data")
             if (_data.msgType === -1) {
                 // message.error("请先打开钱包");
                 return;
