@@ -265,7 +265,7 @@ class Transaction extends React.Component {
     return (
       <div>
         <List
-          header={<div><span className="succes-light">{t("blockchain.transaction.status")}</span><span>{t("blockchain.transaction info")}</span><span className="float-r">{t("common.time")}</span></div>}
+          header={<div><span>{t("blockchain.transaction info")}</span><span className="float-r">{t("common.time")}</span></div>}
           footer={<span></span>}
           itemLayout="horizontal"
           loading={loading}
@@ -274,9 +274,9 @@ class Transaction extends React.Component {
           className="font-s"
           renderItem={item => (
             <List.Item>
-              <List.Item.Meta
+              {/* <List.Item.Meta
               title={<span className="succes-light">{t('blockchain.transaction.confirmed')}</span>}
-              />
+              /> */}
               <div className="trans-detail">
                   <p>
                     <Link className="w500 ellipsis hash" to={ local + item.txId} title={t("show detail")}>{item.txId}</Link>

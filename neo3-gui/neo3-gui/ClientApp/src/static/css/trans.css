@@ -131,7 +131,8 @@
 }
 .trans-detail{
     display: inline-block;
-    width: 90%;
+    width: 100%;
+    /* width: 90%; */
 }
 .trans-detail p{
     margin-top: 4px;
