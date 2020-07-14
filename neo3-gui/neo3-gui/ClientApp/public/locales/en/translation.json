@@ -218,7 +218,7 @@
 		"address non":"Non-standard address",
 		"address standard":"Standard address",
 		"balance": "Balance",
-		"close wallet success": "Close Wallet Success",
+		"close wallet": "Close Wallet",
 		"create wallet fail": "Create wallet fails, please check and retry.",
 		"create wallet file": "Create Wallet File",
 		"create wallet success": "New wallet was created！",

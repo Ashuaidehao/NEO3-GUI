@@ -218,7 +218,7 @@
 		"address non":"非标准地址",
 		"address standard":"标准地址",
 		"balance": "余额",
-		"close wallet success": "钱包退出成功",
+		"close wallet": "钱包已退出",
 		"create wallet fail": "钱包创建失败，请检查后重试",
 		"create wallet file": "创建钱包文件",
 		"create wallet success": "钱包已创建",

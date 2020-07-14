@@ -2,7 +2,6 @@ import React from 'react';
 import {BrowserRouter, Route , Switch,Redirect} from 'react-router-dom';
 import Home from '../pages/home'
 import Sync from '../components/sync';
-import Addressdetail from '../components/Common/addressdetail';
 
 import Chain from '../components/Chain/chain';
 import Chainlayout from '../components/Chain/chainlayout';
@@ -12,13 +11,11 @@ import Chaintrans from '../components/Chain/trans';
 import Chainasset from '../components/Chain/asset';
 import Assetdetail from '../components/Chain/assetdetail';
 
-import Wallet from '../components/Wallet/wallet';
 import Walletlayout from '../components/Wallet/walletlayout';
 import Walletlist from '../components/Wallet/walletlist';
 import Walletdetail from '../components/Wallet/walletdetail';
 import Wallettrans from '../components/Wallet/trans';
 
-import Transfer from '../components/Transaction/transfer';
 import Selecttrans from '../components/Transaction/selecttrans';
 import Transdetail from '../components/Transaction/transdetail';
 import Untransdetail from '../components/Transaction/untransdetail';
@@ -56,20 +53,17 @@ const BasicRoute = () => (
                     <Route exact path="/chain/untransaction:hash" component={Untransdetail} />
                     <Route exact path="/chain/asset" component={Chainasset} />
                     <Route exact path="/chain/asset:hash" component={Assetdetail} />
-                    <Route exact path="/chain/address:address" component={Addressdetail} />
                 </Layout>
             </Route>
             <Route path="/wallet">
                 <Layout style={{ height: 'calc( 100vh )'}}>
                     <Route  component={Walletlayout} />
-                    {/* <Route exact path="/wallet" component={Wallet} /> */}
                     <Route exact path="/wallet/walletlist" component={Authenticated(Walletlist)} />
                     <Route exact path="/wallet/walletlist:address" component={Authenticated(Walletdetail)} />
                     <Route exact path="/wallet/address:address" component={Authenticated(Walletdetail)} />
                     <Route exact path="/wallet/transaction" component={Authenticated(Wallettrans)} />
                     <Route exact path="/wallet/transaction:hash" component={Authenticated(Transdetail)} />
                     <Route exact path="/wallet/untransaction:hash" component={Authenticated(Untransdetail)} />
-                    {/* <Route exact path="/wallet/transfer" component={Transfer} /> */}
                     <Route exact path="/wallet/transfer" component={Authenticated(Selecttrans)} />
                 </Layout>
             </Route>
@@ -80,7 +74,6 @@ const BasicRoute = () => (
                     <Route exact path="/contract/detail:hash" component={Contractdetail} />
                     <Route exact path="/contract/deploy" component={Authenticated(Contractdeploy)} />
                     <Route exact path="/contract/invoke" component={Authenticated(Contractinvoke)} />
-                    {/* <Route exact path="/contract/wallet" component={Wallet} /> */}
                 </Layout>
             </Route>
             <Route path="/advanced">

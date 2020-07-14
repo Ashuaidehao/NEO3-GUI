@@ -3,14 +3,13 @@ import React from 'react';
 import { observer, inject } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import 'antd/dist/antd.css';
-import { message, Modal } from 'antd';
+import { message, Modal,Radio  } from 'antd';
 import axios from 'axios';
-import Addressdetail from './addressdetail';
-import Setting from './setting';
+import {Addressdetail,Changepass,Setting} from './menuaction';
 import {
     ReadOutlined,
     LogoutOutlined,
-    SettingOutlined
+    SettingOutlined,KeyOutlined
 } from '@ant-design/icons';
 import { withTranslation,Trans } from 'react-i18next';
 import { shell } from "electron";
@@ -48,7 +47,6 @@ class menuDown extends React.Component {
         }).catch(function (error) {
             console.log(error);
             console.log("error");
-            // _this.props.history.goBack();
         });
     }
     logout = () => {
@@ -57,7 +55,7 @@ class menuDown extends React.Component {
             "id": "1234",
             "method": "CloseWallet"
         }).then(() => {
-            message.success(t("wallet.close wallet success"), 2);
+            message.success(t("wallet.close wallet"), 2);
             this.props.walletStore.logout();
             this.props.history.push('/');
         }).catch(function (error) {
@@ -95,8 +93,9 @@ class menuDown extends React.Component {
             this.setState({ showElem: false })
             switch (ele) {
                 case 0: this.setState({ title: "sideBar.address book", children: <Addressdetail /> }); break;
-                case 1: this.setState({ title: "sideBar.settings", children: <Setting switchNetwork={this.switchNetwork.bind(this)} /> }); break;
-                default: this.setState({ title: "sideBar.Settings", children: <Setting switchNetwork={this.switchNetwork.bind(this)} /> }); break;
+                case 1: this.setState({ title: "修改密码", children: <Changepass logout={this.logout.bind(this)} /> }); break;
+                case 2: this.setState({ title: "sideBar.settings", children: <Setting switchnetwork={this.switchNetwork.bind(this)} /> }); break;
+                default: this.setState({ title: "sideBar.Settings", children: <Setting switchnetwork={this.switchNetwork.bind(this)} /> }); break;
             }
             this.setState({
                 visible: true,
@@ -121,12 +120,19 @@ class menuDown extends React.Component {
             <div className="menu-down">
                 <ul>
                     {walletOpen ? (
-                        <li>
-                            <a onClick={this.getInset(0)}>
-                                <ReadOutlined />
-                                <span>{t("sideBar.address book")}</span>
-                            </a>
-                        </li>) : null}
+                    <li>
+                        <a onClick={this.getInset(0)}>
+                            <ReadOutlined />
+                            <span>{t("sideBar.address book")}</span>
+                        </a>
+                    </li>) : null}
+                    {walletOpen ? (
+                    <li>
+                        <a onClick={this.getInset(1)}>
+                            <KeyOutlined />
+                            <span>{t("修改密码")}</span>
+                        </a>
+                    </li>) : null}
                     {walletOpen ? (
                         <li>
                             <a onClick={this.logout}>
@@ -135,7 +141,7 @@ class menuDown extends React.Component {
                             </a>
                         </li>) : null}
                     <li>
-                        <a onClick={this.getInset(1)}>
+                        <a onClick={this.getInset(2)}>
                             <SettingOutlined />
                             <span>{t("sideBar.settings")}</span>
                         </a>
