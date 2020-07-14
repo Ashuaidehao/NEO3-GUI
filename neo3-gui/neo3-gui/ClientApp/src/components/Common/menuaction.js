@@ -37,13 +37,14 @@ const Changepass = ({logout}) => {
             "oldPassword": values.oldpass,
             "newPassword": values.newpass
         };
+        console.log(params)
         post("ChangePassword",params).then(res =>{
           var _data = res.data;
-          if (_data.msgType === -1) {
-            message.error("密码修改失败");
+          if (_data.msgType === -1 || _data.result === false) {
+            message.error(t("wallet.password change fail"));
             return;
           } else {
-            message.success("密码修改成功");
+            message.success(t("wallet.password change success"));
             logout();
           }
         }).catch(function (error) {
@@ -54,28 +55,28 @@ const Changepass = ({logout}) => {
     return (
     <div className="neo-form w300 mt3 mb2">
       <Form form={form} onFinish={onFinish}>
-        <Form.Item name="oldpass" rules={[{ required: true, message: 'Please input your Password!-未翻译' }]} >
-          <Input.Password placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />}/>
+        <Form.Item name="oldpass" rules={[{ required: true, message: t("wallet.please input password") }]} >
+          <Input.Password placeholder={t("wallet.please input old password")} maxLength={30} prefix={<LockOutlined />}/>
         </Form.Item>
-        <Form.Item name="newpass" rules={[{ required: true, message: 'Please input your Password!-未翻译' }]} hasFeedback >
-          <Input.Password placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />}/>
+        <Form.Item name="newpass" rules={[{ required: true, message: t("wallet.please input new password") }]} hasFeedback >
+          <Input.Password placeholder={t("wallet.please input new password")} maxLength={30} prefix={<LockOutlined />}/>
         </Form.Item>
         <Form.Item name="veripass" dependencies={['newpass']}
         hasFeedback
         rules={[
           {
             required: true,
-            message: 'Please confirm your password!',
+            message: t("wallet.please confirm password"),
           },
           ({ getFieldValue }) => ({
             validator(rule, value) {
               if (!value || getFieldValue('newpass') === value) return Promise.resolve();
-              return Promise.reject('The two passwords that you entered do not match!');
+              return Promise.reject(t("wallet.password not match"));
             },
           }),
         ]}
         >
-          <Input.Password placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />}/>
+          <Input.Password placeholder={t("wallet.please input twice")} maxLength={30} prefix={<LockOutlined />}/>
         </Form.Item>
         <Form.Item>
           <Button type="primary" style={{ width: '100%' }} htmlType="submit">{t("button.confirm")}</Button>

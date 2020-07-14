@@ -170,7 +170,7 @@ class Multitomulti extends React.Component{
                             label={t("wallet.to")}
                             rules={[          {
                                 pattern:"^[N][1-9A-HJ-NP-Za-km-z]{32,34}$",
-                                message: t("请检查地址格式是否正确"),
+                                message: t("wallet.address format"),
                             },
                             {
                                 required: true,
@@ -198,7 +198,6 @@ class Multitomulti extends React.Component{
                             <Divider orientation="right">
                                 <a className="delete-line" onClick={ () => { remove(field.name); }}><MinusSquareOutlined /> <span className="font-s">{t("wallet.delete add")}</span></a>
                             </Divider>
-                            // <div className="delete-btn" onClick={ () => { remove(field.name); }}></div>
                         ) : null}
                       </Row>
                       </div>

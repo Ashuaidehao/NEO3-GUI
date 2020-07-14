@@ -17,10 +17,10 @@ const Walletopen = ({feedback}) => {
   return (
     <div className="open">
       <Form form={form} onFinish={feedback}>
-        <Form.Item name="path" onClick={opendialog(form)} rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}>
+        <Form.Item name="path" onClick={opendialog(form)} rules={[{ required: true, message: t("wallet.please select file path") }]}>
           <Input disabled className="dis-file" prefix={<UserOutlined />} placeholder={t("please select file location")}/>
         </Form.Item>
-        <Form.Item name="password" rules={[{ required: true, message: 'Please input your Password!-未翻译' }]} >
+        <Form.Item name="password" rules={[{ required: true, message: t("wallet.please input password") }]} >
           <Input.Password placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />}/>
         </Form.Item>
         <Form.Item>
@@ -38,10 +38,10 @@ const Walletcreate = ({feedback}) => {
   return (
     <div className="open">
       <Form form={form} onFinish={feedback}>
-        <Form.Item name="path" onClick={opensavedialog(form)} rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}>
+        <Form.Item name="path" onClick={opensavedialog(form)} rules={[{ required: true, message: t("wallet.please select file path") }]}>
           <Input disabled className="dis-file" prefix={<UserOutlined />} placeholder={t("please select file location")}/>
         </Form.Item>
-        <Form.Item name="pass" rules={[{ required: true, message: 'Please input your Password!-未翻译' }]} hasFeedback >
+        <Form.Item name="pass" rules={[{ required: true, message: t("wallet.please input password") }]} hasFeedback >
           <Input.Password placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />}/>
         </Form.Item>
         <Form.Item name="veripass" dependencies={['pass']}
@@ -49,17 +49,17 @@ const Walletcreate = ({feedback}) => {
         rules={[
           {
             required: true,
-            message: 'Please confirm your password!',
+            message: t("wallet.please confirm password"),
           },
           ({ getFieldValue }) => ({
             validator(rule, value) {
               if (!value || getFieldValue('pass') === value) return Promise.resolve();
-              return Promise.reject('The two passwords that you entered do not match!');
+              return Promise.reject(t("wallet.password not match"));
             },
           }),
         ]}
         >
-          <Input.Password placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />}/>
+          <Input.Password placeholder={t("wallet.please input twice")} maxLength={30} prefix={<LockOutlined />}/>
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">{t("button.confirm")}</Button>
@@ -79,10 +79,9 @@ const Walletprivate = () => {
     post("VerifyPrivateKey",params).then(res =>{
       var _data = res.data;
       if (_data.msgType === -1) {
-        message.error("私钥验证失败");
+        message.error(t("wallet.private fail"));
         return;
       } else {
-        message.success("私钥验证成功");
         changeShow(true);
         changePrivate(values.private);
       }
@@ -94,7 +93,7 @@ const Walletprivate = () => {
   return (
     <div className="open">
       <Form form={form} onFinish={veriPrivate}>
-        <Form.Item name="private" rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}>
+        <Form.Item name="private" rules={[{ required: true, message: t("please input Hex/WIF private key") }]}>
           <Input disabled={showElem} placeholder={t("please input Hex/WIF private key")}/>
         </Form.Item>
         {!showElem?(
@@ -124,10 +123,9 @@ const Walletencrypted = () => {
     post("VerifyNep2Key",params).then(res =>{
       var _data = res.data;
       if (_data.msgType === -1) {
-        message.error("私钥验证失败");
+        message.error(t("wallet.encryred fail"));
         return;
       } else {
-        message.success("私钥验证成功");
         changeShow(true);
         changeEncrypted(_data.result);
       }
@@ -139,12 +137,12 @@ const Walletencrypted = () => {
   return (
     <div className="open">
       <Form form={form} onFinish={veriPrivate}>
-        <Form.Item name="private" rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}>
-          <Input disabled={showElem} placeholder={t("please input Hex/WIF private key")}/>
+        <Form.Item name="private" rules={[{ required: true, message: t("wallet.please input encrypted")}]}>
+          <Input disabled={showElem} placeholder={t("wallet.please input encrypted")}/>
         </Form.Item>
         {!showElem?(
-        <Form.Item name="pass" rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}>
-          <Input.Password disabled={showElem} placeholder={t("password")}/>
+        <Form.Item name="pass" rules={[{ required: true, message: t("wallet.please input password") }]} hasFeedback >
+          <Input.Password disabled={showElem} placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />}/>
         </Form.Item>
         ):null}
         {!showElem?(
@@ -169,6 +167,7 @@ const Walletencrypted = () => {
  * Walletopen
  */
 const onOpen = values => {
+  const { t } = useTranslation();
   let params = {
     "path": values.path,
     "password": values.password
@@ -176,10 +175,10 @@ const onOpen = values => {
   post("OpenWallet",params).then(res =>{
     var _data = res.data;
     if (_data.msgType === -1) {
-      message.error("钱包打开失败，路径or密码错误");
+      message.error(t("wallet.open wallet failed"));
       return;
     } else {
-      message.success("登录成功");
+      message.success(t("wallet.wallet opened"));
       walletStore.setWalletState(true);
     }
     return;
@@ -202,10 +201,10 @@ const onCreate = values => {
   post("CreateWallet",params).then(res =>{
     var _data = res.data;
     if (_data.msgType === -1) {
-      message.error("钱包创建失败");
+      message.error(t("wallet.create wallet fail"));
       return;
     } else {
-      message.success("钱包创建成功");
+      message.success(t("wallet.create wallet success"));
       walletStore.setWalletState(true);
     }
   }).catch(function () {
@@ -227,9 +226,10 @@ const onPrivate = (priva) => {
 
 //打开弹窗
 const opendialog = (form) => {
+  const { t } = useTranslation();
   return ()=>{
     dialog.showOpenDialog({
-      title: 't("wallet.open wallet file")',
+      title: t("wallet.open wallet file"),
       defaultPath: '/',
       filters: [{
         name: 'JSON',
@@ -248,9 +248,10 @@ const opendialog = (form) => {
 
 //保存弹窗
 const opensavedialog = (form) => {
+  const { t } = useTranslation();
   return ()=>{
     dialog.showSaveDialog({
-      title: 't("wallet.save wallet file title")',
+      title: t("wallet.save wallet file title"),
       defaultPath: '/',
       filters: [
         {

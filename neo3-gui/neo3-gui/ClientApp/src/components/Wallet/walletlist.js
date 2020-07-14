@@ -277,7 +277,7 @@ const Private = ({func}) => {
   }
   return (
     <Form className="neo-form" form={form} onFinish={importPrivate}>
-      <Form.Item name="private" rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}>
+      <Form.Item name="private" rules={[{ required: true, message: t("please input Hex/WIF private key")}]}>
         <Input placeholder={t("please input Hex/WIF private key")}/>
       </Form.Item>
       <Form.Item>

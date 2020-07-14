@@ -93,7 +93,7 @@ class menuDown extends React.Component {
             this.setState({ showElem: false })
             switch (ele) {
                 case 0: this.setState({ title: "sideBar.address book", children: <Addressdetail /> }); break;
-                case 1: this.setState({ title: "修改密码", children: <Changepass logout={this.logout.bind(this)} /> }); break;
+                case 1: this.setState({ title: "sideBar.change pass", children: <Changepass logout={this.logout.bind(this)} /> }); break;
                 case 2: this.setState({ title: "sideBar.settings", children: <Setting switchnetwork={this.switchNetwork.bind(this)} /> }); break;
                 default: this.setState({ title: "sideBar.Settings", children: <Setting switchnetwork={this.switchNetwork.bind(this)} /> }); break;
             }
@@ -130,7 +130,7 @@ class menuDown extends React.Component {
                     <li>
                         <a onClick={this.getInset(1)}>
                             <KeyOutlined />
-                            <span>{t("修改密码")}</span>
+                            <span>{t("sideBar.change pass")}</span>
                         </a>
                     </li>) : null}
                     {walletOpen ? (
