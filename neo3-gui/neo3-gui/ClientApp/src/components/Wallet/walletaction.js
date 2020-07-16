@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import { Form, message, Input, Button,Divider } from 'antd';
 import { walletStore } from "../../store/stores";
-import { useTranslation } from "react-i18next";
+import { useTranslation,Trans } from "react-i18next";
 import { post } from "../../core/request";
 import { remote } from 'electron';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
@@ -162,12 +162,10 @@ const Walletencrypted = () => {
   )
 };
 
-
 /* 
  * Walletopen
  */
 const onOpen = values => {
-  const { t } = useTranslation();
   let params = {
     "path": values.path,
     "password": values.password
@@ -175,16 +173,15 @@ const onOpen = values => {
   post("OpenWallet",params).then(res =>{
     var _data = res.data;
     if (_data.msgType === -1) {
-      message.error(t("wallet.open wallet failed"));
+      message.error(<Trans>wallet.open wallet failed</Trans>);
       return;
     } else {
-      message.success(t("wallet.wallet opened"));
+      message.success(<Trans>wallet.wallet opened</Trans>);
       walletStore.setWalletState(true);
     }
     return;
   }).catch(function () {
     console.log("error");
-    // _this.props.history.goBack();
   });
 };
 
@@ -201,15 +198,14 @@ const onCreate = values => {
   post("CreateWallet",params).then(res =>{
     var _data = res.data;
     if (_data.msgType === -1) {
-      message.error(t("wallet.create wallet fail"));
+      message.error(<Trans>wallet.create wallet fail</Trans>);
       return;
     } else {
-      message.success(t("wallet.create wallet success"));
+      message.success(<Trans>wallet.create wallet success</Trans>);
       walletStore.setWalletState(true);
     }
   }).catch(function () {
     console.log("error");
-    // _this.props.history.goBack();
   });
 };
 
@@ -241,7 +237,6 @@ const opendialog = (form) => {
       });
     }).catch(function (error) {
       console.log(error);
-      console.log("文件打开错误");
     })
   }
 }
@@ -265,7 +260,6 @@ const opensavedialog = (form) => {
       });
     }).catch(function (error) {
       console.log(error);
-      console.log("钱包存储错误");
     })
   }
 }

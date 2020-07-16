@@ -39,8 +39,7 @@
 		"vote success": "投票成功，请稍后再查看"
 	},
 	"alert msg":{
-		"no find":"信息展示失败",
-		"":""
+		"no find":"信息展示失败"
 	},
 	"blockchain": {
 		"abbreviation":"缩写",
@@ -255,6 +254,8 @@
 		"please input password": "请正确输入密码",
 		"please input new password": "请输入新密码",
 		"please input old password": "请输入原始密码",
+		"please input public key":"请输入公钥",
+		"please input signature min":"请输入最小签名数量",
 		"please input twice": "请输入确认密码",
 		"please open wallet": "请先打开钱包",
 		"please select a account": "请选择要转出的地址",
@@ -265,12 +266,21 @@
 		"private key save wallet title": "保存钱包",
 		"private key warning": "请妥善保存好您的私钥，切勿丢失。",
 		"public key": "公钥",
+		"public key error":"公钥格式错误，请确认后重新输入",
 		"require open": "需要先打开钱包再进入页面",
 		"required": "必填项",
 		"save wallet file title": "保存钱包文件",
 		"select": "选择",
 		"select path": "选择路径",
 		"show detail": "查看详情",
+		"signature":"签名",
+		"signature multi":"多方签名",
+		"signature multi create":"创建多方签名地址",
+		"signature multi error":"多签创建失败，请检查后再试",
+		"signature multi success":"多签创建成功",
+		"signature public":"选择想要进行多签的公钥或者输入",
+		"signature min":"最小签名数量",
+		"signature min input":"请输入最小签名数量",
 		"to": "收款地址",
 		"transactions": "交易列表",
 		"transfer": "转账",

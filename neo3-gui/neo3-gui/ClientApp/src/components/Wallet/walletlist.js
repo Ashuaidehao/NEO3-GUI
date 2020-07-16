@@ -154,7 +154,7 @@ class Walletlist extends React.Component {
       this.setState({visible: true})
       switch(ele){
         case 0:this.setState({modalPanel:<Private func={this.handleCancel}/>,modalTitle:t("wallet.import private")});break;
-        case 1:this.setState({modalPanel:<Multiaddress func={this.handleCancel}/>,modalTitle:t("wallet.import private")});break;
+        case 1:this.setState({modalPanel:<Multiaddress func={this.handleCancel}/>,modalTitle:t("wallet.signature multi")});break;
         default:this.setState({visible: false});break;
       }
     }
@@ -201,7 +201,7 @@ class Walletlist extends React.Component {
                       <ul>
                         <li><a onClick={this.addAddress}>{t('wallet.add address')}</a></li>
                         <li><a onClick={this.showModal(0)}>{t('wallet.import private')}</a></li>
-                        <li><a onClick={this.showModal(1)}>{t('多方签名-未翻译')}</a></li>
+                        <li><a onClick={this.showModal(1)}>{t('wallet.signature multi')}</a></li>
                       </ul>
                     </div>
                   </div>
@@ -297,37 +297,34 @@ const Multiaddress = ({func}) => {
     post("ListCandidatePublicKey",{}).then(res =>{
       var _data = res.data;
       if (_data.msgType === -1) {
-        message.error("公钥获取失败");
+        message.error(t("alert msg.no find"));
       }else{
         changeList(_data.result);
       }
       return;
     }).catch(function (error) {
-      console.log("error");
       console.log(error);
     });
   }
   const addMulti = values =>{
-    console.log(values);
     let params = {
       "limit":values.limit,
       "publicKeys":values.publicKeys
     };
     post("CreateMultiAddress",params).then(res =>{
       var _data = res.data;
-      console.log(_data);
       if (_data.msgType === -1) {
-        message.error("多签创建失败，请检查后再试");
+        message.error(<Trans>wallet.signature multi error</Trans>);
         return;
       } else {
         func();
         Modal.success({
           width: 600,
-          title: <Trans>多签创建成功</Trans>,
+          title: <Trans>wallet.signature multi success</Trans>,
           content: (
               <div className="show-pri">
-              <p><Trans>hash</Trans>：{_data.result.scriptHash}</p>
-              <p><Trans>多签地址</Trans>：{_data.result.address}</p>
+              <p><Trans>hash</Trans> ：{_data.result.scriptHash}</p>
+              <p><Trans>wallet.address multi sign</Trans> ：{_data.result.address}</p>
               </div>
           ),
           okText:<Trans>button.ok</Trans>
@@ -335,7 +332,6 @@ const Multiaddress = ({func}) => {
         form.resetFields();
       }
     }).catch(function (error) {
-      console.log("error");
       console.log(error);
     });
   }
@@ -344,7 +340,7 @@ const Multiaddress = ({func}) => {
     let last = value.pop().trim();
     var regex = new RegExp("^0[23][0-9a-f]{64}$");
     if(!regex.test(last)){
-      message.error("公钥格式错误，请确认后重新输入");
+      message.error(t("wallet.public key error"));
       return;
     }
     value.push(last);
@@ -354,10 +350,10 @@ const Multiaddress = ({func}) => {
   return(
     <Form className="neo-form" form={form} onFinish={addMulti}>
       {console.log(accounts)}
-      <h4>{t("创建多方签名地址")}</h4>
-      <Form.Item name="publicKeys" rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}>
+      <h4>{t("wallet.signature multi create")}</h4>
+      <Form.Item name="publicKeys" rules={[{ required: true, message: t("wallet.please input public key") }]}>
         <Select
-          placeholder={t("选择想要进行多签的公钥或者输入")}
+          placeholder={t("wallet.signature public")}
           mode="tags"
           onChange={handleChange}
           className="multiadd"
@@ -370,16 +366,16 @@ const Multiaddress = ({func}) => {
           }):null}
         </Select>
       </Form.Item>
-      <h4>{t("最小签名数量")}</h4>
-      <Form.Item name="limit" rules={[{ required: true, message: 'Please input your Path!-未翻译' }]}>
+      <h4>{t("wallet.signature min")}</h4>
+      <Form.Item name="limit" rules={[{ required: true, message: t("wallet.please input signature min")}]}>
         <InputNumber
-          placeholder={t("请输入最小签名数量")}
+          placeholder={t("wallet.signature min input")}
           parser={value => value.replace(/[^0-9]/g, '')}
           step={1}  min={1}  max={maxnum}
           style={{ width: '100%'}}/>
       </Form.Item>
       <Form.Item>
-        <Button type="primary" htmlType="submit">{t("wallet.import private")}</Button>
+        <Button style={{ 'width': '100%' }} type="primary" htmlType="submit">{t("button.confirm")}</Button>
       </Form.Item>
     </Form>
   )
