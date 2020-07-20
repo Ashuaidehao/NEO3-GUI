@@ -3,14 +3,15 @@ import React from 'react';
 import '../../static/css/trans.css';
 import { Link } from 'react-router-dom';
 import { Layout, Row, Col, Tabs, message, PageHeader, Divider } from 'antd';
-import { Hashdetail, Attrlist, Translist, Witlist} from './translog';
+import { Hashdetail, Attrlist, Translist, Witlist,Scriptlist} from './translog';
 import Notifies from './translog';
 import Datatrans from '../Common/datatrans';
 import { withRouter } from "react-router-dom";
 import Sync from '../sync';
-import { SwapOutlined } from '@ant-design/icons';
 import { useTranslation, withTranslation } from "react-i18next";
 import { post } from "../../core/request";
+
+import { SwapOutlined,ArrowLeftOutlined } from '@ant-design/icons';
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -26,17 +27,22 @@ class Transcon extends React.Component {
       transfers: [],
       witnesses: [],
       attributes: [],
-      notifies: []
+      notifies: [],
+      script:"",
+      scriptcode:[]
     };
   }
   componentDidMount() {
     this.getTransdetail(res => {
+      console.log(res);
       this.setState({
         hashdetail: res,
         transfers: res.transfers,
         witnesses: res.witnesses,
         attributes: res.attributes,
         notifies: res.notifies,
+        script:res.script,
+        scriptcode:res.scriptCode,
       });
     });
   }
@@ -71,9 +77,12 @@ class Transcon extends React.Component {
   notifiesData = () =>{
     console.log(this.state.notifies)
   }
+  back=()=>{
+    this.props.history.goBack();
+  }
   render = () => {
     const { t } = this.props;
-    const { hashdetail, transfers, witnesses, attributes } = this.state;
+    const { hashdetail, transfers, witnesses, attributes,script,scriptcode } = this.state;
     return (
       <Layout className="gui-container">
         <Sync />
@@ -81,12 +90,13 @@ class Transcon extends React.Component {
           <Row gutter={[30, 0]} className="mb1">
             <Col span={24} className="bg-white pv4">
               <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
-              <Tabs className="tran-title" defaultActiveKey="1">
+              <Tabs className="tran-title" defaultActiveKey="1" tabBarExtraContent={<ArrowLeftOutlined className="h2" onClick={this.back}/>}>
                 <TabPane tab={t("blockchain.transaction.content")} key="1">
                   <Hashdetail hashdetail={hashdetail} />
                   <Translist transfers={transfers} />
                   <Attrlist attributes={attributes} />
                   <Witlist witnesses={witnesses} />
+                  <Scriptlist script={script} scriptcode={scriptcode}/>
                 </TabPane>
                 <TabPane tab={t("blockchain.transaction.log")} key="2">
                   <Notifies notifies={this.state.notifies} />

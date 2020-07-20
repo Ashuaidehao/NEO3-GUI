@@ -3,25 +3,26 @@ import React from 'react';
 import { observer, inject } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import 'antd/dist/antd.css';
-import { message, Modal } from 'antd';
+import { message, Modal,Radio  } from 'antd';
 import axios from 'axios';
-import Addressdetail from './addressdetail';
-import Setting from './setting';
+import {Addressdetail,Changepass,Setting} from './menuaction';
 import {
     ReadOutlined,
     LogoutOutlined,
-    SettingOutlined
+    SettingOutlined,KeyOutlined
 } from '@ant-design/icons';
-import { withTranslation } from 'react-i18next';
+import { withTranslation,Trans } from 'react-i18next';
 import { shell } from "electron";
 import Config from "../../config";
 import neonode from "../../neonode";
+import { post } from "../../core/request";
+import { walletStore } from "../../store/stores";
 
 @withTranslation()
 @inject("walletStore")
 @inject("blockSyncStore")
-@observer
 @withRouter
+@observer
 class menuDown extends React.Component {
     constructor(props) {
         super(props);
@@ -29,13 +30,32 @@ class menuDown extends React.Component {
             title: "设置",
         };
     }
+    componentDidMount() {
+        this.setWallet()
+    }
+    setWallet = () => {
+        var _this = this;
+        post("ListAddress",{}).then(res =>{
+            var _data = res.data;
+            if (_data.msgType === -1) {
+                // message.error("请先打开钱包");
+                return;
+            } else {
+                _this.props.walletStore.setWalletState(true);
+                _this.props.walletStore.setAccounts(_data.result.accounts);
+            }
+        }).catch(function (error) {
+            console.log(error);
+            console.log("error");
+        });
+    }
     logout = () => {
         const { t } = this.props;
         axios.post('http://localhost:8081', {
             "id": "1234",
             "method": "CloseWallet"
         }).then(() => {
-            message.success(t("wallet.close wallet success"), 2);
+            message.success(t("wallet.close wallet"), 2);
             this.props.walletStore.logout();
             this.props.history.push('/');
         }).catch(function (error) {
@@ -72,9 +92,10 @@ class menuDown extends React.Component {
         return () => {
             this.setState({ showElem: false })
             switch (ele) {
-                case 0: this.setState({ title: t("sideBar.address book"), children: <Addressdetail /> }); break;
-                case 1: this.setState({ title: "Settings", children: <Setting switchNetwork={this.switchNetwork.bind(this)} /> }); break;
-                default: this.setState({ title: "Settings", children: <Setting switchNetwork={this.switchNetwork.bind(this)} /> }); break;
+                case 0: this.setState({ title: "sideBar.address book", children: <Addressdetail /> }); break;
+                case 1: this.setState({ title: "sideBar.change pass", children: <Changepass logout={this.logout.bind(this)} /> }); break;
+                case 2: this.setState({ title: "sideBar.settings", children: <Setting switchnetwork={this.switchNetwork.bind(this)} /> }); break;
+                default: this.setState({ title: "sideBar.Settings", children: <Setting switchnetwork={this.switchNetwork.bind(this)} /> }); break;
             }
             this.setState({
                 visible: true,
@@ -93,18 +114,25 @@ class menuDown extends React.Component {
         });
     }
     render() {
-        const walletOpen = this.props.walletStore.isOpen;
+        const walletOpen = walletStore.isOpen;
         const { t } = this.props;
         return (
             <div className="menu-down">
                 <ul>
                     {walletOpen ? (
-                        <li>
-                            <a onClick={this.getInset(0)}>
-                                <ReadOutlined />
-                                <span>{t("sideBar.address book")}</span>
-                            </a>
-                        </li>) : null}
+                    <li>
+                        <a onClick={this.getInset(0)}>
+                            <ReadOutlined />
+                            <span>{t("sideBar.address book")}</span>
+                        </a>
+                    </li>) : null}
+                    {walletOpen ? (
+                    <li>
+                        <a onClick={this.getInset(1)}>
+                            <KeyOutlined />
+                            <span>{t("sideBar.change pass")}</span>
+                        </a>
+                    </li>) : null}
                     {walletOpen ? (
                         <li>
                             <a onClick={this.logout}>
@@ -113,7 +141,7 @@ class menuDown extends React.Component {
                             </a>
                         </li>) : null}
                     <li>
-                        <a onClick={this.getInset(1)}>
+                        <a onClick={this.getInset(2)}>
                             <SettingOutlined />
                             <span>{t("sideBar.settings")}</span>
                         </a>
@@ -121,7 +149,7 @@ class menuDown extends React.Component {
                 </ul>
                 <Modal
                     className="set-modal"
-                    title={this.state.title}
+                    title={<Trans>{this.state.title}</Trans>}
                     visible={this.state.visible}
                     onCancel={this.hideModal}
                     footer={null}

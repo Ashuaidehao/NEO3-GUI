@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Row, Col, Divider,Select } from 'antd';
+import { Row, Col, Divider,Select,Radio } from 'antd';
 import { Empty } from 'antd';
 import { useTranslation,withTranslation } from "react-i18next";
 import '../../static/css/trans.css';
@@ -34,6 +34,7 @@ const Hashdetail = ({ hashdetail }) => {
     </Row>
   )
 };
+
 const Translist = ({ transfers }) => {
   const { t } = useTranslation();
   transfers = transfers?transfers:[];
@@ -46,8 +47,7 @@ const Translist = ({ transfers }) => {
         {transfers.map((item, index) => {
           return (
             <ul className="detail-ul border-under" key={index}>
-              <li><span className="gray">{t("blockchain.transaction.from")}</span><span className="detail-add">{item.fromAddress ? item.fromAddress : "--"}</span></li>
-              <li><span className="gray">{t("blockchain.transaction.to")}</span><span className="detail-add">{item.toAddress ? item.toAddress : "--"}</span></li>
+              <li><span className="gray">{t("blockchain.transaction.from")}</span><span className="detail-add">{item.fromAddress ? item.fromAddress : "--"}</span><span className="gray">{t("blockchain.transaction.to")}</span><span className="detail-add">{item.toAddress ? item.toAddress : "--"}</span></li>
               <li><span className="gray">{t("blockchain.transaction.amount")}</span><span className="detail-amount">{item.amount} {item.symbol}</span></li>
             </ul>
           )
@@ -58,6 +58,7 @@ const Translist = ({ transfers }) => {
     </div>
   )
 };
+
 const Attrlist = ({ attributes }) => {
   const { t } = useTranslation();
   attributes = attributes?attributes:[];
@@ -87,41 +88,110 @@ const Attrlist = ({ attributes }) => {
     </div>
   )
 };
+
 const Witlist = ({ witnesses }) => {
   const { t } = useTranslation();
+  const [opClass,changeOP] = useState("showhex");
   witnesses = witnesses?witnesses:[];
+  if(witnesses.length <= 0) return null;
   return (
-    <div>
-    {witnesses.length > 0 ? (
-      <Row>
-        <Col span={24}>
-          <div className="hash-title pa3 mt4 mb4">{t("blockchain.witness")}</div>
-          {witnesses.map((item, index) => {
-            return (
-              <ul className="detail-ul border-under" key={index}>
+    <Row>
+      <Col span={24}>
+        <div className="hash-title pa3 mt4 mb4">
+          {t("blockchain.witness")}
+          <Radio.Group onChange={e => changeOP(e.target.value)} defaultValue="showhex">
+            <Radio className="font-s ml1" value="showhex">Hex</Radio>
+            <Radio className="font-s" value="showopcode">Opcode</Radio>
+          </Radio.Group>
+        </div>
+
+        {witnesses.map((item, index) => {
+          return (
+            <div className={"detail-ul border-under " + opClass} key={index}>
+              <ul className="hex">
                 <li>
                   <p>{t("blockchain.transaction.invocation script")}</p>
-                  <p className="trans-table">
-                    <span><span className="trans-type">HEX</span></span>
-                    <span>{item.invocationScript}</span>
-                  </p>
+                  <p className="trans-table"><span>{item.invocationScript}</span></p>
                 </li>
                 <li>
                   <p>{t("blockchain.transaction.verification script")}</p>
-                  <p className="trans-table">
-                    <span><span className="trans-type">HEX</span></span>
-                    <span>{item.verificationScript}</span>
-                  </p>
+                  <p className="trans-table"><span>{item.verificationScript}</span></p>
                 </li>
               </ul>
-            )
-          })}
-        </Col>
-      </Row>
-    ) : null}
-    </div>
+
+              <ul className="opcode">
+                <li>
+                  <p>{t("blockchain.transaction.invocation script")}</p>
+                </li>
+                {item.invocationOpCode.map((i,index)=>{
+                return(
+                  <li key={index}>
+                    <p className="trans-table">
+                      <span className="trans-type gray">{i.opCodeName}</span>
+                      <span>{i.opDataPossibleString}</span>
+                    </p>
+                  </li>
+                )})}
+                <li>
+                  <p>{t("blockchain.transaction.verification script")}</p>
+                </li>
+                {item.verificationOpCode.map((i,index)=>{
+                return(
+                  <li key={index}>
+                    <p className="trans-table">
+                      <span className="trans-type gray">{i.opCodeName}</span>
+                      <span>{i.opDataPossibleString}</span>
+                    </p>
+                  </li>
+                )})}
+              </ul>
+
+            </div>
+          )
+        })}
+      </Col>
+    </Row>
   )
 };
+
+const Scriptlist = ({ script,scriptcode }) => {
+  const { t } = useTranslation();
+  const [opClass,changeOP] = useState("showhex");
+  script = script?script:"";
+  if(script==="") return null;
+  return (
+    <Row>
+      <Col span={24}>
+        <div className="hash-title pa3 mt4 mb4">
+          {t("blockchain.transaction.script")}
+          <Radio.Group onChange={e => changeOP(e.target.value)} defaultValue="showhex">
+            <Radio className="font-s ml1" value="showhex">Hex</Radio>
+            <Radio className="font-s" value="showopcode">Opcode</Radio>
+          </Radio.Group>
+        </div>
+        
+        <div className={"detail-ul border-under " + opClass}>
+          <ul className="hex">
+            <li>{script}</li>
+          </ul>
+
+          <ul className="opcode">
+            {scriptcode.map((i,index)=>{
+            return(
+              <li key={index}>
+                <p className="trans-table">
+                  <span className="trans-type gray">{i.opCodeName}</span>
+                  <span>{i.opDataPossibleString}</span>
+                </p>
+              </li>
+            )})}
+          </ul>
+        </div>
+      </Col>
+    </Row>
+  )
+};
+
 
 @withTranslation()
 class Notifies extends React.Component{
@@ -151,32 +221,6 @@ class Notifies extends React.Component{
           html.push(<li className="trans-title pa3" key="title"><span>ScriptHash: &nbsp;&nbsp;&nbsp;</span>{item.contract}</li>);
           for(var i = 0;i<_data.length;i++){
             html.push(<li className="pa3" key={i}><span className="trans-type">{_data[i].type}</span>{_data[i].value? JSON.stringify(_data[i].value).replace(/"/g,' '):"--"}</li>);
-//             html.push(<Select
-//               key={"select"+i}
-//               placeholder={t("select account")}
-//               style={{ width: '100%' }}
-//               defaultValue={_data[i].type}
-//               onChange={this.changeType}>
-// {/* 
-// 0x00	Signature
-// 0x01	Boolean
-// 0x02	Integer
-// 0x03	Hash160
-// 0x04	Hash256
-// 0x05	ByteArray
-// 0x06	PublicKey
-// 0x07	String
-// 0x10 （16）	Array
-// 0x12 （18）	Map
-// 0xf0 （240）	InteropInterface
-// 0xfe （254）	Any
-// 0xff （255）	Void */}
-//               <Option value="ByteArray">ByteArray</Option>
-//               <Option value="Integer">Integer</Option>
-//               <Option value="Hash160">Hash160</Option>
-//               <Option value="Hash256">Hash256</Option>
-//               <Option value="Any">Any</Option>
-//             </Select>)
           }
 
           html.push(<Divider key="divider"></Divider>)
@@ -188,5 +232,5 @@ class Notifies extends React.Component{
   }
 }
 
-export { Hashdetail,Attrlist,Translist,Witlist}
+export { Hashdetail,Attrlist,Translist,Witlist,Scriptlist}
 export default Notifies;

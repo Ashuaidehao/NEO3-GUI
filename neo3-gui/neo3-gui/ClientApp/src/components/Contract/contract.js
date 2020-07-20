@@ -31,11 +31,6 @@ class Contract extends React.Component {
       show: !this.state.show,
     });
   }
-  show = (e) => {
-    return () => {
-      console.log(this.state.show)
-    }
-  }
   getAllblock = (info) => {
     var _this = this;
     axios.post('http://localhost:8081', {
@@ -87,7 +82,7 @@ class Contract extends React.Component {
               />
             </Col>
 
-          <Searcharea show={this.show()} />
+          <Searcharea />
           </Row>
         </Content>
       </Layout>

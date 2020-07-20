@@ -136,7 +136,7 @@ class Blockdetail extends React.Component {
 
           {/* <Transaction page={this.state.href} content={t("blockchain.transactions")} /> */}
 
-          <Row gutter={[30, 0]} className="mt2" type="flex" style={{ 'minHeight': '120px' }}>
+          <Row gutter={[30, 0]} className="mt2 mb2" type="flex" style={{ 'minHeight': '120px' }}>
             <Col span={24} className="bg-white pv4">
               <PageHeader title={t("blockchain.transactions")}></PageHeader>
               <List

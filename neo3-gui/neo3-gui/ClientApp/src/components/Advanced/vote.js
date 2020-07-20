@@ -21,6 +21,7 @@ import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import "../../static/css/advanced.css";
 import { shell } from "electron";
+import {post} from '../../core/request';
 
 const { Option } = Select;
 
@@ -51,11 +52,7 @@ class Advancedvote extends React.Component {
   }
   listCandidate = callback => {
     const { t } = this.props;
-    axios.post('http://localhost:8081', {
-      "id": "1",
-      "method": "GetValidators"
-    })
-    .then(function (response) {
+    post("GetValidators",{}).then(function (response) {
       var _data = response.data;
       console.log(_data)
       if (_data.msgType === -1) {
@@ -81,29 +78,19 @@ class Advancedvote extends React.Component {
       console.log("error");
     });
   }
-  onChange = checkedList => {
-    this.setState({
-      checkedList
-    });
-  };
-  onVote = fieldsValue =>{
+  onVote = values =>{
     const { t } = this.props;
-    let {checkedList} = this.state;
-    if(checkedList.length <= 0) {
+    let {value} = this.state;
+    if(!value) {
       message.error(t('advanced.vote fail info'));
       return;
     }
-    axios.post('http://localhost:8081', {
-      "id": "1",
-      "method": "VoteCN",
-      "params": {
-        "account": fieldsValue.voter,
-        "pubkeys": checkedList
-      }
-    })
-    .then(function (response) {
+    let params = {
+      "account": values.voter,
+      "pubkeys": [value]
+    };
+    post("VoteCN",params).then(function (response) {
       var _data = response.data;
-      console.log(_data);
       if (_data.msgType === -1) {
         let res = _data.error;
         Modal.error({
@@ -135,6 +122,11 @@ class Advancedvote extends React.Component {
     .catch(function (error) {
       console.log(error);
       console.log("error");
+    });
+  }
+  onChoose = e =>{
+    this.setState({
+      value:e.target.value
     });
   }
   openUrl (url) {
@@ -169,9 +161,7 @@ class Advancedvote extends React.Component {
               </div>}
               showIcon
             />
-                                
-            {/* <Form ref="formRef" onFinish={this.onVote}> */}
-            <Form ref="formRef" onFinish={this.oneVote}>
+            <Form ref="formRef" onFinish={this.onVote}>
               <h4 className="bolder">{t('advanced.vote for')}</h4>
               <Form.Item
               name="voter"
@@ -195,16 +185,6 @@ class Advancedvote extends React.Component {
                 </Select>
               </Form.Item>
                 <h4>{t('advanced.candidate key')}<a className="ml2 small t-green" onClick={this.openUrl("https://neo.org/consensus")}> {t('advanced.candidate intro')}</a></h4>
-              {/* <CheckboxGroup
-                className="check-candi"
-                value={this.state.checkedList}
-                onChange={this.onChoose}
-              >
-                {candidates.map((item,index)=>{
-                  return <p key={index}><Checkbox value={item.publickey}>{item.publickey}</Checkbox> <em className="small"> {item.votes} </em></p>
-                })}
-              </CheckboxGroup> 
-              */}
               <Radio.Group
                 className="check-candi"
                 onChange={this.onChoose}
@@ -225,63 +205,6 @@ class Advancedvote extends React.Component {
         </Content>
       </Layout>
     );
-  }
-  onChoose = e =>{
-    console.log('radio checked', e.target.value);
-    this.setState({
-      value:e.target.value
-    });
-  }
-  oneVote = fieldsValue =>{
-    const { t } = this.props;
-    let {value} = this.state;
-    if(!value) {
-      message.error(t('advanced.vote fail info'));
-      return;
-    }
-    axios.post('http://localhost:8081', {
-      "id": "1",
-      "method": "VoteCN",
-      "params": {
-        "account": fieldsValue.voter,
-        "pubkeys": [value]
-      }
-    })
-    .then(function (response) {
-      var _data = response.data;
-      console.log(_data);
-      if (_data.msgType === -1) {
-        let res = _data.error;
-        Modal.error({
-          title: t('advanced.vote fail'),
-          width: 400,
-          content: (
-            <div className="show-pri">
-              <p>{t('error code')}: {res.code}</p>
-              <p>{t('error msg')}: {res.message}</p>
-            </div>
-          ),
-          okText: t("button.ok")
-        });
-        return;
-      } else if (_data.msgType === 3) {
-        Modal.success({
-          title: t('advanced.vote success'),
-          width: 400,
-          content: (
-            <div className="show-pri">
-              <p>TxID : {_data.result.txId?_data.result.txId:"--"}</p>
-            </div>
-          ),
-          okText:t('button.ok')
-        });
-        return;
-      }
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error");
-    });
   }
 }
 

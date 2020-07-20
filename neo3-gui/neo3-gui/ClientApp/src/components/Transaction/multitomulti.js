@@ -9,6 +9,7 @@ import {
   Row,
   Col,
   message,
+  Divider,
   Button,
 } from 'antd';
 import { Layout } from 'antd';
@@ -50,52 +51,62 @@ class Multitomulti extends React.Component{
             this.setState({ assetlist: _list })
         }
     }
+    toTrim = value => {
+        
+    // setNumber({ ...validatePrimeNumber(value), value });
+
+    //     console.log(e.target)
+    //     this.formRef.current.setFieldsValue({
+    //         receiver: (e.target.value).trim()
+    //     });
+    };
     transfer = values =>{
         const {t}=this.props;
         var _this = this;
+        console.log(values)
         
-        this.setState({ iconLoading: true });
-        post("SendTo",values.params).then(res =>{
-            var _data = res.data;
-            var result = res.data.result;
-            _this.setState({ iconLoading: true });
-            if(_data.msgType === -1){
-                let res = _data.error;
-                Modal.error({
-                title: t('wallet.transfer send error'),
-                width: 400,
-                content: (
-                    <div className="show-pri">
-                        <p>{t("error code")}: {res.code}</p>
-                        <p>{t("error msg")}: {res.message}</p>
-                    </div>
-                ),
-                okText:t("button.confirm")
-                });
-                return;
-            }else{
-                Modal.success({
-                title: t('wallet.transfer send success'),
-                content: (
-                    <div className="show-pri">
-                    <p>{t("blockchain.transaction hash")}：{result.txId}</p>
-                    </div>
-                ),
-                okText:t("button.confirm")
-                });
-                _this.refs.formRef.resetFields()
-                _this.setState({
-                    assetlist:[],
-                    addresslist:[]
-                })
-            }
-        })
+        // this.setState({ iconLoading: true });
+        // post("SendTo",values.params).then(res =>{
+        //     var _data = res.data;
+        //     var result = res.data.result;
+        //     _this.setState({ iconLoading: true });
+        //     if(_data.msgType === -1){
+        //         let res = _data.error;
+        //         Modal.error({
+        //         title: t('wallet.transfer send error'),
+        //         width: 400,
+        //         content: (
+        //             <div className="show-pri">
+        //                 <p>{t("error code")}: {res.code}</p>
+        //                 <p>{t("error msg")}: {res.message}</p>
+        //             </div>
+        //         ),
+        //         okText:t("button.confirm")
+        //         });
+        //         return;
+        //     }else{
+        //         Modal.success({
+        //         title: t('wallet.transfer send success'),
+        //         content: (
+        //             <div className="show-pri">
+        //             <p>{t("blockchain.transaction hash")}：{result.txId}</p>
+        //             </div>
+        //         ),
+        //         okText:t("button.confirm")
+        //         });
+        //         _this.refs.formRef.resetFields()
+        //         _this.setState({
+        //             assetlist:[],
+        //             addresslist:[]
+        //         })
+        //     }
+        // })
     }
     render = () =>{
         const { account, t } = this.props;
         const { assetlist } = this.state;
         return (
-        <div className="w500 info-detail mt3">
+        <div className="w600 info-detail mt3">
         <Form ref="formRef" className="trans-form" onFinish={this.transfer}>
             <Form.List name="params">
                 {(fields, { add, remove }) => {
@@ -103,7 +114,8 @@ class Multitomulti extends React.Component{
                 return (
                     <div>
                     {fields.map((field) => (
-                      <Row key={field.key}>
+                      <div key={field.key}>
+                      <Row>
                         <Col span="15">
                         <Form.Item
                             name={[field.name, "sender"]}
@@ -149,11 +161,17 @@ class Multitomulti extends React.Component{
                             </Select>
                             </Form.Item>
                         </Col>
+                        </Row>
+                        <Row>
                         <Col span="15">
+                            {/*  pattern={value => value.replace(/[^0-9]/g, '')} */}
                         <Form.Item
                             name={[field.name, "receiver"]}
                             label={t("wallet.to")}
-                            rules={[
+                            rules={[          {
+                                pattern:"^[N][1-9A-HJ-NP-Za-km-z]{32,34}$",
+                                message: t("wallet.address format"),
+                            },
                             {
                                 required: true,
                                 message: t("wallet.please input a correct amount"),
@@ -177,11 +195,14 @@ class Multitomulti extends React.Component{
                         </Form.Item>
                         </Col>
                         {fields.length > 1 ? (
-                            <div className="delete-btn" onClick={ () => { remove(field.name); }}></div>
+                            <Divider orientation="right">
+                                <a className="delete-line" onClick={ () => { remove(field.name); }}><MinusSquareOutlined /> <span className="font-s">{t("wallet.delete add")}</span></a>
+                            </Divider>
                         ) : null}
                       </Row>
+                      </div>
                     ))}
-                    <Form.Item class="mb0">
+                    <Form.Item className="mb0">
                       <Button
                         type="dashed"
                         onClick={() => {

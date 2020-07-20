@@ -33,8 +33,8 @@ const { TextArea } = Input;
 
 @withTranslation()
 @inject("walletStore")
-@observer
 @withRouter
+@observer
 class Contractdeploy extends React.Component {
   constructor(props) {
     super(props);

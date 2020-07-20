@@ -264,45 +264,38 @@ class Transaction extends React.Component {
     ) : null;
     return (
       <div>
-        <Content className="mt3 mb4">
-          <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': '120px' }}>
-            <Col span={24} className="bg-white pv4">
-              <PageHeader title={this.props.content || t("lastest transactions")}></PageHeader>
-              <List
-                header={<div><span className="succes-light">{t("blockchain.transaction.status")}</span><span>{t("blockchain.transaction info")}</span><span className="float-r">{t("common.time")}</span></div>}
-                footer={<span></span>}
-                itemLayout="horizontal"
-                loading={loading}
-                loadMore={loadMore}
-                dataSource={translist}
-                className="font-s"
-                renderItem={item => (
-                  <List.Item>
-                    <List.Item.Meta
-                    title={<span className="succes-light">{t('blockchain.transaction.confirmed')}</span>}
-                    />
-                    <div className="trans-detail">
-                        <p>
-                          <Link className="w500 ellipsis hash" to={ local + item.txId} title={t("show detail")}>{item.txId}</Link>
-                          <span className="float-r">{item.blockTime}</span>
-                        </p>
-                        {item.transfers[0]?
-                        <div >
-                          <span className="w200 ellipsis">{item.transfers[0].fromAddress ? item.transfers[0].fromAddress : "--"}</span>
-                          <SwapRightOutlined />
-                          <span className="w200 ellipsis" >{item.transfers[0].toAddress ? item.transfers[0].toAddress : "--"}</span>
-                          <span className="float-r"><span className="trans-amount">{item.transfers[0].amount}</span>{item.transfers[0].symbol}</span>
-                        </div>
-                        :null}
-                    </div>
-                  </List.Item>
-                )}
-              />
-            </Col>
-            <Searcharea show={this.show()} />
-            <div className="pv1"></div>
-          </Row>
-        </Content>
+        <List
+          header={<div><span>{t("blockchain.transaction info")}</span><span className="float-r">{t("common.time")}</span></div>}
+          footer={<span></span>}
+          itemLayout="horizontal"
+          loading={loading}
+          loadMore={loadMore}
+          dataSource={translist}
+          className="font-s"
+          renderItem={item => (
+            <List.Item>
+              {/* <List.Item.Meta
+              title={<span className="succes-light">{t('blockchain.transaction.confirmed')}</span>}
+              /> */}
+              <div className="trans-detail">
+                  <p>
+                    <Link className="w500 ellipsis hash" to={ local + item.txId} title={t("show detail")}>{item.txId}</Link>
+                    <span className="float-r">{item.blockTime}</span>
+                  </p>
+                  {item.transfers[0]?
+                  <div >
+                    <span className="w200 ellipsis">{item.transfers[0].fromAddress ? item.transfers[0].fromAddress : "--"}</span>
+                    <SwapRightOutlined />
+                    <span className="w200 ellipsis" >{item.transfers[0].toAddress ? item.transfers[0].toAddress : "--"}</span>
+                    <span className="float-r"><span className="trans-amount">{item.transfers[0].amount}</span>{item.transfers[0].symbol}</span>
+                  </div>
+                  :null}
+              </div>
+            </List.Item>
+          )}
+          />
+        {/* <Searcharea show={this.show()} />
+        <div className="pv1"></div> */}
       </div>
     );
   }

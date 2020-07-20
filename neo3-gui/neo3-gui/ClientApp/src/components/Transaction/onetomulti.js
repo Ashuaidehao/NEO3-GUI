@@ -108,7 +108,7 @@ class Onetomulti extends React.Component{
         <Form ref="formRef" className="trans-form" onFinish={this.transfer}>
             <Row gutter={[30, 0]} className="bg-white pv4">
                 <Col span={24}>
-                <div className="w500 mt3" style={{ 'minHeight': 'calc( 100vh - 350px )' }}>
+                <div className="w600 mt3" style={{ 'minHeight': 'calc( 100vh - 350px )' }}>
                     <Row>
                       <Col span={15}>
                       <Form.Item

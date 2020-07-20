@@ -151,36 +151,28 @@ class Untransaction extends React.Component {
     ) : null;
     return (
       <div>
-        <Content className="mt3 mb4">
-          <Row gutter={[30, 0]} type="flex" style={{ 'minHeight': '120px' }}>
-            <Col span={24} className="bg-white pv4">
-              <PageHeader title={this.props.content || t("blockchain.transaction.pending")}></PageHeader>
-              <List
-                header={<div><span className="fail-light">{t("blockchain.transaction.status")}</span><span>{t("blockchain.transaction info")}</span></div>}
-                footer={<span></span>}
-                itemLayout="horizontal"
-                loading={loading}
-                loadMore={loadUnMore}
-                dataSource={untranslist}
-                className="font-s"
-                renderItem={item => (
-                  <List.Item>
-                    <List.Item.Meta
-                    title={<span className="fail-light">{t('blockchain.transaction.unconfirmed')}</span>}
-                    />
-                    <div className="trans-detail">
-                        <p>
-                          <Link className="w500 ellipsis hash" to={ local + item.txId} title={t("show detail")}>{item.txId}</Link>
-                          <span className="float-r">{item.blockTime}</span>
-                        </p>
-                    </div>
-                  </List.Item>
-                )}
-              />
-            </Col>
-            <div className="pv1"></div>
-          </Row>
-        </Content>
+        <List
+          header={<div><span>{t("blockchain.transaction info")}</span></div>}
+          footer={<span></span>}
+          itemLayout="horizontal"
+          loading={loading}
+          loadMore={loadUnMore}
+          dataSource={untranslist}
+          className="font-s"
+          renderItem={item => (
+            <List.Item>
+              {/* <List.Item.Meta
+              title={<span className="fail-light">{t('blockchain.transaction.unconfirmed')}</span>}
+              /> */}
+              <div className="trans-detail">
+                  <p>
+                    <Link className="w500 ellipsis hash" to={ local + item.txId} title={t("show detail")}>{item.txId}</Link>
+                    <span className="float-r">{item.blockTime}</span>
+                  </p>
+              </div>
+            </List.Item>
+          )}
+        />
       </div>
     );
   }

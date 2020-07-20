@@ -4,7 +4,8 @@ import 'antd/dist/antd.css';
 import '../../static/css/trans.css';
 import '../../static/js/bundledemo.js';
 import {
-    Alert, Input,
+    Divider,
+    Input,
     Tooltip,
     Icon,
     Cascader,
@@ -195,9 +196,9 @@ class Datatrans extends React.Component {
                 getContainer={false}
                 style={{ position: 'absolute' }}
             >
-                <ul className="trans-ul">
+                <ul className="trans-ul datatrans">
                     <li>
-                        <p className="trans-title">String <SwapOutlined className="small" /> Hex String</p>
+                        <Divider className="font-n">String <SwapOutlined className="small" /> Hex String</Divider>
                         <p className="trans-area">
                             <label>Hex String:</label><Input id="inString" type="text" placeholder="7472616e73666572" />
                             <label>String:</label><span id="outString" className="trans-text">{this.state.outstr}</span><br />
@@ -211,18 +212,7 @@ class Datatrans extends React.Component {
                         </p>
                     </li>
                     <li>
-                        <p className="trans-title">Script Hash (Big-endian <SwapOutlined className="small" /> Little-endian)</p>
-                        <p className="trans-area">
-                            <label>Big / Little:</label><Input id="inHash" type="text" placeholder="0xb135cda6d0c707b8fd019cb76f555eb518f94945" />
-                            <label>Result:</label><span className="trans-text">{this.state.outhash}</span><br />
-                        </p>
-                        <p className="text-r">
-                            <Button type="primary" onClick={this.endianTrans}>Transform</Button>
-                        </p>
-                    </li>
-                    <li>
-                        <p className="trans-title">little endian</p>
-                        <p className="trans-title">Address <SwapOutlined className="small"/> Script Hash</p>
+                        <Divider className="font-n mt3">Address <SwapOutlined className="small"/> Script Hash ( little endian )</Divider>
                         <p className="trans-area">
                             <label>Hash:</label><Input id="inLittleHash" type="text" placeholder="b135cda6d0c707b8fd019cb76f555eb518f94945"/>
                             <label>Address:</label><span className="trans-text">{this.state.outlittlehash}</span><br />
@@ -237,8 +227,7 @@ class Datatrans extends React.Component {
                         </p>
                     </li>
                     <li>
-                        <p className="trans-title">big endian</p>
-                        <p className="trans-title">Address<SwapOutlined className="small"/> Hex String</p>
+                        <Divider className="font-n">Address <SwapOutlined className="small"/> Hex String ( big endian )</Divider>
                         <p className="trans-area">
                             <label>Hash:</label><Input id="inBigHash" type="text" placeholder="0x4549f918b55e556fb79c01fdb807c7d0a6cd35b1"/>
                             <label>Address:</label><span className="trans-text">{this.state.outbighash}</span><br />
@@ -249,6 +238,16 @@ class Datatrans extends React.Component {
                         </p>
                         <p className="text-r">
                             <Button type="primary" onClick={this.bigTrans}>Transform</Button>
+                        </p>
+                    </li>
+                    <li>
+                        <Divider className="font-n">Script Hash (Big-endian <SwapOutlined className="small" /> Little-endian)</Divider>
+                        <p className="trans-area">
+                            <label>Big / Little:</label><Input id="inHash" type="text" placeholder="0xb135cda6d0c707b8fd019cb76f555eb518f94945" />
+                            <label>Result:</label><span className="trans-text">{this.state.outhash}</span><br />
+                        </p>
+                        <p className="text-r">
+                            <Button type="primary" onClick={this.endianTrans}>Transform</Button>
                         </p>
                     </li>
                 </ul>

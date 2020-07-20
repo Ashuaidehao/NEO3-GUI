@@ -1,14 +1,16 @@
 /* eslint-disable */
-import React from 'react';
+import React,{useState } from 'react';
 import 'antd/dist/antd.css';
+import { useHistory } from "react-router-dom";
 import axios from 'axios';
 import { Input, message } from 'antd';
 import Topath from '../Common/topath';
+import {post} from '../../core/request';
 import {
     ArrowRightOutlined,
     SearchOutlined 
   } from '@ant-design/icons';
-import { withTranslation } from "react-i18next";
+import { withTranslation,useTranslation } from "react-i18next";
 
 @withTranslation()
 class Searcharea extends React.Component{
@@ -94,4 +96,49 @@ class Searcharea extends React.Component{
   }
 }
 
+
+
+const Searchtttt = () =>{
+  // console.log(this.props)
+  const { t } = useTranslation();
+  const [hash, searchHash] = useState(false);
+  let history = useHistory();
+  const aaa = value =>{
+    console.log(value)
+  }
+  const sessss = ()=>{
+
+    let txid = "0xc5c29246d1f1e05efffe541e6951ff60f6c5e03e2f246c1754c182604fad1105";
+    console.log(txid)
+    // let params = { "txId":txid };
+    // post("GetTransaction",params).then(function (res) {
+    //   var _data = res.data;
+    //   if(_data.msgType === -1){
+    //     message.info(t('search.hash unexist'));
+    //     return;
+    //   }else if(_data.msgType === 3){
+    //     message.info("hashcunzai");
+    //     history.push("/wallet/transaction:"+txid);
+    //   }
+    // })
+    // .catch(function (error) {
+    //   console.log(error);
+    //   console.log("error");
+    // });
+  }
+  return (
+    <div>
+      <SearchOutlined className="h2" onClick={aaa}/>
+      <div className="search-div">
+        <Input
+        placeholder={'t("search.hash-hint")'}
+        onPressEnter={value =>{console.log(value)}}
+        suffix={<ArrowRightOutlined onClick={sessss}/>}
+        />
+      </div>
+    </div>
+  )
+} 
+
+export { Searchtttt } ;
 export default Searcharea;

@@ -72,16 +72,16 @@ class Assetdetail extends React.Component{
                 <Row>
                   <Col span={12}>
                     <ul className="detail-ul">
-                      <li><span className="hint">{t("名称")}:</span>{assetdetail.name}</li>
-                      <li><span className="hint">{t("发行量")}：</span>{assetdetail.totalSupply?assetdetail.totalSupply:"--"}</li>
-                      <li><span className="hint">{t("发行时间")}：</span>{(assetdetail.createTime).substr(0,10)}</li>
+                      <li><span className="hint">{t("blockchain.name")}:</span>{assetdetail.name}</li>
+                      <li><span className="hint">{t("blockchain.total")}：</span>{assetdetail.totalSupply?assetdetail.totalSupply:"--"}</li>
+                      <li><span className="hint">{t("blockchain.publish time")}：</span>{(assetdetail.createTime).substr(0,10)}</li>
                     </ul>
                   </Col>
                   <Col span={12}>
                     <ul className="detail-ul">
-                      <li><span className="hint">{t("缩写")}：</span>{assetdetail.symbol}</li>
-                      <li><span className="hint">{t("精度")}：</span>{assetdetail.decimals ? assetdetail.decimals : '--'}</li>
-                      <li><span className="hint">{t("交易数量")}：</span>{assetdetail.transactionCount ? assetdetail.transactionCount : '--'}</li>
+                      <li><span className="hint">{t("blockchain.abbreviation")}：</span>{assetdetail.symbol}</li>
+                      <li><span className="hint">{t("blockchain.precision")}：</span>{assetdetail.decimals ? assetdetail.decimals : '--'}</li>
+                      <li><span className="hint">{t("blockchain.transaction count")}：</span>{assetdetail.transactionCount ? assetdetail.transactionCount : '--'}</li>
                     </ul>
                   </Col>
                 </Row>:null}
@@ -89,7 +89,12 @@ class Assetdetail extends React.Component{
             </Col>
           </Row>
 
-          <Transaction content={t("blockchain.transactions")} page="assetdetail"/>
+          <Row gutter={[30, 0]} className="mt2 mb1" type="flex" style={{ 'minHeight': '120px' }}>
+            <Col span={24} className="bg-white pv4">
+              <PageHeader title={t("blockchain.transactions")}></PageHeader>
+                <Transaction content={t("blockchain.transactions")} page="assetdetail"/>
+            </Col>
+          </Row>
         </Content>
       </Layout>
     );

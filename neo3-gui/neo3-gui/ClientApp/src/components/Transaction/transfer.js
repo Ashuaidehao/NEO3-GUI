@@ -203,7 +203,7 @@ class Transfer extends React.Component {
                     </Col>
                   </Row>
                   <div className="text-c lighter">
-                        <small>{t("wallet.estimated time")}：12s </small>
+                    <small>{t("wallet.estimated time")}：12s </small>
                   </div>
                   <Form.Item>
                     <Button type="primary" htmlType="submit" loading={this.state.iconLoading}>

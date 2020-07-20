@@ -171,7 +171,7 @@ class Contractdetail extends React.Component{
             </Table>
           </Col>
         </Row>
-    </Content>
+      </Content>
     </Layout>
     );
   }
