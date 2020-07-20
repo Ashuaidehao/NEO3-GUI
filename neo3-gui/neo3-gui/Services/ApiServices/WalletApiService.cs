@@ -685,13 +685,13 @@ namespace Neo.Services.ApiServices
             var script = sb.ToArray();
             var senders = transfers.Select(t => t.Sender).ToHashSet();
             var cosigners = senders.Select(p =>
-                new Cosigner()
+                new Signer()
                 {
                     // default access for transfers should be valid only for first invocation
                     Scopes = WitnessScope.CalledByEntry,
                     Account = p
                 }).ToArray();
-            return CurrentWallet.MakeTransaction(script, null, new TransactionAttribute[0], cosigners);
+            return CurrentWallet.MakeTransaction(script, null, cosigners,new TransactionAttribute[0]);
         }
 
 

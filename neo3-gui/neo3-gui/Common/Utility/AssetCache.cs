@@ -79,7 +79,7 @@ namespace Neo.Common.Utility
                 using var engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
                 string name = engine.ResultStack.Pop().GetString();
                 string symbol = engine.ResultStack.Pop().GetString();
-                byte decimals = (byte)engine.ResultStack.Pop().GetBigInteger();
+                byte decimals = (byte)engine.ResultStack.Pop().GetInteger();
                 symbol = symbol == "neo" || symbol == "gas" ? symbol.ToUpper() : symbol;
 
                 if (string.IsNullOrWhiteSpace(name))

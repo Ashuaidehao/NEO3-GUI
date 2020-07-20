@@ -99,7 +99,8 @@ namespace Neo
         /// <returns></returns>
         public static async Task Broadcast(this Transaction tx)
         {
-            Program.Starter.NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+            Program.Starter.NeoSystem.Blockchain.Tell(tx);
+            //.Tell(new LocalNode.Relay { Inventory = tx });
             var task = Task.Run(() => UnconfirmedTransactionCache.AddTransaction(tx));
         }
 
@@ -124,7 +125,7 @@ namespace Neo
         /// <returns></returns>
         public static Transaction InitTransaction(this Wallet wallet, byte[] script, params UInt160[] signers)
         {
-            var cosigners = signers.Select(account => new Cosigner { Account = account }).ToArray();
+            var cosigners = signers.Select(account => new Signer { Account = account }).ToArray();
             return InitTransaction(wallet, script, cosigners);
         }
 
@@ -135,9 +136,9 @@ namespace Neo
         /// <param name="script"></param>
         /// <param name="signers"></param>
         /// <returns></returns>
-        public static Transaction InitTransaction(this Wallet wallet, byte[] script, params Cosigner[] signers)
+        public static Transaction InitTransaction(this Wallet wallet, byte[] script, params Signer[] signers)
         {
-            var tx = wallet.MakeTransaction(script, null, null, signers);
+            var tx = wallet.MakeTransaction(script, null, signers);
             return tx;
         }
 
@@ -443,7 +444,7 @@ namespace Neo
         /// <param name="asset"></param>
         /// <param name="snapshot"></param>
         /// <returns></returns>
-        public static List<BigDecimal> GetNativeBalanceOf<T>(this IEnumerable<UInt160> addresses, Nep5Token<T> asset, StoreView snapshot) where T : Nep5AccountState, new()
+        public static List<BigDecimal> GetNativeBalanceOf<T>(this IEnumerable<UInt160> addresses, Nep5Token<T> asset, StoreView snapshot) where T : AccountState, new()
         {
             var balances = new List<BigDecimal>();
             foreach (var account in addresses)
@@ -503,7 +504,7 @@ namespace Neo
                 throw new Exception($"query balance error");
             }
 
-            var result = engine.ResultStack.Select(p => p.GetBigInteger());
+            var result = engine.ResultStack.Select(p => p.GetInteger());
             return result.Select(bigInt => new BigDecimal(bigInt, assetInfo.Decimals)).ToList();
         }
 
@@ -541,7 +542,7 @@ namespace Neo
             {
                 return new BigDecimal(0, 0);
             }
-            var balances = engine.ResultStack.Pop().GetBigInteger();
+            var balances = engine.ResultStack.Pop().GetInteger();
             return new BigDecimal(balances, assetInfo.Decimals);
         }
 
@@ -715,7 +716,7 @@ namespace Neo
                 Asset = asset,
                 From = fromBytes == null ? null : new UInt160(fromBytes),
                 To = new UInt160(toBytes),
-                Amount = amountItem.GetBigInteger(),
+                Amount = amountItem.GetInteger(),
             };
             return transfer;
         }
@@ -881,7 +882,7 @@ namespace Neo
         }
 
 
-        public static BigInteger? ToBigInteger(this StackItem value) => value == null || value is Null ? (BigInteger?)null : value.GetBigInteger();
+        public static BigInteger? ToBigInteger(this StackItem value) => value == null || value is Null ? (BigInteger?)null : value.GetInteger();
 
         public static bool ToBigInteger(this JStackItem item, out BigInteger amount)
         {

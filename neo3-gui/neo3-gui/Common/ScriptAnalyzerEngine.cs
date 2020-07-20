@@ -27,18 +27,17 @@ namespace Neo.Common
         //}
 
         public List<ContractEventInfo> ContractEvents = new List<ContractEventInfo>();
-        protected override bool OnSysCall(uint method)
+        protected override void OnSysCall(uint method)
         {
-            if (Snapshot.Height == 0)
+            if (Snapshot.Height == 0 || !ApplicationEngine.Services.TryGetValue(method, out var syscallMethod))
             {
                 //Genesis block cannot be replay
-                return true;
+                return;
             }
-            var syscallMethod = InteropService.SupportedMethods().FirstOrDefault(m => m.Hash == method);
             if (syscallMethod != null)
             {
                 //Console.WriteLine($"[SysCall]:{syscallMethod.Method}");
-                if (syscallMethod == InteropService.Contract.Create)
+                if (syscallMethod == ApplicationEngine.System_Contract_Create)
                 {
                     var script = CurrentContext.EvaluationStack.Peek()?.GetByteSafely();
                     if (script != null)
@@ -53,7 +52,7 @@ namespace Neo.Common
                     }
                 }
 
-                if (syscallMethod == InteropService.Contract.Destroy)
+                if (syscallMethod == ApplicationEngine.System_Contract_Destroy)
                 {
                     var destroyContract = CurrentScriptHash;
                     Console.WriteLine($"Block[{Snapshot.Height}]-销毁合约[{destroyContract}]-[{_tx.Hash}]");
@@ -64,7 +63,7 @@ namespace Neo.Common
                     });
                 }
 
-                if (syscallMethod == InteropService.Contract.Update)
+                if (syscallMethod == ApplicationEngine.System_Contract_Update)
                 {
                     var oldContract = CurrentScriptHash;
 
@@ -91,7 +90,7 @@ namespace Neo.Common
                 //    Console.WriteLine($"Block[{Snapshot.Height}]-Call合约[{contract}]-{methodItem}-[{_tx.Hash}]");
                 //}
 
-                if (syscallMethod == InteropService.Contract.CallEx)
+                if (syscallMethod == ApplicationEngine.System_Contract_CallEx)
                 {
                     StackItem contractHash = CurrentContext.EvaluationStack.Peek();
                     var methodItem = CurrentContext.EvaluationStack.Peek(1).GetString();
@@ -100,7 +99,7 @@ namespace Neo.Common
                     Console.WriteLine($"Block[{Snapshot.Height}]-CallEx合约[{contract}]-{methodItem}-[{_tx.Hash}]");
                 }
             }
-            return base.OnSysCall(method);
+            base.OnSysCall(method);
         }
     }
 }
