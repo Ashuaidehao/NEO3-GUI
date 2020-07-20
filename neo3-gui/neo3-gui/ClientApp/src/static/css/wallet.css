@@ -18,6 +18,9 @@
     margin-right: auto;
     min-height: 260px;
 }
+.wa-open .ant-row{
+    min-height: 40px;
+}
 
 /* 路径 */
 .wa-link{
@@ -300,4 +303,23 @@ button,input{
     font-size:12px;
     line-height: 22px;
     width: 75px;
+}
+
+.multiadd .ant-select-selection-item-content{
+    width: 290px;
+}
+.add-list{
+    padding: 10px 12px;
+}
+.ant-select-item-option-content .add-show{
+    display: block;
+    width: 100%;
+    line-height: 12px;
+    font-size: 12px;
+    color: #999;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    transform: scale(0.9);
+    transform-origin: left;
 }

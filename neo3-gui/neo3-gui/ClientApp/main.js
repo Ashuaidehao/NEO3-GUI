@@ -91,7 +91,8 @@ if (!gotTheLock) {
     app.on('ready', () => {
 
         if (process.env.NODE_ENV === 'development') {
-            installExtensions().then(() => createWindow())
+            // installExtensions().then(() => createWindow())
+            createWindow()
         } else {
             createWindow()
         }

@@ -7,6 +7,7 @@ import { post } from "../../core/request";
 import "../../static/css/chain.css";
 
 const { Content } = Layout;
+
 @withTranslation()
 class Chainasset extends React.Component {
   constructor(props) {
@@ -18,18 +19,16 @@ class Chainasset extends React.Component {
   componentDidMount() {
     this.getAllblock();
   }
-  getAllblock = (info) => {
+  getAllblock = () => {
     var _this = this;
     const { t } = this.props;
     post("GetAllAssets",{}).then(res =>{
       var _data = res.data;
       if (_data.msgType === -1) {
-        message.error("查询失败");
+        message.error(t("alert msg.no find"));
         return;
       }
-      _this.setState({
-        assetlist: _data.result
-      })
+      _this.setState({ assetlist: _data.result });
     }).catch(function (error) {
       console.log(error);
       console.log("error");
@@ -66,8 +65,8 @@ class Chainasset extends React.Component {
                 />
               </div>
             </Col>
-            <div className="pv1"></div>
           </Row>
+          <div className="pv1"></div>
         </Content>
       </Layout>
     );

@@ -105,7 +105,6 @@ const Witlist = ({ witnesses }) => {
           </Radio.Group>
         </div>
 
-
         {witnesses.map((item, index) => {
           return (
             <div className={"detail-ul border-under " + opClass} key={index}>
@@ -187,25 +186,12 @@ const Scriptlist = ({ script,scriptcode }) => {
               </li>
             )})}
           </ul>
-          
         </div>
       </Col>
     </Row>
   )
 };
 
-
-const options = [
-  { label: 'Signature', value: 'Signature' },
-  { label: 'Boolean', value: 'Boolean' },
-  { label: 'Integer', value: 'Integer' },
-  { label: 'Hash160', value: 'Hash160' },
-  { label: 'Hash256', value: 'Hash256' },
-  { label: 'ByteArray', value: 'ByteArray' },
-  { label: 'PublicKey', value: 'PublicKey' },
-  { label: 'String', value: 'String' },
-  { label: 'Array', value: 'Array' },
-];
 
 @withTranslation()
 class Notifies extends React.Component{

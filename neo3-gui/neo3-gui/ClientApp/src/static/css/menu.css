@@ -61,7 +61,7 @@
 
 /* 兼容下拉菜单过长的情况 */
 .menu-scroll {
-    height: calc( 100% - 220px);
+    height: calc( 100% - 250px);
     overflow-y: auto;
     overflow-x: hidden;
 }

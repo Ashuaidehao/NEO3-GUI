@@ -9,6 +9,11 @@
     top: 54px;
     margin-left: -10px;
 }
+/* .search-content{
+    position: relative;
+    overflow: hidden;
+    animation: test1 forwards .3s;
+} */
 .search-content{
     position: relative;
     overflow: hidden;

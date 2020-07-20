@@ -380,6 +380,9 @@ small,.small{
 .ant-select-item-option-selected:not(.ant-select-item-option-disabled){
     background-color: rgba(12, 221, 186, 0.1);
 }
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled) .ant-select-item-option-state{
+    color:#00af92;
+}
 /* 列表样式覆盖 */
 .ant-list-header,
 .ant-list-footer,
@@ -573,6 +576,12 @@ small,.small{
     padding-bottom: 5px;
     border-bottom: 1px solid #FCFCFC;
 }
+/* .add-icon{
+    width: 20px;
+} */
+/* .add-icon img{
+    width: 20px;
+} */
 .list-num{
     font-size: 12px;
     padding-left: 15px;
@@ -622,3 +631,18 @@ small,.small{
 .showopcode .opcode{
     display: block;
 }
+
+.neo-form .ant-row{
+    min-height: 32px;
+}
+
+.search-div{
+    position: absolute;
+    z-index: 100;
+    width: 100%;
+    left: 0;
+    background: #ffffff;
+    padding: 10px;
+    box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.103);
+}
+

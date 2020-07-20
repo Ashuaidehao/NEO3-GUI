@@ -1,18 +1,22 @@
 /* eslint-disable */
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { observer, inject } from "mobx-react";
 import axios from 'axios';
-import { Layout, message, Row, Col, List, Avatar, Button, Typography,PageHeader,Modal,Input } from 'antd';
+import { Layout, message, Row, Col, List, Avatar, Button, Typography,PageHeader,Modal,Input,Select,Form,InputNumber } from 'antd';
 import '../../static/css/wallet.css'
 import Sync from '../sync';
-import { withTranslation,useTranslation } from "react-i18next";
+import { withTranslation,useTranslation,Trans } from "react-i18next";
+import { post } from "../../core/request";
+import { walletStore } from "../../store/stores";
 
 import {
   PlusCircleOutlined
 } from '@ant-design/icons';
+import { values } from 'mobx';
 
 const { Content } = Layout;
+const { Option } = Select;
 
 @withTranslation()
 @inject("walletStore")
@@ -101,8 +105,9 @@ class Walletlist extends React.Component {
   }
   claimGas = () => {
     const { t } = this.props;
+    var _this = this;
     this.setState({iconLoading:true})
-    setTimeout(this.setState({iconLoading:false}),10000);
+    setTimeout(function(){_this.setState({iconLoading:false});_this.getGas()},15000);
     axios.post('http://localhost:8081', {
       "id": 51,
       "method": "ClaimGas"
@@ -110,8 +115,6 @@ class Walletlist extends React.Component {
     .then(function (response) {
       var _data = response.data;
       if (_data.msgType === -1) {
-        console.log("ClaimGas Error");
-        console.log(_data);
         message.success(t("wallet.gas fail"), 3);
         return;
       } else if (_data.msgType = 3) {
@@ -145,35 +148,16 @@ class Walletlist extends React.Component {
       console.log("error");
     });
   }
-  importPrivate = () => {
+  showModal = (ele) => {
     const { t } = this.props;
-    this.handleCancel();
-
-    var pass = document.getElementById("privateKey").value;
-    axios.post('http://localhost:8081', {
-      "id": "20",
-      "method": "ImportAccounts",
-      "params": [pass]
-    })
-    .then(function (res) {
-      let _data = res.data;
-      if (_data.msgType === 3) {
-        message.success(t('wallet.import private success'), 2);
-      } else {
-        message.info(t('wallet.private fail'), 2);
+    return () =>{
+      this.setState({visible: true})
+      switch(ele){
+        case 0:this.setState({modalPanel:<Private func={this.handleCancel}/>,modalTitle:t("wallet.import private")});break;
+        case 1:this.setState({modalPanel:<Multiaddress func={this.handleCancel}/>,modalTitle:t("wallet.signature multi")});break;
+        default:this.setState({visible: false});break;
       }
-    }).catch(function (error) {
-      console.log(error);
-      console.log("error");
-    });
-  }
-  showModal = () => {
-    const { t } = this.props;
-    this.setState({
-      visible: true,
-      modalPanel:<Private func={this.importPrivate} t={t}/>,
-      modalTitle:t("wallet.import private")
-    });
+    }
   };
   handleOk = () => {
     this.setState({
@@ -216,7 +200,8 @@ class Walletlist extends React.Component {
                     <div className="wal-ul">
                       <ul>
                         <li><a onClick={this.addAddress}>{t('wallet.add address')}</a></li>
-                        <li><a onClick={this.showModal}>{t('wallet.import private')}</a></li>
+                        <li><a onClick={this.showModal(0)}>{t('wallet.import private')}</a></li>
+                        <li><a onClick={this.showModal(1)}>{t('wallet.signature multi')}</a></li>
                       </ul>
                     </div>
                   </div>
@@ -272,16 +257,129 @@ class Walletlist extends React.Component {
 export default Walletlist;
 
 
-const Private = ({func,t}) => {
+
+const Private = ({func}) => {
+  const [form] = Form.useForm();
+  const { t } = useTranslation();
+  const importPrivate = values =>{
+    post("ImportAccounts",[values.private]).then(res =>{
+      let _data = res.data;
+      if (_data.msgType === 3) {
+        message.success(t('wallet.import private success'), 2);
+      } else {
+        message.info(t('wallet.private fail'), 2);
+      }
+      func();
+    }).catch(function (error) {
+      console.log("error");
+      console.log(error);
+    });
+  }
   return (
-    <div>
-      <Input type="text" id="privateKey" placeholder={t("please input Hex/WIF private key")} />
-      <p className="text-c mb0">
-        <Button onClick={func} type="primary" className="mt3">{t("wallet.import private")}</Button>
-      </p>
-    </div>
+    <Form className="neo-form" form={form} onFinish={importPrivate}>
+      <Form.Item name="private" rules={[{ required: true, message: t("please input Hex/WIF private key")}]}>
+        <Input placeholder={t("please input Hex/WIF private key")}/>
+      </Form.Item>
+      <Form.Item>
+        <Button type="primary" htmlType="submit">{t("wallet.import private")}</Button>
+      </Form.Item>
+    </Form>
   )
 };
+
+const Multiaddress = ({func}) => {
+  const [form] = Form.useForm();
+  const { t } = useTranslation();
+  const [accounts, changeList] = useState([]);
+  const [maxnum, changeNum] = useState(1);
+  const getPublic = () =>{
+    //列出所有可选举公钥
+    post("ListCandidatePublicKey",{}).then(res =>{
+      var _data = res.data;
+      if (_data.msgType === -1) {
+        message.error(t("alert msg.no find"));
+      }else{
+        changeList(_data.result);
+      }
+      return;
+    }).catch(function (error) {
+      console.log(error);
+    });
+  }
+  const addMulti = values =>{
+    let params = {
+      "limit":values.limit,
+      "publicKeys":values.publicKeys
+    };
+    post("CreateMultiAddress",params).then(res =>{
+      var _data = res.data;
+      if (_data.msgType === -1) {
+        message.error(<Trans>wallet.signature multi error</Trans>);
+        return;
+      } else {
+        func();
+        Modal.success({
+          width: 600,
+          title: <Trans>wallet.signature multi success</Trans>,
+          content: (
+              <div className="show-pri">
+              <p><Trans>hash</Trans> ：{_data.result.scriptHash}</p>
+              <p><Trans>wallet.address multi sign</Trans> ：{_data.result.address}</p>
+              </div>
+          ),
+          okText:<Trans>button.ok</Trans>
+        });
+        form.resetFields();
+      }
+    }).catch(function (error) {
+      console.log(error);
+    });
+  }
+  const handleChange = value => {
+    if(value.length<=0) return;
+    let last = value.pop().trim();
+    var regex = new RegExp("^0[23][0-9a-f]{64}$");
+    if(!regex.test(last)){
+      message.error(t("wallet.public key error"));
+      return;
+    }
+    value.push(last);
+    changeNum(value.length);
+  }
+  if(accounts.length === 0) getPublic();
+  return(
+    <Form className="neo-form" form={form} onFinish={addMulti}>
+      {console.log(accounts)}
+      <h4>{t("wallet.signature multi create")}</h4>
+      <Form.Item name="publicKeys" rules={[{ required: true, message: t("wallet.please input public key") }]}>
+        <Select
+          placeholder={t("wallet.signature public")}
+          mode="tags"
+          onChange={handleChange}
+          className="multiadd"
+          style={{ width: '100%'}}>
+          {accounts.length>0?accounts.map((item)=>{
+            console.log({...item})
+            return(
+            <Option className="add-list" key={item.publicKey}>{item.publicKey}<span className="add-show">{item.address}</span></Option>
+            )
+          }):null}
+        </Select>
+      </Form.Item>
+      <h4>{t("wallet.signature min")}</h4>
+      <Form.Item name="limit" rules={[{ required: true, message: t("wallet.please input signature min")}]}>
+        <InputNumber
+          placeholder={t("wallet.signature min input")}
+          parser={value => value.replace(/[^0-9]/g, '')}
+          step={1}  min={1}  max={maxnum}
+          style={{ width: '100%'}}/>
+      </Form.Item>
+      <Form.Item>
+        <Button style={{ 'width': '100%' }} type="primary" htmlType="submit">{t("button.confirm")}</Button>
+      </Form.Item>
+    </Form>
+  )
+}
 
 const Accounts = ({accounts,name}) => {
   const { t } = useTranslation();

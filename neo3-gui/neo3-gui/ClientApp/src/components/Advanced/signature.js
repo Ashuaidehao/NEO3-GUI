@@ -44,17 +44,6 @@ function error(data) {
     });
 }
 
-// const Signtrans = () =>{
-//     const { t } = useTranslation();
-//     const [broad,changeBroad] = useState("");
-    
-//     return (
-//         <div>
-
-//         </div>
-//     );
-// }
-
 @withTranslation()
 class Advancedsignature extends React.Component {
     constructor(props){
@@ -103,7 +92,6 @@ class Advancedsignature extends React.Component {
             <Content className="mt3">
               <Row gutter={[30, 0]} className="mb1" style={{ 'minHeight': 'calc( 100vh - 150px )' }}>
                 <Col span={24} className="bg-white pv4">
-                  <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
                   <Tabs className="tran-title" defaultActiveKey="1">
                     {/* <TabPane tab={t("advanced.signature text")} key="1">
                       <div>文本签名</div>
