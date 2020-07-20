@@ -63,44 +63,42 @@ class Multitomulti extends React.Component{
     transfer = values =>{
         const {t}=this.props;
         var _this = this;
-        console.log(values)
-        
-        // this.setState({ iconLoading: true });
-        // post("SendTo",values.params).then(res =>{
-        //     var _data = res.data;
-        //     var result = res.data.result;
-        //     _this.setState({ iconLoading: true });
-        //     if(_data.msgType === -1){
-        //         let res = _data.error;
-        //         Modal.error({
-        //         title: t('wallet.transfer send error'),
-        //         width: 400,
-        //         content: (
-        //             <div className="show-pri">
-        //                 <p>{t("error code")}: {res.code}</p>
-        //                 <p>{t("error msg")}: {res.message}</p>
-        //             </div>
-        //         ),
-        //         okText:t("button.confirm")
-        //         });
-        //         return;
-        //     }else{
-        //         Modal.success({
-        //         title: t('wallet.transfer send success'),
-        //         content: (
-        //             <div className="show-pri">
-        //             <p>{t("blockchain.transaction hash")}：{result.txId}</p>
-        //             </div>
-        //         ),
-        //         okText:t("button.confirm")
-        //         });
-        //         _this.refs.formRef.resetFields()
-        //         _this.setState({
-        //             assetlist:[],
-        //             addresslist:[]
-        //         })
-        //     }
-        // })
+        this.setState({ iconLoading: true });
+        post("SendTo",values.params).then(res =>{
+            var _data = res.data;
+            var result = res.data.result;
+            _this.setState({ iconLoading: true });
+            if(_data.msgType === -1){
+                let res = _data.error;
+                Modal.error({
+                title: t('wallet.transfer send error'),
+                width: 400,
+                content: (
+                    <div className="show-pri">
+                        <p>{t("error code")}: {res.code}</p>
+                        <p>{t("error msg")}: {res.message}</p>
+                    </div>
+                ),
+                okText:t("button.confirm")
+                });
+                return;
+            }else{
+                Modal.success({
+                title: t('wallet.transfer send success'),
+                content: (
+                    <div className="show-pri">
+                    <p>{t("blockchain.transaction hash")}：{result.txId}</p>
+                    </div>
+                ),
+                okText:t("button.confirm")
+                });
+                _this.refs.formRef.resetFields()
+                _this.setState({
+                    assetlist:[],
+                    addresslist:[]
+                })
+            }
+        })
     }
     render = () =>{
         const { account, t } = this.props;
