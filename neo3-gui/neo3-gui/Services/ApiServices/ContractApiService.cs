@@ -90,9 +90,9 @@ namespace Neo.Services.ApiServices
             {
                 tx = CurrentWallet.MakeTransaction(script);
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
-                return Error(ErrorCode.EngineFault);
+                return Error(ErrorCode.EngineFault, ex.Message);
             }
             catch (Exception ex)
             {
@@ -162,9 +162,9 @@ namespace Neo.Services.ApiServices
             {
                 tx = CurrentWallet.InitTransaction(sb.ToArray(), signers.ToArray());
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
-                return Error(ErrorCode.EngineFault);
+                return Error(ErrorCode.EngineFault, ex.Message);
             }
             catch (Exception ex)
             {
@@ -329,9 +329,9 @@ namespace Neo.Services.ApiServices
             {
                 tx = CurrentWallet.InitTransaction(sb.ToArray(), account);
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
-                return Error(ErrorCode.EngineFault);
+                return Error(ErrorCode.EngineFault, ex.Message);
             }
             catch (Exception ex)
             {
@@ -398,9 +398,9 @@ namespace Neo.Services.ApiServices
             {
                 tx = CurrentWallet.InitTransaction(sb.ToArray(), account);
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
-                return Error(ErrorCode.EngineFault);
+                return Error(ErrorCode.EngineFault, ex.Message);
             }
             catch (Exception ex)
             {
