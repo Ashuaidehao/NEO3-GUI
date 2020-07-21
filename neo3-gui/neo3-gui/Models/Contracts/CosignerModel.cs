@@ -9,6 +9,6 @@ namespace Neo.Models.Contracts
 
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public WitnessScope Scopes { get; set; }
+        public WitnessScope Scopes { get; set; } = WitnessScope.Global;
     }
 }

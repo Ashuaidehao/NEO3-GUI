@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Neo.VM.Types;
 
 namespace Neo.Models.Transactions
 {

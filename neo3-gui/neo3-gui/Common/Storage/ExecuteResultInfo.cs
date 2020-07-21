@@ -7,7 +7,6 @@ using Neo.Common.Storage.SQLiteModules;
 using Neo.IO.Json;
 using Neo.SmartContract;
 using Neo.VM;
-using Array = Neo.VM.Types.Array;
 
 namespace Neo.Common.Storage
 {
