@@ -32,7 +32,9 @@ namespace Neo.Common
         {
             Header header = snapshot.GetHeader(snapshot.CurrentBlockHash);
 
-            var analyzer = new BlockAnalyzer(snapshot, header, applicationExecutedList);
+
+
+            var analyzer = new BlockAnalyzer(snapshot.Clone(), header, applicationExecutedList);
             analyzer.Analysis();
 
             foreach (var analyzerResultInfo in analyzer.AnalysisResult.ExecuteResultInfos)
@@ -56,11 +58,12 @@ namespace Neo.Common
             }
 
 
-            if (analyzer.AnalysisResult.ContractEvents.NotEmpty())
+            if (analyzer.AnalysisResult.ContractChangeEvents.NotEmpty())
             {
-                _levelDb.SaveContractEvent(snapshot.Height, analyzer.AnalysisResult.ContractEvents);
+                _levelDb.SaveContractEvent(snapshot.Height, analyzer.AnalysisResult.ContractChangeEvents);
             }
         }
+
 
         public void OnCommit(StoreView snapshot)
         {

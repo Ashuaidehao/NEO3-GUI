@@ -26,6 +26,10 @@ namespace Neo.Models
                 TypeCode = json["type"].TryGetEnum<ContractParameterType>(),
                 Type = json["type"].AsString(),
             };
+            if (parameter.Type == "ByteString")
+            {
+                parameter.TypeCode = ContractParameterType.ByteArray;
+            }
             if (json["value"] != null)
                 switch (parameter.TypeCode)
                 {

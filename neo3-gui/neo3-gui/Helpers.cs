@@ -125,7 +125,7 @@ namespace Neo
         /// <returns></returns>
         public static Transaction InitTransaction(this Wallet wallet, byte[] script, params UInt160[] signers)
         {
-            var cosigners = signers.Select(account => new Signer { Account = account }).ToArray();
+            var cosigners = signers.Select(account => new Signer { Account = account, Scopes = WitnessScope.Global }).ToArray();
             return InitTransaction(wallet, script, cosigners);
         }
 
@@ -669,9 +669,13 @@ namespace Neo
 
         public static bool NotVmNull(this StackItem item)
         {
-            return !(item is Null);
+            return !(item.IsNull);
         }
 
+        public static bool IsVmNullOrByteArray(this StackItem item)
+        {
+            return item.IsNull || item is ByteString;
+        }
 
         public static bool NotVmInt(this StackItem item)
         {
@@ -916,15 +920,9 @@ namespace Neo
         public static NotificationInfo ToNotificationInfo(this NotifyEventArgs notify)
         {
             var notification = new NotificationInfo();
-            notification.Contract = notify.ScriptHash.ToString();
-            try
-            {
-                notification.State = notify.State.ToParameter().ToJson();
-            }
-            catch (InvalidOperationException)
-            {
-                notification.State = "error: recursive reference";
-            }
+            notification.EventName = notify.EventName;
+            notification.Contract = notify.ScriptHash;
+            notification.State = notify.State.ToJson();
             return notification;
         }
 

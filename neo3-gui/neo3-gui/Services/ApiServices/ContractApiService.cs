@@ -310,7 +310,7 @@ namespace Neo.Services.ApiServices
             }
             using var snapshot = Blockchain.Singleton.GetSnapshot();
             var validators = NativeContract.NEO.GetValidators(snapshot);
-            //if (validators.Any(v => v..PublicKey.ToString() == pubkey))
+            if (validators.Any(v => v.Equals(publicKey)))
             {
                 return Error(ErrorCode.ValidatorAlreadyExist);
             }
@@ -322,7 +322,7 @@ namespace Neo.Services.ApiServices
 
             var account = contract.ScriptHash;
             using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitAppCall(NativeContract.NEO.Hash, "registerValidator", publicKey);
+            sb.EmitAppCall(NativeContract.NEO.Hash, "registerCandidate", publicKey);
 
             Transaction tx = null;
             try
@@ -370,10 +370,13 @@ namespace Neo.Services.ApiServices
             {
                 return Error(ErrorCode.ParameterIsNull);
             }
-            ECPoint[] publicKeys = null;
+
+            ECPoint publicKey = null;
+            //ECPoint[] publicKeys = null;
             try
             {
-                publicKeys = pubkeys.Select(p => ECPoint.Parse(p, ECCurve.Secp256r1)).ToArray();
+                //publicKeys = pubkeys.Select(p => ECPoint.Parse(p, ECCurve.Secp256r1)).ToArray();
+                publicKey = ECPoint.Parse(pubkeys.FirstOrDefault(), ECCurve.Secp256r1);
             }
             catch (Exception e)
             {
@@ -386,12 +389,8 @@ namespace Neo.Services.ApiServices
                 Value = account
             }, new ContractParameter
             {
-                Type = ContractParameterType.Array,
-                Value = publicKeys.Select(p => new ContractParameter
-                {
-                    Type = ContractParameterType.PublicKey,
-                    Value = p
-                }).ToArray()
+                Type = ContractParameterType.PublicKey,
+                Value = publicKey
             });
 
             Transaction tx = null;
@@ -491,7 +490,7 @@ namespace Neo.Services.ApiServices
         private async Task CheckBadOpcode(byte[] script)
         {
             // Basic script checks
-            using var engine =  ApplicationEngine.Create(TriggerType.Application, null, null, 0, true);
+            using var engine = ApplicationEngine.Create(TriggerType.Application, null, null, 0, true);
             var context = engine.LoadScript(script);
             while (context.InstructionPointer <= context.Script.Length)
             {
