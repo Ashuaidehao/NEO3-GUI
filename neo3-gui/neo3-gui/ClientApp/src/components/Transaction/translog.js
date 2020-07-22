@@ -200,11 +200,6 @@ class Notifies extends React.Component{
     this.state = {
     };
   }
-  changeType = e => {
-    // this.setState({ size: e.target.value });
-    console.log(e);
-    console.log(e.target);
-  };
   render = ()=> {
     const {t}=this.props;
     const {notifies} = this.props;
@@ -219,6 +214,7 @@ class Notifies extends React.Component{
           let _data = item.state?item.state.value:[];
           var html=[];
           html.push(<li className="trans-title pa3" key="title"><span>ScriptHash: &nbsp;&nbsp;&nbsp;</span>{item.contract}</li>);
+          html.push(<li className="pa3 bold t-dark" key="event"><span className="trans-type">Event</span>{item.eventName}</li>);
           for(var i = 0;i<_data.length;i++){
             html.push(<li className="pa3" key={i}><span className="trans-type">{_data[i].type}</span>{_data[i].value? JSON.stringify(_data[i].value).replace(/"/g,' '):"--"}</li>);
           }

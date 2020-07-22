@@ -77,7 +77,7 @@ a:hover{
     font-weight: 600;
 }
 .t-dark{
-    color: #000000;
+    color: #000000!important;
 }
 .t-normal{
     color: #222222;

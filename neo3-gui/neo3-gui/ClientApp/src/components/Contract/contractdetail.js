@@ -1,10 +1,7 @@
-/* eslint-disable */ 
-//just test replace wallet//
 import React from 'react';
-import {Link} from 'react-router-dom';
-import { Layout, Row, Col, message,PageHeader,Table,Tag,Descriptions } from 'antd';
-import axios from 'axios';
+import { Layout, Row, Col, message, PageHeader, Table, Tag } from 'antd';
 import Sync from '../sync';
+import post from '../../core/request';
 import { withTranslation } from "react-i18next";
 
 const { Content } = Layout;
@@ -25,15 +22,12 @@ class Contractdetail extends React.Component{
   componentDidMount(){
     let _hash = location.pathname.split(":").pop();
     this.contractDetail(_hash,res=>{
-      let _mainarr = new Array();
-      res.manifest.abi.entryPoint?res.manifest.abi.entryPoint.key = 0:null;
-      _mainarr.push(res.manifest.abi.entryPoint);
-      
       let _methodarr = new Array();
       _methodarr = res.manifest.abi.methods?res.manifest.abi.methods:[];
       _methodarr.map((item,index) => {
         item.key = index
       })
+
       let _eventarr = new Array();
       _eventarr = res.manifest.abi.events?res.manifest.abi.events:[];
       _eventarr.map((item,index) => {
@@ -45,7 +39,6 @@ class Contractdetail extends React.Component{
         detail:res,
         storage:res.hasStorage,
         payable:res.payable,
-        mainarr:_mainarr,
         methodarr:_methodarr,
         eventarr:_eventarr
       })
@@ -53,14 +46,8 @@ class Contractdetail extends React.Component{
   }
   contractDetail = (hash,callback) => {
     const {t}=this.props;
-    axios.post('http://localhost:8081', {
-        "id":"1111",
-        "method": "GetContract",
-        "params": {
-            "contractHash":hash
-        }
-    })
-    .then(function (response) {
+    let params ={"contractHash":hash}
+    post("GetContract",params).then(function (response) {
       var _data = response.data;
       if(_data.msgType === -1){
         message.info(t("contract.hash fail"));
@@ -75,7 +62,7 @@ class Contractdetail extends React.Component{
     });
   }
   render(){
-    const {detail,mainarr,methodarr,eventarr,storage,payable} = this.state;
+    const {detail,methodarr,eventarr,storage,payable} = this.state;
     const { t } = this.props;
     return (
     <Layout className="gui-container">
@@ -98,31 +85,8 @@ class Contractdetail extends React.Component{
                 </Col>
               </Row>
             </div>
+            
             <Table
-              dataSource={mainarr}
-              pagination={false}
-              bordered={true}
-              title={() => t('contract.main')}
-            >
-              <Column title={t('contract.name')} dataIndex="name" key="name" width={150}/>
-              <Column
-                title={t('contract.para')}
-                dataIndex="parameters"
-                key="parameters"
-                render={parameters => (
-                  parameters.map((item,index) => (
-                    <span className="para-tag" key={index}>{item.type}<em>{item.name}</em></span>
-                  ))
-                )}
-              />
-              <Column title={t('contract.return')} dataIndex="returnType" key="returnType" width={100}
-                render = {returnType =>(
-                  returnType?<span className="para-tag">{returnType}</span>:null
-                )}
-              />
-            </Table>
-            <Table
-              className="mt3"
               dataSource={methodarr}
               pagination={false}
               bordered={true}

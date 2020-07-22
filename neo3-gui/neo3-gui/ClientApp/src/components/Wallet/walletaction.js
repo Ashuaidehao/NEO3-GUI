@@ -34,7 +34,8 @@ const Walletopen = ({feedback}) => {
 const Walletcreate = ({feedback}) => {
   const [form] = Form.useForm();
   const { t } = useTranslation();
-  feedback = feedback ? feedback:onCreate;
+  // const [loading, changeLoad] = useState(false);
+  feedback = feedback ? feedback : onCreate;
   return (
     <div className="open">
       <Form form={form} onFinish={feedback}>
@@ -62,7 +63,7 @@ const Walletcreate = ({feedback}) => {
           <Input.Password placeholder={t("wallet.please input twice")} maxLength={30} prefix={<LockOutlined />}/>
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit">{t("button.confirm")}</Button>
+          <Button type="primary" loading={loading} htmlType="submit">{t("button.confirm")}</Button>
         </Form.Item>
       </Form>
     </div>
@@ -197,6 +198,7 @@ const onCreate = values => {
   };
   post("CreateWallet",params).then(res =>{
     var _data = res.data;
+    console.log(_data);
     if (_data.msgType === -1) {
       message.error(<Trans>wallet.create wallet fail</Trans>);
       return;
