@@ -40,7 +40,7 @@ namespace Neo.Common
             /// <summary>
             /// Contract Create\Update\Destroy info in current block
             /// </summary>
-            public readonly IDictionary<UInt256, List<ContractEventInfo>> ContractEvents = new Dictionary<UInt256, List<ContractEventInfo>>();
+            public readonly IDictionary<UInt256, List<ContractEventInfo>> ContractChangeEvents = new Dictionary<UInt256, List<ContractEventInfo>>();
 
             /// <summary>
             /// relate  asset info in current block
@@ -89,12 +89,12 @@ namespace Neo.Common
             {
                 execResult.ResultStack = "error: recursive reference";
             }
-            execResult.Notifications = appExec.Notifications.Select(q => q.ToNotificationInfo()).ToList();
+            execResult.Notifications = appExec.Notifications.Select(n => n.ToNotificationInfo()).ToList();
             AnalysisResult.ExecuteResultInfos.Add(execResult);
 
             foreach (var contract in execResult.Notifications.Select(n => n.Contract).Distinct())
             {
-                var asset = AssetCache.GetAssetInfo(UInt160.Parse(contract), _snapshot);
+                var asset = AssetCache.GetAssetInfo(contract, _snapshot);
                 if (asset != null)
                 {
                     AnalysisResult.AssetInfos[asset.Asset] = asset;
@@ -109,14 +109,15 @@ namespace Neo.Common
 
             if (_snapshot.Height > 0)
             {
+                //Re-execute script
                 using var replaySnapshot = Blockchain.Singleton.GetSnapshot();
-                ApplicationEngine.Run(null, replaySnapshot, null, null, true);
+                ApplicationEngine.Run(new Byte []{}, replaySnapshot, testMode: true);
                 var scriptAnalyzer = new ScriptAnalyzerEngine(transaction, replaySnapshot);
                 scriptAnalyzer.LoadScript(transaction.Script);
                 scriptAnalyzer.Execute();
                 if (scriptAnalyzer.ContractEvents.NotEmpty())
                 {
-                    AnalysisResult.ContractEvents[transaction.Hash] = scriptAnalyzer.ContractEvents;
+                    AnalysisResult.ContractChangeEvents[transaction.Hash] = scriptAnalyzer.ContractEvents;
                     foreach (var contractEvent in scriptAnalyzer.ContractEvents)
                     {
                         var asset = AssetCache.GetAssetInfo(contractEvent.Contract, _snapshot);
@@ -143,7 +144,7 @@ namespace Neo.Common
                 return;
             }
             var transferList = new List<TransferInfo>();
-            foreach (var notification in execResult.Notifications)
+            foreach (var notification in appExec.Notifications)
             {
                 var transfer = HasTransfer(notification, transaction);
                 if (transfer != null)
@@ -172,47 +173,61 @@ namespace Neo.Common
         /// <param name="notification"></param>
         /// <param name="transaction"></param>
         /// <returns></returns>
-        private TransferInfo HasTransfer(NotificationInfo notification, Transaction transaction)
+        private TransferInfo HasTransfer(NotifyEventArgs notification, Transaction transaction)
         {
-            var assetHash = UInt160.Parse(notification.Contract);
+            if (!"transfer".Equals(notification.EventName, StringComparison.OrdinalIgnoreCase) || notification.State.Count < 3)
+            {
+                return null;
+            }
+            var assetHash = notification.ScriptHash;
             var asset = AssetCache.GetAssetInfo(assetHash, _snapshot);
             if (asset == null)
             {
                 //not nep5 asset
                 return null;
             }
-            var notify = JStackItem.FromJson(notification.State);
-            if (!(notify.Value is IList<JStackItem> notifyArray) || notifyArray.Count < 4)
+            var notify = notification.State;
+            var fromItem = notify[0];
+            var toItem = notify[1];
+            var amountItem = notify[2];
+            if (!fromItem.IsVmNullOrByteArray() || !toItem.IsVmNullOrByteArray())
             {
                 return null;
             }
-            if (!"transfer".Equals(notifyArray[0].ValueString, StringComparison.OrdinalIgnoreCase))
+            var from = fromItem.GetByteSafely();
+            if (from != null && from.Length != UInt160.Length)
             {
                 return null;
             }
-            var from = notifyArray[1].Value as byte[];
-            var to = notifyArray[2].Value as byte[];
+            var to = toItem.GetByteSafely();
+            if (to != null && to.Length != UInt160.Length)
+            {
+                return null;
+            }
             if (from == null && to == null)
             {
                 return null;
             }
-            if (!notifyArray[3].ToBigInteger(out var amount))
+            if (amountItem.NotVmByteArray() && amountItem.NotVmInt())
             {
                 return null;
             }
-
+            var amount = amountItem.ToBigInteger();
+            if (amount == null)
+            {
+                return null;
+            }
             var record = new TransferInfo
             {
                 BlockHeight = _header.Index,
                 From = from == null ? null : new UInt160(from),
                 To = to == null ? null : new UInt160(to),
                 Asset = asset.Asset,
-                Amount = amount,
+                Amount = amount.Value,
                 TxId = transaction.Hash,
                 TimeStamp = _header.Timestamp,
                 //AssetInfo = asset,
             };
-
             return record;
         }
 

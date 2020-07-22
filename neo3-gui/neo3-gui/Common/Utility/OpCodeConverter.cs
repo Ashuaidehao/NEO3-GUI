@@ -22,7 +22,7 @@ namespace Neo.Common.Utility
         static OpCodeConverter()
         {
             //初始化所有 InteropService Method
-            _interopServiceMap = InteropService.SupportedMethods().ToDictionary(p => p.Hash, p => p.Method);
+            _interopServiceMap = ApplicationEngine.Services.ToDictionary(s=>s.Key,s=>s.Value.Name);
             //初始化所有 OpCode OperandSize
             foreach (FieldInfo field in typeof(OpCode).GetFields(BindingFlags.Public | BindingFlags.Static))
             {

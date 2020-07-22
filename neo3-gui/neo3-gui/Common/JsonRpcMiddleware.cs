@@ -82,6 +82,7 @@ namespace Neo.Common
                     Code = -1,
                     Message = e.ToString(),
                 };
+                Console.WriteLine(e);
             }
             finally
             {

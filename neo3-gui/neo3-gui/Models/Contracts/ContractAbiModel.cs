@@ -14,7 +14,7 @@ namespace Neo.Models.Contracts
             if (abi != null)
             {
                 ContractHash = abi.Hash;
-                EntryPoint= new ContractMethodModel(abi.EntryPoint);
+                //EntryPoint= new ContractMethodModel(abi.EntryPoint);
                 Methods = abi.Methods.Select(m => new ContractMethodModel(m)).ToArray();
                 Events = abi.Events.Select(m => new ContractEventModel(m)).ToArray();
             }
