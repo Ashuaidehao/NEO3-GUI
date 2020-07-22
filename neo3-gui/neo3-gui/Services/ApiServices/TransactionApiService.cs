@@ -52,8 +52,10 @@ namespace Neo.Services.ApiServices
                 model.Notifies.AddRange(
                     executeResult.Notifications.Select(n => new NotifyModel()
                     {
-                        Contract = UInt160.Parse(n.Contract),
+                        Contract = n.Contract,
+                        EventName = n.EventName,
                         State = JStackItem.FromJson(n.State),
+
                     }));
             }
             return model;

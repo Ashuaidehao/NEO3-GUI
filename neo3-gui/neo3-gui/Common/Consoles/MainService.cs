@@ -203,8 +203,7 @@ namespace Neo.Common.Consoles
                     return OnStartCommand(args);
                 case "upgrade":
                     return OnUpgradeCommand(args);
-                case "deploy":
-                    return OnDeployCommand(args);
+
                 case "invoke":
                     return OnInvokeCommand(args);
                 case "install":
@@ -254,29 +253,7 @@ namespace Neo.Common.Consoles
             return true;
         }
 
-        private bool OnDeployCommand(string[] args)
-        {
-            if (NoWallet()) return true;
-            byte[] script = LoadDeploymentScript(
-                /* filePath */ args[1],
-                /* manifest */ args.Length == 2 ? "" : args[2],
-                /* scriptHash */ out var scriptHash);
 
-            Transaction tx;
-            try
-            {
-                tx = CurrentWallet.MakeTransaction(script);
-            }
-            catch (InvalidOperationException)
-            {
-                Console.WriteLine("Engine faulted.");
-                return true;
-            }
-            Console.WriteLine($"Script hash: {scriptHash.ToString()}");
-            Console.WriteLine($"Gas: {tx.SystemFee}");
-            Console.WriteLine();
-            return SignAndSendTx(tx);
-        }
 
         private bool OnInvokeCommand(string[] args)
         {
@@ -295,7 +272,7 @@ namespace Neo.Common.Consoles
 
             Transaction tx = new Transaction
             {
-                Sender = UInt160.Zero,
+                Signers = new Signer[] { new Signer() { Account = UInt160.Zero } },
                 Attributes = new TransactionAttribute[0],
                 Witnesses = new Witness[0]
             };
@@ -337,81 +314,6 @@ namespace Neo.Common.Consoles
             return SignAndSendTx(tx);
         }
 
-        private byte[] LoadDeploymentScript(string nefFilePath, string manifestFilePath, out UInt160 scriptHash)
-        {
-            if (string.IsNullOrEmpty(manifestFilePath))
-            {
-                manifestFilePath = Path.ChangeExtension(nefFilePath, ".manifest.json");
-            }
-
-            // Read manifest
-
-            var info = new FileInfo(manifestFilePath);
-            if (!info.Exists || info.Length >= Transaction.MaxTransactionSize)
-            {
-                throw new ArgumentException(nameof(manifestFilePath));
-            }
-
-            var manifest = ContractManifest.Parse(File.ReadAllBytes(manifestFilePath));
-
-            // Read nef
-
-            info = new FileInfo(nefFilePath);
-            if (!info.Exists || info.Length >= Transaction.MaxTransactionSize)
-            {
-                throw new ArgumentException(nameof(nefFilePath));
-            }
-
-            NefFile file;
-            using (var stream = new BinaryReader(File.OpenRead(nefFilePath), Encoding.UTF8, false))
-            {
-                file = stream.ReadSerializable<NefFile>();
-            }
-
-            // Basic script checks
-
-            using (var engine = new ApplicationEngine(TriggerType.Application, null, null, 0, true))
-            {
-                var context = engine.LoadScript(file.Script);
-
-                while (context.InstructionPointer <= context.Script.Length)
-                {
-                    // Check bad opcodes
-
-                    var ci = context.CurrentInstruction;
-
-                    if (ci == null || !Enum.IsDefined(typeof(OpCode), ci.OpCode))
-                    {
-                        throw new FormatException($"OpCode not found at {context.InstructionPointer}-{((byte)ci.OpCode).ToString("x2")}");
-                    }
-
-                    switch (ci.OpCode)
-                    {
-                        case OpCode.SYSCALL:
-                            {
-                                // Check bad syscalls (NEO2)
-
-                                if (InteropService.SupportedMethods().All(u => u.Hash != ci.TokenU32))
-                                {
-                                    throw new FormatException($"Syscall not found {ci.TokenU32.ToString("x2")}. Are you using a NEO2 smartContract?");
-                                }
-                                break;
-                            }
-                    }
-
-                    context.InstructionPointer += ci.Size;
-                }
-            }
-
-            // Build script
-
-            scriptHash = file.ScriptHash;
-            using (ScriptBuilder sb = new ScriptBuilder())
-            {
-                sb.EmitSysCall(InteropService.Contract.Create, file.Script, manifest.ToJson().ToString());
-                return sb.ToArray();
-            }
-        }
 
         private bool SignAndSendTx(Transaction tx)
         {
@@ -431,7 +333,8 @@ namespace Neo.Common.Consoles
             {
                 tx.Witnesses = context.GetWitnesses();
 
-                NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+                NeoSystem.Blockchain.Tell(tx);
+                //NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
 
                 msg = $"Signed and relayed transaction with hash={tx.Hash}";
                 Console.WriteLine(msg);
@@ -470,7 +373,8 @@ namespace Neo.Common.Consoles
                     return true;
                 }
                 tx.Witnesses = context.GetWitnesses();
-                NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+                NeoSystem.Blockchain.Tell(tx);
+                //NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
                 Console.WriteLine($"Data relay success, the hash is shown as follows:{Environment.NewLine}{tx.Hash}");
             }
             catch (Exception e)
@@ -1090,7 +994,8 @@ namespace Neo.Common.Consoles
             if (context.Completed)
             {
                 tx.Witnesses = context.GetWitnesses();
-                NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
+                NeoSystem.Blockchain.Tell(tx);
+                //NeoSystem.LocalNode.Tell(new LocalNode.Relay { Inventory = tx });
                 Console.WriteLine($"TXID: {tx.Hash}");
             }
             else

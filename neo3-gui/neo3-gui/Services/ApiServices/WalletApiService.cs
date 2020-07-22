@@ -188,7 +188,17 @@ namespace Neo.Services.ApiServices
             {
                 return Error(ErrorCode.WalletNotOpen);
             }
-            var points = publicKeys.Select(p => ECPoint.DecodePoint(Helper.HexToBytes(p), ECCurve.Secp256r1)).ToArray();
+
+            ECPoint[] points = null;
+            try
+            {
+                points = publicKeys.Select(p => ECPoint.DecodePoint(Helper.HexToBytes(p), ECCurve.Secp256r1)).ToArray();
+
+            }
+            catch (FormatException ex)
+            {
+                return Error(ErrorCode.InvalidPara, ex.Message);
+            }
             Contract contract = Contract.CreateMultiSigContract(limit, points);
             if (contract == null)
             {
@@ -675,13 +685,13 @@ namespace Neo.Services.ApiServices
             var script = sb.ToArray();
             var senders = transfers.Select(t => t.Sender).ToHashSet();
             var cosigners = senders.Select(p =>
-                new Cosigner()
+                new Signer()
                 {
                     // default access for transfers should be valid only for first invocation
                     Scopes = WitnessScope.CalledByEntry,
                     Account = p
                 }).ToArray();
-            return CurrentWallet.MakeTransaction(script, null, new TransactionAttribute[0], cosigners);
+            return CurrentWallet.MakeTransaction(script, null, cosigners,new TransactionAttribute[0]);
         }
 
 

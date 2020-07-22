@@ -28,13 +28,20 @@ namespace Neo.Common.Storage
         public List<NotificationInfo> Notifications { get; set; }
     }
 
+
+    /// <summary>
+    /// notify item for save
+    /// </summary>
     public class NotificationInfo
     {
         /// <summary>
         /// contract script hash bin-endian, starts with "0x"
         /// </summary>
-        public string Contract { get; set; }
+        public UInt160 Contract { get; set; }
+
+        public string EventName { get; set; }
 
         public JObject State { get; set; }
+
     }
 }

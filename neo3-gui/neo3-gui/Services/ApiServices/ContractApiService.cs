@@ -82,7 +82,7 @@ namespace Neo.Services.ApiServices
 
             // Build script
             using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitSysCall(InteropService.Contract.Create, nefFile.Script, manifest.ToJson().ToString());
+            sb.EmitSysCall(ApplicationEngine.System_Contract_Create, nefFile.Script, manifest.ToJson().ToString());
             var script = sb.ToArray();
 
             Transaction tx;
@@ -90,9 +90,9 @@ namespace Neo.Services.ApiServices
             {
                 tx = CurrentWallet.MakeTransaction(script);
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
-                return Error(ErrorCode.EngineFault);
+                return Error(ErrorCode.EngineFault, ex.Message);
             }
             catch (Exception ex)
             {
@@ -148,10 +148,10 @@ namespace Neo.Services.ApiServices
                 return Error(ErrorCode.InvalidPara);
             }
 
-            var signers = new List<Cosigner>();
+            var signers = new List<Signer>();
             if (para.Cosigners.NotEmpty())
             {
-                signers.AddRange(para.Cosigners.Select(s => new Cosigner() { Account = s.Account, Scopes = s.Scopes, AllowedContracts = new UInt160[0] }));
+                signers.AddRange(para.Cosigners.Select(s => new Signer() { Account = s.Account, Scopes = s.Scopes, AllowedContracts = new UInt160[0] }));
             }
 
             Transaction tx = null;
@@ -162,9 +162,9 @@ namespace Neo.Services.ApiServices
             {
                 tx = CurrentWallet.InitTransaction(sb.ToArray(), signers.ToArray());
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
-                return Error(ErrorCode.EngineFault);
+                return Error(ErrorCode.EngineFault, ex.Message);
             }
             catch (Exception ex)
             {
@@ -272,8 +272,8 @@ namespace Neo.Services.ApiServices
         {
             using var snapshot = Blockchain.Singleton.GetSnapshot();
             var validators = NativeContract.NEO.GetValidators(snapshot);
-            var registerValidators = NativeContract.NEO.GetRegisteredValidators(snapshot);
-            return registerValidators.OrderByDescending(v => v.Votes).Select(p => new ValidatorModel
+            var candidates = NativeContract.NEO.GetCandidates(snapshot);
+            return candidates.OrderByDescending(v => v.Votes).Select(p => new ValidatorModel
             {
                 Publickey = p.PublicKey.ToString(),
                 Votes = p.Votes.ToString(),
@@ -309,8 +309,8 @@ namespace Neo.Services.ApiServices
                 return Error(ErrorCode.InvalidPara);
             }
             using var snapshot = Blockchain.Singleton.GetSnapshot();
-            var validators = NativeContract.NEO.GetRegisteredValidators(snapshot);
-            if (validators.Any(v => v.PublicKey.ToString() == pubkey))
+            var validators = NativeContract.NEO.GetValidators(snapshot);
+            if (validators.Any(v => v.Equals(publicKey)))
             {
                 return Error(ErrorCode.ValidatorAlreadyExist);
             }
@@ -322,16 +322,16 @@ namespace Neo.Services.ApiServices
 
             var account = contract.ScriptHash;
             using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitAppCall(NativeContract.NEO.Hash, "registerValidator", publicKey);
+            sb.EmitAppCall(NativeContract.NEO.Hash, "registerCandidate", publicKey);
 
             Transaction tx = null;
             try
             {
                 tx = CurrentWallet.InitTransaction(sb.ToArray(), account);
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
-                return Error(ErrorCode.EngineFault);
+                return Error(ErrorCode.EngineFault, ex.Message);
             }
             catch (Exception ex)
             {
@@ -370,10 +370,13 @@ namespace Neo.Services.ApiServices
             {
                 return Error(ErrorCode.ParameterIsNull);
             }
-            ECPoint[] publicKeys = null;
+
+            ECPoint publicKey = null;
+            //ECPoint[] publicKeys = null;
             try
             {
-                publicKeys = pubkeys.Select(p => ECPoint.Parse(p, ECCurve.Secp256r1)).ToArray();
+                //publicKeys = pubkeys.Select(p => ECPoint.Parse(p, ECCurve.Secp256r1)).ToArray();
+                publicKey = ECPoint.Parse(pubkeys.FirstOrDefault(), ECCurve.Secp256r1);
             }
             catch (Exception e)
             {
@@ -386,12 +389,8 @@ namespace Neo.Services.ApiServices
                 Value = account
             }, new ContractParameter
             {
-                Type = ContractParameterType.Array,
-                Value = publicKeys.Select(p => new ContractParameter
-                {
-                    Type = ContractParameterType.PublicKey,
-                    Value = p
-                }).ToArray()
+                Type = ContractParameterType.PublicKey,
+                Value = publicKey
             });
 
             Transaction tx = null;
@@ -399,9 +398,9 @@ namespace Neo.Services.ApiServices
             {
                 tx = CurrentWallet.InitTransaction(sb.ToArray(), account);
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
-                return Error(ErrorCode.EngineFault);
+                return Error(ErrorCode.EngineFault, ex.Message);
             }
             catch (Exception ex)
             {
@@ -491,7 +490,7 @@ namespace Neo.Services.ApiServices
         private async Task CheckBadOpcode(byte[] script)
         {
             // Basic script checks
-            using var engine = new ApplicationEngine(TriggerType.Application, null, null, 0, true);
+            using var engine = ApplicationEngine.Create(TriggerType.Application, null, null, 0, true);
             var context = engine.LoadScript(script);
             while (context.InstructionPointer <= context.Script.Length)
             {
@@ -502,7 +501,7 @@ namespace Neo.Services.ApiServices
                     throw new WsException(ErrorCode.InvalidOpCode, $"OpCode not found at {context.InstructionPointer}-{(byte?)ci?.OpCode:x2}.");
                 }
                 // Check bad syscalls (NEO2)
-                if (ci.OpCode == OpCode.SYSCALL && InteropService.SupportedMethods().All(u => u.Hash != ci.TokenU32))
+                if (ci.OpCode == OpCode.SYSCALL && !ApplicationEngine.Services.ContainsKey(ci.TokenU32))
                 {
                     throw new WsException(ErrorCode.InvalidOpCode, $"Syscall not found {ci.TokenU32:x2}. Are you using a NEO2 smartContract?");
                 }

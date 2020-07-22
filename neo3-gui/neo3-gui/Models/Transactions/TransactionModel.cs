@@ -27,8 +27,8 @@ namespace Neo.Models.Transactions
             Size = tx.Size;
             Attributes = tx.Attributes?.Select(a => new TranAttributeModel()
             {
-                Usage = a.Usage,
-                Data = a.Data,
+                Usage = a.Type,
+                //Data = a.Data,
             }).ToList();
             Witnesses = tx.Witnesses?.Select(w => new WitnessModel(w)
             ).ToList();
