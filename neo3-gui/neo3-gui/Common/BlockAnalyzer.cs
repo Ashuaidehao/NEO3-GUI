@@ -111,7 +111,7 @@ namespace Neo.Common
             {
                 //Re-execute script
                 using var replaySnapshot = Blockchain.Singleton.GetSnapshot();
-                ApplicationEngine.Run(new Byte []{}, replaySnapshot, testMode: true);
+                ApplicationEngine.Run(new Byte[] { }, replaySnapshot, testMode: true);
                 var scriptAnalyzer = new ScriptAnalyzerEngine(transaction, replaySnapshot);
                 scriptAnalyzer.LoadScript(transaction.Script);
                 scriptAnalyzer.Execute();
@@ -146,89 +146,40 @@ namespace Neo.Common
             var transferList = new List<TransferInfo>();
             foreach (var notification in appExec.Notifications)
             {
-                var transfer = HasTransfer(notification, transaction);
-                if (transfer != null)
+                var transfer = notification.ConvertToTransfer();// HasTransfer(notification, transaction);
+                if (transfer == null)
                 {
-                    transferList.Add(transfer);
-                    if (transfer.From != null)
-                    {
-                        AnalysisResult.BalanceChangeAccounts.Add((transfer.From, transfer.Asset));
-                    }
-
-                    if (transfer.To != null)
-                    {
-                        AnalysisResult.BalanceChangeAccounts.Add((transfer.To, transfer.Asset));
-                    }
+                    continue;
                 }
+
+                var asset = AssetCache.GetAssetInfo(transfer.Asset, _snapshot);
+                if (asset == null)
+                {
+                    continue;
+                }
+
+                transferList.Add(new TransferInfo()
+                {
+                    BlockHeight = _header.Index,
+                    From = transfer.From,
+                    To = transfer.To,
+                    Asset = transfer.Asset,
+                    Amount = transfer.Amount,
+                    TxId = transaction.Hash,
+                    TimeStamp = _header.Timestamp,
+                });
+                if (transfer.From != null)
+                {
+                    AnalysisResult.BalanceChangeAccounts.Add((transfer.From, transfer.Asset));
+                }
+
+                if (transfer.To != null)
+                {
+                    AnalysisResult.BalanceChangeAccounts.Add((transfer.To, transfer.Asset));
+                }
+
             }
             AnalysisResult.Transfers[transaction.Hash] = transferList;
-        }
-
-
-
-
-        /// <summary>
-        /// try to find "Transfer" event, then add record to db
-        /// </summary>
-        /// <param name="notification"></param>
-        /// <param name="transaction"></param>
-        /// <returns></returns>
-        private TransferInfo HasTransfer(NotifyEventArgs notification, Transaction transaction)
-        {
-            if (!"transfer".Equals(notification.EventName, StringComparison.OrdinalIgnoreCase) || notification.State.Count < 3)
-            {
-                return null;
-            }
-            var assetHash = notification.ScriptHash;
-            var asset = AssetCache.GetAssetInfo(assetHash, _snapshot);
-            if (asset == null)
-            {
-                //not nep5 asset
-                return null;
-            }
-            var notify = notification.State;
-            var fromItem = notify[0];
-            var toItem = notify[1];
-            var amountItem = notify[2];
-            if (!fromItem.IsVmNullOrByteArray() || !toItem.IsVmNullOrByteArray())
-            {
-                return null;
-            }
-            var from = fromItem.GetByteSafely();
-            if (from != null && from.Length != UInt160.Length)
-            {
-                return null;
-            }
-            var to = toItem.GetByteSafely();
-            if (to != null && to.Length != UInt160.Length)
-            {
-                return null;
-            }
-            if (from == null && to == null)
-            {
-                return null;
-            }
-            if (amountItem.NotVmByteArray() && amountItem.NotVmInt())
-            {
-                return null;
-            }
-            var amount = amountItem.ToBigInteger();
-            if (amount == null)
-            {
-                return null;
-            }
-            var record = new TransferInfo
-            {
-                BlockHeight = _header.Index,
-                From = from == null ? null : new UInt160(from),
-                To = to == null ? null : new UInt160(to),
-                Asset = asset.Asset,
-                Amount = amount.Value,
-                TxId = transaction.Hash,
-                TimeStamp = _header.Timestamp,
-                //AssetInfo = asset,
-            };
-            return record;
         }
 
     }

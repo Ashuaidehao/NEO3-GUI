@@ -683,6 +683,58 @@ namespace Neo
         }
 
 
+        /// <summary>
+        /// try to convert "Transfer" event, missing "Decimals"、"Symbol"
+        /// </summary>
+        /// <param name="notification"></param>
+        /// <returns></returns>
+        public static TransferNotifyItem ConvertToTransfer(this NotifyEventArgs notification)
+        {
+            if (!"transfer".Equals(notification.EventName, StringComparison.OrdinalIgnoreCase) || notification.State.Count < 3)
+            {
+                return null;
+            }
+            var notify = notification.State;
+            var fromItem = notify[0];
+            var toItem = notify[1];
+            var amountItem = notify[2];
+            if (!fromItem.IsVmNullOrByteArray() || !toItem.IsVmNullOrByteArray())
+            {
+                return null;
+            }
+            var from = fromItem.GetByteSafely();
+            if (from != null && from.Length != UInt160.Length)
+            {
+                return null;
+            }
+            var to = toItem.GetByteSafely();
+            if (to != null && to.Length != UInt160.Length)
+            {
+                return null;
+            }
+            if (from == null && to == null)
+            {
+                return null;
+            }
+            if (amountItem.NotVmByteArray() && amountItem.NotVmInt())
+            {
+                return null;
+            }
+            var amount = amountItem.ToBigInteger();
+            if (amount == null)
+            {
+                return null;
+            }
+            var record = new TransferNotifyItem
+            {
+                From = from == null ? null : new UInt160(from),
+                To = to == null ? null : new UInt160(to),
+                Amount = amount.Value,
+                Asset = notification.ScriptHash,
+            };
+            return record;
+        }
+
 
         public static TransferNotifyItem GetTransferNotify(this VmArray notifyArray, UInt160 asset)
         {
