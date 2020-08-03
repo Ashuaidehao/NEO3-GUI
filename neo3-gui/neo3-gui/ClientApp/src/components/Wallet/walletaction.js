@@ -63,7 +63,7 @@ const Walletcreate = ({feedback}) => {
           <Input.Password placeholder={t("wallet.please input twice")} maxLength={30} prefix={<LockOutlined />}/>
         </Form.Item>
         <Form.Item>
-          <Button type="primary" loading={loading} htmlType="submit">{t("button.confirm")}</Button>
+          <Button type="primary" htmlType="submit">{t("button.confirm")}</Button>
         </Form.Item>
       </Form>
     </div>
