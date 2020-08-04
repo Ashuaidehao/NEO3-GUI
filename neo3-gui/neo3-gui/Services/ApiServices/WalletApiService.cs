@@ -1046,14 +1046,14 @@ namespace Neo.Services.ApiServices
         private AssetBalanceModel _defaultNeoBalance = new AssetBalanceModel()
         {
             Asset = NativeContract.NEO.Hash,
-            Symbol = NativeContract.NEO.Symbol,
+            Symbol = NativeContract.NEO.Symbol.ToUpper(),
             Balance = new BigInteger(0).ToNeo()
         };
 
         private AssetBalanceModel _defaultGasBalance = new AssetBalanceModel()
         {
             Asset = NativeContract.GAS.Hash,
-            Symbol = NativeContract.GAS.Symbol,
+            Symbol = NativeContract.GAS.Symbol.ToUpper(),
             Balance = new BigInteger(0).ToGas()
         };
 
