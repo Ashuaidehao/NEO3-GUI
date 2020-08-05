@@ -24,18 +24,18 @@ class Contract extends React.Component {
     };
   }
   componentDidMount() {
-    this.getAllblock();
+    this.getAllContracts();
   }
   visi = () =>{
     this.setState({
       show: !this.state.show,
     });
   }
-  getAllblock = (info) => {
+  getAllContracts = (info) => {
     var _this = this;
     axios.post('http://localhost:8081', {
       "id": "1111",
-      "method": "GetAllAssets",
+      "method": "GetAllContracts",
       "params": {}
     })
     .then(function (response) {
@@ -71,12 +71,11 @@ class Contract extends React.Component {
                   <List.Item>
                     <List.Item.Meta
                       avatar={
-                        <Avatar src={"https://neo.org/images/gui/"+item.asset+".png"}/>
+                        <Avatar src={"https://neo.org/images/gui/"+item.hash+".png"}/>
                       }
-                      title={<Link className="asset-link w450 ellipsis" to={"/contract/detail:" + item.asset} title={t("show detail")}>{item.name}</Link>}
+                      title={<Link className="asset-link w450 ellipsis" to={"/contract/detail:" + item.hash} title={t("show detail")}>{item.name}</Link>}
                     />
-                    <Typography>{item.asset}</Typography>
-                    <Typography>{item.balance}</Typography>
+                    <Typography>{item.hash}</Typography>
                   </List.Item>
                 )}
               />
