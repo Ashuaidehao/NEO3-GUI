@@ -208,7 +208,8 @@
 	},
 	"wallet": {
 		"Nep2 key": "Nep2 Key",
-		"accounts": "Address",
+		"account": "Account",
+		"accounts": "Accounts",
 		"add address": "Create new address",
 		"add address success": "Create address success",
 		"address format": "Please check the address format",

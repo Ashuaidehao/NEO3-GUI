@@ -173,7 +173,7 @@ class Walletdetail extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]}>
             <Col span={24} className="bg-white pv4">
-              <PageHeader title={t("wallet.accounts")}></PageHeader>
+              <PageHeader title={t("wallet.account")}></PageHeader>
               <List
                 header={<div>{address}</div>}
                 footer={<span></span>}
@@ -189,7 +189,7 @@ class Walletdetail extends React.Component {
                 )}
               />
               <div className="mb4 text-r">
-                <Button type="primary" onClick={this.showPrivate}>{t("button.show details")}</Button>
+                <Button type="primary" onClick={this.showPrivate} style={{ visibility: 'hidden' }}>{t("button.show details")}</Button>
                 <Button className="ml3" onClick={this.deleteConfirm}>{t("button.delete account")}</Button>
               </div>
             </Col>

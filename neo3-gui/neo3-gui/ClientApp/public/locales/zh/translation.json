@@ -188,7 +188,7 @@
 	},
 	"show detail": "查看详情",
 	"sideBar": {
-		"accounts": "地址列表",
+		"accounts": "账户列表",
 		"address book": "地址簿",
 		"assets": "资产",
 		"blockchain": "区块链",
@@ -208,7 +208,8 @@
 	},
 	"wallet": {
 		"Nep2 key": "加密私钥",
-		"accounts": "地址列表",
+		"account": "账户",
+		"accounts": "账户列表",
 		"add address": "创建新地址",
 		"add address success": "钱包地址新建成功",
 		"address format": "请检查地址格式是否正确",
