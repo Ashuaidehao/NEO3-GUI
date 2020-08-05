@@ -44,6 +44,7 @@
 	"blockchain": {
 		"abbreviation":"缩写",
 		"asset info": "资产信息",
+		"asset detail": "资产详情",
 		"assets": "资产列表",
 		"block": "区块",
 		"block info": "区块信息",

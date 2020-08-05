@@ -44,6 +44,7 @@
 	"blockchain": {
 		"abbreviation":"Abbreviation",
 		"asset info": "Asset Info",
+		"asset detail": "Asset Detail",
 		"assets": "Assets",
 		"block": "Block",
 		"block info": "Block Info",
