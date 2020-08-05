@@ -46,7 +46,7 @@ namespace Neo.Services.ApiServices
                     Hash = a.Hash,
                     Name = a.Name,
                 }).ToList();
-            list = list.Union(assets).ToList();
+            list.AddRange(assets);
             return list;
         }
 
