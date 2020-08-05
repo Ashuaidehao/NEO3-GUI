@@ -451,7 +451,7 @@ namespace Neo.Services.ApiServices
             {
                 return Error(ErrorCode.WalletNotOpen);
             }
-            var addresses = CurrentWallet.GetAccounts().Where(a => !a.Lock && !a.WatchOnly).Select(a => a.ScriptHash).ToList();
+            var addresses = CurrentWallet.GetAccounts().Where(a => !a.Lock && !a.WatchOnly && a.Contract.Script.IsSignatureContract()).Select(a => a.ScriptHash).ToList();
 
             var balances = addresses.GetBalanceOf(NativeContract.NEO.Hash);
             balances = balances.Where(b => b.Value > 0).ToList();
@@ -691,7 +691,7 @@ namespace Neo.Services.ApiServices
                     Scopes = WitnessScope.CalledByEntry,
                     Account = p
                 }).ToArray();
-            return CurrentWallet.MakeTransaction(script, null, cosigners,new TransactionAttribute[0]);
+            return CurrentWallet.MakeTransaction(script, null, cosigners, new TransactionAttribute[0]);
         }
 
 
