@@ -6,7 +6,7 @@ import Translog , { Hashdetail, Attrlist, Translist, Witlist } from './translog'
 import Datatrans from '../Common/datatrans';
 import { withRouter } from "react-router-dom";
 import Sync from '../sync';
-import { SwapOutlined } from '@ant-design/icons';
+import { SwapOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { useTranslation, withTranslation } from "react-i18next";
 import { post } from "../../core/request";
 
@@ -69,6 +69,9 @@ class Untransdetail extends React.Component {
       _this.props.history.goBack();
     });
   }
+  back=()=>{
+    this.props.history.goBack();
+  }
   render = () => {
     const { t } = this.props;
     const { hashdetail, transfers, witnesses, attributes } = this.state;
@@ -79,7 +82,7 @@ class Untransdetail extends React.Component {
           <Row gutter={[30, 0]} className="mb1">
             <Col span={24} className="bg-white pv4">
               <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
-              <Tabs className="tran-title" defaultActiveKey="1">
+              <Tabs className="tran-title" defaultActiveKey="1" tabBarExtraContent={<ArrowLeftOutlined className="h2" onClick={this.back}/>}>
                 <TabPane tab={t("blockchain.transaction.content")} key="1">
                   <Hashdetail hashdetail={hashdetail} />
                   <Translist transfers={transfers} />
