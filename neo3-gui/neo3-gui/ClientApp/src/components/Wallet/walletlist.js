@@ -403,7 +403,10 @@ const Accounts = ({accounts,name}) => {
     renderItem={item => (
       <List.Item>
         <List.Item.Meta
-          title={<Link to={"/wallet/walletlist:" + item.address} title={t("wallet.show detail")}>{item.address}</Link>}
+          title={<Link to={{ 
+            pathname: "/wallet/walletlist:" + item.address, 
+            props: item
+           }} title={t("wallet.show detail")} >{item.address}</Link>}
           description={
             <span className="f-s">
               <span className="amount mr2">NEO <span className="wa-count">{item.neo}</span></span>
