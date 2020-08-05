@@ -70,7 +70,7 @@ class Blockdetail extends React.Component{
           <Content className="mt3">
           <Row gutter={[30, 0]} type="flex">
             <Col span={24} className="bg-white pv4">
-              <PageHeader className="mb2" content="区块信息"></PageHeader>
+              <PageHeader className="mb2" content={t("blockchain.block info")}></PageHeader>
               <div className="info-detail pv3">
                 <div className="pa3"><span>Hash: &nbsp;&nbsp;&nbsp;</span>{blockdetail.blockHash}</div>
                 <Row>

@@ -65,7 +65,7 @@ class Assetdetail extends React.Component{
         <Content className="mt3">
           <Row gutter={[30, 0]} type="flex">
             <Col span={24} className="bg-white pv4">
-              <PageHeader title={t("blockchain.block info")}></PageHeader>
+              <PageHeader title={t("blockchain.asset detail")}></PageHeader>
               <div className="info-detail pv3">
                 <div className="hash-title pa3 mt5 mb4"><span>Hash: &nbsp;&nbsp;&nbsp;</span>{assetdetail.asset}</div>
                 {assetdetail.asset?
