@@ -292,6 +292,8 @@ const Multiaddress = ({func}) => {
   const { t } = useTranslation();
   const [accounts, changeList] = useState([]);
   const [maxnum, changeNum] = useState(1);
+  const [sigBTdisabled, changeSigBTdisabled] = useState(false);
+
   const getPublic = () =>{
     //列出所有可选举公钥
     post("ListCandidatePublicKey",{}).then(res =>{
@@ -346,6 +348,14 @@ const Multiaddress = ({func}) => {
     value.push(last);
     changeNum(value.length);
   }
+  const handleSignatureMinChange = value => {
+    if (value < 0 || value > maxnum) {
+      changeSigBTdisabled(true);
+       message.error(t("wallet.signature max input"));
+    } else {
+      changeSigBTdisabled(false);
+    }
+  }
   if(accounts.length === 0) getPublic();
   return(
     <Form className="neo-form" form={form} onFinish={addMulti}>
@@ -371,11 +381,12 @@ const Multiaddress = ({func}) => {
         <InputNumber
           placeholder={t("wallet.signature min input")}
           parser={value => value.replace(/[^0-9]/g, '')}
-          step={1}  min={1}  max={maxnum}
+          step={1}  min={1}
+          onChange={handleSignatureMinChange}
           style={{ width: '100%'}}/>
       </Form.Item>
       <Form.Item>
-        <Button style={{ 'width': '100%' }} type="primary" htmlType="submit">{t("button.confirm")}</Button>
+        <Button style={{ 'width': '100%' }} type="primary" htmlType="submit" disabled={sigBTdisabled}>{t("button.confirm")}</Button>
       </Form.Item>
     </Form>
   )
