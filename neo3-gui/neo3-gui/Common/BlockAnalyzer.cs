@@ -120,7 +120,7 @@ namespace Neo.Common
                     AnalysisResult.ContractChangeEvents[transaction.Hash] = scriptAnalyzer.ContractEvents;
                     foreach (var contractEvent in scriptAnalyzer.ContractEvents)
                     {
-                        var asset = AssetCache.GetAssetInfo(contractEvent.Contract, _snapshot);
+                        var asset = AssetCache.GetAssetInfo(contractEvent.Contract, _snapshot, contractEvent.Event != ContractEventType.Create);
                         if (asset != null)
                         {
                             AnalysisResult.AssetInfos[asset.Asset] = asset;

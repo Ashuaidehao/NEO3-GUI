@@ -109,6 +109,7 @@ namespace Neo.Common
 
             foreach (var transaction in block.Transactions)
             {
+                balanceChanges.Add((transaction.Sender, NativeContract.GAS.Hash));
                 var invokeMethods = GetInvokeMethods(transaction);
                 if (invokeMethods.NotEmpty())
                 {
@@ -250,7 +251,7 @@ namespace Neo.Common
                 CreateTime = blockTime,
             };
 
-            var asset = AssetCache.GetAssetInfo(contract);
+            var asset = AssetCache.GetAssetInfoFromDb(contract);
             if (asset != null)
             {
                 newContract.Name = asset.Name;
