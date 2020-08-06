@@ -106,7 +106,7 @@ class Blockdetail extends React.Component{
               renderItem={item => (
               <List.Item>
                   <List.Item.Meta
-                  title={<Link to={"/chain/transaction:"+item.txId} title="查看详情">{item.txId}</Link>}
+                  title={<Link to={{ pathname: "/chain/transaction:"+item.txId, title: t("show detail"), state: { from: this.props.location.pathname } }}>{item.txId}</Link>}
                   description={
                   <div className="font-s">
                       From：<span className="w300 ellipsis">{item.transfers[0].fromAddress?item.transfers[0].fromAddress:"--"}</span><br></br>

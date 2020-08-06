@@ -84,21 +84,9 @@ class Transfer extends React.Component {
     .then(function (response) {
       var _data = response.data;
       _this.setState({ iconLoading: false });
-
+      
       if(_data.msgType === -1){
         let res = _data.error;
-        const errorContent = res.code === 20014 ? (
-          <div className="show-pri">
-            <p>{t("error code")}: {res.code}</p>
-            <p>{t("error msg")}: {t('wallet.transfer send erro 20014')}</p>
-          </div>
-        ) : (
-          <div className="show-pri">
-            <p>{t("error code")}: {res.code}</p>
-            <p>{t("error msg")}: {res.message}</p>
-          </div>
-        );
-        
         Modal.error({
           title: t('wallet.transfer send error'),
           width: 400,
