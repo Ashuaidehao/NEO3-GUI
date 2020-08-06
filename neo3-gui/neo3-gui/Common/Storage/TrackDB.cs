@@ -390,15 +390,17 @@ namespace Neo.Common.Storage
             return _sqldb.Contracts.ToList().Select(ToNep5ContractInfo);
         }
 
+
+        private ContractEntity GetActiveContract(UInt160 contract)
+        {
+            var contractHash = contract.ToBigEndianHex();
+            return _sqldb.Contracts.FirstOrDefault(c => c.Hash == contractHash && c.DeleteOrMigrateTxId == null);
+        }
+
         public Nep5ContractInfo GetContract(UInt160 asset)
         {
-            var assetHash = asset.ToBigEndianHex();
-            var assetInfo = _sqldb.Contracts.FirstOrDefault(c => c.Hash == assetHash);
-            if (assetInfo == null)
-            {
-                return null;
-            }
-            return ToNep5ContractInfo(assetInfo);
+            var assetInfo = GetActiveContract(asset);
+            return assetInfo == null ? null : ToNep5ContractInfo(assetInfo);
         }
 
 
@@ -444,8 +446,7 @@ namespace Neo.Common.Storage
 
         public void AddInvokeTransaction(UInt256 txId, UInt160 contract, string method)
         {
-            var contractHash = contract.ToBigEndianHex();
-            var contractEntity = _sqldb.Contracts.FirstOrDefault(c => c.Hash == contractHash);
+            var contractEntity = GetActiveContract(contract);
             if (contractEntity != null)
             {
                 _sqldb.InvokeRecords.Add(new InvokeRecordEntity()
@@ -470,7 +471,7 @@ namespace Neo.Common.Storage
         public void CreateContract(Nep5ContractInfo newContract)
         {
             var contractHash = newContract.Hash.ToBigEndianHex();
-            var old = _sqldb.Contracts.FirstOrDefault(c => c.Hash == contractHash);
+            var old = GetActiveContract(newContract.Hash);
             if (old == null)
             {
                 var contract = new ContractEntity()
@@ -504,8 +505,7 @@ namespace Neo.Common.Storage
         /// <param name="time"></param>
         public void DeleteContract(UInt160 contractHash, UInt256 txId, DateTime time)
         {
-            var contract = contractHash.ToBigEndianHex();
-            var old = _sqldb.Contracts.FirstOrDefault(c => c.Hash == contract);
+            var old = GetActiveContract(contractHash);
             if (old != null)
             {
                 old.DeleteOrMigrateTxId = txId.ToBigEndianHex();
@@ -523,10 +523,9 @@ namespace Neo.Common.Storage
         /// <param name="time"></param>
         public void MigrateContract(UInt160 contract, Nep5ContractInfo migrateContract, UInt256 txId, DateTime time)
         {
-            var contractHash = contract.ToBigEndianHex();
             var migrateContractHash = migrateContract.Hash.ToBigEndianHex();
             var tx = txId.ToBigEndianHex();
-            var old = _sqldb.Contracts.FirstOrDefault(c => c.Hash == contractHash);
+            var old = GetActiveContract(contract);
             if (old != null)
             {
                 old.DeleteOrMigrateTxId = tx;
@@ -588,8 +587,7 @@ namespace Neo.Common.Storage
             {
                 return _assetCache[asset];
             }
-            var assetScriptHash = asset.ToBigEndianHex();
-            var old = _sqldb.Contracts.FirstOrDefault(a => a.Hash == assetScriptHash);
+            var old = GetActiveContract(asset);
             if (old != null)
             {
                 _assetCache[asset] = old;
