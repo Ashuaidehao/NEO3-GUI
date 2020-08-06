@@ -188,7 +188,7 @@
 	},
 	"show detail": "查看详情",
 	"sideBar": {
-		"accounts": "地址列表",
+		"accounts": "账户列表",
 		"address book": "地址簿",
 		"assets": "资产",
 		"blockchain": "区块链",
@@ -208,7 +208,8 @@
 	},
 	"wallet": {
 		"Nep2 key": "加密私钥",
-		"accounts": "地址列表",
+		"account": "账户",
+		"accounts": "账户列表",
 		"add address": "创建新地址",
 		"add address success": "钱包地址新建成功",
 		"address format": "请检查地址格式是否正确",
@@ -287,6 +288,7 @@
 		"transactions": "交易列表",
 		"transfer": "转账",
 		"transfer send error": "交易发送失败,请检查后再试",
+		"transfer send erro 20014": "交易无法发送，签名数不足",
 		"transfer send success": "交易发送成功",
 		"transfer warning": "安全提示：请勿轻易向陌生人转账。请仔细确认收款账户、转账金额、资产类型。请仔细辨别相同资产名称的资产，避免被骗。请勿向其它区块链的收款账户（地址）转账。",
 		"transfer add": "添加转账",

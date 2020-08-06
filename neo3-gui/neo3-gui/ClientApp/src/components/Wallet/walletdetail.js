@@ -2,6 +2,7 @@
 //just test replace wallet//
 import React from 'react';
 import axios from 'axios';
+import _ from 'lodash';
 import { Layout, Row, Col, Modal, List, Button, Typography, message,PageHeader } from 'antd';
 import Sync from '../sync';
 import Transaction from '../Transaction/transaction';
@@ -163,7 +164,8 @@ class Walletdetail extends React.Component {
   }
   render = () => {
     const { assetlist, address } = this.state;
-    const { t } = this.props;
+    const { t, location } = this.props;
+    const accountType = _.get(location, 'props.accountType', 2);
     return (
       <Layout className="gui-container wa-detail">
 
@@ -173,7 +175,7 @@ class Walletdetail extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]}>
             <Col span={24} className="bg-white pv4">
-              <PageHeader title={t("wallet.accounts")}></PageHeader>
+              <PageHeader title={t("wallet.account")}></PageHeader>
               <List
                 header={<div>{address}</div>}
                 footer={<span></span>}
@@ -189,7 +191,7 @@ class Walletdetail extends React.Component {
                 )}
               />
               <div className="mb4 text-r">
-                <Button type="primary" onClick={this.showPrivate}>{t("button.show details")}</Button>
+                <Button type="primary" onClick={this.showPrivate} style={{ visibility: (accountType === 2 ? 'hidden' : 'default') }}>{t("button.show details")}</Button>
                 <Button className="ml3" onClick={this.deleteConfirm}>{t("button.delete account")}</Button>
               </div>
             </Col>
