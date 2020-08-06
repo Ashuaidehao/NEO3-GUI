@@ -358,7 +358,7 @@ namespace Neo.Common.Storage
         /// <returns></returns>
         public IEnumerable<BalanceInfo> FindAssetBalance(BalanceFilter filter)
         {
-            IQueryable<AssetBalanceEntity> query = _sqldb.AssetBalances.Include(a => a.Address).Include(a => a.Asset);
+            IQueryable<AssetBalanceEntity> query = _sqldb.AssetBalances.Include(a => a.Address).Include(a => a.Asset).Where(a => a.Asset.DeleteOrMigrateTxId == null);
             if (filter.Addresses.NotEmpty())
             {
                 var addrs = filter.Addresses.Select(a => a.ToBigEndianHex()).ToList();
