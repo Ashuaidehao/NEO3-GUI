@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React from 'react';
+import _ from 'lodash';
 import '../../static/css/trans.css';
 import { Link } from 'react-router-dom';
 import { Layout, Row, Col, Tabs, message, PageHeader, Divider } from 'antd';
@@ -78,7 +79,13 @@ class Transcon extends React.Component {
     console.log(this.state.notifies)
   }
   back=()=>{
-    this.props.history.goBack();
+    const { location, history } = this.props;
+    const from = _.get(location, 'state.from', null);
+    if (from) {
+      history.replace(from);
+    } else {
+      history.goBack();
+    }
   }
   render = () => {
     const { t } = this.props;
@@ -90,7 +97,7 @@ class Transcon extends React.Component {
           <Row gutter={[30, 0]} className="mb1">
             <Col span={24} className="bg-white pv4">
               <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
-              <Tabs className="tran-title" defaultActiveKey="1" tabBarExtraContent={<ArrowLeftOutlined className="h2" onClick={this.back}/>}>
+              <Tabs className="tran-title" defaultActiveKey="1" tabBarExtraContent={<ArrowLeftOutlined className="h2" onClick={this.back} />}>
                 <TabPane tab={t("blockchain.transaction.content")} key="1">
                   <Hashdetail hashdetail={hashdetail} />
                   <Translist transfers={transfers} />

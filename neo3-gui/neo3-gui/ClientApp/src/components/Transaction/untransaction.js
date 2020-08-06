@@ -166,7 +166,7 @@ class Untransaction extends React.Component {
               /> */}
               <div className="trans-detail">
                   <p>
-                    <Link className="w500 ellipsis hash" to={ local + item.txId} title={t("show detail")}>{item.txId}</Link>
+                    <Link className="w500 ellipsis hash" to={{ pathname: local + item.txId, title: t("show detail"), state: { from: this.props.location.pathname } }}>{item.txId}</Link>
                     <span className="float-r">{item.blockTime}</span>
                   </p>
               </div>

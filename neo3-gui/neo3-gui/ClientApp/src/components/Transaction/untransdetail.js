@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React from 'react';
+import _ from 'lodash';
 import '../../static/css/trans.css';
 import { Layout, Row, Col, Tabs, message } from 'antd';
 import Translog , { Hashdetail, Attrlist, Translist, Witlist } from './translog';
@@ -70,7 +71,13 @@ class Untransdetail extends React.Component {
     });
   }
   back=()=>{
-    this.props.history.goBack();
+    const { location, history } = this.props;
+    const from = _.get(location, 'state.from', null);
+    if (from) {
+      history.replace(from);
+    } else {
+      history.goBack();
+    }
   }
   render = () => {
     const { t } = this.props;

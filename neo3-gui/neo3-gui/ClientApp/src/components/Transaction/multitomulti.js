@@ -60,6 +60,10 @@ class Multitomulti extends React.Component{
     //         receiver: (e.target.value).trim()
     //     });
     };
+    clickToCopy = (text) => {
+        navigator.clipboard.writeText(text)
+        message.success(t("common.copied"))
+    }
     transfer = values =>{
         const {t}=this.props;
         var _this = this;
@@ -68,18 +72,27 @@ class Multitomulti extends React.Component{
             var _data = res.data;
             var result = res.data.result;
             _this.setState({ iconLoading: true });
+
             if(_data.msgType === -1){
                 let res = _data.error;
+                const errorTitle = res.code === 20014 ? (
+                    t('wallet.transfer send error 20014')
+                ) : (
+                    t('wallet.transfer send error')
+                );
                 Modal.error({
-                title: t('wallet.transfer send error'),
-                width: 400,
-                content: (
-                    <div className="show-pri">
-                        <p>{t("error code")}: {res.code}</p>
-                        <p>{t("error msg")}: {res.message}</p>
-                    </div>
-                ),
-                okText:t("button.confirm")
+                    title: errorTitle,
+                    width: 650,
+                    centered: true,
+                    content: (
+                        <div className="show-pri">
+                            <pre style={{ overflow: 'hidden', overflowX: 'auto', overflowY: 'scroll', maxHeight: '60vh', width: 'auto' }}>
+                                <code>{ JSON.stringify(JSON.parse(res.message), null, 2) }</code>
+                            </pre>
+                            <p><Button type="link" style={{ margin: 0, color: '#00B594' }} onClick={() => this.clickToCopy(res.message)}>{t("button.copy to clipboard")}</Button></p>
+                        </div>
+                    ),
+                    okText:t("button.confirm")
                 });
                 return;
             }else{

@@ -1,7 +1,6 @@
 /* eslint-disable */ 
 //just test replace wallet//
 import React from 'react';
-import {Link} from 'react-router-dom';
 import { Layout, Row, Col, message,List,PageHeader } from 'antd';
 import axios from 'axios';
 import Intitle from '../Common/intitle';
