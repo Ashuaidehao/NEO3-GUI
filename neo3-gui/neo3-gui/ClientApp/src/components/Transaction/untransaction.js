@@ -1,7 +1,8 @@
 /* eslint-disable */
 //just test replace wallet//
 import React from 'react';
-import { Link } from 'react-router-dom';
+import _ from 'lodash';
+import { Link, withRouter } from 'react-router-dom';
 import { Layout, Row, Col, PageHeader, List, Button, message } from 'antd';
 import { withTranslation } from "react-i18next";
 import { post } from "../../core/request";
@@ -9,6 +10,7 @@ import { post } from "../../core/request";
 const { Content } = Layout;
 
 @withTranslation()
+@withRouter
 class Untransaction extends React.Component {
   constructor(props) {
     super(props);
@@ -166,7 +168,8 @@ class Untransaction extends React.Component {
               /> */}
               <div className="trans-detail">
                   <p>
-                    <Link className="w500 ellipsis hash" to={{ pathname: local + item.txId, title: t("show detail"), state: { from: this.props.location.pathname } }}>{item.txId}</Link>
+                    <Link className="w500 ellipsis hash" to={{ pathname: local + item.txId, title: t("show detail"), 
+                      state: { from: _.get(this.props, 'location.pathname', null) } }}>{item.txId}</Link>
                     <span className="float-r">{item.blockTime}</span>
                   </p>
               </div>
