@@ -91,7 +91,7 @@ class Onetomulti extends React.Component{
                                 <code>{ JSON.stringify(JSON.parse(res.message), null, 2) }</code>
                             </pre>
                             <p>
-                                <Button type="link" style={{ margin: 0, color: '#00B594' }} onClick={() => this.clickToCopy(res.message)}>
+                                <Button type="link" style={{ margin: 0, color: '#00B594' }} onClick={() => _this.clickToCopy(res.message)}>
                                     <Trans>button.copy to clipboard</Trans>
                                 </Button>
                             </p>
