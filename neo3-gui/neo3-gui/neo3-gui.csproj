@@ -54,11 +54,6 @@
 
 
   <ItemGroup>
-    <!--<ProjectReference Include="..\..\neo\src\neo\neo.csproj" />-->
-  </ItemGroup>
-
-
-  <ItemGroup>
     <None Update="Plugins\LevelDBStore.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

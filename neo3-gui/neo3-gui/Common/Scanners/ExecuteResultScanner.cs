@@ -1,26 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
-using Akka.Util;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Neo.Common.Storage;
 using Neo.Common.Storage.LevelDBModules;
 using Neo.Common.Utility;
 using Neo.Ledger;
-using Neo.Models;
 using Neo.Network.P2P.Payloads;
 using Neo.Persistence;
-using Neo.SmartContract;
 using Neo.SmartContract.Native;
 using Neo.VM;
-using Newtonsoft.Json.Bson;
 
-namespace Neo.Common
+namespace Neo.Common.Scanners
 {
     /// <summary>
     /// Scan execute result log background
@@ -109,6 +100,7 @@ namespace Neo.Common
 
             foreach (var transaction in block.Transactions)
             {
+                balanceChanges.Add((transaction.Sender, NativeContract.GAS.Hash));
                 var invokeMethods = GetInvokeMethods(transaction);
                 if (invokeMethods.NotEmpty())
                 {
@@ -250,7 +242,7 @@ namespace Neo.Common
                 CreateTime = blockTime,
             };
 
-            var asset = AssetCache.GetAssetInfo(contract);
+            var asset = AssetCache.GetAssetInfoFromDb(contract);
             if (asset != null)
             {
                 newContract.Name = asset.Name;

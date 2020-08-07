@@ -32,8 +32,7 @@ namespace Neo.Common.Utility
                 return _assets[assetId];
             }
             using var snapshot = Blockchain.Singleton.GetSnapshot();
-            var asset = GetAssetInfoFromChain(assetId, snapshot) ?? (readFromDb ? GetAssetInfoFromDb(assetId) : null);
-            return asset;
+            return GetAssetInfo(assetId, snapshot, readFromDb);
         }
 
 
@@ -43,13 +42,13 @@ namespace Neo.Common.Utility
         /// <param name="assetId"></param>
         /// <param name="snapshot"></param>
         /// <returns></returns>
-        public static AssetInfo GetAssetInfo(UInt160 assetId, StoreView snapshot)
+        public static AssetInfo GetAssetInfo(UInt160 assetId, StoreView snapshot, bool readFromDb = true)
         {
             if (_assets.ContainsKey(assetId))
             {
                 return _assets[assetId];
             }
-            return GetAssetInfoFromChain(assetId, snapshot);
+            return GetAssetInfoFromChain(assetId, snapshot) ?? (readFromDb ? GetAssetInfoFromDb(assetId) : null);
         }
 
 
@@ -77,6 +76,11 @@ namespace Neo.Common.Utility
             try
             {
                 using var engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
+                if (engine.State.HasFlag(VMState.FAULT))
+                {
+                    Console.WriteLine($"Cannot find Nep5 Asset[{assetId}] at height:{snapshot.Height}");
+                    return null;
+                }
                 string name = engine.ResultStack.Pop().GetString();
                 string symbol = engine.ResultStack.Pop().GetString();
                 byte decimals = (byte)engine.ResultStack.Pop().GetInteger();
@@ -107,7 +111,11 @@ namespace Neo.Common.Utility
 
 
 
-
+        /// <summary>
+        /// read asset info from backup db
+        /// </summary>
+        /// <param name="assetId"></param>
+        /// <returns></returns>
         public static AssetInfo GetAssetInfoFromDb(UInt160 assetId)
         {
             using var db = new LevelDbContext();

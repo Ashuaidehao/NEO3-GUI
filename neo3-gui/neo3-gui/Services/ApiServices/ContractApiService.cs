@@ -6,12 +6,14 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Win32.SafeHandles;
+using Neo.Common.Storage;
 using Neo.Common.Utility;
 using Neo.Cryptography.ECC;
 using Neo.IO;
 using Neo.IO.Json;
 using Neo.Ledger;
 using Neo.Models;
+using Neo.Models.Blocks;
 using Neo.Models.Contracts;
 using Neo.Network.P2P.Payloads;
 using Neo.SmartContract;
@@ -27,6 +29,26 @@ namespace Neo.Services.ApiServices
     {
 
         protected Wallet CurrentWallet => Program.Starter.CurrentWallet;
+
+        public async Task<object> GetAllContracts()
+        {
+            var list = new List<ContractInfoModel>();
+            list.AddRange(NativeContract.Contracts.Select(c => new ContractInfoModel()
+            {
+                Hash = c.Hash,
+                Name = c.Name,
+            }));
+            var nativeHashes = new HashSet<UInt160>(list.Select(x => x.Hash));
+            using var db = new TrackDB();
+            var assets = db.GetAllContracts()?.Where(a => !nativeHashes.Contains(a.Hash) && a.Symbol.NotNull() && a.DeleteOrMigrateTxId == null).Select(a =>
+                new ContractInfoModel()
+                {
+                    Hash = a.Hash,
+                    Name = a.Name,
+                }).ToList();
+            list.AddRange(assets);
+            return list;
+        }
 
         public async Task<object> GetContract(UInt160 contractHash)
         {

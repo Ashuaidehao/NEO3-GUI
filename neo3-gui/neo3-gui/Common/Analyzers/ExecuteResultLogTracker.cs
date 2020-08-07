@@ -1,30 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using Akka.Event;
 using Neo.Common.Storage;
 using Neo.Common.Storage.LevelDBModules;
-using Neo.Common.Utility;
-using Neo.IO;
-using Neo.IO.Caching;
-using Neo.IO.Json;
 using Neo.Ledger;
-using Neo.Models;
 using Neo.Network.P2P.Payloads;
 using Neo.Persistence;
 using Neo.Plugins;
-using Neo.SmartContract;
-using Neo.SmartContract.Native;
-using Neo.VM;
 
-namespace Neo.Common
+namespace Neo.Common.Analyzers
 {
 
-    public class ExecuteLogTracker : Plugin, IPersistencePlugin
+    public class ExecuteResultLogTracker : Plugin, IPersistencePlugin
     {
         private readonly LevelDbContext _levelDb = new LevelDbContext();
 
