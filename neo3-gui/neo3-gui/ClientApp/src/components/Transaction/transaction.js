@@ -279,7 +279,8 @@ class Transaction extends React.Component {
               /> */}
               <div className="trans-detail">
                   <p>
-                    <Link className="w500 ellipsis hash" to={{ pathname: local + item.txId, title: t("show detail"), state: { from: this.props.location.pathname } }}>{item.txId}</Link>
+                    <Link className="w500 ellipsis hash" to={{ pathname: local + item.txId, title: t("show detail"), 
+                      state: { from: _.get(this.props, 'location.pathname', null) } }}>{item.txId}</Link>
                     <span className="float-r">{item.blockTime}</span>
                   </p>
                   {item.transfers[0]?

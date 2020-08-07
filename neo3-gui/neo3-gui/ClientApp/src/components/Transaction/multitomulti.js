@@ -14,7 +14,7 @@ import {
 } from 'antd';
 import { Layout } from 'antd';
 import '../../static/css/wallet.css'
-import { withTranslation } from "react-i18next";
+import { withTranslation, Trans } from "react-i18next";
 import { post } from "../../core/request";
 
 import { MinusSquareOutlined, PlusOutlined } from '@ant-design/icons';
@@ -62,7 +62,7 @@ class Multitomulti extends React.Component{
     };
     clickToCopy = (text) => {
         navigator.clipboard.writeText(text)
-        message.success(t("common.copied"))
+        message.success(<Trans>common.copied</Trans>)
     }
     transfer = values =>{
         const {t}=this.props;
@@ -89,7 +89,10 @@ class Multitomulti extends React.Component{
                             <pre style={{ overflow: 'hidden', overflowX: 'auto', overflowY: 'scroll', maxHeight: '60vh', width: 'auto' }}>
                                 <code>{ JSON.stringify(JSON.parse(res.message), null, 2) }</code>
                             </pre>
-                            <p><Button type="link" style={{ margin: 0, color: '#00B594' }} onClick={() => this.clickToCopy(res.message)}>{t("button.copy to clipboard")}</Button></p>
+                            <p>
+                                <Button type="link" style={{ margin: 0, color: '#00B594' }} 
+                                    onClick={() => this.clickToCopy(res.message)}>{t("button.copy to clipboard")}</Button>
+                            </p>
                         </div>
                     ),
                     okText:t("button.confirm")

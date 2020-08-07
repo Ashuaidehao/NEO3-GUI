@@ -18,21 +18,42 @@ const { Content } = Layout;
 const { TabPane } = Tabs;
 const { TextArea } = Input;
 
-function success(data) {
-    Modal.success({
-        title: <Trans>advanced.signature trans</Trans>,
-        content: (
-            <div className="show-pri">
-            <p><Trans>blockchain.transaction hash</Trans>：{data.result}</p>
-            </div>
-        ),
-        okText:<Trans>button.ok</Trans>
-    });
-}
-
 function clickToCopy(text) {
     navigator.clipboard.writeText(text)
     message.success(<Trans>common.copied</Trans>)
+}
+
+function success(data) {
+    const { method, result } = data;
+    let title = (<Trans>advanced.signature trans</Trans>);
+    let content = (
+        <div className="show-pri">
+            <p><Trans>blockchain.transaction hash</Trans>: </p>
+            <p>{data.result}</p>
+        </div> 
+    );
+    if (method === 'AppendSignature') {
+        title = (<Trans>advanced.signature success</Trans>)
+        content = (
+            <div className="show-pri">
+                <pre style={{ overflow: 'hidden', overflowX: 'auto', overflowY: 'scroll', maxHeight: '60vh', width: 'auto' }}>
+                    <code>{ JSON.stringify(JSON.parse(result), null, 2) }</code>
+                </pre>
+                <p>
+                    <Button type="link" style={{ margin: 0, color: '#00B594' }} onClick={() => clickToCopy(result)}>
+                        <Trans>button.copy to clipboard</Trans>
+                    </Button>
+                </p>
+            </div>
+        );
+    } 
+    Modal.success({
+        width: 650,
+        centered: true,
+        title: title,
+        content: content,
+        okText:<Trans>button.ok</Trans>
+    });
 }
 
 function error(data) {
@@ -46,7 +67,11 @@ function error(data) {
             <pre style={{ overflow: 'hidden', overflowX: 'auto', overflowY: 'scroll', maxHeight: '60vh', width: 'auto' }}>
                 <code>{ JSON.stringify(JSON.parse(data.error.message), null, 2) }</code>
             </pre>
-            <p><Button type="link" style={{ margin: 0, color: '#00B594' }} onClick={() => clickToCopy(data.error.message)}><Trans>button.copy to clipboard</Trans></Button></p>
+            <p>
+                <Button type="link" style={{ margin: 0, color: '#00B594' }} onClick={() => clickToCopy(data.error.message)}>
+                    <Trans>button.copy to clipboard</Trans>
+                </Button>
+            </p>
         </div>
     ) : (
         <div className="show-pri">
