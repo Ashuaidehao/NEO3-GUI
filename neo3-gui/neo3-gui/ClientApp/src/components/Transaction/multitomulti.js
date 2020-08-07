@@ -80,7 +80,7 @@ class Multitomulti extends React.Component{
                 ) : (
                     t('wallet.transfer send error')
                 );
-                Modal.error({
+                Modal.warning({
                     title: errorTitle,
                     width: 650,
                     centered: true,
