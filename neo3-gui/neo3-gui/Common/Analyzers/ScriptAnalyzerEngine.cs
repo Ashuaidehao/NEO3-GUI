@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Neo.Common.Storage;
 using Neo.Network.P2P.Payloads;
 using Neo.Persistence;
 using Neo.SmartContract;
-using Neo.VM;
 using Neo.VM.Types;
 
-namespace Neo.Common
+namespace Neo.Common.Analyzers
 {
     public class ScriptAnalyzerEngine : ApplicationEngine
     {

@@ -130,7 +130,7 @@ namespace Neo.Common.Storage
         {
             var from = GetOrCreateAddress(newTransaction.From);
             var to = GetOrCreateAddress(newTransaction.To);
-            var asset = GetAsset(newTransaction.Asset);
+            var asset = GetActiveContract(newTransaction.Asset);
 
             var tran = new Nep5TransferEntity
             {
@@ -158,7 +158,7 @@ namespace Neo.Common.Storage
         public void UpdateBalance(UInt160 addressHash, UInt160 assetHash, BigInteger balance, uint height)
         {
             if (addressHash == null || assetHash == null) return;
-            var asset = GetAsset(assetHash);
+            var asset = GetActiveContract(assetHash);
             if (asset == null)
             {
                 throw new Exception($"Unkown asset:{assetHash}");
@@ -190,7 +190,7 @@ namespace Neo.Common.Storage
         {
             if (addressHash == null) return;
             var address = GetOrCreateAddress(addressHash);
-            var asset = GetAsset(assetInfo.Asset);
+            var asset = GetActiveContract(assetInfo.Asset);
             var balanceRecord = GetOrCreateBalance(address, asset, balance, height);
 
             if (balanceRecord.BlockHeight >= height)
@@ -251,7 +251,7 @@ namespace Neo.Common.Storage
             if (filter.Contracts.NotEmpty())
             {
                 var contracts = filter.Contracts.Select(a => a.ToBigEndianHex()).Distinct().ToList();
-                query = query.Where(tx => tx.InvokeContracts.Any(c => contracts.Contains(c.Contract.Hash)));
+                query = query.Where(tx => tx.InvokeContracts.Any(c => contracts.Contains(c.Contract.Hash) && c.Contract.DeleteOrMigrateTxId == null));
 
                 //query = query.Join(_sqldb.InvokeRecords,tx=>tx.TxId,r=>r.TxId,(tx,r)=>new{tx,r}).Where(tx => tx.Any(c => contracts.Contains(c.Contract.Hash)));
 
@@ -580,21 +580,6 @@ namespace Neo.Common.Storage
             return old;
         }
 
-        private readonly ConcurrentDictionary<UInt160, ContractEntity> _assetCache = new ConcurrentDictionary<UInt160, ContractEntity>();
-        private ContractEntity GetAsset(UInt160 asset)
-        {
-            if (_assetCache.ContainsKey(asset))
-            {
-                return _assetCache[asset];
-            }
-            var old = GetActiveContract(asset);
-            if (old != null)
-            {
-                _assetCache[asset] = old;
-            }
-            return old;
-        }
-
         private AssetBalanceEntity GetOrCreateBalance(AddressEntity address, ContractEntity asset, BigInteger balance, uint height)
         {
             var old = _sqldb.AssetBalances.FirstOrDefault(a => a.AddressId == address.Id && a.AssetId == asset.Id);
@@ -613,7 +598,7 @@ namespace Neo.Common.Storage
             IQueryable<Nep5TransferEntity> query = _sqldb.Nep5Transactions
                 .Include(t => t.From)
                 .Include(t => t.To)
-                .Include(t => t.Asset);
+                .Include(t => t.Asset).Where(t => t.Asset.DeleteOrMigrateTxId == null);
 
             if (filter.FromOrTo.NotEmpty())
             {
