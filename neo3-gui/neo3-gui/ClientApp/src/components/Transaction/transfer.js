@@ -99,7 +99,8 @@ class Transfer extends React.Component {
           title: t('wallet.transfer send success'),
           content: (
             <div className="show-pri">
-              <p>{t("blockchain.transaction hash")}：{_data.result.txId}</p>
+              <p>{t("blockchain.transaction hash")}：</p>
+              <p>{_data.result.txId}</p>
             </div>
           ),
           okText:"确认"
