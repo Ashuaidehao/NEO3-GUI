@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Neo.Common.Storage;
 using Neo.Common.Utility;
 using Neo.Ledger;
@@ -13,7 +11,7 @@ using Neo.SmartContract;
 using Neo.SmartContract.Native;
 using Neo.VM;
 
-namespace Neo.Common
+namespace Neo.Common.Analyzers
 {
     public class BlockAnalyzer
     {
