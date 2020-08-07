@@ -18,7 +18,7 @@ import { Layout } from 'antd';
 import Sync from '../sync';
 import { observer, inject } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { withTranslation } from "react-i18next";
+import { withTranslation, Trans } from "react-i18next";
 import "../../static/css/advanced.css";
 import { shell } from "electron";
 import {post} from '../../core/request';
@@ -49,6 +49,10 @@ class Advancedvote extends React.Component {
         candidates:res.result
       })
     });
+  }
+  clickToCopy = (text) => {
+    navigator.clipboard.writeText(text)
+    message.success(<Trans>common.copied</Trans>)
   }
   listCandidate = callback => {
     const { t } = this.props;
@@ -93,15 +97,32 @@ class Advancedvote extends React.Component {
       var _data = response.data;
       if (_data.msgType === -1) {
         let res = _data.error;
-        Modal.error({
-          title: t('advanced.vote fail'),
-          width: 400,
-          content: (
+        let title = t('advanced.vote fail')
+        let content = (
+          <div className="show-pri">
+            <p>{t('error code')}: {res.code}</p>
+            <p>{t('error msg')}: {res.message}</p>
+          </div>
+        );
+        if (res.code === 20014) {
+          content = (
             <div className="show-pri">
-              <p>{t('error code')}: {res.code}</p>
-              <p>{t('error msg')}: {res.message}</p>
+                <pre style={{ overflow: 'hidden', overflowX: 'auto', overflowY: 'scroll', maxHeight: '60vh', width: 'auto' }}>
+                    <code>{ JSON.stringify(JSON.parse(res.message), null, 2) }</code>
+                </pre>
+                <p>
+                    <Button type="link" style={{ margin: 0, color: '#00B594' }} onClick={() => this.clickToCopy(res.message)}>
+                        <Trans>button.copy to clipboard</Trans>
+                    </Button>
+                </p>
             </div>
-          ),
+          );
+        }
+        Modal.error({
+          title: title,
+          centered: true,
+          width: 650,
+          content: content,
           okText: t("button.ok")
         });
         return;
