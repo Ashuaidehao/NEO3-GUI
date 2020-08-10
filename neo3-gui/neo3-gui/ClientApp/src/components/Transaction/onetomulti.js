@@ -15,7 +15,7 @@ import {
 } from 'antd';
 import { Layout } from 'antd';
 import '../../static/css/wallet.css'
-import { withTranslation } from "react-i18next";
+import { withTranslation, Trans } from "react-i18next";
 import { post } from "../../core/request";
 
 const { Option } = Select;
@@ -38,6 +38,10 @@ class Onetomulti extends React.Component{
       this.setState({
         selectadd: _detail
       })
+    }
+    clickToCopy = (text) => {
+        navigator.clipboard.writeText(text)
+        message.success(<Trans>common.copied</Trans>)
     }
     transfer = values =>{
         var _this = this;
@@ -67,23 +71,47 @@ class Onetomulti extends React.Component{
         };
 
         post("SendToMultiAddress",params).then(res =>{
-            var _data = res.data;
-            var result = res.data.result;
-            if(_data.msgType === -1){
+            const _data = res.data;
+            const result = res.data.result;
+            if (_data.msgType === -1) {
                 let res = _data.error;
-                Modal.error({
-                title: t('wallet.transfer send error'),
-                width: 400,
-                content: (
+                let title = (<Trans>wallet.transfer send error</Trans>);
+                let content = (
                     <div className="show-pri">
-                        <p>{t("error code")}: {res.code}</p>
-                        <p>{t("error msg")}: {res.message}</p>
+                        <p><Trans>blockchain.transaction hash</Trans>: {res.code}</p>
+                        <p><Trans>error msg</Trans>: {res.message}</p>
                     </div>
-                ),
-                okText:t("button.confirm")
-                });
+                );
+
+                if (res.code === 20014) {
+                    title = (<Trans>wallet.transfer send error 20014</Trans>); 
+                    content = (
+                        <div className="show-pri">
+                            <pre style={{ overflow: 'hidden', overflowX: 'auto', overflowY: 'scroll', maxHeight: '60vh', width: 'auto' }}>
+                                <code>{ JSON.stringify(JSON.parse(res.message), null, 2) }</code>
+                            </pre>
+                            <p>
+                                <Button type="link" style={{ margin: 0, color: '#00B594' }} onClick={() => _this.clickToCopy(res.message)}>
+                                    <Trans>button.copy to clipboard</Trans>
+                                </Button>
+                            </p>
+                        </div>
+                    );
+                }
+                const args = {
+                    title: title,
+                    width: 650,
+                    centered: true,
+                    content: content,
+                    okText: (<Trans>button.confirm</Trans>)
+                };
+                if (res.code === 20014) {
+                    Modal.warning(args);
+                } else {
+                    Modal.error(args);
+                }
                 return;
-            }else{
+            } else {
                 Modal.success({
                 title: t('wallet.transfer send success'),
                 content: (

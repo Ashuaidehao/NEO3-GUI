@@ -75,28 +75,41 @@ class Multitomulti extends React.Component{
 
             if(_data.msgType === -1){
                 let res = _data.error;
-                const errorTitle = res.code === 20014 ? (
-                    t('wallet.transfer send error 20014')
-                ) : (
-                    t('wallet.transfer send error')
+                let title = (<Trans>wallet.transfer send error</Trans>);
+                let content = (
+                    <div className="show-pri">
+                        <p><Trans>blockchain.transaction hash</Trans>: {res.code}</p>
+                        <p><Trans>error msg</Trans>: {res.message}</p>
+                    </div>
                 );
-                Modal.warning({
-                    title: errorTitle,
-                    width: 650,
-                    centered: true,
-                    content: (
+
+                if (res.code === 20014) {
+                    title = (<Trans>wallet.transfer send error 20014</Trans>); 
+                    content = (
                         <div className="show-pri">
                             <pre style={{ overflow: 'hidden', overflowX: 'auto', overflowY: 'scroll', maxHeight: '60vh', width: 'auto' }}>
                                 <code>{ JSON.stringify(JSON.parse(res.message), null, 2) }</code>
                             </pre>
                             <p>
-                                <Button type="link" style={{ margin: 0, color: '#00B594' }} 
-                                    onClick={() => this.clickToCopy(res.message)}>{t("button.copy to clipboard")}</Button>
+                                <Button type="link" style={{ margin: 0, color: '#00B594' }} onClick={() => this.clickToCopy(res.message)}>
+                                    <Trans>button.copy to clipboard</Trans>
+                                </Button>
                             </p>
                         </div>
-                    ),
-                    okText:t("button.confirm")
-                });
+                    );
+                }
+                const args = {
+                    title: title,
+                    width: 650,
+                    centered: true,
+                    content: content,
+                    okText: (<Trans>button.confirm</Trans>)
+                };
+                if (res.code === 20014) {
+                    Modal.warning(args);
+                } else {
+                    Modal.error(args);
+                }
                 return;
             }else{
                 Modal.success({
