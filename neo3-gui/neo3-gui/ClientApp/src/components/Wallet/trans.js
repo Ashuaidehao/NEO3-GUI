@@ -1,27 +1,27 @@
-import React from 'react';
-import { Layout, Row, Col,Tabs } from 'antd';
-import Transaction from '../Transaction/transaction';
-import Untransaction from '../Transaction/untransaction';
-import Sync from '../sync';
-import Searcharea,{ Searchtttt } from '../Common/searcharea';
-import { withTranslation } from 'react-i18next';
+import React from "react";
+import { Layout, Row, Col, Tabs } from "antd";
+import Transaction from "../Transaction/transaction";
+import Untransaction from "../Transaction/untransaction";
+import Sync from "../sync";
+import Searcharea, { Searchtttt } from "../Common/searcharea";
+import { withTranslation } from "react-i18next";
 
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
 
 @withTranslation()
-class Wallettrans extends React.Component{
-  constructor(props){
+class Wallettrans extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
-        size: 'default',
-        translist:[],
+      size: "default",
+      translist: [],
     };
   }
-  render = () =>{
-    const{t}=this.props;
+  render = () => {
+    const { t } = this.props;
     return (
       <Layout className="gui-container">
         <Sync />
@@ -38,7 +38,7 @@ class Wallettrans extends React.Component{
                   <Transaction page="wallettrans" />
                 </TabPane>
                 <TabPane tab={t("blockchain.transaction.pending")} key="2">
-                  <Untransaction page="wallet"/>
+                  <Untransaction page="wallet" />
                 </TabPane>
               </Tabs>
               {/* <Searcharea /> */}
@@ -47,7 +47,7 @@ class Wallettrans extends React.Component{
         </Content>
       </Layout>
     );
-  }
-} 
+  };
+}
 
 export default Wallettrans;

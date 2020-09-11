@@ -1,12 +1,11 @@
 import React from "react";
-import Router from './router/router';
+import Router from "./router/router";
 import { ConfigProvider } from "antd";
 import { Provider } from "mobx-react";
 import stores from "./store/stores";
 import Config from "./config";
 import neoNode from "./neonode";
 import neoWebSocket from "./components/WebSocket/neoWebSocket";
-
 
 class App extends React.Component {
   constructor(props) {
@@ -22,16 +21,17 @@ class App extends React.Component {
     neoWebSocket.registMethod("getWalletBalance", this.processGetWalletBalance);
   }
 
-
   componentWillUnmount = () => {
     neoWebSocket.unregistMethod("getSyncHeight", this.processGetSyncHeight);
-    neoWebSocket.unregistMethod("getWalletBalance", this.processGetWalletBalance);
-  }
+    neoWebSocket.unregistMethod(
+      "getWalletBalance",
+      this.processGetWalletBalance
+    );
+  };
 
   processGetSyncHeight(msg) {
     stores.blockSyncStore.setHeight(msg.result);
   }
-
 
   processGetWalletBalance(msg) {
     stores.walletStore.setAccounts(msg.result.accounts);
@@ -48,6 +48,5 @@ class App extends React.Component {
     );
   }
 }
-
 
 export default App;

@@ -1,3 +1,6 @@
 {
-    "react-i18n.i18nPaths": "build\\locales,public\\locales,build-electron\\win-unpacked\\locales,build-electron\\win-unpacked\\resources\\app.asar\\build\\locales"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "javascript.suggest.autoImports": false,
+  "react-i18n.i18nPaths": "build\\locales,public\\locales,build-electron\\win-unpacked\\locales,build-electron\\win-unpacked\\resources\\app.asar\\build\\locales"
 }
