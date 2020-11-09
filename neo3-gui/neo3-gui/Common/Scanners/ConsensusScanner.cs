@@ -49,7 +49,7 @@ namespace Neo.Common.Scanners
             if (Blockchain.Singleton.Height > 0)
             {
                 using var snapshot = Blockchain.Singleton.GetSnapshot();
-                var validators = NativeContract.NEO.GetValidators(snapshot);
+                var validators = NativeContract.NEO.GetCommittee(snapshot);
                 var addresses = new List<UInt160>();
                 foreach (var ecPoint in validators)
                 {

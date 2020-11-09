@@ -11,7 +11,7 @@ namespace Neo.Common.Analyzers
     public class ScriptAnalyzerEngine : ApplicationEngine
     {
         private Transaction _tx;
-        public ScriptAnalyzerEngine(Transaction container, StoreView replaySnapshot) : base(TriggerType.Application, container, replaySnapshot, 0, true)
+        public ScriptAnalyzerEngine(Transaction container, StoreView replaySnapshot) : base(TriggerType.Application, container, replaySnapshot, Constant.TestMode)
         {
             _tx = container;
             Console.WriteLine($"start analysis:[{_tx.Hash}]");

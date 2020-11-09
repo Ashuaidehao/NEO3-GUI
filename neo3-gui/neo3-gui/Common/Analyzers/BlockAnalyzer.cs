@@ -109,7 +109,7 @@ namespace Neo.Common.Analyzers
             {
                 //Re-execute script
                 using var replaySnapshot = Blockchain.Singleton.GetSnapshot();
-                ApplicationEngine.Run(new Byte[] { }, replaySnapshot, testMode: true);
+                new Byte[0].RunTestMode(replaySnapshot);
                 var scriptAnalyzer = new ScriptAnalyzerEngine(transaction, replaySnapshot);
                 scriptAnalyzer.LoadScript(transaction.Script);
                 scriptAnalyzer.Execute();
