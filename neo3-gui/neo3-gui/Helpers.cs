@@ -498,7 +498,7 @@ namespace Neo
                 sb.EmitAppCall(assetId, "balanceOf", address);
             }
 
-            using ApplicationEngine engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
+            using ApplicationEngine engine = sb.ToArray().RunTestMode(snapshot);
             if (engine.State.HasFlag(VMState.FAULT))
             {
                 throw new Exception($"query balance error");
@@ -537,7 +537,7 @@ namespace Neo
 
             using var sb = new ScriptBuilder();
             sb.EmitAppCall(assetId, "balanceOf", address);
-            using var engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
+            using var engine = sb.ToArray().RunTestMode(snapshot);
             if (engine.State.HasFlag(VMState.FAULT))
             {
                 return new BigDecimal(0, 0);
@@ -976,6 +976,12 @@ namespace Neo
             notification.Contract = notify.ScriptHash;
             notification.State = notify.State.ToJson();
             return notification;
+        }
+
+
+        public static ApplicationEngine RunTestMode(this byte[] script, StoreView snapshot, IVerifiable container = null)
+        {
+            return ApplicationEngine.Run(script, snapshot, container, gas: Constant.TestMode);
         }
 
     }

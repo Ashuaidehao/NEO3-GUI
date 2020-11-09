@@ -34,7 +34,7 @@ namespace Neo.Common.Utility
             }
 
             var transfers = new List<TransferNotifyItem>();
-            using var exeResult = ApplicationEngine.Run(tx.Script, tx, testMode: true);
+            using var exeResult = tx.Script.RunTestMode(null, tx);
             if (exeResult.Notifications.NotEmpty())
             {
                 foreach (var notification in exeResult.Notifications)
