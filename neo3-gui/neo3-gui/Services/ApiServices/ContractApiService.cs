@@ -5,7 +5,6 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Win32.SafeHandles;
 using Neo.Common;
 using Neo.Common.Storage;
 using Neo.Common.Utility;
@@ -20,6 +19,7 @@ using Neo.Network.P2P.Payloads;
 using Neo.SmartContract;
 using Neo.SmartContract.Manifest;
 using Neo.SmartContract.Native;
+using Neo.SmartContract.Native.Designate;
 using Neo.VM;
 using Neo.Wallets;
 using Neo.Wallets.SQLite;
@@ -449,7 +449,95 @@ namespace Neo.Services.ApiServices
         #endregion
 
 
+        #region DesignRole
 
+        /// <summary>
+        /// vote for consensus node
+        /// </summary>
+        /// <returns></returns>
+        public async Task<object> DesignRole(Role role, string[] pubkeys, List<UInt160> signers = null)
+        {
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+
+            ECPoint[] publicKeys = null;
+            try
+            {
+                publicKeys = pubkeys.Select(p => ECPoint.Parse(p, ECCurve.Secp256r1)).ToArray();
+            }
+            catch (Exception e)
+            {
+                return Error(ErrorCode.InvalidPara);
+            }
+
+            if (publicKeys.IsEmpty())
+            {
+                return Error(ErrorCode.InvalidPara);
+            }
+
+
+            var paras = new List<ContractParameter>();
+            paras.Add(new ContractParameter(ContractParameterType.Integer) { Value = (int)role });
+            paras.Add(new ContractParameter(ContractParameterType.Array)
+            {
+                Value = publicKeys.Select(p => new ContractParameter(ContractParameterType.PublicKey) { Value = p }).ToList()
+            });
+            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            using var sb = new ScriptBuilder();
+            sb.EmitAppCall(NativeContract.Designate.Hash, "designateAsRole", paras.ToArray());
+
+            if (signers == null)
+            {
+                signers = new List<UInt160>();
+            }
+            var committee = NativeContract.NEO.GetCommitteeAddress(snapshot);
+            signers.Add(committee);
+
+            Transaction tx = null;
+            try
+            {
+                tx = CurrentWallet.InitTransaction(sb.ToArray(), signers.ToArray());
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Error(ErrorCode.EngineFault, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("Insufficient GAS"))
+                {
+                    return Error(ErrorCode.GasNotEnough);
+                }
+                throw;
+            }
+
+            var (signSuccess, context) = CurrentWallet.TrySignTx(tx);
+            if (!signSuccess)
+            {
+                return Error(ErrorCode.SignFail, context.SafeSerialize());
+            }
+            var result = new VoteResultModel();
+            await tx.Broadcast();
+            result.TxId = tx.Hash;
+            return result;
+        }
+
+
+        /// <summary>
+        /// query Designated Nodes by Role
+        /// </summary>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        public async Task<object> GetNodesByRole(Role role)
+        {
+            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            var points = NativeContract.Designate.GetDesignatedByRole(snapshot, role);
+            return points?.Select(p => p.ToString()).ToList();
+        }
+
+        #endregion
 
 
         #region Private
