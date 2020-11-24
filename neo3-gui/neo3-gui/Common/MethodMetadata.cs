@@ -80,14 +80,14 @@ namespace Neo.Common
             if (inputParas.ValueKind == JsonValueKind.Undefined)
             {
                 //no input paras
-                paras.AddRange(_parameters.Select(p=>p.DefaultValue));
+                paras.AddRange(_parameters.Select(p => p.DefaultValue));
                 return paras;
             }
             //only accept one parameter
             if (_parameters.Length == 1)
             {
                 var parameterType = _parameters[0].ParameterType;
-                
+
                 if (inputParas.ValueKind == JsonValueKind.Array && parameterType.IsArray)
                 {
                     // input paras is Array format, method only accept one array parameter
@@ -95,7 +95,7 @@ namespace Neo.Common
                     return paras;
                 }
 
-                if (!parameterType.IsPrimitive && !parameterType.IsArray && parameterType != typeof(string) && parameterType != typeof(UInt256) && parameterType != typeof(UInt160))
+                if (!parameterType.IsPrimitive && !parameterType.IsArray && !parameterType.IsEnum && parameterType != typeof(string) && parameterType != typeof(UInt256) && parameterType != typeof(UInt160))
                 {
                     //method only accept one Object parameter
                     paras.Add(inputParas.GetRawText().DeserializeJson(parameterType));
