@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Neo.Models.Contracts
 {
-    public class VoteResultModel
+    public class TxResultModel
     {
         public UInt256 TxId { get; set; }
     }

@@ -15,6 +15,7 @@ using Neo.Ledger;
 using Neo.Models;
 using Neo.Models.Blocks;
 using Neo.Models.Contracts;
+using Neo.Network.P2P;
 using Neo.Network.P2P.Payloads;
 using Neo.SmartContract;
 using Neo.SmartContract.Manifest;
@@ -29,7 +30,6 @@ namespace Neo.Services.ApiServices
     public class ContractApiService : ApiService
     {
 
-        protected Wallet CurrentWallet => Program.Starter.CurrentWallet;
 
         public async Task<object> GetAllContracts()
         {
@@ -347,33 +347,7 @@ namespace Neo.Services.ApiServices
             using ScriptBuilder sb = new ScriptBuilder();
             sb.EmitAppCall(NativeContract.NEO.Hash, "registerCandidate", publicKey);
 
-            Transaction tx = null;
-            try
-            {
-                tx = CurrentWallet.InitTransaction(sb.ToArray(), account);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Error(ErrorCode.EngineFault, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("Insufficient GAS"))
-                {
-                    return Error(ErrorCode.GasNotEnough);
-                }
-                throw;
-            }
-
-            var (signSuccess, context) = CurrentWallet.TrySignTx(tx);
-            if (!signSuccess)
-            {
-                return Error(ErrorCode.SignFail, context.SafeSerialize());
-            }
-            var result = new VoteResultModel();
-            await tx.Broadcast();
-            result.TxId = tx.Hash;
-            return result;
+            return await SignAndBroadcastTx(sb.ToArray(), account);
         }
 
 
@@ -416,33 +390,7 @@ namespace Neo.Services.ApiServices
                 Value = publicKey
             });
 
-            Transaction tx = null;
-            try
-            {
-                tx = CurrentWallet.InitTransaction(sb.ToArray(), account);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Error(ErrorCode.EngineFault, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("Insufficient GAS"))
-                {
-                    return Error(ErrorCode.GasNotEnough);
-                }
-                throw;
-            }
-
-            var (signSuccess, context) = CurrentWallet.TrySignTx(tx);
-            if (!signSuccess)
-            {
-                return Error(ErrorCode.SignFail, context.SafeSerialize());
-            }
-            var result = new VoteResultModel();
-            await tx.Broadcast();
-            result.TxId = tx.Hash;
-            return result;
+            return await SignAndBroadcastTx(sb.ToArray(), account);
         }
 
 
@@ -495,33 +443,7 @@ namespace Neo.Services.ApiServices
             var committee = NativeContract.NEO.GetCommitteeAddress(snapshot);
             signers.Add(committee);
 
-            Transaction tx = null;
-            try
-            {
-                tx = CurrentWallet.InitTransaction(sb.ToArray(), signers.ToArray());
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Error(ErrorCode.EngineFault, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("Insufficient GAS"))
-                {
-                    return Error(ErrorCode.GasNotEnough);
-                }
-                throw;
-            }
-
-            var (signSuccess, context) = CurrentWallet.TrySignTx(tx);
-            if (!signSuccess)
-            {
-                return Error(ErrorCode.SignFail, context.SafeSerialize());
-            }
-            var result = new VoteResultModel();
-            await tx.Broadcast();
-            result.TxId = tx.Hash;
-            return result;
+            return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
         }
 
 
@@ -539,6 +461,200 @@ namespace Neo.Services.ApiServices
 
         #endregion
 
+
+        #region Policy
+
+        public async Task<uint> GetMaxTransactionsPerBlock()
+        {
+            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            return NativeContract.Policy.GetMaxTransactionsPerBlock(snapshot);
+        }
+
+
+
+        public async Task<object> SetMaxTransactionsPerBlock(uint max, List<UInt160> signers = null)
+        {
+            if (max > Block.MaxTransactionsPerBlock)
+            {
+                return Error(ErrorCode.InvalidPara, $"input value is bigger than {Block.MaxTransactionsPerBlock}");
+            }
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            using var snapshot = Blockchain.Singleton.GetSnapshot();
+
+            using ScriptBuilder sb = new ScriptBuilder();
+            sb.EmitAppCall(NativeContract.Policy.Hash, "setMaxTransactionsPerBlock", new ContractParameter
+            {
+                Type = ContractParameterType.Integer,
+                Value = max
+            });
+
+            if (signers == null)
+            {
+                signers = new List<UInt160>();
+            }
+            var committee = NativeContract.NEO.GetCommitteeAddress(snapshot);
+            signers.Add(committee);
+            return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
+        }
+
+
+        public async Task<uint> GetMaxBlockSize()
+        {
+            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            return NativeContract.Policy.GetMaxBlockSize(snapshot);
+        }
+
+
+        public async Task<object> SetMaxBlockSize(uint max, List<UInt160> signers = null)
+        {
+            if (max > Message.PayloadMaxSize)
+            {
+                return Error(ErrorCode.InvalidPara, $"input value is bigger than {Message.PayloadMaxSize}");
+            }
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            using ScriptBuilder sb = new ScriptBuilder();
+            sb.EmitAppCall(NativeContract.Policy.Hash, "setMaxBlockSize", new ContractParameter
+            {
+                Type = ContractParameterType.Integer,
+                Value = max
+            });
+
+            if (signers == null)
+            {
+                signers = new List<UInt160>();
+            }
+            var committee = NativeContract.NEO.GetCommitteeAddress(snapshot);
+            signers.Add(committee);
+            return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
+        }
+
+        public async Task<long> GetMaxBlockSystemFee()
+        {
+            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            return NativeContract.Policy.GetMaxBlockSystemFee(snapshot);
+        }
+
+
+        public async Task<object> SetMaxBlockSystemFee(long max, List<UInt160> signers = null)
+        {
+            if (max <= 4007600)
+            {
+                return Error(ErrorCode.InvalidPara, $"input value is less than 4007600");
+            }
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            using ScriptBuilder sb = new ScriptBuilder();
+            sb.EmitAppCall(NativeContract.Policy.Hash, "setMaxBlockSystemFee", new ContractParameter
+            {
+                Type = ContractParameterType.Integer,
+                Value = max
+            });
+            if (signers == null)
+            {
+                signers = new List<UInt160>();
+            }
+            var committee = NativeContract.NEO.GetCommitteeAddress(snapshot);
+            signers.Add(committee);
+            return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
+        }
+
+        public async Task<long> GetFeePerByte()
+        {
+            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            return NativeContract.Policy.GetFeePerByte(snapshot);
+        }
+
+
+        public async Task<object> SetFeePerByte(long fee, List<UInt160> signers = null)
+        {
+            if (fee < 0 || fee > 1_00000000)
+            {
+                return Error(ErrorCode.InvalidPara, $"input value should between 0 and  100,000,000");
+            }
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            using ScriptBuilder sb = new ScriptBuilder();
+            sb.EmitAppCall(NativeContract.Policy.Hash, "setFeePerByte", new ContractParameter
+            {
+                Type = ContractParameterType.Integer,
+                Value = fee
+            });
+            if (signers == null)
+            {
+                signers = new List<UInt160>();
+            }
+            var committee = NativeContract.NEO.GetCommitteeAddress(snapshot);
+            signers.Add(committee);
+            return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
+        }
+
+        public async Task<bool> IsBlocked(UInt160 account)
+        {
+            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            return NativeContract.Policy.IsBlocked(snapshot, account);
+        }
+
+
+        public async Task<object> BlockAccount(UInt160 account, List<UInt160> signers = null)
+        {
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            using ScriptBuilder sb = new ScriptBuilder();
+            sb.EmitAppCall(NativeContract.Policy.Hash, "blockAccount", new ContractParameter
+            {
+                Type = ContractParameterType.Hash160,
+                Value = account
+            });
+            if (signers == null)
+            {
+                signers = new List<UInt160>();
+            }
+            var committee = NativeContract.NEO.GetCommitteeAddress(snapshot);
+            signers.Add(committee);
+            return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
+        }
+
+
+
+        public async Task<object> UnblockAccount(UInt160 account, List<UInt160> signers = null)
+        {
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            using ScriptBuilder sb = new ScriptBuilder();
+            sb.EmitAppCall(NativeContract.Policy.Hash, "unblockAccount", new ContractParameter
+            {
+                Type = ContractParameterType.Hash160,
+                Value = account
+            });
+            if (signers == null)
+            {
+                signers = new List<UInt160>();
+            }
+            var committee = NativeContract.NEO.GetCommitteeAddress(snapshot);
+            signers.Add(committee);
+            return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
+        }
+
+        #endregion
 
         #region Private
 
