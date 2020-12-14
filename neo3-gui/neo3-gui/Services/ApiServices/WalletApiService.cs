@@ -35,9 +35,6 @@ namespace Neo.Services.ApiServices
 {
     public class WalletApiService : ApiService
     {
-        protected Wallet CurrentWallet => Program.Starter.CurrentWallet;
-
-
         /// <summary>
         /// open wallet
         /// </summary>
