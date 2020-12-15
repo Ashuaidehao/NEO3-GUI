@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Neo.Common.Storage;
 using Neo.Network.P2P.Payloads;
 using Neo.Persistence;
 using Neo.SmartContract;
-using Neo.VM;
 using Neo.VM.Types;
 
-namespace Neo.Common
+namespace Neo.Common.Analyzers
 {
     public class ScriptAnalyzerEngine : ApplicationEngine
     {
         private Transaction _tx;
-        public ScriptAnalyzerEngine(Transaction container, StoreView replaySnapshot) : base(TriggerType.Application, container, replaySnapshot, 0, true)
+        public ScriptAnalyzerEngine(Transaction container, StoreView replaySnapshot) : base(TriggerType.Application, container, replaySnapshot, Constant.TestMode)
         {
             _tx = container;
             Console.WriteLine($"start analysis:[{_tx.Hash}]");

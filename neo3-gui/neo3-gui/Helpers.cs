@@ -498,7 +498,7 @@ namespace Neo
                 sb.EmitAppCall(assetId, "balanceOf", address);
             }
 
-            using ApplicationEngine engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
+            using ApplicationEngine engine = sb.ToArray().RunTestMode(snapshot);
             if (engine.State.HasFlag(VMState.FAULT))
             {
                 throw new Exception($"query balance error");
@@ -537,7 +537,7 @@ namespace Neo
 
             using var sb = new ScriptBuilder();
             sb.EmitAppCall(assetId, "balanceOf", address);
-            using var engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
+            using var engine = sb.ToArray().RunTestMode(snapshot);
             if (engine.State.HasFlag(VMState.FAULT))
             {
                 return new BigDecimal(0, 0);
@@ -682,6 +682,58 @@ namespace Neo
             return !(item is Integer);
         }
 
+
+        /// <summary>
+        /// try to convert "Transfer" event, missing "Decimals"、"Symbol"
+        /// </summary>
+        /// <param name="notification"></param>
+        /// <returns></returns>
+        public static TransferNotifyItem ConvertToTransfer(this NotifyEventArgs notification)
+        {
+            if (!"transfer".Equals(notification.EventName, StringComparison.OrdinalIgnoreCase) || notification.State.Count < 3)
+            {
+                return null;
+            }
+            var notify = notification.State;
+            var fromItem = notify[0];
+            var toItem = notify[1];
+            var amountItem = notify[2];
+            if (!fromItem.IsVmNullOrByteArray() || !toItem.IsVmNullOrByteArray())
+            {
+                return null;
+            }
+            var from = fromItem.GetByteSafely();
+            if (from != null && from.Length != UInt160.Length)
+            {
+                return null;
+            }
+            var to = toItem.GetByteSafely();
+            if (to != null && to.Length != UInt160.Length)
+            {
+                return null;
+            }
+            if (from == null && to == null)
+            {
+                return null;
+            }
+            if (amountItem.NotVmByteArray() && amountItem.NotVmInt())
+            {
+                return null;
+            }
+            var amount = amountItem.ToBigInteger();
+            if (amount == null)
+            {
+                return null;
+            }
+            var record = new TransferNotifyItem
+            {
+                From = from == null ? null : new UInt160(from),
+                To = to == null ? null : new UInt160(to),
+                Amount = amount.Value,
+                Asset = notification.ScriptHash,
+            };
+            return record;
+        }
 
 
         public static TransferNotifyItem GetTransferNotify(this VmArray notifyArray, UInt160 asset)
@@ -924,6 +976,12 @@ namespace Neo
             notification.Contract = notify.ScriptHash;
             notification.State = notify.State.ToJson();
             return notification;
+        }
+
+
+        public static ApplicationEngine RunTestMode(this byte[] script, StoreView snapshot, IVerifiable container = null)
+        {
+            return ApplicationEngine.Run(script, snapshot, container, gas: Constant.TestMode);
         }
 
     }

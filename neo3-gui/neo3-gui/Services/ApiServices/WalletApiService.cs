@@ -35,9 +35,6 @@ namespace Neo.Services.ApiServices
 {
     public class WalletApiService : ApiService
     {
-        protected Wallet CurrentWallet => Program.Starter.CurrentWallet;
-
-
         /// <summary>
         /// open wallet
         /// </summary>
@@ -451,7 +448,7 @@ namespace Neo.Services.ApiServices
             {
                 return Error(ErrorCode.WalletNotOpen);
             }
-            var addresses = CurrentWallet.GetAccounts().Where(a => !a.Lock && !a.WatchOnly).Select(a => a.ScriptHash).ToList();
+            var addresses = CurrentWallet.GetAccounts().Where(a => !a.Lock && !a.WatchOnly && a.Contract.Script.IsSignatureContract()).Select(a => a.ScriptHash).ToList();
 
             var balances = addresses.GetBalanceOf(NativeContract.NEO.Hash);
             balances = balances.Where(b => b.Value > 0).ToList();
@@ -691,7 +688,7 @@ namespace Neo.Services.ApiServices
                     Scopes = WitnessScope.CalledByEntry,
                     Account = p
                 }).ToArray();
-            return CurrentWallet.MakeTransaction(script, null, cosigners,new TransactionAttribute[0]);
+            return CurrentWallet.MakeTransaction(script, null, cosigners, new TransactionAttribute[0]);
         }
 
 
@@ -1046,14 +1043,14 @@ namespace Neo.Services.ApiServices
         private AssetBalanceModel _defaultNeoBalance = new AssetBalanceModel()
         {
             Asset = NativeContract.NEO.Hash,
-            Symbol = NativeContract.NEO.Symbol,
+            Symbol = NativeContract.NEO.Symbol.ToUpper(),
             Balance = new BigInteger(0).ToNeo()
         };
 
         private AssetBalanceModel _defaultGasBalance = new AssetBalanceModel()
         {
             Asset = NativeContract.GAS.Hash,
-            Symbol = NativeContract.GAS.Symbol,
+            Symbol = NativeContract.GAS.Symbol.ToUpper(),
             Balance = new BigInteger(0).ToGas()
         };
 

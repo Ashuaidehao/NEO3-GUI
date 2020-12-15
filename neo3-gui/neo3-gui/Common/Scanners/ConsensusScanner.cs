@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Neo.Common.Storage;
-using Neo.Common.Utility;
 using Neo.Cryptography.ECC;
 using Neo.Ledger;
 using Neo.SmartContract.Native;
 
-namespace Neo.Common
+namespace Neo.Common.Scanners
 {
 
     public class ConsensusScanner
@@ -50,7 +49,7 @@ namespace Neo.Common
             if (Blockchain.Singleton.Height > 0)
             {
                 using var snapshot = Blockchain.Singleton.GetSnapshot();
-                var validators = NativeContract.NEO.GetValidators(snapshot);
+                var validators = NativeContract.NEO.GetCommittee(snapshot);
                 var addresses = new List<UInt160>();
                 foreach (var ecPoint in validators)
                 {

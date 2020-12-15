@@ -5,18 +5,22 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Win32.SafeHandles;
+using Neo.Common;
+using Neo.Common.Storage;
 using Neo.Common.Utility;
 using Neo.Cryptography.ECC;
 using Neo.IO;
 using Neo.IO.Json;
 using Neo.Ledger;
 using Neo.Models;
+using Neo.Models.Blocks;
 using Neo.Models.Contracts;
+using Neo.Network.P2P;
 using Neo.Network.P2P.Payloads;
 using Neo.SmartContract;
 using Neo.SmartContract.Manifest;
 using Neo.SmartContract.Native;
+using Neo.SmartContract.Native.Designate;
 using Neo.VM;
 using Neo.Wallets;
 using Neo.Wallets.SQLite;
@@ -26,7 +30,26 @@ namespace Neo.Services.ApiServices
     public class ContractApiService : ApiService
     {
 
-        protected Wallet CurrentWallet => Program.Starter.CurrentWallet;
+
+        public async Task<object> GetAllContracts()
+        {
+            var list = new List<ContractInfoModel>();
+            list.AddRange(NativeContract.Contracts.Select(c => new ContractInfoModel()
+            {
+                Hash = c.Hash,
+                Name = c.Name,
+            }));
+            var nativeHashes = new HashSet<UInt160>(list.Select(x => x.Hash));
+            using var db = new TrackDB();
+            var assets = db.GetAllContracts()?.Where(a => !nativeHashes.Contains(a.Hash) && a.Symbol.NotNull() && a.DeleteOrMigrateTxId == null).Select(a =>
+                new ContractInfoModel()
+                {
+                    Hash = a.Hash,
+                    Name = a.Name,
+                }).ToList();
+            list.AddRange(assets);
+            return list;
+        }
 
         public async Task<object> GetContract(UInt160 contractHash)
         {
@@ -181,7 +204,7 @@ namespace Neo.Services.ApiServices
                 return Error(ErrorCode.SignFail, context.SafeSerialize());
             }
             var result = new InvokeResultModel();
-            using ApplicationEngine engine = ApplicationEngine.Run(tx.Script, tx, testMode: true);
+            using ApplicationEngine engine = tx.Script.RunTestMode(null, tx);
             result.VmState = engine.State;
             result.GasConsumed = new BigDecimal(tx.SystemFee, NativeContract.GAS.Decimals);
             result.ResultStack = engine.ResultStack.Select(p => JStackItem.FromJson(p.ToParameter().ToJson())).ToList();
@@ -271,7 +294,7 @@ namespace Neo.Services.ApiServices
         public async Task<object> GetValidators()
         {
             using var snapshot = Blockchain.Singleton.GetSnapshot();
-            var validators = NativeContract.NEO.GetValidators(snapshot);
+            var validators = NativeContract.NEO.GetCommittee(snapshot);
             var candidates = NativeContract.NEO.GetCandidates(snapshot);
             return candidates.OrderByDescending(v => v.Votes).Select(p => new ValidatorModel
             {
@@ -309,7 +332,7 @@ namespace Neo.Services.ApiServices
                 return Error(ErrorCode.InvalidPara);
             }
             using var snapshot = Blockchain.Singleton.GetSnapshot();
-            var validators = NativeContract.NEO.GetValidators(snapshot);
+            var validators = NativeContract.NEO.GetCommittee(snapshot);
             if (validators.Any(v => v.Equals(publicKey)))
             {
                 return Error(ErrorCode.ValidatorAlreadyExist);
@@ -324,33 +347,7 @@ namespace Neo.Services.ApiServices
             using ScriptBuilder sb = new ScriptBuilder();
             sb.EmitAppCall(NativeContract.NEO.Hash, "registerCandidate", publicKey);
 
-            Transaction tx = null;
-            try
-            {
-                tx = CurrentWallet.InitTransaction(sb.ToArray(), account);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Error(ErrorCode.EngineFault, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("Insufficient GAS"))
-                {
-                    return Error(ErrorCode.GasNotEnough);
-                }
-                throw;
-            }
-
-            var (signSuccess, context) = CurrentWallet.TrySignTx(tx);
-            if (!signSuccess)
-            {
-                return Error(ErrorCode.SignFail, context.SafeSerialize());
-            }
-            var result = new VoteResultModel();
-            await tx.Broadcast();
-            result.TxId = tx.Hash;
-            return result;
+            return await SignAndBroadcastTx(sb.ToArray(), account);
         }
 
 
@@ -393,40 +390,11 @@ namespace Neo.Services.ApiServices
                 Value = publicKey
             });
 
-            Transaction tx = null;
-            try
-            {
-                tx = CurrentWallet.InitTransaction(sb.ToArray(), account);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Error(ErrorCode.EngineFault, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("Insufficient GAS"))
-                {
-                    return Error(ErrorCode.GasNotEnough);
-                }
-                throw;
-            }
-
-            var (signSuccess, context) = CurrentWallet.TrySignTx(tx);
-            if (!signSuccess)
-            {
-                return Error(ErrorCode.SignFail, context.SafeSerialize());
-            }
-            var result = new VoteResultModel();
-            await tx.Broadcast();
-            result.TxId = tx.Hash;
-            return result;
+            return await SignAndBroadcastTx(sb.ToArray(), account);
         }
 
 
         #endregion
-
-
-
 
 
         #region Private
@@ -489,23 +457,16 @@ namespace Neo.Services.ApiServices
         /// <returns></returns>
         private async Task CheckBadOpcode(byte[] script)
         {
-            // Basic script checks
-            using var engine = ApplicationEngine.Create(TriggerType.Application, null, null, 0, true);
-            var context = engine.LoadScript(script);
-            while (context.InstructionPointer <= context.Script.Length)
+            Script scriptCodes = new Script(script);
+            for (var i = 0; i < scriptCodes.Length;)
             {
                 // Check bad opcodes
-                var ci = context.CurrentInstruction;
-                if (ci == null || !Enum.IsDefined(typeof(OpCode), ci.OpCode))
+                Instruction inst = scriptCodes.GetInstruction(i);
+                if (inst is null || !Enum.IsDefined(typeof(OpCode), inst.OpCode))
                 {
-                    throw new WsException(ErrorCode.InvalidOpCode, $"OpCode not found at {context.InstructionPointer}-{(byte?)ci?.OpCode:x2}.");
+                    throw new FormatException($"OpCode not found at {i}-{((byte)inst.OpCode):x2}");
                 }
-                // Check bad syscalls (NEO2)
-                if (ci.OpCode == OpCode.SYSCALL && !ApplicationEngine.Services.ContainsKey(ci.TokenU32))
-                {
-                    throw new WsException(ErrorCode.InvalidOpCode, $"Syscall not found {ci.TokenU32:x2}. Are you using a NEO2 smartContract?");
-                }
-                context.InstructionPointer += ci.Size;
+                i += inst.Size;
             }
         }
 

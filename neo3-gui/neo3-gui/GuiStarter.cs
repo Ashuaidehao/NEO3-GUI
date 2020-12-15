@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Microsoft.Extensions.Configuration;
 using Neo.Common;
+using Neo.Common.Analyzers;
 using Neo.Common.Consoles;
+using Neo.Common.Scanners;
 using Neo.Common.Utility;
 using Neo.Ledger;
 using Neo.Network.P2P.Payloads;
@@ -18,7 +20,7 @@ namespace Neo
     {
         public GuiStarter()
         {
-            ExecuteLogTracker = new ExecuteLogTracker();
+            ExecuteResultLogTracker = new ExecuteResultLogTracker();
             ExecuteResultScanner = new ExecuteResultScanner();
             ConsensusScanner = new ConsensusScanner();
             ConsensusScanner.StartLoop();
@@ -33,7 +35,7 @@ namespace Neo
 
         public readonly ExecuteResultScanner ExecuteResultScanner;
 
-        public readonly ExecuteLogTracker ExecuteLogTracker;
+        public readonly ExecuteResultLogTracker ExecuteResultLogTracker;
 
         public readonly ConsensusScanner ConsensusScanner;
 

@@ -1,13 +1,13 @@
 /* eslint-disable */
 //just test replace wallet//
-import React from "react";
+import React from 'react';
 import { observer, inject } from "mobx-react";
-import { withRouter, Link } from "react-router-dom";
-import axios from "axios";
-import { Layout, Row, Col, List, Button, PageHeader, message } from "antd";
+import { withRouter, Link } from 'react-router-dom';
+import axios from 'axios';
+import { Layout, Row, Col, List, Button, PageHeader, message } from 'antd';
 import { withTranslation } from "react-i18next";
-import Searcharea from "./searcharea";
-import { SwapRightOutlined } from "@ant-design/icons";
+import Searcharea from './searcharea'
+import { SwapRightOutlined } from '@ant-design/icons';
 
 const { Content } = Layout;
 @withTranslation()
@@ -27,70 +27,70 @@ class Transaction extends React.Component {
       translist: [],
       loading: true,
       iswa: false,
-      show: false,
+      show:false
     };
   }
   componentDidMount() {
     this.setState({
-      local: "/chain/transaction:",
-    });
-    this.selTrans();
+      local: "/chain/transaction:"
+    })
+    this.selTrans()
   }
   selTrans = () => {
-    let _hash = location.pathname.split(":").pop();
+    let _hash = location.pathname.split(":").pop()
     let page = this.props.page ? this.props.page : "all";
     var _params = this.madeParams();
     if (page === "all") {
       this.allset(_params);
     } else if (page === "blockdetail") {
       _params.blockHeight = Number(_hash);
-      this.setState({ params: _params });
+      this.setState({params:_params})
       this.allset(_params);
     } else if (page === "reblockdetail") {
       _params.blockHeight = Number(_hash);
-      this.setState({ params: _params });
+      this.setState({params:_params})
       this.allset(_params);
     } else if (page === "addressdetail") {
       _params.address = Number(_hash);
       this.setState({
-        params: _params,
-        local: "/wallet/transaction:",
-      });
+        params:_params,
+        local:"/wallet/transaction:"
+      })
       this.nepset(_params);
     } else if (page === "assetdetail") {
       _params.asset = _hash;
-      this.setState({ params: _params });
+      this.setState({params:_params})
       this.nepset(_params);
     } else if (page === "wallettrans") {
-      this.setState({ local: "/wallet/transaction:" });
+      this.setState({local:"/wallet/transaction:"});
       this.walletset(_params);
     } else if (page === "walletdetail") {
-      this.setState({ local: "/wallet/transaction:" });
+      this.setState({local:"/wallet/transaction:"});
       _params.address = _hash;
       this.walletset(_params);
-    } else {
+    } else{
       this.allset(_params);
     }
-  };
+  }
   madeParams = () => {
     return {
-      pageIndex: this.state.page,
-      limit: this.state.limit,
+      "pageIndex": this.state.page,
+      "limit": this.state.limit
     };
-  };
-  allset = (params) => {
-    this.getAlltrans(params, (res) => {
+  }
+  allset = params => {
+    this.getAlltrans(params, res => {
       this.setState({
         loading: false,
         data: res.result.list,
         translist: res.result.list,
         page: this.state.page + 1,
-        allpage: Math.ceil(res.result.totalCount / this.state.limit),
+        allpage: Math.ceil(res.result.totalCount / this.state.limit)
       });
-    });
-  };
-  nepset = (params) => {
-    this.getNeptrans(params, (res) => {
+    })
+  }
+  nepset = params => {
+    this.getNeptrans(params, res => {
       this.setState({
         loading: false,
         data: res.result.list,
@@ -98,12 +98,12 @@ class Transaction extends React.Component {
         page: this.state.page + 1,
         iswa: false,
         isnpe: true,
-        allpage: Math.ceil(res.result.totalCount / this.state.limit),
+        allpage: Math.ceil(res.result.totalCount / this.state.limit)
       });
-    });
-  };
-  walletset = (params) => {
-    this.getMytrans(params, (res) => {
+    })
+  }
+  walletset = params => {
+    this.getMytrans(params, res => {
       this.setState({
         loading: false,
         data: res.result.list,
@@ -111,73 +111,70 @@ class Transaction extends React.Component {
         page: this.state.page + 1,
         iswa: true,
         isnpe: false,
-        allpage: Math.ceil(res.result.totalCount / this.state.limit),
+        allpage: Math.ceil(res.result.totalCount / this.state.limit)
       });
+    })
+  }
+  getMytrans = (params, callback) => {
+    axios.post('http://localhost:8081', {
+      "id": "51",
+      "method": "GetMyTransactions",
+      "params": params
+    })
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        message.error("查询失败");
+        return;
+      } else {
+        callback(_data);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
+  }
+  getAlltrans = (params, callback) => {
+    axios.post('http://localhost:8081', {
+      "id": "51",
+      "method": "QueryTransactions",
+      "params": params
+    })
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        console.log(_data)
+        message.error("查询失败");
+        return;
+      } else {
+        callback(_data);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
     });
   };
-  getMytrans = (params, callback) => {
-    axios
-      .post("http://localhost:8081", {
-        id: "51",
-        method: "GetMyTransactions",
-        params: params,
-      })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          message.error("查询失败");
-          return;
-        } else {
-          callback(_data);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
-  };
-  getAlltrans = (params, callback) => {
-    axios
-      .post("http://localhost:8081", {
-        id: "51",
-        method: "QueryTransactions",
-        params: params,
-      })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          console.log(_data);
-          message.error("查询失败");
-          return;
-        } else {
-          callback(_data);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
-  };
   getNeptrans = (params, callback) => {
-    axios
-      .post("http://localhost:8081", {
-        id: "51",
-        method: "QueryNep5Transactions",
-        params: params,
-      })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          message.error("查询失败");
-          return;
-        } else {
-          callback(_data);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    axios.post('http://localhost:8081', {
+      "id": "51",
+      "method": "QueryNep5Transactions",
+      "params": params
+    })
+    .then(function (response) {
+      var _data = response.data;
+      if (_data.msgType === -1) {
+        message.error("查询失败");
+        return;
+      } else {
+        callback(_data);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("error");
+    });
   };
   loadMore = () => {
     this.setState({
@@ -185,7 +182,7 @@ class Transaction extends React.Component {
     });
     var _flag = this.madeParams();
     var _params = Object.assign(this.state.params, _flag);
-    this.getAlltrans(_params, (res) => {
+    this.getAlltrans(_params, res => {
       const data = this.state.data.concat(res.result.list);
       const _page = this.state.page + 1;
       this.setState(
@@ -193,20 +190,20 @@ class Transaction extends React.Component {
           data: data,
           translist: data,
           loading: false,
-          page: _page,
+          page: _page
         },
         () => {
-          window.dispatchEvent(new Event("resize"));
-        }
+          window.dispatchEvent(new Event('resize'));
+        },
       );
     });
-  };
+  }
   loadMyMore = () => {
     this.setState({
       loading: true,
     });
     var _params = this.madeParams();
-    this.getMytrans(_params, (res) => {
+    this.getMytrans(_params, res => {
       const data = this.state.data.concat(res.result.list);
       const _page = this.state.page + 1;
       this.setState(
@@ -214,22 +211,22 @@ class Transaction extends React.Component {
           data: data,
           translist: data,
           loading: false,
-          page: _page,
+          page: _page
         },
         () => {
-          window.dispatchEvent(new Event("resize"));
+          window.dispatchEvent(new Event('resize'));
           console.log(this.state);
-        }
+        },
       );
     });
-  };
-  loadNepMore = () => {
+  }
+  loadNepMore = () =>{
     this.setState({
       loading: true,
     });
     var _flag = this.madeParams();
     var _params = Object.assign(this.state.params, _flag);
-    this.getNeptrans(_params, (res) => {
+    this.getNeptrans(_params, res => {
       const data = this.state.data.concat(res.result.list);
       const _page = this.state.page + 1;
       this.setState(
@@ -237,114 +234,72 @@ class Transaction extends React.Component {
           data: data,
           translist: data,
           loading: false,
-          page: _page,
+          page: _page
         },
         () => {
-          window.dispatchEvent(new Event("resize"));
-        }
+          window.dispatchEvent(new Event('resize'));
+        },
       );
     });
-  };
-  visi = () => {
+  }
+  visi = () =>{
     this.setState({
       show: !this.state.show,
     });
-  };
+  }
   show = (e) => {
     return () => {
-      console.log(this.state.show);
-    };
-  };
+      console.log(this.state.show)
+    }
+  }
   render = () => {
     const { t } = this.props;
-    const {
-      translist,
-      local,
-      loading,
-      iswa,
-      isnpe,
-      page,
-      allpage,
-    } = this.state;
-    const loadMore =
-      !loading && page <= allpage ? (
-        <div className="text-c mb3">
-          {iswa ? (
-            <Button type="primary" onClick={this.loadMyMore}>
-              {t("common.load more")}
-            </Button>
-          ) : isnpe ? (
-            <Button type="primary" onClick={this.loadNepMore}>
-              {t("common.load more")}
-            </Button>
-          ) : (
-            <Button type="primary" onClick={this.loadMore}>
-              {t("common.load more")}
-            </Button>
-          )}
-        </div>
-      ) : null;
+    const { translist, local, loading, iswa,isnpe, page, allpage } = this.state;
+    const loadMore = !loading && page <= allpage ? (
+      <div className="text-c mb3">
+        {iswa ? (<Button type="primary" onClick={this.loadMyMore}>{ t('common.load more') }</Button>)
+        :isnpe ? (<Button type="primary" onClick={this.loadNepMore}>{ t('common.load more') }</Button>):
+        (<Button type="primary" onClick={this.loadMore}>{ t('common.load more') }</Button>)}
+      </div>
+    ) : null;
     return (
       <div>
         <List
-          header={
-            <div>
-              <span>{t("blockchain.transaction info")}</span>
-              <span className="float-r">{t("common.time")}</span>
-            </div>
-          }
+          header={<div><span>{t("blockchain.transaction info")}</span><span className="float-r">{t("common.time")}</span></div>}
           footer={<span></span>}
           itemLayout="horizontal"
           loading={loading}
           loadMore={loadMore}
           dataSource={translist}
           className="font-s"
-          renderItem={(item) => (
+          renderItem={item => (
             <List.Item>
               {/* <List.Item.Meta
               title={<span className="succes-light">{t('blockchain.transaction.confirmed')}</span>}
               /> */}
               <div className="trans-detail">
-                <p>
-                  <Link
-                    className="w500 ellipsis hash"
-                    to={local + item.txId}
-                    title={t("show detail")}
-                  >
-                    {item.txId}
-                  </Link>
-                  <span className="float-r">{item.blockTime}</span>
-                </p>
-                {item.transfers[0] ? (
+                  <p>
+                    <Link className="w500 ellipsis hash" to={{ pathname: local + item.txId, title: t("show detail"), 
+                      state: { from: _.get(this.props, 'location.pathname', null) } }}>{item.txId}</Link>
+                    <span className="float-r">{item.blockTime}</span>
+                  </p>
+                  {item.transfers[0]?
                   <div>
-                    <span className="w200 ellipsis">
-                      {item.transfers[0].fromAddress
-                        ? item.transfers[0].fromAddress
-                        : "--"}
-                    </span>
+                    <span className="w200 ellipsis">{item.transfers[0].fromAddress ? item.transfers[0].fromAddress : "--"}</span>
                     <SwapRightOutlined />
-                    <span className="w200 ellipsis">
-                      {item.transfers[0].toAddress
-                        ? item.transfers[0].toAddress
-                        : "--"}
-                    </span>
-                    <span className="float-r">
-                      <span className="trans-amount">
-                        {item.transfers[0].amount}
-                      </span>
-                      {item.transfers[0].symbol}
-                    </span>
+                    <span className="w200 ellipsis" >{item.transfers[0].toAddress ? item.transfers[0].toAddress : "--"}</span>
+                    <span className="float-r"><span className="trans-amount">{item.transfers[0].amount}</span>{item.transfers[0].symbol}</span>
                   </div>
-                ) : null}
+                  :null}
               </div>
             </List.Item>
           )}
-        />
+          />
         {/* <Searcharea show={this.show()} />
         <div className="pv1"></div> */}
       </div>
     );
-  };
+  }
 }
 
 export default Transaction;

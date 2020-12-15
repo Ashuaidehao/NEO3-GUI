@@ -34,24 +34,20 @@ namespace Neo.Common.Utility
             }
 
             var transfers = new List<TransferNotifyItem>();
-            using var exeResult = ApplicationEngine.Run(tx.Script, tx, testMode: true);
+            using var exeResult = tx.Script.RunTestMode(null, tx);
             if (exeResult.Notifications.NotEmpty())
             {
                 foreach (var notification in exeResult.Notifications)
                 {
-                    if (notification.State is VmArray notifyArray && notifyArray.Count == 4)
+                    var transfer = notification.ConvertToTransfer();
+                    if (transfer == null)
                     {
-                        var transfer = notifyArray.GetTransferNotify(notification.ScriptHash);
-                        if (transfer == null)
-                        {
-                            continue;
-                        }
-
-                        var asset = AssetCache.GetAssetInfo(notification.ScriptHash);
-                        transfer.Symbol = asset.Symbol;
-                        transfer.Decimals = asset.Decimals;
-                        transfers.Add(transfer);
+                        continue;
                     }
+                    var asset = AssetCache.GetAssetInfo(transfer.Asset);
+                    transfer.Symbol = asset.Symbol;
+                    transfer.Decimals = asset.Decimals;
+                    transfers.Add(transfer);
                 }
             }
             SaveTransfer(tx, transfers);
