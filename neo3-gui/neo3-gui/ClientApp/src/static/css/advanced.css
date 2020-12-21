@@ -52,3 +52,13 @@ textarea.ant-input::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.1);
   border-radius: 10px;
 }
+
+
+.committe-title .ant-tabs-tab-active,
+.ant-tabs-nav .ant-tabs-tab:hover {
+  color: #00af92;
+}
+
+.committe-title .ant-tabs-ink-bar {
+  background-color: #00af92;
+}
