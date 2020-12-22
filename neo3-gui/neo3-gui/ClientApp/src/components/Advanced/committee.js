@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import _ from 'lodash';
 import "../../static/css/advanced.css";
 import '../../static/css/trans.css';
-import { Layout, Tabs, Row, Col, Modal, Button,Input,Select,Form,InputNumber } from 'antd';
-import { Statistic, Button,Slider,InputNumber } from 'antd';
+import { Layout, Tabs,message, Row, Col, Modal, Button,Input,Select,Form,InputNumber } from 'antd';
+import { Statistic,Slider } from 'antd';
 import { withRouter } from "react-router-dom";
 import Sync from '../sync';
 import { observer, inject } from "mobx-react";
@@ -69,6 +69,11 @@ class AdvancedCommittee extends React.Component {
       visible: false,
     });
   };
+  handleCancel = () => {
+    this.setState({
+      visible: false,
+    });
+  };
   changeDialog=(ele)=>{
     const { t } = this.props;
     return () => {
@@ -77,31 +82,31 @@ class AdvancedCommittee extends React.Component {
         case 0:
           this.setState({
             title: "交易数设置",
-            children: <TransNumber account={accounts} />,
+            children: <TransNumber account={accounts} func={this.handleCancel}/>,
           });
           break;
         case 1:
           this.setState({
             title: "区块大小设置",
-            children: <BlockSize account={accounts}/>,
+            children: <BlockSize account={accounts} func={this.handleCancel}/>,
           });
           break;
         case 2:
           this.setState({
             title: "区块系统费设置",
-            children: <BlockFee account={accounts}/>,
+            children: <BlockFee account={accounts} func={this.handleCancel}/>,
           });
           break;
         case 3:
           this.setState({
             title: "字节费用设置",
-            children: <ByteFee account={accounts}/>,
+             children: <ByteFee account={accounts} func={this.handleCancel}/>,
           });
           break;
         case 4:
           this.setState({
             title: "账号锁定设置",
-            children: <AccountState account={accounts} />,
+            children: <AccountState account={accounts} func={this.handleCancel}/>,
           });
           break;
       }
@@ -204,8 +209,8 @@ class AdvancedCommittee extends React.Component {
           onCancel={this.hideModal}
           footer={null}
         >
-          {this.state.children}
-        </Modal>
+        {this.state.children}
+      </Modal>
     </Layout>
     );
   }
@@ -213,66 +218,49 @@ class AdvancedCommittee extends React.Component {
 
 export default AdvancedCommittee;
 
-const TransNumber = ({account}) => {
+const TransNumber = ({account,func}) => {
   const [form] = Form.useForm();
-  const [setInput, changeInput] = useState();
-  const onChange = value => {
-    changeInput(value)
-  };
-  const handleChange = (value) => {
-    console.log(`selected ${value}`);
-  }
+  const { t } = useTranslation();
   const setTrans = values =>{
     console.log(values)
-    // let params = {
-    //   "limit":values.limit,
-    //   "publicKeys":values.publicKeys
-    // };
-    // post("CreateMultiAddress",params).then(res =>{
-    //   var _data = res.data;
-    //   if (_data.msgType === -1) {
-    //     message.error(<Trans>wallet.signature multi error</Trans>);
-    //     return;
-    //   } else {
-    //     func();
-    //     Modal.success({
-    //       width: 600,
-    //       title: <Trans>wallet.signature multi success</Trans>,
-    //       content: (
-    //           <div className="show-pri">
-    //           <p><Trans>hash</Trans> ：{_data.result.scriptHash}</p>
-    //           <p><Trans>wallet.address multi sign</Trans> ：{_data.result.address}</p>
-    //           </div>
-    //       ),
-    //       okText:<Trans>button.ok</Trans>
-    //     });
-    //     form.resetFields();
-    //   }
-    // }).catch(function (error) {
-    //   console.log(error);
-    // });
+    let params = {
+      "max":values.max,
+      "signers":values.signers
+    };
+    post("SetMaxTransactionsPerBlock",params).then(res =>{
+      var _data = res.data;
+      console.log(_data)
+      if (_data.msgType === -1) {
+        ModalError(_data,"交易上限设置失败");
+      } else {
+        ModalSuccess(_data,"交易上限设置成功")
+        form.resetFields();
+        func();
+      }
+    }).catch(function (error) {
+      console.log(error);
+    });
   }
   if(account.length === 0) return null;
   return (
-    <Row>
+    <div className="w400">
       <Form className="neo-form" form={form} onFinish={setTrans}>
         <h4>指定新的上限</h4>
-        <Form.Item name="limit" rules={[{ required: true, message: t("wallet.please input signature min")}]}>
+        <Form.Item name="max" rules={[{ required: true, message: t("wallet.please input signature min")}]}>
           <InputNumber
-            placeholder={t("wallet.signature min input")}
+            placeholder={t("指定新的上限")}
             parser={value => value.replace(/[^0-9]/g, '')}
-            step={1}  min={1}
+            step={1}  max={65534}
             style={{ width: '100%'}}/>
         </Form.Item>
         <h4>选择签名的地址</h4>
-        <Form.Item name="publicKeys" rules={[{ required: true, message: t("wallet.please input public key") }]}>
+        <Form.Item name="signers" rules={[{ required: true, message: t("wallet.please input public key") }]}>
           <Select
             placeholder={t("wallet.signature public")}
             mode="tags"
-            onChange={handleChange}
             className="multiadd"
             style={{ width: '100%'}}>
-            {account.length>0?accounts.map((item)=>{
+            {account.length>0?account.map((item)=>{
               return(
                 <Option key={item.address}>{item.address}</Option>
               )
@@ -280,161 +268,314 @@ const TransNumber = ({account}) => {
           </Select>
         </Form.Item>
         <Form.Item>
-          <Button style={{ 'width': '100%' }} type="primary" htmlType="submit" disabled={sigBTdisabled}>{t("button.confirm")}</Button>
+          <Button style={{ 'width': '100%' }} type="primary" htmlType="submit">{t("button.confirm")}</Button>
         </Form.Item>
       </Form>
-    </Row>
+    </div>
   )
 };
 
-const BlockSize = ({ hashdetail }) => {
+const BlockSize = ({account,func}) => {
+  const [form] = Form.useForm();
   const { t } = useTranslation();
-  const [setInput, changeInput] = useState();
-  const onChange = value => {
-    changeInput(value)
-  };
-  const handleChange = (value) => {
-    console.log(`selected ${value}`);
-  }  
+  const setTrans = values =>{
+    console.log(values)
+    let params = {
+      "max":values.max,
+      "signers":values.signers
+    };
+    post("SetMaxBlockSize",params).then(res =>{
+      var _data = res.data;
+      console.log(_data)
+      if (_data.msgType === -1) {
+        ModalError(_data,"区块上限设置失败");
+      } else {
+        ModalSuccess(_data,"区块上限设置成功")
+        form.resetFields();
+        func();
+      }
+    }).catch(function (error) {
+      console.log(error);
+    });
+  }
+  if(account.length === 0) return null;
   return (
-    <Row>
-      <Col span={16}>
-        <Select mode="tags" style={{ width: '100%' }} onChange={handleChange} tokenSeparators={[',']}>
-          <Option key={1}>1</Option>
-          <Option key={2}>2</Option>
-          <Option key={3}>3</Option>
-          <Option key={4}>4</Option>
-        </Select>
-      </Col>
-      <Col span={12}>
-        <Slider
-          min={1}
-          max={20}
-          onChange={onChange}
-          value={typeof setInput === 'number' ? setInput : 0}
-        />
-      </Col>
-      <Col span={4}>
-        <InputNumber
-          min={1}
-          max={100}
-          style={{ margin: '0 16px' }}
-          value={setInput}
-          onChange={onChange}
-        />
-      </Col>
-    </Row>
-  );
+    <div className="w400">
+      <Form className="neo-form" form={form} onFinish={setTrans}>
+        <h4>指定新的区块大小上限</h4>
+        <Form.Item name="max" rules={[{ required: true, message: t("wallet.please input signature min")}]}>
+          <InputNumber
+            placeholder={t("指定新的上限")}
+            parser={value => value.replace(/[^0-9]/g, '')}
+            step={1}  max={33554432}
+            style={{ width: '100%'}}/>
+        </Form.Item>
+        <h4>选择签名的地址</h4>
+        <Form.Item name="signers" rules={[{ required: true, message: t("wallet.please input public key") }]}>
+          <Select
+            placeholder={t("wallet.signature public")}
+            mode="tags"
+            className="multiadd"
+            style={{ width: '100%'}}>
+            {account.length>0?account.map((item)=>{
+              return(
+                <Option key={item.address}>{item.address}</Option>
+              )
+            }):null}
+          </Select>
+        </Form.Item>
+        <Form.Item>
+          <Button style={{ 'width': '100%' }} type="primary" htmlType="submit">{t("button.confirm")}</Button>
+        </Form.Item>
+      </Form>
+    </div>
+  )
 };
 
-const BlockFee = ({ transfers }) => {
+const BlockFee = ({account,func}) => {
+  const [form] = Form.useForm();
   const { t } = useTranslation();
-  const [setInput, changeInput] = useState();
-  const onChange = value => {
-    changeInput(value)
-  };
-  const handleChange = (value) => {
-    console.log(`selected ${value}`);
-  }  
+  const setTrans = values =>{
+    console.log(values)
+    let params = {
+      "max":values.max,
+      "signers":values.signers
+    };
+    post("SetMaxBlockSystemFee",params).then(res =>{
+      var _data = res.data;
+      console.log(_data)
+      if (_data.msgType === -1) {
+        ModalError(_data,"区块系统费上限设置失败");
+      } else {
+        ModalSuccess(_data,"区块系统费上限设置成功")
+        form.resetFields();
+        func();
+      }
+    }).catch(function (error) {
+      console.log(error);
+    });
+  }
+  if(account.length === 0) return null;
   return (
-    <Row>
-      <Col span={16}>
-        <Select mode="tags" style={{ width: '100%' }} onChange={handleChange} tokenSeparators={[',']}>
-          <Option key={1}>1</Option>
-          <Option key={2}>2</Option>
-          <Option key={3}>3</Option>
-          <Option key={4}>4</Option>
-        </Select>
-      </Col>
-      <Col span={12}>
-        <Slider
-          min={1}
-          max={20}
-          onChange={onChange}
-          value={typeof setInput === 'number' ? setInput : 0}
-        />
-      </Col>
-      <Col span={4}>
-        <InputNumber
-          min={1}
-          max={100}
-          style={{ margin: '0 16px' }}
-          value={setInput}
-          onChange={onChange}
-        />
-      </Col>
-    </Row>
-  );
+    <div className="w400">
+      <Form className="neo-form" form={form} onFinish={setTrans}>
+        <h4>指定区块系统费上限</h4>
+        <Form.Item name="max" rules={[{ required: true, message: t("wallet.please input signature min")}]}>
+          <InputNumber
+            placeholder={t("指定区块系统费上限")}
+            parser={value => value.replace(/[^0-9]/g, '')}
+            step={1}  max={33554432}
+            style={{ width: '100%'}}/>
+        </Form.Item>
+        <h4>选择签名的地址</h4>
+        <Form.Item name="signers" rules={[{ required: true, message: t("wallet.please input public key") }]}>
+          <Select
+            placeholder={t("wallet.signature public")}
+            mode="tags"
+            className="multiadd"
+            style={{ width: '100%'}}>
+            {account.length>0?account.map((item)=>{
+              return(
+                <Option key={item.address}>{item.address}</Option>
+              )
+            }):null}
+          </Select>
+        </Form.Item>
+        <Form.Item>
+          <Button style={{ 'width': '100%' }} type="primary" htmlType="submit">{t("button.confirm")}</Button>
+        </Form.Item>
+      </Form>
+    </div>
+  )
 };
 
-const ByteFee = ({ transfers }) => {
+const ByteFee = ({account,func}) => {
+  const [form] = Form.useForm();
   const { t } = useTranslation();
-  const [setInput, changeInput] = useState();
-  const onChange = value => {
-    changeInput(value)
-  };
-  const handleChange = (value) => {
-    console.log(`selected ${value}`);
-  }  
+  const setTrans = values =>{
+    console.log(values)
+    let params = {
+      "fee":values.fee,
+      "signers":values.signers
+    };
+    post("SetFeePerByte",params).then(res =>{
+      var _data = res.data;
+      console.log(_data)
+      if (_data.msgType === -1) {
+        ModalError(_data,"每字节费用设置失败");
+      } else {
+        ModalSuccess(_data,"每字节费用设置成功")
+        form.resetFields();
+        func();
+      }
+    }).catch(function (error) {
+      console.log(error);
+    });
+  }
+  if(account.length === 0) return null;
   return (
-    <Row>
-      <Col span={12}>
-        <Slider
-          min={1}
-          max={20}
-          onChange={onChange}
-          value={typeof setInput === 'number' ? setInput : 0}
-        />
-      </Col>
-      <Col span={4}>
-        <InputNumber
-          min={1}
-          max={100}
-          style={{ margin: '0 16px' }}
-          value={setInput}
-          onChange={onChange}
-        />
-      </Col>
-      <Col span={16}>
-        <Select mode="tags" style={{ width: '100%' }} onChange={handleChange} tokenSeparators={[',']}>
-          <Option key={1}>1</Option>
-          <Option key={2}>2</Option>
-          <Option key={3}>3</Option>
-          <Option key={4}>4</Option>
-        </Select>
-      </Col>
-    </Row>
-  );
+    <div className="w400">
+      <Form className="neo-form" form={form} onFinish={setTrans}>
+        <h4>指定每字节费用</h4>
+        <Form.Item name="fee" rules={[{ required: true, message: t("wallet.please input signature min")}]}>
+          <InputNumber
+            placeholder={t("指定每字节费用")}
+            parser={value => value.replace(/[^0-9]/g, '')}
+            step={1}  max={33554432}
+            style={{ width: '100%'}}/>
+        </Form.Item>
+        <h4>选择签名的地址</h4>
+        <Form.Item name="signers" rules={[{ required: true, message: t("wallet.please input public key") }]}>
+          <Select
+            placeholder={t("wallet.signature public")}
+            mode="tags"
+            className="multiadd"
+            style={{ width: '100%'}}>
+            {account.length>0?account.map((item)=>{
+              return(
+                <Option key={item.address}>{item.address}</Option>
+              )
+            }):null}
+          </Select>
+        </Form.Item>
+        <Form.Item>
+          <Button style={{ 'width': '100%' }} type="primary" htmlType="submit">{t("button.confirm")}</Button>
+        </Form.Item>
+      </Form>
+    </div>
+  )
 };
 
-const AccountState = ({ transfers }) => {
+
+const AccountState = ({account,func}) => {
+  const [form] = Form.useForm();
   const { t } = useTranslation();
-  const [setInput, changeInput] = useState();
-  const onChange = value => {
-    changeInput(value)
-  };
-  const handleChange = (value) => {
-    console.log(`selected ${value}`);
-  }  
+  const [locked, changelocked] = useState(true);
+  const onBlur = () => {
+    var account = form.getFieldValue().account;
+    console.log(account)
+    const param = {"account":form.getFieldValue().account};
+    post("IsBlocked",param).then(result =>{
+      changelocked(result.data.result)
+    });
+  }
+  const setTrans = values =>{
+    console.log(values)
+    let params = {
+      "account":values.account,
+      "signers":values.signers
+    };
+    post("BlockAccount",params).then(res =>{
+      var _data = res.data;
+      console.log(_data)
+      if (_data.msgType === -1) {
+        ModalError(_data,"每字节费用设置失败");
+      } else {
+        ModalSuccess(_data,"每字节费用设置成功")
+        form.resetFields();
+        func();
+      }
+    }).catch(function (error) {
+      console.log(error);
+    });
+  }
+  if(account.length === 0) return null;
   return (
-    <Row>
-      <Col span={16}>
-        <Input
-          min={1}
-          max={100}
-          style={{ margin: '0 16px' }}
-          value={setInput}
-          onChange={onChange}
-        />
-      </Col>
-      <Col span={16}>
-        <Select mode="tags" style={{ width: '100%' }} onChange={handleChange} tokenSeparators={[',']}>
-          <Option key={1}>1</Option>
-          <Option key={2}>2</Option>
-          <Option key={3}>3</Option>
-          <Option key={4}>4</Option>
-        </Select>
-      </Col>
-    </Row>
-  );
+    <div className="w400">
+      <Form className="neo-form" form={form} onFinish={setTrans}>
+        <h4>修改账号状态</h4>
+        <Form.Item 
+          name="account"
+          rules={[{
+            pattern:"^[N][1-9A-HJ-NP-Za-km-z]{32,34}$",
+            message: t("wallet.address format"),
+          },{
+            required: true,
+            message: t("wallet.please input signature min")
+          }]}>
+          <Input
+            placeholder={t("输入想要修改的账号")}
+            onBlur={onBlur}
+            style={{ width: '100%'}}/>
+        </Form.Item>
+        <h4>选择签名的地址</h4>
+        <Form.Item name="signers" rules={[{ required: true, message: t("wallet.please input public key") }]}>
+          <Select
+            placeholder={t("wallet.signature public")}
+            mode="tags"
+            className="multiadd"
+            style={{ width: '100%'}}>
+            {account.length>0?account.map((item)=>{
+              return(
+                <Option key={item.address}>{item.address}</Option>
+              )
+            }):null}
+          </Select>
+        </Form.Item>
+        <Form.Item>
+          {locked?
+          <Button type="primary" htmlType="submit" style={{ width: '100%'}}>{t("解锁地址")}</Button>:
+          <Button type="primary" htmlType="submit" style={{ width: '100%'}}>{t("锁定地址")}</Button>}
+        </Form.Item>
+      </Form>
+    </div>
+  )
 };
+
+const ModalError = (data,title) => {
+  Modal.error({
+    width: 600,
+    title: title,
+    content: (
+      <div className="show-pri">
+        <p><Trans>error</Trans> ：{data.error.message}</p>
+      </div>
+    ),
+    okText:<Trans>button.ok</Trans>
+  });
+};
+
+const ModalSuccess = (data,title) => {
+  Modal.success({
+    width: 600,
+    title: title,
+    content: (
+        <div className="show-pri">
+          <p><Trans>hash</Trans> ：{data.result.txId}</p>
+        </div>
+    ),
+    okText:<Trans>button.ok</Trans>
+  });
+};
+
+// const eeee = ({ transfers }) => {
+//   const { t } = useTranslation();
+//   const [setInput, changeInput] = useState();
+//   const onChange = value => {
+//     changeInput(value)
+//   };
+//   const handleChange = (value) => {
+    // console.log(`selected ${value}`);
+//   }  
+//   return (
+//     <Row>
+//       <Col span={16}>
+//         <Input
+//           min={1}
+//           max={100}
+//           style={{ margin: '0 16px' }}
+//           value={setInput}
+//           onChange={onChange}
+//         />
+//       </Col>
+//       <Col span={16}>
+//         <Select mode="tags" style={{ width: '100%' }} onChange={handleChange} tokenSeparators={[',']}>
+//           <Option key={1}>1</Option>
+//           <Option key={2}>2</Option>
+//           <Option key={3}>3</Option>
+//           <Option key={4}>4</Option>
+//         </Select>
+//       </Col>
+//     </Row>
+//   );
+// };
