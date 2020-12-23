@@ -76,7 +76,7 @@ class Contractinvoke extends React.Component{
         this.refs.formRef.resetFields()
         this.setState({
           hash:res.contractHash,
-          methods:res.methods,
+          methods:res.manifest.abi.methods,
           params:[],
           tresult:""
         })
@@ -97,8 +97,11 @@ class Contractinvoke extends React.Component{
       .then(function (response) {
         var _data = response.data;
         _this.setState({loading:false});
+        console.log(_data)
 
         if(_data.msgType === -1){
+          console.log(-1)
+  
           _this.setState({
             methods:[],
             params:[],
@@ -111,7 +114,9 @@ class Contractinvoke extends React.Component{
           message.info(t("contract.search fail"));
           return;
         }else if(_data.msgType === 3){
-          callback(_data.result.manifest.abi)
+          
+          console.log(3)
+          callback(_data.result)
         }
       })
       .catch(function (error) {
@@ -149,6 +154,11 @@ class Contractinvoke extends React.Component{
         if(_type.search(/(hash160)|(bytearray)/g) !== -1 && typeof _item.value  === "object"){
           _item.type = _item.value.type;
           _item.value = _item.value.string;
+        }
+
+        if(_type === 'any'){
+          _item.type = 'String';
+          _item.value = _item.value;
         }
         
         console.log(_item);
@@ -373,7 +383,9 @@ class Contractinvoke extends React.Component{
                           // getValueFromEvent={this.handleparam}
                           onSearch={this.makeArray}
                         />:<Input placeholder={item.type}/>} */}
-                        <Input placeholder={item.type}/>
+                        {item.type.toLowerCase() === 'any'?
+                        <Input placeholder="String"/>:
+                        <Input placeholder={item.type}/>}
                       </Form.Item>
                       }
                     </div>
