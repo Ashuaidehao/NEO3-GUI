@@ -9,7 +9,6 @@ using Neo.Network.P2P;
 using Neo.Network.P2P.Payloads;
 using Neo.SmartContract;
 using Neo.SmartContract.Native;
-using Neo.SmartContract.Native.Designate;
 using Neo.VM;
 
 namespace Neo.Services.ApiServices
@@ -33,7 +32,7 @@ namespace Neo.Services.ApiServices
             }
             using var snapshot = Blockchain.Singleton.GetSnapshot();
             var points = NativeContract.NEO.GetCommittee(snapshot);
-            var committees= points.Select(p => p.ToVerificationContract().Address).ToList();
+            var committees = points.Select(p => p.ToVerificationContract().Address).ToList();
             return CurrentWallet.GetAccounts().Any(a => committees.Contains(a.Address));
         }
 
@@ -75,7 +74,7 @@ namespace Neo.Services.ApiServices
             });
             using var snapshot = Blockchain.Singleton.GetSnapshot();
             using var sb = new ScriptBuilder();
-            sb.EmitAppCall(NativeContract.Designate.Hash, "designateAsRole", paras.ToArray());
+            sb.EmitAppCall(NativeContract.Designation.Hash, "designateAsRole", paras.ToArray());
 
             if (signers == null)
             {
@@ -92,11 +91,12 @@ namespace Neo.Services.ApiServices
         /// query Designated Nodes by Role
         /// </summary>
         /// <param name="role"></param>
+        /// <param name="height"></param>
         /// <returns></returns>
-        public async Task<object> GetNodesByRole(Role role)
+        public async Task<object> GetNodesByRole(Role role, uint? height = null)
         {
             using var snapshot = Blockchain.Singleton.GetSnapshot();
-            var points = NativeContract.Designate.GetDesignatedByRole(snapshot, role);
+            var points = NativeContract.Designation.GetDesignatedByRole(snapshot, role, height ?? snapshot.Height);
             return points?.Select(p => p.ToString()).ToList();
         }
 

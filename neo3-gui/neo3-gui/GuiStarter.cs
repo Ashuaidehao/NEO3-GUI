@@ -23,7 +23,7 @@ namespace Neo
             ExecuteResultLogTracker = new ExecuteResultLogTracker();
             ExecuteResultScanner = new ExecuteResultScanner();
             ConsensusScanner = new ConsensusScanner();
-            ConsensusScanner.StartLoop();
+            //ConsensusScanner.StartLoop();
             Task.Run(() => ExecuteResultScanner.Start());
         }
 

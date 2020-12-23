@@ -46,33 +46,42 @@ namespace Neo.Common.Scanners
 
         private static void UpdateConsensusBalance()
         {
-            if (Blockchain.Singleton.Height > 0)
+            try
             {
-                using var snapshot = Blockchain.Singleton.GetSnapshot();
-                var validators = NativeContract.NEO.GetCommittee(snapshot);
-                var addresses = new List<UInt160>();
-                foreach (var ecPoint in validators)
+                if (Blockchain.Singleton.Height > 0)
                 {
-                    if (!_consensusMap.ContainsKey(ecPoint))
+                    using var snapshot = Blockchain.Singleton.GetSnapshot();
+                    var validators = NativeContract.NEO.GetCommittee(snapshot);
+                    var addresses = new List<UInt160>();
+                    foreach (var ecPoint in validators)
                     {
-                        _consensusMap[ecPoint] = ecPoint.ToVerificationContract().ScriptHash;
+                        if (!_consensusMap.ContainsKey(ecPoint))
+                        {
+                            _consensusMap[ecPoint] = ecPoint.ToVerificationContract().ScriptHash;
+                        }
+
+                        addresses.Add(_consensusMap[ecPoint]);
+                    }
+                    using var db = new TrackDB();
+                    //var neobalances = addresses.GetBalanceOf(NativeContract.NEO.Hash, snapshot);
+                    var balances = addresses.GetBalanceOf(NativeContract.GAS.Hash, snapshot);
+
+                    for (var index = 0; index < addresses.Count; index++)
+                    {
+                        var address = addresses[index];
+                        //db.UpdateBalance(address, NativeContract.NEO.Hash, neobalances[index].Value, snapshot.Height);
+                        db.UpdateBalance(address, NativeContract.GAS.Hash, balances[index].Value, snapshot.Height);
                     }
 
-                    addresses.Add(_consensusMap[ecPoint]);
+                    db.Commit();
                 }
-                using var db = new TrackDB();
-                //var neobalances = addresses.GetBalanceOf(NativeContract.NEO.Hash, snapshot);
-                var balances = addresses.GetBalanceOf(NativeContract.GAS.Hash, snapshot);
-
-                for (var index = 0; index < addresses.Count; index++)
-                {
-                    var address = addresses[index];
-                    //db.UpdateBalance(address, NativeContract.NEO.Hash, neobalances[index].Value, snapshot.Height);
-                    db.UpdateBalance(address, NativeContract.GAS.Hash, balances[index].Value, snapshot.Height);
-                }
-
-                db.Commit();
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+         
         }
 
 

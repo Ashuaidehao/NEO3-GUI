@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Neo.SmartContract;
 
 namespace Neo.Common.Storage.LevelDBModules
 {
@@ -13,5 +14,7 @@ namespace Neo.Common.Storage.LevelDBModules
         public UInt160 To { get; set; }
         public BigInteger Amount { get; set; }
         public UInt160 Asset { get; set; }
+        public UInt256 TxId { get; set; }
+        public TriggerType Trigger { get; set; }
     }
 }

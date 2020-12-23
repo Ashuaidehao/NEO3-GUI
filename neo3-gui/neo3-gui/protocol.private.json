@@ -1,7 +1,8 @@
 {
   "ProtocolConfiguration": {
-    "Magic": 666666,
+    "Magic": 55555,
     "MillisecondsPerBlock": 15000,
+    "MaxTraceableBlocks": 2102400,
     "StandbyCommittee": [
       "023592bca183fda6e86f2248299b8baa63405ba83beb5e0c5027b304a809fc423d"
     ],

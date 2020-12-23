@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Neo.Common.Storage;
 using Neo.Common.Storage.LevelDBModules;
+using Neo.Common.Storage.SQLiteModules;
 using Neo.Common.Utility;
 using Neo.Ledger;
 using Neo.Network.P2P.Payloads;
@@ -73,15 +74,10 @@ namespace Neo.Common.Scanners
             }
 
             var block = Blockchain.Singleton.GetBlock(blockHeight);
-            if (block.Transactions.IsEmpty())
-            {
-                _db.SetMaxSyncIndex(blockHeight);
-                _db.Commit();
-                return true;
-            }
-
             var blockTime = block.Timestamp.FromTimestampMS();
+            SyncContracts(blockHeight, blockTime);
 
+            var balanceChanges = new HashSet<(UInt160 account, UInt160 asset)>();
             foreach (var transaction in block.Transactions)
             {
                 _db.AddTransaction(new TransactionInfo()
@@ -91,15 +87,6 @@ namespace Neo.Common.Scanners
                     Sender = transaction.Sender,
                     Time = blockTime,
                 });
-            }
-
-            SyncContracts(blockHeight, blockTime);
-
-            var transfers = new List<TransferInfo>();
-            var balanceChanges = new HashSet<(UInt160 account, UInt160 asset)>();
-
-            foreach (var transaction in block.Transactions)
-            {
                 balanceChanges.Add((transaction.Sender, NativeContract.GAS.Hash));
                 var invokeMethods = GetInvokeMethods(transaction);
                 if (invokeMethods.NotEmpty())
@@ -109,29 +96,35 @@ namespace Neo.Common.Scanners
                         _db.AddInvokeTransaction(transaction.Hash, invokeMethod.contract, string.Join(',', invokeMethod.methods));
                     }
                 }
-                var transferItems = _levelDb.GetTransfers(transaction.Hash);
-                if (transferItems.NotEmpty())
+            }
+
+
+
+
+            var transfers = new List<TransferInfo>();
+            var transferItems = _levelDb.GetTransfers(blockHeight);
+            if (transferItems.NotEmpty())
+            {
+                foreach (var item in transferItems)
                 {
-                    foreach (var item in transferItems)
+                    transfers.Add(new TransferInfo()
                     {
-                        transfers.Add(new TransferInfo()
-                        {
-                            BlockHeight = blockHeight,
-                            TxId = transaction.Hash,
-                            From = item.From,
-                            To = item.To,
-                            Amount = item.Amount,
-                            TimeStamp = block.Timestamp,
-                            Asset = item.Asset,
-                        });
-                        if (item.From != null)
-                        {
-                            balanceChanges.Add((item.From, item.Asset));
-                        }
-                        if (item.To != null)
-                        {
-                            balanceChanges.Add((item.To, item.Asset));
-                        }
+                        BlockHeight = blockHeight,
+                        TimeStamp = block.Timestamp,
+                        TxId = item.TxId,
+                        From = item.From,
+                        To = item.To,
+                        Amount = item.Amount,
+                        Asset = item.Asset,
+                        Trigger = item.Trigger,
+                    });
+                    if (item.From != null)
+                    {
+                        balanceChanges.Add((item.From, item.Asset));
+                    }
+                    if (item.To != null)
+                    {
+                        balanceChanges.Add((item.To, item.Asset));
                     }
                 }
             }
@@ -172,28 +165,27 @@ namespace Neo.Common.Scanners
         {
             if (blockHeight == 0)
             {
-                var tx = Blockchain.GenesisBlock.Transactions[0];
-                // create native contract record
-                foreach (NativeContract contract in NativeContract.Contracts)
+                foreach (var nativeContract in NativeContract.Contracts)
                 {
-                    var newContract = new Nep5ContractInfo()
+                    var entity = new Nep5ContractInfo()
                     {
-                        Hash = contract.Hash,
-                        CreateTxId = tx.Hash,
+                        Name = nativeContract.Name,
+                        Hash = nativeContract.Hash,
                         CreateTime = blockTime,
                     };
-                    var asset = AssetCache.GetAssetInfoFromDb(newContract.Hash);
-                    if (asset != null)
+                    if (nativeContract is NeoToken neo)
                     {
-                        newContract.Name = asset.Name;
-                        newContract.Symbol = asset.Symbol;
-                        newContract.Decimals = asset.Decimals;
+                        entity.Symbol = neo.Symbol;
+                        entity.Decimals = neo.Decimals;
                     }
-                    _db.CreateContract(newContract);
+                    if (nativeContract is GasToken gas)
+                    {
+                        entity.Symbol = gas.Symbol;
+                        entity.Decimals = gas.Decimals;
+                    }
+                    _db.CreateContract(entity);
                 }
-                return;
             }
-
             var contractEvents = _levelDb.GetContractEvent(blockHeight);
             if (contractEvents.NotEmpty())
             {
