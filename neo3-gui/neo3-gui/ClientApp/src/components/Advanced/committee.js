@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import _ from 'lodash';
 import "../../static/css/advanced.css";
 import '../../static/css/trans.css';
-import { Layout, Tabs,message, Row, Col, Modal, Button,Input,Select,Form,InputNumber } from 'antd';
-import { Statistic,Slider } from 'antd';
+import { Layout, Tabs,message, Row, Col, Modal, Button,Input,Select,Form,InputNumber,Tag } from 'antd';
+import { Statistic } from 'antd';
 import { withRouter } from "react-router-dom";
 import Sync from '../sync';
 import { observer, inject } from "mobx-react";
@@ -27,7 +27,8 @@ class AdvancedCommittee extends React.Component {
       visible: false,
       show: false,
       accounts:[],
-      blocked: true,
+      locked: true,
+      showlocked:false,
       title:"111",
       transnum:0,
       blocksize:0,
@@ -40,24 +41,6 @@ class AdvancedCommittee extends React.Component {
     this.getBlocksize();
     this.getBlockFee();
     this.getByteFee();
-
-    const account = this.props.walletStore.accountlist;
-    console.log(account)
-    
-    const accounts = Array.call([],...this.props.walletStore.accountlist);
-    console.log(accounts);
-
-    const add = []
-    Array.call([],...accounts).map(function (item) {
-      let _item = {...item};
-      add.push(_item);
-      console.log(_item)
-    });
-    console.log(accounts)
-    this.setState({
-      accounts: add,
-    });
-
   }
   showDrawer = () => {
     this.setState({
@@ -81,31 +64,31 @@ class AdvancedCommittee extends React.Component {
       switch (ele) {
         case 0:
           this.setState({
-            title: "交易数设置",
+            title: t("advanced.com-trans"),
             children: <TransNumber account={accounts} func={this.handleCancel}/>,
           });
           break;
         case 1:
           this.setState({
-            title: "区块大小设置",
+            title: t("advanced.com-blocksize"),
             children: <BlockSize account={accounts} func={this.handleCancel}/>,
           });
           break;
         case 2:
           this.setState({
-            title: "区块系统费设置",
+            title: t("advanced.com-blockfee"),
             children: <BlockFee account={accounts} func={this.handleCancel}/>,
           });
           break;
         case 3:
           this.setState({
-            title: "字节费用设置",
+            title: t("advanced.com-bytefee"),
              children: <ByteFee account={accounts} func={this.handleCancel}/>,
           });
           break;
         case 4:
           this.setState({
-            title: "账号锁定设置",
+            title: t("advanced.com-account"),
             children: <AccountState account={accounts} func={this.handleCancel}/>,
           });
           break;
@@ -144,18 +127,33 @@ class AdvancedCommittee extends React.Component {
     });
   }
   searchAdd = ({ target: { value } }) =>{
-    console.log(value)
+    const { t } = this.props;
+    if(value.length<=0) return;
+    
+    this.setState({
+      showlocked:false
+    });
+
     const param = {"account":value};
+    var regex = new RegExp("^[N][1-9A-HJ-NP-Za-km-z]{32,34}$");
+    if(!regex.test(value)){
+      message.error(t("advanced.com-veri-account"));
+      return;
+    }
+
     post("IsBlocked",param).then(result =>{
-      console.log(result.data.result)
-      this.setState({
-        blocked: result.data.result,
-      });
+      console.log(result.data)
+      if(result.data.msgType==3) {
+        this.setState({
+          locked: result.data.result,
+          showlocked:true
+        });
+      }
     });
   }
   render = () => {
     const { t } = this.props;
-    const { transnum, blocksize, blockfee, bytefee, blocked } = this.state;
+    const { transnum, blocksize, blockfee, bytefee, locked,showlocked } = this.state;
     return (
       <Layout className="gui-container">
       <Sync />
@@ -163,42 +161,38 @@ class AdvancedCommittee extends React.Component {
         <Row gutter={[30, 0]} style={{ minHeight: "calc( 100vh - 120px )" }}>
           <Col span={24} className="bg-white pv4">
           <Tabs className="committe-title" defaultActiveKey="1">
-                <TabPane tab={t("交易数设置")} key="1">
-                  <Statistic title="当前交易数上限：" value={transnum} prefix={<RetweetOutlined />}/>
-                  <Button onClick={this.changeDialog(0)}>修改当前交易数上限</Button>
-                </TabPane>
-                <TabPane tab={t("区块大小设置")} key="2">
-                  <Statistic title="当前区块大小上限：" value={blocksize} prefix={<RetweetOutlined />}/>
-                  <Button onClick={this.changeDialog(1)}>修改当前区块大小上限</Button>
-                </TabPane>
-                <TabPane tab={t("区块系统费设置")} key="3">
-                  <Statistic title="当前区块系统费上限：" value={blockfee} prefix={<RetweetOutlined />}/>
-                  <Button onClick={this.changeDialog(2)}>修改当前区块系统费上限</Button>
-                </TabPane>
-                <TabPane tab={t("字节费用设置")} key="4">
-                  <Statistic title="当前区块系统费上限：" value={bytefee} prefix={<RetweetOutlined />}/>
-                  <Button onClick={this.changeDialog(3)}>修改当前区块系统费上限</Button>
-                </TabPane>
-                <TabPane tab={t("账号设置")} key="5">
-                  <h4 className="bolder mb4"></h4>
-                  NLGMSsGTDsLbAfGCBJvNmUMj16kvHHjFpa<br />
-                  NPwTFCHP9Pve6EChLp1HVQq9NTqcUr3PJS<br />
-                  NRppSV6itDBzg8yecamWYEAyJTdkKEQo4i<br />
-                  <Input
-                    placeholder="选择想要查询的地址" 
-                    prefix={<RetweetOutlined />} 
-                    onChange={this.searchAdd}
-                    />
-                  {blocked?
-                  <div className="">
-                    已锁定
-                  </div>:
-                  <div className="">
-                    未锁定-111
-                  </div>}
-                  <Button onClick={this.changeDialog(4)}>修改账号状态</Button>
-                </TabPane>
-              </Tabs>
+            <TabPane tab={t("交易数设置")} key="1">
+              <Statistic title="当前交易数上限：" value={transnum} prefix={<RetweetOutlined />}/>
+              <Button className="mt3" type="primary" onClick={this.changeDialog(0)}>修改当前交易数上限</Button>
+            </TabPane>
+            <TabPane tab={t("区块大小设置")} key="2">
+              <Statistic title="当前区块大小上限：" value={blocksize} prefix={<RetweetOutlined />}/>
+              <Button className="mt3" type="primary" onClick={this.changeDialog(1)}>修改当前区块大小上限</Button>
+            </TabPane>
+            <TabPane tab={t("区块系统费设置")} key="3">
+              <Statistic title="当前区块系统费上限：" value={blockfee} prefix={<RetweetOutlined />}/>
+              <Button className="mt3" type="primary" onClick={this.changeDialog(2)}>修改当前区块系统费上限</Button>
+            </TabPane>
+            <TabPane tab={t("字节费用设置")} key="4">
+              <Statistic title="当前区块系统费上限：" value={bytefee} prefix={<RetweetOutlined />}/>
+              <Button className="mt3" type="primary" onClick={this.changeDialog(3)}>修改当前区块系统费上限</Button>
+            </TabPane>
+            <TabPane tab={t("账号设置")} key="5">
+              <h4 className="bolder mb4">地址锁定查询</h4>
+              <Input
+                placeholder="请输入想要查询的地址" 
+                prefix={<RetweetOutlined />} 
+                onBlur={this.searchAdd}/>
+              {showlocked?<div className="mt4">
+                <span className="para-tag">
+                  地址状态
+                  {locked?<em>已锁定</em>:<em>未锁定</em>}
+                </span>
+              </div>
+              :null}
+              <Button className="mt3" type="primary" onClick={this.changeDialog(4)}>修改账号状态</Button>
+            </TabPane>
+          </Tabs>
           </Col>
         </Row>
       </Content>
@@ -453,8 +447,12 @@ const AccountState = ({account,func}) => {
   const [locked, changelocked] = useState(true);
   const onBlur = () => {
     var account = form.getFieldValue().account;
-    console.log(account)
-    const param = {"account":form.getFieldValue().account};
+    if(account.length<=0) return;
+
+    var regex = new RegExp("^[N][1-9A-HJ-NP-Za-km-z]{32,34}$");
+    if(!regex.test(account))return;
+
+    const param = {"account":account};
     post("IsBlocked",param).then(result =>{
       changelocked(result.data.result)
     });
@@ -469,9 +467,9 @@ const AccountState = ({account,func}) => {
       var _data = res.data;
       console.log(_data)
       if (_data.msgType === -1) {
-        ModalError(_data,"每字节费用设置失败");
+        ModalError(_data,"地址锁定失败");
       } else {
-        ModalSuccess(_data,"每字节费用设置成功")
+        ModalSuccess(_data,"地址锁定成功")
         form.resetFields();
         func();
       }
@@ -498,6 +496,9 @@ const AccountState = ({account,func}) => {
             onBlur={onBlur}
             style={{ width: '100%'}}/>
         </Form.Item>
+        {locked?<div>
+
+        </div>:null}
         <h4>选择签名的地址</h4>
         <Form.Item name="signers" rules={[{ required: true, message: t("wallet.please input public key") }]}>
           <Select
@@ -547,35 +548,3 @@ const ModalSuccess = (data,title) => {
     okText:<Trans>button.ok</Trans>
   });
 };
-
-// const eeee = ({ transfers }) => {
-//   const { t } = useTranslation();
-//   const [setInput, changeInput] = useState();
-//   const onChange = value => {
-//     changeInput(value)
-//   };
-//   const handleChange = (value) => {
-    // console.log(`selected ${value}`);
-//   }  
-//   return (
-//     <Row>
-//       <Col span={16}>
-//         <Input
-//           min={1}
-//           max={100}
-//           style={{ margin: '0 16px' }}
-//           value={setInput}
-//           onChange={onChange}
-//         />
-//       </Col>
-//       <Col span={16}>
-//         <Select mode="tags" style={{ width: '100%' }} onChange={handleChange} tokenSeparators={[',']}>
-//           <Option key={1}>1</Option>
-//           <Option key={2}>2</Option>
-//           <Option key={3}>3</Option>
-//           <Option key={4}>4</Option>
-//         </Select>
-//       </Col>
-//     </Row>
-//   );
-// };

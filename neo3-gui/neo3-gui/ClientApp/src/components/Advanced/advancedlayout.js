@@ -53,14 +53,14 @@ class Advancedlayout extends React.Component {
                 <Link to="/advanced/signature">{t("advanced.signature")}</Link>
               </Menu.Item>
               <Menu.Item key="5">
-                <Link to="/advanced/committee">{t("委员会相关")}</Link>
+                <Link to="/advanced/committee">{t("advanced.committee")}</Link>
               </Menu.Item>
-              <Menu.Item key="6">
+              {/* <Menu.Item key="6">
                 <Link to="/advanced/designrole">{t("指派节点角色")}</Link>
               </Menu.Item>
               <Menu.Item key="7">
                 <Link to="/advanced/getnoderole">{t("根据角色查询节点")}</Link>
-              </Menu.Item>
+              </Menu.Item> */}
             </SubMenu>
           </Menu>
           <MenuDown />

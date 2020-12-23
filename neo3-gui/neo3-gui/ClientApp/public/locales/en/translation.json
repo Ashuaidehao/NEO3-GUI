@@ -11,6 +11,7 @@
 		"candidate step2": "NEO holders vote on candidates",
 		"candidate step3": "The consensus node is selected based on the number of votes and the number of candidates. Elections will consume a certain amount of GAS and will become candidates after the election.",
 		"candidate success": "Candidate success, please check transaction list later",
+		"committee":"委员会设置",
 		"data trans": "Data transform",
 		"dev docs": "Documentation",
 		"dev tools": "Developer tools",

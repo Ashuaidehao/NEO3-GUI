@@ -62,3 +62,7 @@ textarea.ant-input::-webkit-scrollbar-thumb {
 .committe-title .ant-tabs-ink-bar {
   background-color: #00af92;
 }
+
+.ant-btn{
+  padding: 6px 12px;
+}
