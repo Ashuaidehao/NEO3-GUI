@@ -75,7 +75,6 @@ namespace Neo.Common.Scanners
 
             var block = Blockchain.Singleton.GetBlock(blockHeight);
             var blockTime = block.Timestamp.FromTimestampMS();
-            SyncContracts(blockHeight, blockTime);
 
             var balanceChanges = new HashSet<(UInt160 account, UInt160 asset)>();
             foreach (var transaction in block.Transactions)
@@ -98,6 +97,7 @@ namespace Neo.Common.Scanners
                 }
             }
 
+            SyncContracts(blockHeight, blockTime);
 
 
 

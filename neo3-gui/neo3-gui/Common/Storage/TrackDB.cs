@@ -489,6 +489,7 @@ namespace Neo.Common.Storage
                 {
                     ContractId = contract.Id,
                     TxId = contract.CreateTxId,
+                    Methods = "Deployed"
                 });
                 _sqldb.SaveChanges();
             }
@@ -545,6 +546,7 @@ namespace Neo.Common.Storage
                 {
                     ContractId = newContract.Id,
                     TxId = tx,
+                    Methods = "Deployed"
                 });
                 _sqldb.SaveChanges();
                 // migrate balance records to new contract
