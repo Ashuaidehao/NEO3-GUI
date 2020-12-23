@@ -15,6 +15,8 @@ namespace Neo.Common.Analyzers
     {
         private readonly LevelDbContext _levelDb = new LevelDbContext();
 
+        private readonly HashSet<UInt160> _cachedAssets = new HashSet<UInt160>();
+
         public void OnPersist(StoreView snapshot, IReadOnlyList<Blockchain.ApplicationExecuted> applicationExecutedList)
         {
             Header header = snapshot.GetHeader(snapshot.CurrentBlockHash);
@@ -24,30 +26,36 @@ namespace Neo.Common.Analyzers
             var analyzer = new BlockAnalyzer(snapshot.Clone(), header, applicationExecutedList);
             analyzer.Analysis();
 
-            foreach (var analyzerResultInfo in analyzer.AnalysisResult.ExecuteResultInfos)
+            foreach (var analyzerResultInfo in analyzer.Result.ExecuteResultInfos)
             {
-                _levelDb.SaveExecuteLog(analyzerResultInfo);
+                _levelDb.SaveTxExecuteLog(analyzerResultInfo);
             }
-            foreach (var analyzerAssetInfo in analyzer.AnalysisResult.AssetInfos)
+            foreach (var analyzerAssetInfo in analyzer.Result.AssetInfos)
             {
-                _levelDb.SaveAssetInfo(analyzerAssetInfo.Value);
+                if (!_cachedAssets.Contains(analyzerAssetInfo.Key))
+                {
+                    _levelDb.SaveAssetInfo(analyzerAssetInfo.Value);
+                    _cachedAssets.Add(analyzerAssetInfo.Key);
+
+                }
             }
 
-            foreach (var transaction in analyzer.AnalysisResult.Transfers.Where(t => t.Value.NotEmpty()))
+            if (analyzer.Result.Transfers.NotEmpty())
             {
-                _levelDb.SaveTransfers(transaction.Key, transaction.Value);
+                _levelDb.SaveTransfers(snapshot.Height, analyzer.Result.Transfers);
             }
 
-            foreach (var item in analyzer.AnalysisResult.BalanceChangeAccounts)
+            foreach (var item in analyzer.Result.BalanceChangeAccounts)
             {
                 var balance = item.account.GetBalanceOf(item.asset, snapshot);
                 _levelDb.UpdateBalance(item.account, item.asset, balance.Value, snapshot.Height);
             }
 
 
-            if (analyzer.AnalysisResult.ContractChangeEvents.NotEmpty())
+            if (analyzer.Result.ContractChangeEvents.NotEmpty())
             {
-                _levelDb.SaveContractEvent(snapshot.Height, analyzer.AnalysisResult.ContractChangeEvents);
+                _levelDb.SaveContractEvent(snapshot.Height, analyzer.Result.ContractChangeEvents);
+
             }
         }
 

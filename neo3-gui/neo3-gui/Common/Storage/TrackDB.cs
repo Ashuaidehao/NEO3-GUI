@@ -12,6 +12,7 @@ using Neo.Common.Storage.LevelDBModules;
 using Neo.Common.Storage.SQLiteModules;
 using Neo.IO;
 using Neo.Models;
+using Neo.SmartContract.Native;
 
 namespace Neo.Common.Storage
 {
@@ -125,23 +126,23 @@ namespace Neo.Common.Storage
         /// <summary>
         /// will save after call <see cref="Commit"/> method
         /// </summary>
-        /// <param name="newTransaction"></param>
-        public void AddTransfer(TransferInfo newTransaction)
+        /// <param name="transfer"></param>
+        public void AddTransfer(TransferInfo transfer)
         {
-            var from = GetOrCreateAddress(newTransaction.From);
-            var to = GetOrCreateAddress(newTransaction.To);
-            var asset = GetActiveContract(newTransaction.Asset);
+            var from = GetOrCreateAddress(transfer.From);
+            var to = GetOrCreateAddress(transfer.To);
+            var asset = GetActiveContract(transfer.Asset);
 
             var tran = new Nep5TransferEntity
             {
-                BlockHeight = newTransaction.BlockHeight,
-                TxId = newTransaction.TxId.ToBigEndianHex(),
+                BlockHeight = transfer.BlockHeight,
+                TxId = transfer.TxId?.ToBigEndianHex(),
                 FromId = from?.Id,
-                ToId = to.Id,
-
-                Amount = newTransaction.Amount.ToByteArray(),
+                ToId = to?.Id,
+                Amount = transfer.Amount.ToByteArray(),
                 AssetId = asset.Id,
-                Time = newTransaction.TimeStamp.FromTimestampMS(),
+                Time = transfer.TimeStamp.FromTimestampMS(),
+                Trigger = transfer.Trigger,
             };
             _sqldb.Nep5Transactions.Add(tran);
         }
@@ -252,9 +253,6 @@ namespace Neo.Common.Storage
             {
                 var contracts = filter.Contracts.Select(a => a.ToBigEndianHex()).Distinct().ToList();
                 query = query.Where(tx => tx.InvokeContracts.Any(c => contracts.Contains(c.Contract.Hash) && c.Contract.DeleteOrMigrateTxId == null));
-
-                //query = query.Join(_sqldb.InvokeRecords,tx=>tx.TxId,r=>r.TxId,(tx,r)=>new{tx,r}).Where(tx => tx.Any(c => contracts.Contains(c.Contract.Hash)));
-
             }
             var pageList = new PageList<TransactionInfo>();
             var pageIndex = filter.PageIndex <= 0 ? 0 : filter.PageIndex - 1;
@@ -595,7 +593,7 @@ namespace Neo.Common.Storage
 
         private IQueryable<Nep5TransferEntity> BuildQuery(TransferFilter filter)
         {
-            IQueryable<Nep5TransferEntity> query = _sqldb.Nep5Transactions
+            IQueryable<Nep5TransferEntity> query = _sqldb.Nep5Transactions.Where(t => t.TxId != null)
                 .Include(t => t.From)
                 .Include(t => t.To)
                 .Include(t => t.Asset).Where(t => t.Asset.DeleteOrMigrateTxId == null);
@@ -646,9 +644,9 @@ namespace Neo.Common.Storage
             return new TransferInfo()
             {
                 BlockHeight = entity.BlockHeight,
-                TxId = UInt256.Parse(entity.TxId),
+                TxId = entity.TxId != null ? UInt256.Parse(entity.TxId) : null,
                 From = entity.From != null ? UInt160.Parse(entity.From.Hash) : null,
-                To = UInt160.Parse(entity.To.Hash),
+                To = entity.To != null ? UInt160.Parse(entity.To.Hash) : null,
                 Amount = new BigInteger(entity.Amount),
                 Asset = UInt160.Parse(entity.Asset.Hash),
 

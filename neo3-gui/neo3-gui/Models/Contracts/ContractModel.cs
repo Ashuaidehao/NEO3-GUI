@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Neo.Ledger;
+using Neo.SmartContract;
 
 namespace Neo.Models.Contracts
 {
@@ -12,9 +12,6 @@ namespace Neo.Models.Contracts
         public ContractModel(ContractState contract)
         {
             ContractId = contract.Id;
-            ContractHash = contract.ScriptHash;
-            HasStorage = contract.HasStorage;
-            Payable = contract.Payable;
             Script = contract.Script;
             Manifest = new ManifestModel(contract.Manifest);
         }
@@ -23,8 +20,8 @@ namespace Neo.Models.Contracts
 
         public int ContractId { get; set; }
         public UInt160 ContractHash { get; set; }
-        public bool HasStorage { get; set; }
-        public bool Payable { get; set; }
+        //public bool HasStorage { get; set; }
+        //public bool Payable { get; set; }
         public byte[] Script { get; set; }
         public ManifestModel Manifest { get; set; }
 
