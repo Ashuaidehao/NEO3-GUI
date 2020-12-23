@@ -51,7 +51,6 @@ class Walletdetail extends React.Component {
     .then(function (response) {
       var _data = response.data;
       if (_data.msgType === -1) {
-        console.log(t('wallet.require open'));
         return;
       } else {
         if (_data.result.length > 0) {
@@ -75,10 +74,7 @@ class Walletdetail extends React.Component {
     })
     .then(function (response) {
       var _data = response.data;
-      if (_data.msgType === -1) {
-        console.log(t('wallet.require open'));
-        return;
-      }
+      if (_data.msgType === -1) return;
       _this.setState({
         gas: _data.result.unclaimedGas
       })
@@ -115,7 +111,6 @@ class Walletdetail extends React.Component {
     .then(function (response) {
       var _data = response.data;
       if (_data.msgType === -1) {
-        console.log(t('wallet.require open'));
         return;
       } else {
         message.success(t("wallet.delete success"), 2)

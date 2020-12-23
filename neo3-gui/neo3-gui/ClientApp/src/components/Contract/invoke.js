@@ -83,7 +83,6 @@ class Contractinvoke extends React.Component{
         this.refs.formRef.setFieldsValue({
           guihash:this.state.hash
         })
-        console.log(this.refs.formRef)
       });
     }
     searchContract = callback => {
@@ -97,11 +96,7 @@ class Contractinvoke extends React.Component{
       .then(function (response) {
         var _data = response.data;
         _this.setState({loading:false});
-        console.log(_data)
-
         if(_data.msgType === -1){
-          console.log(-1)
-  
           _this.setState({
             methods:[],
             params:[],
@@ -114,8 +109,6 @@ class Contractinvoke extends React.Component{
           message.info(t("contract.search fail"));
           return;
         }else if(_data.msgType === 3){
-          
-          console.log(3)
           callback(_data.result)
         }
       })
@@ -160,8 +153,6 @@ class Contractinvoke extends React.Component{
           _item.type = 'String';
           _item.value = _item.value;
         }
-        
-        console.log(_item);
         
         if(_type === 'array'){
           _item.value = JSON.parse(_item.value);
@@ -265,12 +256,7 @@ class Contractinvoke extends React.Component{
       });
     }
     handleparam = (val) =>{
-      console.log(val);
-      console.log(JSON.stringify(val))
       if(val.length <= 0) return "";
-      // this.refs.formRef.setFieldsValue({
-      //   tresult:this.state.tresult
-      // });
       this.handleCancel()
       return JSON.stringify(val);
     }
