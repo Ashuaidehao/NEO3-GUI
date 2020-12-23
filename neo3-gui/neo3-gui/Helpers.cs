@@ -32,7 +32,6 @@ using Neo.Persistence;
 using Neo.Services;
 using Neo.SmartContract;
 using Neo.SmartContract.Native;
-using Neo.SmartContract.Native.Tokens;
 using Neo.VM;
 using Neo.VM.Types;
 using Neo.Wallets;
@@ -429,7 +428,7 @@ namespace Neo
                 {
                     return AccountType.Standard;
                 }
-                if (snapshot.Contracts.TryGet(account.Contract.ScriptHash) != null)
+                if (snapshot.GetContract(account.Contract.ScriptHash) != null)
                 {
                     return AccountType.DeployedContract;
                 }
@@ -444,7 +443,7 @@ namespace Neo
         /// <param name="asset"></param>
         /// <param name="snapshot"></param>
         /// <returns></returns>
-        public static List<BigDecimal> GetNativeBalanceOf<T>(this IEnumerable<UInt160> addresses, Nep5Token<T> asset, StoreView snapshot) where T : AccountState, new()
+        public static List<BigDecimal> GetNativeBalanceOf<T>(this IEnumerable<UInt160> addresses, Nep17Token<T> asset, StoreView snapshot) where T : AccountState, new()
         {
             var balances = new List<BigDecimal>();
             foreach (var account in addresses)
@@ -476,7 +475,7 @@ namespace Neo
         /// <param name="assetId"></param>
         /// <param name="snapshot"></param>
         /// <returns></returns>
-        public static List<BigDecimal> GetBalanceOf(this IEnumerable<UInt160> addresses, UInt160 assetId, StoreView snapshot)
+        public static List<BigDecimal> GetBalanceOf(this IEnumerable<UInt160> addresses, UInt160 assetId, SnapshotView snapshot)
         {
             var assetInfo = AssetCache.GetAssetInfo(assetId, snapshot);
             if (assetInfo == null)
@@ -984,5 +983,22 @@ namespace Neo
             return ApplicationEngine.Run(script, snapshot, container, gas: Constant.TestMode);
         }
 
+
+        public static ContractState GetContract(this StoreView snapshot, UInt160 hash)
+        {
+            return NativeContract.Management.GetContract(snapshot, hash);
+        }
+
+
+        public static string GetExMessage(this Exception ex)
+        {
+            var msg = ex.Message;
+            while (ex.InnerException != null)
+            {
+                msg += $"\r\n----[{ex.InnerException.Message}]";
+                ex = ex.InnerException;
+            }
+            return msg;
+        }
     }
 }

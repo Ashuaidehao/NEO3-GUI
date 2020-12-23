@@ -13,16 +13,16 @@ namespace Neo.Models.Contracts
         {
             if (abi != null)
             {
-                ContractHash = abi.Hash;
+                //ContractHash = abi.Hash;
                 //EntryPoint= new ContractMethodModel(abi.EntryPoint);
                 Methods = abi.Methods.Select(m => new ContractMethodModel(m)).ToArray();
                 Events = abi.Events.Select(m => new ContractEventModel(m)).ToArray();
             }
         }
-        /// <summary>
-        /// Hash is the script hash of the contract. It is encoded as a hexadecimal string in big-endian.
-        /// </summary>
-        public UInt160 ContractHash { get; set; }
+        ///// <summary>
+        ///// Hash is the script hash of the contract. It is encoded as a hexadecimal string in big-endian.
+        ///// </summary>
+        //public UInt160 ContractHash { get; set; }
 
         /// <summary>
         /// Entrypoint is a Method object which describe the details of the entrypoint of the contract.

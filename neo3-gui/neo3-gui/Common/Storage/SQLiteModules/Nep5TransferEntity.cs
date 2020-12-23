@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Neo.SmartContract;
 
 namespace Neo.Common.Storage.SQLiteModules
 {
@@ -25,13 +26,15 @@ namespace Neo.Common.Storage.SQLiteModules
 
         public AddressEntity From { get; set; }
 
-        public long ToId { get; set; }
+        public long? ToId { get; set; }
         public AddressEntity To { get; set; }
 
         public byte[] Amount { get; set; }
 
 
         public DateTime Time { get; set; }
+
+        public TriggerType Trigger { get; set; }
 
     }
 }

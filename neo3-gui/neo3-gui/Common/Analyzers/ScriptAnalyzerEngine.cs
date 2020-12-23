@@ -33,59 +33,51 @@ namespace Neo.Common.Analyzers
             }
             if (syscallMethod != null)
             {
-                //Console.WriteLine($"[SysCall]:{syscallMethod.Method}");
-                if (syscallMethod == ApplicationEngine.System_Contract_Create)
-                {
-                    var script = CurrentContext.EvaluationStack.Peek()?.GetByteSafely();
-                    if (script != null)
-                    {
-                        var contractHash = script.ToScriptHash();
-                        Console.WriteLine($"Block[{Snapshot.Height}]-创建合约[{contractHash}]-[{_tx.Hash}]");
-                        ContractEvents.Add(new ContractEventInfo()
-                        {
-                            Contract = contractHash,
-                            Event = ContractEventType.Create,
-                        });
-                    }
-                }
-
-                if (syscallMethod == ApplicationEngine.System_Contract_Destroy)
-                {
-                    var destroyContract = CurrentScriptHash;
-                    Console.WriteLine($"Block[{Snapshot.Height}]-销毁合约[{destroyContract}]-[{_tx.Hash}]");
-                    ContractEvents.Add(new ContractEventInfo()
-                    {
-                        Contract = destroyContract,
-                        Event = ContractEventType.Destroy,
-                    });
-                }
-
-                if (syscallMethod == ApplicationEngine.System_Contract_Update)
-                {
-                    var oldContract = CurrentScriptHash;
-
-                    var script = CurrentContext.EvaluationStack.Peek()?.GetByteSafely();
-                    if (script != null)
-                    {
-                        var newContract = script.ToScriptHash();
-                        Console.WriteLine($"Block[{Snapshot.Height}]-升级合约old[{oldContract}]-new[{newContract}]-[{_tx.Hash}]");
-                        ContractEvents.Add(new ContractEventInfo()
-                        {
-                            Contract = oldContract,
-                            Event = ContractEventType.Migrate,
-                            MigrateToContract = newContract,
-                        });
-                    }
-                }
-
-                //if (syscallMethod == InteropService.Contract.Call)
+                Console.WriteLine($"[SysCall]:{syscallMethod.Name}");
+                //if (syscallMethod == ApplicationEngine.System_Contract_Create)
                 //{
-                //    StackItem contractHash = CurrentContext.EvaluationStack.Peek();
-                //    var methodItem = CurrentContext.EvaluationStack.Peek(1).GetString();
-
-                //    var contract = new UInt160(contractHash.GetByteSafely());
-                //    Console.WriteLine($"Block[{Snapshot.Height}]-Call合约[{contract}]-{methodItem}-[{_tx.Hash}]");
+                //    var script = CurrentContext.EvaluationStack.Peek()?.GetByteSafely();
+                //    if (script != null)
+                //    {
+                //        var contractHash = script.ToScriptHash();
+                //        Console.WriteLine($"Block[{Snapshot.Height}]-创建合约[{contractHash}]-[{_tx.Hash}]");
+                //        ContractEvents.Add(new ContractEventInfo()
+                //        {
+                //            Contract = contractHash,
+                //            Event = ContractEventType.Create,
+                //        });
+                //    }
                 //}
+
+                //if (syscallMethod == ApplicationEngine.System_Contract_Destroy)
+                //{
+                //    var destroyContract = CurrentScriptHash;
+                //    Console.WriteLine($"Block[{Snapshot.Height}]-销毁合约[{destroyContract}]-[{_tx.Hash}]");
+                //    ContractEvents.Add(new ContractEventInfo()
+                //    {
+                //        Contract = destroyContract,
+                //        Event = ContractEventType.Destroy,
+                //    });
+                //}
+
+                //if (syscallMethod == ApplicationEngine.System_Contract_Update)
+                //{
+                //    var oldContract = CurrentScriptHash;
+
+                //    var script = CurrentContext.EvaluationStack.Peek()?.GetByteSafely();
+                //    if (script != null)
+                //    {
+                //        var newContract = script.ToScriptHash();
+                //        Console.WriteLine($"Block[{Snapshot.Height}]-升级合约old[{oldContract}]-new[{newContract}]-[{_tx.Hash}]");
+                //        ContractEvents.Add(new ContractEventInfo()
+                //        {
+                //            Contract = oldContract,
+                //            Event = ContractEventType.Migrate,
+                //            MigrateToContract = newContract,
+                //        });
+                //    }
+                //}
+
 
                 if (syscallMethod == ApplicationEngine.System_Contract_CallEx)
                 {

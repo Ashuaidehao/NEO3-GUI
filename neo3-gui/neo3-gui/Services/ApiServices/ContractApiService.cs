@@ -20,7 +20,6 @@ using Neo.Network.P2P.Payloads;
 using Neo.SmartContract;
 using Neo.SmartContract.Manifest;
 using Neo.SmartContract.Native;
-using Neo.SmartContract.Native.Designate;
 using Neo.VM;
 using Neo.Wallets;
 using Neo.Wallets.SQLite;
@@ -54,18 +53,22 @@ namespace Neo.Services.ApiServices
         public async Task<object> GetContract(UInt160 contractHash)
         {
             using var snapshot = Blockchain.Singleton.GetSnapshot();
-            var contract = snapshot.Contracts.TryGet(contractHash);
+            var contract = snapshot.GetContract(contractHash);
             if (contract == null)
             {
                 return Error(ErrorCode.UnknownContract);
             }
-            return new ContractModel(contract);
+            var model = new ContractModel(contract)
+            {
+                ContractHash = contractHash,
+            };
+            return model;
         }
 
         public async Task<object> GetManifestFile(UInt160 contractHash)
         {
             using var snapshot = Blockchain.Singleton.GetSnapshot();
-            var contract = snapshot.Contracts.TryGet(contractHash);
+            var contract = snapshot.GetContract(contractHash);
             if (contract == null)
             {
                 return Error(ErrorCode.UnknownContract);
@@ -74,7 +77,7 @@ namespace Neo.Services.ApiServices
         }
 
 
-        public async Task<object> DeployContract(string nefPath, string manifestPath = null, bool sendTx = false)
+        public async Task<object> DeployContract(string nefPath, string manifestPath = null, bool sendTx = false, UInt160 sender = null)
         {
             if (CurrentWallet == null)
             {
@@ -90,14 +93,6 @@ namespace Neo.Services.ApiServices
             }
             // Read nef
             NefFile nefFile = ReadNefFile(nefPath);
-
-
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
-            var oldContract = snapshot.Contracts.TryGet(nefFile.ScriptHash);
-            if (oldContract != null)
-            {
-                return Error(ErrorCode.ContractAlreadyExist);
-            }
             // Read manifest
             ContractManifest manifest = ReadManifestFile(manifestPath);
             // Basic script checks
@@ -105,17 +100,17 @@ namespace Neo.Services.ApiServices
 
             // Build script
             using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitSysCall(ApplicationEngine.System_Contract_Create, nefFile.Script, manifest.ToJson().ToString());
+            sb.EmitAppCall(NativeContract.Management.Hash, "deploy", nefFile.ToArray(), manifest.ToJson().ToString());
             var script = sb.ToArray();
-
+    
             Transaction tx;
             try
             {
-                tx = CurrentWallet.MakeTransaction(script);
+                tx = CurrentWallet.MakeTransaction(script, sender);
             }
             catch (InvalidOperationException ex)
             {
-                return Error(ErrorCode.EngineFault, ex.Message);
+                return Error(ErrorCode.EngineFault, ex.GetExMessage());
             }
             catch (Exception ex)
             {
@@ -125,10 +120,16 @@ namespace Neo.Services.ApiServices
                 }
                 throw;
             }
-
+            UInt160 hash = SmartContract.Helper.GetContractHash(tx.Sender, nefFile.Script);
+            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            var oldContract = NativeContract.Management.GetContract(snapshot, hash);
+            if (oldContract != null)
+            {
+                return Error(ErrorCode.ContractAlreadyExist);
+            }
             var result = new DeployResultModel
             {
-                ContractHash = nefFile.ScriptHash,
+                ContractHash = hash,
                 GasConsumed = new BigDecimal(tx.SystemFee, NativeContract.GAS.Decimals)
             };
             if (sendTx)
@@ -155,7 +156,7 @@ namespace Neo.Services.ApiServices
                 return Error(ErrorCode.ParameterIsNull);
             }
             using var snapshot = Blockchain.Singleton.GetSnapshot();
-            var contract = snapshot.Contracts.TryGet(para.ContractHash);
+            var contract = snapshot.GetContract(para.ContractHash);
             if (contract == null)
             {
                 return Error(ErrorCode.UnknownContract);

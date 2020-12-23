@@ -64,15 +64,12 @@ namespace Neo.Common.Utility
             using var sb = new ScriptBuilder();
             sb.EmitAppCall(assetId, "decimals");
             sb.EmitAppCall(assetId, "symbol");
-            sb.EmitAppCall(assetId, "name");
-
-
-            var contract = snapshot.Contracts.TryGet(assetId);
+            //sb.EmitAppCall(assetId, "name");
+            var contract = snapshot.GetContract(assetId);
             if (contract == null)
             {
                 return null;
             }
-
             try
             {
                 using var engine = sb.ToArray().RunTestMode(snapshot);
@@ -81,7 +78,7 @@ namespace Neo.Common.Utility
                     Console.WriteLine($"Cannot find Nep5 Asset[{assetId}] at height:{snapshot.Height}");
                     return null;
                 }
-                string name = engine.ResultStack.Pop().GetString();
+                string name = contract.Manifest.Name;
                 string symbol = engine.ResultStack.Pop().GetString();
                 byte decimals = (byte)engine.ResultStack.Pop().GetInteger();
                 symbol = symbol == "neo" || symbol == "gas" ? symbol.ToUpper() : symbol;

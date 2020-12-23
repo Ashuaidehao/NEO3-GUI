@@ -826,7 +826,7 @@ namespace Neo.Common.Consoles
                     {
                         type = "Standard";
                     }
-                    else if (snapshot.Contracts.TryGet(contract.ScriptHash) != null)
+                    else if (snapshot.GetContract(contract.ScriptHash) != null)
                     {
                         type = "Deployed-Nonstandard";
                     }

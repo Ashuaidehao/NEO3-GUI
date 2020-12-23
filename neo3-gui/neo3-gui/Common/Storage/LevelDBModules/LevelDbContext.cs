@@ -98,9 +98,9 @@ namespace Neo.Common.Storage.LevelDBModules
         /// save execute result log after call <see cref="Commit"/> method
         /// </summary>
         /// <param name="log"></param>
-        public void SaveExecuteLog(ExecuteResultInfo log)
+        public void SaveTxExecuteLog(ExecuteResultInfo log)
         {
-            if (log != null)
+            if (log != null && log.TxId != null)
             {
                 writeBatch.Put(ExecuteLogKey(log.TxId), log.SerializeJsonBytes());
             }
@@ -174,30 +174,24 @@ namespace Neo.Common.Storage.LevelDBModules
         }
 
 
-        private byte[] TransferKey(UInt256 txId) => TransferPrefix.Append(txId.ToArray());
+        private byte[] TransferKey(uint blockHeight) => TransferPrefix.Append(BitConverter.GetBytes(blockHeight));
 
 
         /// <summary>
         /// will save after call <see cref="Commit"/> method
         /// </summary>
-        /// <param name="txId"></param>
+        /// <param name="blockHeight"></param>
         /// <param name="transfers"></param>
-        public void SaveTransfers(UInt256 txId, List<TransferInfo> transfers)
+        public void SaveTransfers(uint blockHeight, List<TransferStorageItem> transfers)
         {
-            var key = TransferKey(txId);
-            writeBatch.Put(key, transfers.Select(t => new TransferStorageItem()
-            {
-                From = t.From,
-                To = t.To,
-                Amount = t.Amount,
-                Asset = t.Asset,
-            }).SerializeJsonBytes());
+            var key = TransferKey(blockHeight);
+            writeBatch.Put(key, transfers.SerializeJsonBytes());
         }
 
 
-        public List<TransferStorageItem> GetTransfers(UInt256 txId)
+        public List<TransferStorageItem> GetTransfers(uint blockHeight)
         {
-            var key = TransferKey(txId);
+            var key = TransferKey(blockHeight);
             var value = _db.Get(key);
             if (value.NotEmpty())
             {

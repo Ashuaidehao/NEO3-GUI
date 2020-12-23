@@ -9,6 +9,7 @@ namespace Neo.Common.Storage
     public class ContractEventInfo
     {
         public UInt160 Contract { get; set; }
+        public string Name { get; set; }
 
         public ContractEventType Event { get; set; }
 
