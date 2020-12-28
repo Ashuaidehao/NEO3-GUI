@@ -161,36 +161,36 @@ class AdvancedCommittee extends React.Component {
         <Row gutter={[30, 0]} style={{ minHeight: "calc( 100vh - 120px )" }}>
           <Col span={24} className="bg-white pv4">
           <Tabs className="committe-title" defaultActiveKey="1">
-            <TabPane tab={t("交易数设置")} key="1">
-              <Statistic title="当前交易数上限：" value={transnum} prefix={<RetweetOutlined />}/>
-              <Button className="mt3" type="primary" onClick={this.changeDialog(0)}>修改当前交易数上限</Button>
+            <TabPane tab={t("advanced.com-trans")} key="1">
+              <Statistic title={t("advanced.com-trans-max")} value={transnum} prefix={<RetweetOutlined />}/>
+              <Button className="mt3" type="primary" onClick={this.changeDialog(0)}>{t("advanced.modify")}</Button>
             </TabPane>
-            <TabPane tab={t("区块大小设置")} key="2">
-              <Statistic title="当前区块大小上限：" value={blocksize} prefix={<RetweetOutlined />}/>
-              <Button className="mt3" type="primary" onClick={this.changeDialog(1)}>修改当前区块大小上限</Button>
+            <TabPane tab={t("advanced.com-blocksize")} key="2">
+              <Statistic title={t("advanced.com-blocksize-max")} value={blocksize} prefix={<RetweetOutlined />}/>
+              <Button className="mt3" type="primary" onClick={this.changeDialog(1)}>{t("advanced.modify")}</Button>
             </TabPane>
-            <TabPane tab={t("区块系统费设置")} key="3">
-              <Statistic title="当前区块系统费上限：" value={blockfee} prefix={<RetweetOutlined />}/>
-              <Button className="mt3" type="primary" onClick={this.changeDialog(2)}>修改当前区块系统费上限</Button>
+            <TabPane tab={t("advanced.com-blockfee")} key="3">
+              <Statistic title={t("advanced.com-blockfee-max")} value={blockfee} prefix={<RetweetOutlined />}/>
+              <Button className="mt3" type="primary" onClick={this.changeDialog(2)}>{t("advanced.modify")}</Button>
             </TabPane>
-            <TabPane tab={t("字节费用设置")} key="4">
-              <Statistic title="当前区块系统费上限：" value={bytefee} prefix={<RetweetOutlined />}/>
-              <Button className="mt3" type="primary" onClick={this.changeDialog(3)}>修改当前区块系统费上限</Button>
+            <TabPane tab={t("advanced.com-bytefee")} key="4">
+              <Statistic title={t("advanced.com-bytefee-set")} value={bytefee} prefix={<RetweetOutlined />}/>
+              <Button className="mt3" type="primary" onClick={this.changeDialog(3)}>{t("advanced.modify")}</Button>
             </TabPane>
-            <TabPane tab={t("账号设置")} key="5">
-              <h4 className="bolder mb4">地址锁定查询</h4>
+            <TabPane tab={t("advanced.com-account")} key="5">
+              <h4 className="bolder mb4">{t("advanced.com-input")}</h4>
               <Input
-                placeholder="请输入想要查询的地址" 
+                placeholder="NLGMSsGTDsLbAfGCBJvNmUMj16kvHHjFpa"
                 prefix={<RetweetOutlined />} 
                 onBlur={this.searchAdd}/>
               {showlocked?<div className="mt4">
                 <span className="para-tag">
-                  地址状态
-                  {locked?<em>已锁定</em>:<em>未锁定</em>}
+                  {t("advanced.com-account-state")}
+                  {locked?<em>{t("advanced.com-locked")}</em>:<em>{t("advanced.com-unlocked")}</em>}
                 </span>
               </div>
               :null}
-              <Button className="mt3" type="primary" onClick={this.changeDialog(4)}>修改账号状态</Button>
+              <Button className="mt3" type="primary" onClick={this.changeDialog(4)}>{t("advanced.modify")}{t("advanced.com-account-state")}</Button>
             </TabPane>
           </Tabs>
           </Col>
@@ -223,11 +223,10 @@ const TransNumber = ({account,func}) => {
     };
     post("SetMaxTransactionsPerBlock",params).then(res =>{
       var _data = res.data;
-      console.log(_data)
       if (_data.msgType === -1) {
-        ModalError(_data,"交易上限设置失败");
+        ModalError(_data,t("advanced.com-set-success"));
       } else {
-        ModalSuccess(_data,"交易上限设置成功")
+        ModalSuccess(_data,t("advanced.com-set-fail"))
         form.resetFields();
         func();
       }
@@ -239,15 +238,15 @@ const TransNumber = ({account,func}) => {
   return (
     <div className="w400">
       <Form className="neo-form" form={form} onFinish={setTrans}>
-        <h4>指定新的上限</h4>
+        <h4>{t("advanced.com-set-max")}</h4>
         <Form.Item name="max" rules={[{ required: true, message: t("wallet.please input signature min")}]}>
           <InputNumber
-            placeholder={t("指定新的上限")}
+            placeholder={t("advanced.com-set-max")}
             parser={value => value.replace(/[^0-9]/g, '')}
             step={1}  max={65534}
             style={{ width: '100%'}}/>
         </Form.Item>
-        <h4>选择签名的地址</h4>
+        <h4>{t("advanced.com-select-add")}</h4>
         <Form.Item name="signers" rules={[{ required: true, message: t("wallet.please input public key") }]}>
           <Select
             placeholder={t("wallet.signature public")}
@@ -280,11 +279,10 @@ const BlockSize = ({account,func}) => {
     };
     post("SetMaxBlockSize",params).then(res =>{
       var _data = res.data;
-      console.log(_data)
       if (_data.msgType === -1) {
-        ModalError(_data,"区块上限设置失败");
+        ModalError(_data,t("advanced.com-set-success"));
       } else {
-        ModalSuccess(_data,"区块上限设置成功")
+        ModalSuccess(_data,t("advanced.com-set-fail"))
         form.resetFields();
         func();
       }
@@ -296,16 +294,16 @@ const BlockSize = ({account,func}) => {
   return (
     <div className="w400">
       <Form className="neo-form" form={form} onFinish={setTrans}>
-        <h4>指定新的区块大小上限</h4>
-        <Form.Item name="max" rules={[{ required: true, message: t("wallet.please input signature min")}]}>
+        <h4>{t("advanced.com-set-max")}</h4>
+        <Form.Item name="max" rules={[{ required: true, message: t("advanced.com-input-max")}]}>
           <InputNumber
-            placeholder={t("指定新的上限")}
+            placeholder={t("advanced.com-set-max")}
             parser={value => value.replace(/[^0-9]/g, '')}
             step={1}  max={33554432}
             style={{ width: '100%'}}/>
         </Form.Item>
-        <h4>选择签名的地址</h4>
-        <Form.Item name="signers" rules={[{ required: true, message: t("wallet.please input public key") }]}>
+        <h4>{t("advanced.com-select-add")}</h4>
+        <Form.Item name="signers" rules={[{ required: true, message: t("advanced.com-select-add") }]}>
           <Select
             placeholder={t("wallet.signature public")}
             mode="tags"
@@ -337,11 +335,10 @@ const BlockFee = ({account,func}) => {
     };
     post("SetMaxBlockSystemFee",params).then(res =>{
       var _data = res.data;
-      console.log(_data)
       if (_data.msgType === -1) {
-        ModalError(_data,"区块系统费上限设置失败");
+        ModalError(_data,t("advanced.com-set-success"));
       } else {
-        ModalSuccess(_data,"区块系统费上限设置成功")
+        ModalSuccess(_data,t("advanced.com-set-fail"))
         form.resetFields();
         func();
       }
@@ -353,18 +350,18 @@ const BlockFee = ({account,func}) => {
   return (
     <div className="w400">
       <Form className="neo-form" form={form} onFinish={setTrans}>
-        <h4>指定区块系统费上限</h4>
-        <Form.Item name="max" rules={[{ required: true, message: t("wallet.please input signature min")}]}>
+        <h4>{t("advanced.com-set-max")}</h4>
+        <Form.Item name="max" rules={[{ required: true, message: t("advanced.com-input-max")}]}>
           <InputNumber
-            placeholder={t("指定区块系统费上限")}
+            placeholder={t("advanced.com-set-max")}
             parser={value => value.replace(/[^0-9]/g, '')}
             step={1}  max={33554432}
             style={{ width: '100%'}}/>
         </Form.Item>
-        <h4>选择签名的地址</h4>
-        <Form.Item name="signers" rules={[{ required: true, message: t("wallet.please input public key") }]}>
+        <h4>{t("advanced.com-select-add")}</h4>
+        <Form.Item name="signers" rules={[{ required: true, message: t("advanced.com-select-add") }]}>
           <Select
-            placeholder={t("wallet.signature public")}
+            placeholder={t("advanced.com-select-add")}
             mode="tags"
             className="multiadd"
             style={{ width: '100%'}}>
@@ -394,11 +391,10 @@ const ByteFee = ({account,func}) => {
     };
     post("SetFeePerByte",params).then(res =>{
       var _data = res.data;
-      console.log(_data)
       if (_data.msgType === -1) {
-        ModalError(_data,"每字节费用设置失败");
+        ModalError(_data,t("advanced.com-set-success"));
       } else {
-        ModalSuccess(_data,"每字节费用设置成功")
+        ModalSuccess(_data,t("advanced.com-set-fail"))
         form.resetFields();
         func();
       }
@@ -410,18 +406,18 @@ const ByteFee = ({account,func}) => {
   return (
     <div className="w400">
       <Form className="neo-form" form={form} onFinish={setTrans}>
-        <h4>指定每字节费用</h4>
-        <Form.Item name="fee" rules={[{ required: true, message: t("wallet.please input signature min")}]}>
+        <h4>{t("advanced.com-set-max")}</h4>
+        <Form.Item name="fee" rules={[{ required: true, message: t("advanced.com-input-max")}]}>
           <InputNumber
-            placeholder={t("指定每字节费用")}
+            placeholder={t("advanced.com-set-max")}
             parser={value => value.replace(/[^0-9]/g, '')}
             step={1}  max={33554432}
             style={{ width: '100%'}}/>
         </Form.Item>
-        <h4>选择签名的地址</h4>
-        <Form.Item name="signers" rules={[{ required: true, message: t("wallet.please input public key") }]}>
+        <h4>{t("advanced.com-select-add")}</h4>
+        <Form.Item name="signers" rules={[{ required: true, message: t("advanced.com-select-add")}]}>
           <Select
-            placeholder={t("wallet.signature public")}
+            placeholder={t("advanced.com-select-add")}
             mode="tags"
             className="multiadd"
             style={{ width: '100%'}}>
@@ -465,11 +461,10 @@ const AccountState = ({account,func}) => {
     };
     post("BlockAccount",params).then(res =>{
       var _data = res.data;
-      console.log(_data)
       if (_data.msgType === -1) {
-        ModalError(_data,"地址锁定失败");
+        ModalError(_data,t("advanced.com-set-success"));
       } else {
-        ModalSuccess(_data,"地址锁定成功")
+        ModalSuccess(_data,t("advanced.com-set-fail"))
         form.resetFields();
         func();
       }
@@ -489,20 +484,20 @@ const AccountState = ({account,func}) => {
             message: t("wallet.address format"),
           },{
             required: true,
-            message: t("wallet.please input signature min")
+            message: t("advanced.com-input")
           }]}>
           <Input
-            placeholder={t("输入想要修改的账号")}
+            placeholder={t("advanced.com-input")}
             onBlur={onBlur}
             style={{ width: '100%'}}/>
         </Form.Item>
         {locked?<div>
 
         </div>:null}
-        <h4>选择签名的地址</h4>
-        <Form.Item name="signers" rules={[{ required: true, message: t("wallet.please input public key") }]}>
+        <h4>{t("advanced.com-select-add")}</h4>
+        <Form.Item name="signers" rules={[{ required: true, message: t("advanced.com-select-add") }]}>
           <Select
-            placeholder={t("wallet.signature public")}
+            placeholder={t("advanced.com-select-add")}
             mode="tags"
             className="multiadd"
             style={{ width: '100%'}}>
@@ -515,8 +510,8 @@ const AccountState = ({account,func}) => {
         </Form.Item>
         <Form.Item>
           {locked?
-          <Button type="primary" htmlType="submit" style={{ width: '100%'}}>{t("解锁地址")}</Button>:
-          <Button type="primary" htmlType="submit" style={{ width: '100%'}}>{t("锁定地址")}</Button>}
+          <Button type="primary" htmlType="submit" style={{ width: '100%'}}>{t("advanced.com-unlocked-account")}</Button>:
+          <Button type="primary" htmlType="submit" style={{ width: '100%'}}>{t("advanced.com-locked-account")}</Button>}
         </Form.Item>
       </Form>
     </div>

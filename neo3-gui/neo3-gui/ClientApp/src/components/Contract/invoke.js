@@ -12,7 +12,6 @@ import {
   Form,
   message,
   Button,
-  InputNumber,
 } from "antd";
 import Datatrans from "../Common/datatrans";
 import { Layout } from "antd";
@@ -23,8 +22,8 @@ import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import DynamicArray from "./dynamicArray";
 import { post } from "../../core/request";
-
 import { MinusSquareOutlined, PlusOutlined } from "@ant-design/icons";
+
 const { Option } = Select;
 
 const { TextArea } = Input;
@@ -82,7 +81,6 @@ class Contractinvoke extends React.Component {
         })
       });
       console.log(this.refs.formRef);
-    });
   };
   searchContract = (callback) => {
     const { t } = this.props;
@@ -414,7 +412,7 @@ class Contractinvoke extends React.Component {
                         {item.type.toLowerCase() === 'any'?
                         <Input placeholder="String"/>:
                         <Input placeholder={item.type}/>}
-                      </Form.Item>
+                      </Form.Item>)
                       }
                     </div>
                   )}

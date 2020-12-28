@@ -1,6 +1,6 @@
 {
-  "Port": 8081,
-  "RPCURL": "http://localhost:8081",
-  "Language": "zh",
-  "Network": "private"
+    "Port": 8081,
+    "RPCURL": "http://localhost:8081",
+    "Language": "zh",
+    "Network": "private"
 }
