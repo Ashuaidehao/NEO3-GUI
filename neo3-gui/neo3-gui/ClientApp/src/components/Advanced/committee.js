@@ -11,6 +11,7 @@ import { observer, inject } from "mobx-react";
 import { useTranslation, withTranslation , Trans} from "react-i18next";
 import { post } from "../../core/request";
 import { ArrowLeftOutlined,RetweetOutlined } from '@ant-design/icons';
+import { Copy } from '../copy';
 
 const { Option } = Select;
 const { Content } = Layout;
@@ -239,7 +240,7 @@ const TransNumber = ({account,func}) => {
     <div className="w400">
       <Form className="neo-form" form={form} onFinish={setTrans}>
         <h4>{t("advanced.com-set-max")}</h4>
-        <Form.Item name="max" rules={[{ required: true, message: t("wallet.please input signature min")}]}>
+        <Form.Item name="max" rules={[{ required: true, message: t("advanced.com-input-max")}]}>
           <InputNumber
             placeholder={t("advanced.com-set-max")}
             parser={value => value.replace(/[^0-9]/g, '')}
@@ -247,9 +248,9 @@ const TransNumber = ({account,func}) => {
             style={{ width: '100%'}}/>
         </Form.Item>
         <h4>{t("advanced.com-select-add")}</h4>
-        <Form.Item name="signers" rules={[{ required: true, message: t("wallet.please input public key") }]}>
+        <Form.Item name="signers" rules={[{ required: true, message: t("advanced.com-select-add") }]}>
           <Select
-            placeholder={t("wallet.signature public")}
+            placeholder={t("advanced.com-select-add")}
             mode="tags"
             className="multiadd"
             style={{ width: '100%'}}>
@@ -305,7 +306,7 @@ const BlockSize = ({account,func}) => {
         <h4>{t("advanced.com-select-add")}</h4>
         <Form.Item name="signers" rules={[{ required: true, message: t("advanced.com-select-add") }]}>
           <Select
-            placeholder={t("wallet.signature public")}
+            placeholder={t("advanced.com-select-add")}
             mode="tags"
             className="multiadd"
             style={{ width: '100%'}}>
@@ -441,14 +442,15 @@ const AccountState = ({account,func}) => {
   const [form] = Form.useForm();
   const { t } = useTranslation();
   const [locked, changelocked] = useState(true);
+  const [show, changeShow] = useState(false);
   const onBlur = () => {
-    var account = form.getFieldValue().account;
-    if(account.length<=0) return;
+    var add = form.getFieldValue().account||"";
+    if(add.length<=0) return;
 
     var regex = new RegExp("^[N][1-9A-HJ-NP-Za-km-z]{32,34}$");
-    if(!regex.test(account))return;
+    if(!regex.test(add))return;
 
-    const param = {"account":account};
+    const param = {"account":add};
     post("IsBlocked",param).then(result =>{
       changelocked(result.data.result)
     });
@@ -462,7 +464,16 @@ const AccountState = ({account,func}) => {
     post("BlockAccount",params).then(res =>{
       var _data = res.data;
       if (_data.msgType === -1) {
-        ModalError(_data,t("advanced.com-set-success"));
+        Modal.error({
+          width: 600,
+          title: t("advanced.com-set-success"),
+          content: (
+            <div className="show-pri">
+              <p><Trans>error</Trans> ：{_data.error.message}<Copy msg={_data.error.message} /></p>
+            </div>
+          ),
+          okText:<Trans>button.ok</Trans>
+        });
       } else {
         ModalSuccess(_data,t("advanced.com-set-fail"))
         form.resetFields();
@@ -476,7 +487,7 @@ const AccountState = ({account,func}) => {
   return (
     <div className="w400">
       <Form className="neo-form" form={form} onFinish={setTrans}>
-        <h4>修改账号状态</h4>
+        <h4>{t("advanced.com-account")}</h4>
         <Form.Item 
           name="account"
           rules={[{
@@ -491,9 +502,6 @@ const AccountState = ({account,func}) => {
             onBlur={onBlur}
             style={{ width: '100%'}}/>
         </Form.Item>
-        {locked?<div>
-
-        </div>:null}
         <h4>{t("advanced.com-select-add")}</h4>
         <Form.Item name="signers" rules={[{ required: true, message: t("advanced.com-select-add") }]}>
           <Select

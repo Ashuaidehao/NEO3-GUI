@@ -695,3 +695,9 @@ small,
   padding: 10px;
   box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.103);
 }
+
+
+.clipboard {
+  padding: 0px 6px;
+  color: #00af92;
+}

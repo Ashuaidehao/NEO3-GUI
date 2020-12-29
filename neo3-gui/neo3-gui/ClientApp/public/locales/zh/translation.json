@@ -27,6 +27,7 @@
 		"com-unlocked":"未锁定",
 		"com-unlocked-account":"解锁地址",
 		"com-input":"请输入想要查询的地址",
+		"com-input-max":"请输入想要设置的上限",
 		"com-veri-account":"地址格式错误，请检查后再输入",
 		"com-select-add":"选择签名的地址",
 		"com-set-max":"设置新的上限",
