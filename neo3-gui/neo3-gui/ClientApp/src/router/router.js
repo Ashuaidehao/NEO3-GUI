@@ -86,11 +86,9 @@ const BasicRoute = () => (
                     <Route exact path="/advanced/vote" component={Authenticated(Advancedvote)} />
                     <Route exact path="/advanced/candidate" component={Authenticated(Advancedcandidate)} />
                     <Route exact path="/advanced/signature" component={Authenticated(Advancedsignature)} />
-                    <Route exact path="/advanced/committee" component={Advancedcommittee} />
+                    <Route exact path="/advanced/committee" component={Authenticated(Advancedcommittee)} />
                     <Route exact path="/advanced/designrole" component={Advanceddesignrole} />
                     <Route exact path="/advanced/getnoderole" component={Advancednoderole} />
-
-                    
                 </Layout>
             </Route>
             <Redirect from="*" to="/" />

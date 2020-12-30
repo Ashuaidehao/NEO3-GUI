@@ -464,16 +464,7 @@ const AccountState = ({account,func}) => {
     post("BlockAccount",params).then(res =>{
       var _data = res.data;
       if (_data.msgType === -1) {
-        Modal.error({
-          width: 600,
-          title: t("advanced.com-set-success"),
-          content: (
-            <div className="show-pri">
-              <p><Trans>error</Trans> ：{_data.error.message}<Copy msg={_data.error.message} /></p>
-            </div>
-          ),
-          okText:<Trans>button.ok</Trans>
-        });
+        ModalError(_data,t("advanced.com-set-success"));
       } else {
         ModalSuccess(_data,t("advanced.com-set-fail"))
         form.resetFields();
@@ -532,7 +523,7 @@ const ModalError = (data,title) => {
     title: title,
     content: (
       <div className="show-pri">
-        <p><Trans>error</Trans> ：{data.error.message}</p>
+        <p><Trans>error</Trans> ：{data.error.message} <Copy msg={data.error.message} /></p>
       </div>
     ),
     okText:<Trans>button.ok</Trans>

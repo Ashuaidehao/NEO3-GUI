@@ -698,6 +698,6 @@ small,
 
 
 .clipboard {
-  padding: 0px 6px;
-  color: #00af92;
+  margin-left: 4px;
+  color: #00af92!important;
 }
