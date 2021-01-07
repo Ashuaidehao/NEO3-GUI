@@ -8,7 +8,7 @@ import '../../static/css/wallet.css'
 import Sync from '../sync';
 import { withTranslation,useTranslation,Trans } from "react-i18next";
 import { post } from "../../core/request";
-import { walletStore } from "../../store/stores";
+import { Copy } from '../copy';
 
 import {
   PlusCircleOutlined
@@ -403,10 +403,14 @@ const Accounts = ({accounts,name}) => {
     renderItem={item => (
       <List.Item>
         <List.Item.Meta
-          title={<Link to={{ 
-            pathname: "/wallet/walletlist:" + item.address, 
-            props: item
-           }} title={t("wallet.show detail")} >{item.address}</Link>}
+          title={<div>
+            <Link to={{ 
+              pathname: "/wallet/walletlist:" + item.address, 
+              props: item
+            }}
+            title={t("wallet.show detail")} >{item.address}</Link>
+            <Copy msg={item.address} />
+           </div>}
           description={
             <span className="f-s">
               <span className="amount mr2">NEO <span className="wa-count">{item.neo}</span></span>

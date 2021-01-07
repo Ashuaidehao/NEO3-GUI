@@ -6,15 +6,15 @@ import PathStore from "./pathStore";
 
 let blockSyncStore = new BlockSyncStore();
 let walletStore = new WalletStore();
-let nodeStore=new NodeStore();
+let nodeStore = new NodeStore();
 let pathStore = new PathStore();
 
 const Stores = {
-    nodeStore,
-    walletStore,
-    blockSyncStore,
-    pathStore
+  nodeStore,
+  walletStore,
+  blockSyncStore,
+  pathStore,
 };
 
-export { blockSyncStore, walletStore ,nodeStore,pathStore}
+export { blockSyncStore, walletStore, nodeStore, pathStore };
 export default Stores;

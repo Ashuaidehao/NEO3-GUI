@@ -9,6 +9,7 @@ import axios from 'axios';
 import Sync from '../sync';
 import Searcharea from './searcharea'
 import { withTranslation } from "react-i18next";
+import { Copy } from '../copy';
 
 const { Content } = Layout;
 
@@ -75,7 +76,7 @@ class Contract extends React.Component {
                       }
                       title={<Link className="asset-link w450 ellipsis" to={"/contract/detail:" + item.hash} title={t("show detail")}>{item.name}</Link>}
                     />
-                    <Typography>{item.hash}</Typography>
+                    <Typography>{item.hash} <Copy msg={item.hash} /></Typography>
                   </List.Item>
                 )}
               />

@@ -13,7 +13,6 @@
     <NoWarn>1701;1702;1998;</NoWarn>
   </PropertyGroup>
 
-
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
     
@@ -21,7 +20,6 @@
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**">
       <!--<CopyToOutputDirectory>Always</CopyToOutputDirectory>-->
-
     </None>
   </ItemGroup>
 
