@@ -248,7 +248,7 @@ class Multitomulti extends React.Component{
 
             <Form.Item>
                 <Button type="primary" htmlType="submit">
-                    {t("wallet.transfer bulk")}
+                    {t("wallet.transfer")}
                 </Button>
             </Form.Item>
         </Form>

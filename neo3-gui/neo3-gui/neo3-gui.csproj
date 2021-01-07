@@ -20,7 +20,6 @@
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**">
       <!--<CopyToOutputDirectory>Always</CopyToOutputDirectory>-->
-
     </None>
   </ItemGroup>
 

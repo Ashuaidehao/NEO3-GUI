@@ -10,7 +10,7 @@ import Sync from '../sync';
 import { observer, inject } from "mobx-react";
 import { useTranslation, withTranslation , Trans} from "react-i18next";
 import { post } from "../../core/request";
-import { ArrowLeftOutlined,RetweetOutlined } from '@ant-design/icons';
+import { WalletOutlined,RetweetOutlined,ForkOutlined,EditOutlined } from '@ant-design/icons';
 import { Copy } from '../copy';
 
 const { Option } = Select;
@@ -167,11 +167,14 @@ class AdvancedCommittee extends React.Component {
               <Button className="mt3" type="primary" onClick={this.changeDialog(0)}>{t("advanced.modify")}</Button>
             </TabPane>
             <TabPane tab={t("advanced.com-blocksize")} key="2">
-              <Statistic title={t("advanced.com-blocksize-max")} value={blocksize} prefix={<RetweetOutlined />}/>
+              <Statistic title={t("advanced.com-blocksize-max")} value={blocksize} prefix={<EditOutlined />}/>
               <Button className="mt3" type="primary" onClick={this.changeDialog(1)}>{t("advanced.modify")}</Button>
             </TabPane>
             <TabPane tab={t("advanced.com-blockfee")} key="3">
-              <Statistic title={t("advanced.com-blockfee-max")} value={blockfee} prefix={<RetweetOutlined />}/>
+              <Statistic
+                title={t("advanced.com-blockfee-max")}
+                value={blockfee} prefix={<ForkOutlined />}
+                suffix={<div> * 10<sup>-8</sup></div>}/>
               <Button className="mt3" type="primary" onClick={this.changeDialog(2)}>{t("advanced.modify")}</Button>
             </TabPane>
             <TabPane tab={t("advanced.com-bytefee")} key="4">
@@ -182,7 +185,7 @@ class AdvancedCommittee extends React.Component {
               <h4 className="bolder mb4">{t("advanced.com-input")}</h4>
               <Input
                 placeholder="NLGMSsGTDsLbAfGCBJvNmUMj16kvHHjFpa"
-                prefix={<RetweetOutlined />} 
+                prefix={<WalletOutlined />} 
                 onBlur={this.searchAdd}/>
               {showlocked?<div className="mt4">
                 <span className="para-tag">
@@ -191,7 +194,7 @@ class AdvancedCommittee extends React.Component {
                 </span>
               </div>
               :null}
-              <Button className="mt3" type="primary" onClick={this.changeDialog(4)}>{t("advanced.modify")}{t("advanced.com-account-state")}</Button>
+              <Button className="mt3" type="primary" onClick={this.changeDialog(4)}>{t("advanced.modify")}</Button>
             </TabPane>
           </Tabs>
           </Col>
@@ -225,9 +228,9 @@ const TransNumber = ({account,func}) => {
     post("SetMaxTransactionsPerBlock",params).then(res =>{
       var _data = res.data;
       if (_data.msgType === -1) {
-        ModalError(_data,t("advanced.com-set-success"));
+        ModalError(_data,t("advanced.com-set-fail"));
       } else {
-        ModalSuccess(_data,t("advanced.com-set-fail"))
+        ModalSuccess(_data,t("advanced.com-set-success"))
         form.resetFields();
         func();
       }
@@ -281,9 +284,9 @@ const BlockSize = ({account,func}) => {
     post("SetMaxBlockSize",params).then(res =>{
       var _data = res.data;
       if (_data.msgType === -1) {
-        ModalError(_data,t("advanced.com-set-success"));
+        ModalError(_data,t("advanced.com-set-fail"));
       } else {
-        ModalSuccess(_data,t("advanced.com-set-fail"))
+        ModalSuccess(_data,t("advanced.com-set-success"))
         form.resetFields();
         func();
       }
@@ -329,7 +332,6 @@ const BlockFee = ({account,func}) => {
   const [form] = Form.useForm();
   const { t } = useTranslation();
   const setTrans = values =>{
-    console.log(values)
     let params = {
       "max":values.max,
       "signers":values.signers
@@ -337,9 +339,9 @@ const BlockFee = ({account,func}) => {
     post("SetMaxBlockSystemFee",params).then(res =>{
       var _data = res.data;
       if (_data.msgType === -1) {
-        ModalError(_data,t("advanced.com-set-success"));
+        ModalError(_data,t("advanced.com-set-fail"));
       } else {
-        ModalSuccess(_data,t("advanced.com-set-fail"))
+        ModalSuccess(_data,t("advanced.com-set-success"))
         form.resetFields();
         func();
       }
@@ -356,7 +358,7 @@ const BlockFee = ({account,func}) => {
           <InputNumber
             placeholder={t("advanced.com-set-max")}
             parser={value => value.replace(/[^0-9]/g, '')}
-            step={1}  max={33554432}
+            step={1}  min={4007600}
             style={{ width: '100%'}}/>
         </Form.Item>
         <h4>{t("advanced.com-select-add")}</h4>
@@ -392,10 +394,11 @@ const ByteFee = ({account,func}) => {
     };
     post("SetFeePerByte",params).then(res =>{
       var _data = res.data;
+      console.log(_data);
       if (_data.msgType === -1) {
-        ModalError(_data,t("advanced.com-set-success"));
+        ModalError(_data,t("advanced.com-set-fail"));
       } else {
-        ModalSuccess(_data,t("advanced.com-set-fail"))
+        ModalSuccess(_data,t("advanced.com-set-success"))
         form.resetFields();
         func();
       }
@@ -464,9 +467,9 @@ const AccountState = ({account,func}) => {
     post("BlockAccount",params).then(res =>{
       var _data = res.data;
       if (_data.msgType === -1) {
-        ModalError(_data,t("advanced.com-set-success"));
+        ModalError(_data,t("advanced.com-set-fail"));
       } else {
-        ModalSuccess(_data,t("advanced.com-set-fail"))
+        ModalSuccess(_data,t("advanced.com-set-success"))
         form.resetFields();
         func();
       }

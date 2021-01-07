@@ -50,6 +50,7 @@ class Contractdeploy extends React.Component {
   }
   selectNef = () => {
     this.opendialog("nef", (res) => {
+      console.log(res)
       this.setState(
         {
           expath: res.filePaths[0],
@@ -62,7 +63,8 @@ class Contractdeploy extends React.Component {
     });
   };
   selectMani = () => {
-    this.opendialog("manifest.json", (res) => {
+    this.opendialog("json", (res) => {
+      console.log(res)
       this.setState(
         {
           mapath: res.filePaths[0],
