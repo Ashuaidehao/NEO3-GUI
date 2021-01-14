@@ -284,7 +284,7 @@ namespace Neo.Common.Consoles
                 Console.WriteLine($"Invoking script with: '{tx.Script.ToHexString()}'");
             }
 
-            using (ApplicationEngine engine = ApplicationEngine.Run(tx.Script, tx, testMode: true))
+            using (ApplicationEngine engine = tx.Script.RunTestMode(null, tx))
             {
                 Console.WriteLine($"VM State: {engine.State}");
                 Console.WriteLine($"Gas Consumed: {engine.GasConsumed}");
@@ -826,7 +826,7 @@ namespace Neo.Common.Consoles
                     {
                         type = "Standard";
                     }
-                    else if (snapshot.Contracts.TryGet(contract.ScriptHash) != null)
+                    else if (snapshot.GetContract(contract.ScriptHash) != null)
                     {
                         type = "Deployed-Nonstandard";
                     }

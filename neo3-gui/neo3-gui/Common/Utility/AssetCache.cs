@@ -64,24 +64,21 @@ namespace Neo.Common.Utility
             using var sb = new ScriptBuilder();
             sb.EmitAppCall(assetId, "decimals");
             sb.EmitAppCall(assetId, "symbol");
-            sb.EmitAppCall(assetId, "name");
-
-
-            var contract = snapshot.Contracts.TryGet(assetId);
+            //sb.EmitAppCall(assetId, "name");
+            var contract = snapshot.GetContract(assetId);
             if (contract == null)
             {
                 return null;
             }
-
             try
             {
-                using var engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
+                using var engine = sb.ToArray().RunTestMode(snapshot);
                 if (engine.State.HasFlag(VMState.FAULT))
                 {
                     Console.WriteLine($"Cannot find Nep5 Asset[{assetId}] at height:{snapshot.Height}");
                     return null;
                 }
-                string name = engine.ResultStack.Pop().GetString();
+                string name = contract.Manifest.Name;
                 string symbol = engine.ResultStack.Pop().GetString();
                 byte decimals = (byte)engine.ResultStack.Pop().GetInteger();
                 symbol = symbol == "neo" || symbol == "gas" ? symbol.ToUpper() : symbol;
@@ -142,7 +139,7 @@ namespace Neo.Common.Utility
             using var snapshot = Blockchain.Singleton.GetSnapshot();
             using var sb = new ScriptBuilder();
             sb.EmitAppCall(asset, "totalSupply");
-            using var engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
+            using var engine = sb.ToArray().RunTestMode(snapshot);
             var total = engine.ResultStack.FirstOrDefault().ToBigInteger();
             var assetInfo = GetAssetInfo(asset);
             return total.HasValue ? new BigDecimal(total.Value, assetInfo.Decimals) : (BigDecimal?)null;
@@ -158,7 +155,7 @@ namespace Neo.Common.Utility
                 assetInfos.Add(GetAssetInfo(asset));
                 sb.EmitAppCall(asset, "totalSupply");
             }
-            using var engine = ApplicationEngine.Run(sb.ToArray(), snapshot, testMode: true);
+            using var engine = sb.ToArray().RunTestMode(snapshot);
             var values = engine.ResultStack.Select(s => s.ToBigInteger()).ToList();
             var results = new List<BigDecimal?>();
             for (var i = 0; i < values.Count; i++)

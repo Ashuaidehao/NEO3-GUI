@@ -35,9 +35,6 @@ namespace Neo.Services.ApiServices
 {
     public class WalletApiService : ApiService
     {
-        protected Wallet CurrentWallet => Program.Starter.CurrentWallet;
-
-
         /// <summary>
         /// open wallet
         /// </summary>
@@ -623,7 +620,15 @@ namespace Neo.Services.ApiServices
                 {
                     return Error(ErrorCode.GasNotEnough);
                 }
-                return Error(ErrorCode.TransferError, ex.Message);
+
+                var error = ex.Message;
+                var currentEx = ex;
+                while (currentEx.InnerException != null)
+                {
+                    currentEx = currentEx.InnerException;
+                    error += $"\r\n{currentEx.Message}";
+                }
+                return Error(ErrorCode.TransferError, error);
             }
         }
 
@@ -677,7 +682,7 @@ namespace Neo.Services.ApiServices
                 }
                 foreach (var transfer in transferRequests)
                 {
-                    sb.EmitAppCall(assetHash, "transfer", sender, transfer.Receiver, transfer.Amount.Value);
+                    sb.EmitAppCall(assetHash, "transfer", sender, transfer.Receiver, transfer.Amount.Value, null);
                     sb.Emit(OpCode.ASSERT);
                 }
             }

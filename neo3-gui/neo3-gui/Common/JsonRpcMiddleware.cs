@@ -80,7 +80,7 @@ namespace Neo.Common
                 message.Error = new WsError()
                 {
                     Code = -1,
-                    Message = e.ToString(),
+                    Message = e.GetExMessage(),
                 };
                 Console.WriteLine(e);
             }

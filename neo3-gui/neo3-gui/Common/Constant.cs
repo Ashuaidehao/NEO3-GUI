@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Neo.Models.Contracts
+namespace Neo.Common
 {
-    public class VoteResultModel
+    public static class Constant
     {
-        public UInt256 TxId { get; set; }
+        public const long TestMode = 2000_00000000;
     }
 }
