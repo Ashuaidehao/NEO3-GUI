@@ -17,7 +17,7 @@ namespace Neo.Common.Analyzers
 {
     public class BlockAnalyzer
     {
-        private readonly StoreView _snapshot;
+        private readonly DataCache _snapshot;
         private readonly Header _header;
         private readonly IReadOnlyList<Blockchain.ApplicationExecuted> _applicationExecutedResults;
 
@@ -51,11 +51,10 @@ namespace Neo.Common.Analyzers
             /// <summary>
             /// 
             /// </summary>
-            public readonly HashSet<(UInt160 account, UInt160 asset)> BalanceChangeAccounts =
-                new HashSet<(UInt160 account, UInt160 asset)>();
+            public readonly HashSet<AccountAsset> BalanceChangeAccounts = new HashSet<AccountAsset>();
         }
 
-        public BlockAnalyzer(StoreView snapshot, Header header,
+        public BlockAnalyzer(DataCache snapshot, Header header,
             IReadOnlyList<Blockchain.ApplicationExecuted> applicationExecutedResults)
         {
             _snapshot = snapshot;
@@ -82,7 +81,7 @@ namespace Neo.Common.Analyzers
             if (transaction != null)
             {
                 //fee account
-                Result.BalanceChangeAccounts.Add((transaction.Sender, NativeContract.GAS.Hash));
+                Result.BalanceChangeAccounts.Add(new AccountAsset(transaction.Sender, NativeContract.GAS.Hash));
                 execResult.TxId = transaction.Hash;
             }
 
@@ -115,36 +114,6 @@ namespace Neo.Common.Analyzers
                 //no need to track 
                 return;
             }
-
-            //if (_snapshot.Height > 0)
-            //{
-            //    //Re-execute script
-            //    using var replaySnapshot = Blockchain.Singleton.GetSnapshot();
-            //    new Byte[0].RunTestMode(replaySnapshot);
-            //    var scriptAnalyzer = new ScriptAnalyzerEngine(transaction, replaySnapshot);
-            //    scriptAnalyzer.LoadScript(transaction.Script);
-            //    scriptAnalyzer.Execute();
-            //    if (scriptAnalyzer.ContractEvents.NotEmpty())
-            //    {
-            //        AnalysisResult.ContractChangeEvents[transaction.Hash] = scriptAnalyzer.ContractEvents;
-            //        foreach (var contractEvent in scriptAnalyzer.ContractEvents)
-            //        {
-            //            var asset = AssetCache.GetAssetInfo(contractEvent.Contract, _snapshot, contractEvent.Event != ContractEventType.Create);
-            //            if (asset != null)
-            //            {
-            //                AnalysisResult.AssetInfos[asset.Asset] = asset;
-            //            }
-            //            if (contractEvent.MigrateToContract != null)
-            //            {
-            //                var newAsset = AssetCache.GetAssetInfo(contractEvent.MigrateToContract, _snapshot);
-            //                if (newAsset != null)
-            //                {
-            //                    AnalysisResult.AssetInfos[newAsset.Asset] = newAsset;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
 
             if (execResult.Notifications.IsEmpty())
             {
@@ -188,16 +157,13 @@ namespace Neo.Common.Analyzers
             {
                 return;
             }
-
-         
             if (transfer.From != null)
             {
-                Result.BalanceChangeAccounts.Add((transfer.From, transfer.Asset));
+                Result.BalanceChangeAccounts.Add(new AccountAsset(transfer.From, transfer.Asset));
             }
-
             if (transfer.To != null)
             {
-                Result.BalanceChangeAccounts.Add((transfer.To, transfer.Asset));
+                Result.BalanceChangeAccounts.Add(new AccountAsset(transfer.To, transfer.Asset));
             }
 
             if (appExec.Trigger == TriggerType.Application)
@@ -227,7 +193,7 @@ namespace Neo.Common.Analyzers
             {
                 Result.ContractChangeEvents[appExec.Transaction.Hash] = new List<ContractEventInfo>();
             }
-            var contract = _snapshot.GetContract(contractHash);
+            ContractState contract = NativeContract.ContractManagement.GetContract(_snapshot, contractHash);
             Result.ContractChangeEvents[appExec.Transaction.Hash].Add(new ContractEventInfo() { Contract = contractHash, Name = contract?.Manifest.Name, Event = ContractEventType.Create });
             var asset = AssetCache.GetAssetInfoFromChain(contractHash, _snapshot);
             if (asset != null)

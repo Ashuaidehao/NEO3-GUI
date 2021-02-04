@@ -1,6 +1,6 @@
 {
   "ProtocolConfiguration": {
-    "Magic": 1951352142,
+    "Magic": 894448462,
     "MillisecondsPerBlock": 15000,
     "MaxTraceableBlocks": 2102400,
     "ValidatorsCount": 7,

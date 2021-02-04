@@ -11,6 +11,7 @@ using Neo.Ledger;
 using Neo.Models;
 using Neo.Models.Transactions;
 using Neo.Network.P2P.Payloads;
+using Neo.SmartContract.Native;
 
 namespace Neo.Services.ApiServices
 {
@@ -33,14 +34,14 @@ namespace Neo.Services.ApiServices
 
             var model = new TransactionModel(transaction);
 
-            TransactionState txState = Blockchain.Singleton.View.Transactions.TryGet(txId);
+            var txState = Blockchain.Singleton.View.GetTransactionState(txId);
             if (txState != null)
             {
                 Header header = Blockchain.Singleton.GetHeader(txState.BlockIndex);
                 model.BlockHash = header.Hash;
                 model.BlockHeight = txState.BlockIndex;
                 model.Timestamp = header.Timestamp;
-                model.Confirmations = Blockchain.Singleton.Height - header.Index + 1;
+                model.Confirmations = Blockchain.Singleton.GetHeight() - header.Index + 1;
             }
             using var db = new TrackDB();
             var trans = db.QueryTransfers(new TransferFilter() { TxIds = new List<UInt256>() { txId }, PageSize = int.MaxValue }).List;
@@ -79,14 +80,16 @@ namespace Neo.Services.ApiServices
             if (showJson)
             {
                 JObject json = transaction.ToJson();
-                TransactionState txState = Blockchain.Singleton.View.Transactions.TryGet(txId);
+                TransactionState txState = Blockchain.Singleton.View.GetTransactionState(txId);
                 if (txState != null)
                 {
                     Header header = Blockchain.Singleton.GetHeader(txState.BlockIndex);
                     json["blockhash"] = header.Hash.ToString();
-                    json["confirmations"] = Blockchain.Singleton.Height - header.Index + 1;
+                    json["confirmations"] = Blockchain.Singleton.GetHeight() - header.Index + 1;
                     json["blocktime"] = header.Timestamp;
-                    json["vm_state"] = txState.VMState;
+                    using var db = new TrackDB();
+                    var executelog = db.GetExecuteLog(txId);
+                    json["vm_state"] = executelog?.VMState;
                 }
                 return json.ToString();
             }

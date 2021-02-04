@@ -40,7 +40,7 @@ namespace Neo.Services.ApiServices
             }));
             var nativeHashes = new HashSet<UInt160>(list.Select(x => x.Hash));
             using var db = new TrackDB();
-            var assets = db.GetAllContracts()?.Where(a => !nativeHashes.Contains(a.Hash) && a.Symbol.NotNull() && a.DeleteOrMigrateTxId == null).Select(a =>
+            var assets = db.GetAllContracts()?.Where(a => !nativeHashes.Contains(a.Hash)).Select(a =>
                 new ContractInfoModel()
                 {
                     Hash = a.Hash,
@@ -100,9 +100,11 @@ namespace Neo.Services.ApiServices
 
             // Build script
             using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitAppCall(NativeContract.Management.Hash, "deploy", nefFile.ToArray(), manifest.ToJson().ToString());
+            sb.EmitDynamicCall(NativeContract.ContractManagement.Hash, "deploy", nefFile.ToArray(),
+                manifest.ToJson().ToString());
+            //sb.EmitAppCall(NativeContract.Management.Hash, "deploy", nefFile.ToArray(), manifest.ToJson().ToString());
             var script = sb.ToArray();
-    
+
             Transaction tx;
             try
             {
@@ -120,9 +122,11 @@ namespace Neo.Services.ApiServices
                 }
                 throw;
             }
-            UInt160 hash = SmartContract.Helper.GetContractHash(tx.Sender, nefFile.Script);
+
+            UInt160 hash = SmartContract.Helper.GetContractHash(tx.Sender, nefFile.CheckSum, manifest.Name);
+
             using var snapshot = Blockchain.Singleton.GetSnapshot();
-            var oldContract = NativeContract.Management.GetContract(snapshot, hash);
+            var oldContract = NativeContract.ContractManagement.GetContract(snapshot, hash);
             if (oldContract != null)
             {
                 return Error(ErrorCode.ContractAlreadyExist);
@@ -130,7 +134,7 @@ namespace Neo.Services.ApiServices
             var result = new DeployResultModel
             {
                 ContractHash = hash,
-                GasConsumed = new BigDecimal(tx.SystemFee, NativeContract.GAS.Decimals)
+                GasConsumed = new BigDecimal((BigInteger)tx.SystemFee, NativeContract.GAS.Decimals)
             };
             if (sendTx)
             {
@@ -180,7 +184,7 @@ namespace Neo.Services.ApiServices
 
             Transaction tx = null;
             using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitAppCall(para.ContractHash, para.Method, contractParameters);
+            sb.EmitDynamicCall(para.ContractHash, para.Method, contractParameters);
 
             try
             {
@@ -207,7 +211,7 @@ namespace Neo.Services.ApiServices
             var result = new InvokeResultModel();
             using ApplicationEngine engine = tx.Script.RunTestMode(null, tx);
             result.VmState = engine.State;
-            result.GasConsumed = new BigDecimal(tx.SystemFee, NativeContract.GAS.Decimals);
+            result.GasConsumed = new BigDecimal((BigInteger)tx.SystemFee, NativeContract.GAS.Decimals);
             result.ResultStack = engine.ResultStack.Select(p => JStackItem.FromJson(p.ToParameter().ToJson())).ToList();
             if (engine.State.HasFlag(VMState.FAULT))
             {
@@ -346,7 +350,7 @@ namespace Neo.Services.ApiServices
 
             var account = contract.ScriptHash;
             using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitAppCall(NativeContract.NEO.Hash, "registerCandidate", publicKey);
+            sb.EmitDynamicCall(NativeContract.NEO.Hash, "registerCandidate", publicKey);
 
             return await SignAndBroadcastTx(sb.ToArray(), account);
         }
@@ -381,7 +385,7 @@ namespace Neo.Services.ApiServices
                 return Error(ErrorCode.InvalidPara);
             }
             using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitAppCall(NativeContract.NEO.Hash, "vote", new ContractParameter
+            sb.EmitDynamicCall(NativeContract.NEO.Hash, "vote", new ContractParameter
             {
                 Type = ContractParameterType.Hash160,
                 Value = account

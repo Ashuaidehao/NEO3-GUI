@@ -17,13 +17,10 @@ namespace Neo.Common.Analyzers
 
         private readonly HashSet<UInt160> _cachedAssets = new HashSet<UInt160>();
 
-        public void OnPersist(StoreView snapshot, IReadOnlyList<Blockchain.ApplicationExecuted> applicationExecutedList)
+        void IPersistencePlugin.OnPersist(Block block, DataCache snapshot, IReadOnlyList<Blockchain.ApplicationExecuted> applicationExecutedList)
         {
-            Header header = snapshot.GetHeader(snapshot.CurrentBlockHash);
-
-
-
-            var analyzer = new BlockAnalyzer(snapshot.Clone(), header, applicationExecutedList);
+            Header header = snapshot.GetCurrentHeader();
+            var analyzer = new BlockAnalyzer(snapshot, header, applicationExecutedList);
             analyzer.Analysis();
 
             foreach (var analyzerResultInfo in analyzer.Result.ExecuteResultInfos)
@@ -42,32 +39,31 @@ namespace Neo.Common.Analyzers
 
             if (analyzer.Result.Transfers.NotEmpty())
             {
-                _levelDb.SaveTransfers(snapshot.Height, analyzer.Result.Transfers);
+                _levelDb.SaveTransfers(snapshot.GetHeight(), analyzer.Result.Transfers);
             }
 
-            foreach (var item in analyzer.Result.BalanceChangeAccounts)
+            if (analyzer.Result.BalanceChangeAccounts.NotEmpty())
             {
-                var balance = item.account.GetBalanceOf(item.asset, snapshot);
-                _levelDb.UpdateBalance(item.account, item.asset, balance.Value, snapshot.Height);
+                _levelDb.UpdateBalancingAccounts(snapshot.GetHeight(), analyzer.Result.BalanceChangeAccounts);
+                foreach (var item in analyzer.Result.BalanceChangeAccounts)
+                {
+                    var balance = item.Account.GetBalanceOf(item.Asset, snapshot);
+                    _levelDb.UpdateBalance(item.Account, item.Asset, balance.Value, snapshot.GetHeight());
+                }
             }
-
 
             if (analyzer.Result.ContractChangeEvents.NotEmpty())
             {
-                _levelDb.SaveContractEvent(snapshot.Height, analyzer.Result.ContractChangeEvents);
+                _levelDb.SaveContractEvent(snapshot.GetHeight(), analyzer.Result.ContractChangeEvents);
 
             }
         }
 
 
-        public void OnCommit(StoreView snapshot)
+        void IPersistencePlugin.OnCommit(Block block, DataCache snapshot)
         {
             _levelDb.Commit();
         }
 
-        public bool ShouldThrowExceptionFromCommit(Exception ex)
-        {
-            return false;
-        }
     }
 }

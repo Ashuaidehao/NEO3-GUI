@@ -22,8 +22,6 @@ namespace Neo
         {
             ExecuteResultLogTracker = new ExecuteResultLogTracker();
             ExecuteResultScanner = new ExecuteResultScanner();
-            ConsensusScanner = new ConsensusScanner();
-            //ConsensusScanner.StartLoop();
             Task.Run(() => ExecuteResultScanner.Start());
         }
 
@@ -37,7 +35,6 @@ namespace Neo
 
         public readonly ExecuteResultLogTracker ExecuteResultLogTracker;
 
-        public readonly ConsensusScanner ConsensusScanner;
 
     }
 }

@@ -74,7 +74,7 @@ namespace Neo.Services.ApiServices
             });
             using var snapshot = Blockchain.Singleton.GetSnapshot();
             using var sb = new ScriptBuilder();
-            sb.EmitAppCall(NativeContract.Designation.Hash, "designateAsRole", paras.ToArray());
+            sb.EmitDynamicCall(NativeContract.RoleManagement.Hash, "designateAsRole", paras.ToArray());
 
             if (signers == null)
             {
@@ -96,7 +96,7 @@ namespace Neo.Services.ApiServices
         public async Task<object> GetNodesByRole(Role role, uint? height = null)
         {
             using var snapshot = Blockchain.Singleton.GetSnapshot();
-            var points = NativeContract.Designation.GetDesignatedByRole(snapshot, role, height ?? snapshot.Height);
+            var points = NativeContract.RoleManagement.GetDesignatedByRole(snapshot, role, height ?? snapshot.GetHeight());
             return points?.Select(p => p.ToString()).ToList();
         }
 
@@ -126,7 +126,7 @@ namespace Neo.Services.ApiServices
             using var snapshot = Blockchain.Singleton.GetSnapshot();
 
             using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitAppCall(NativeContract.Policy.Hash, "setMaxTransactionsPerBlock", new ContractParameter
+            sb.EmitDynamicCall(NativeContract.Policy.Hash, "setMaxTransactionsPerBlock", new ContractParameter
             {
                 Type = ContractParameterType.Integer,
                 Value = max
@@ -161,7 +161,7 @@ namespace Neo.Services.ApiServices
             }
             using var snapshot = Blockchain.Singleton.GetSnapshot();
             using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitAppCall(NativeContract.Policy.Hash, "setMaxBlockSize", new ContractParameter
+            sb.EmitDynamicCall(NativeContract.Policy.Hash, "setMaxBlockSize", new ContractParameter
             {
                 Type = ContractParameterType.Integer,
                 Value = max
@@ -195,7 +195,7 @@ namespace Neo.Services.ApiServices
             }
             using var snapshot = Blockchain.Singleton.GetSnapshot();
             using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitAppCall(NativeContract.Policy.Hash, "setMaxBlockSystemFee", new ContractParameter
+            sb.EmitDynamicCall(NativeContract.Policy.Hash, "setMaxBlockSystemFee", new ContractParameter
             {
                 Type = ContractParameterType.Integer,
                 Value = max
@@ -228,7 +228,7 @@ namespace Neo.Services.ApiServices
             }
             using var snapshot = Blockchain.Singleton.GetSnapshot();
             using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitAppCall(NativeContract.Policy.Hash, "setFeePerByte", new ContractParameter
+            sb.EmitDynamicCall(NativeContract.Policy.Hash, "setFeePerByte", new ContractParameter
             {
                 Type = ContractParameterType.Integer,
                 Value = fee
@@ -257,7 +257,7 @@ namespace Neo.Services.ApiServices
             }
             using var snapshot = Blockchain.Singleton.GetSnapshot();
             using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitAppCall(NativeContract.Policy.Hash, "blockAccount", new ContractParameter
+            sb.EmitDynamicCall(NativeContract.Policy.Hash, "blockAccount", new ContractParameter
             {
                 Type = ContractParameterType.Hash160,
                 Value = account
@@ -281,7 +281,7 @@ namespace Neo.Services.ApiServices
             }
             using var snapshot = Blockchain.Singleton.GetSnapshot();
             using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitAppCall(NativeContract.Policy.Hash, "unblockAccount", new ContractParameter
+            sb.EmitDynamicCall(NativeContract.Policy.Hash, "unblockAccount", new ContractParameter
             {
                 Type = ContractParameterType.Hash160,
                 Value = account

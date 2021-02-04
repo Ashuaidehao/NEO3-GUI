@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Neo</RootNamespace>
     <SpaRoot>ClientApp\</SpaRoot>
     <DefaultItemExcludes>$(SpaRoot)node_modules\**;Data*\**</DefaultItemExcludes>
@@ -44,15 +44,20 @@
 
   <ItemGroup>
     <PackageReference Include="EFCore.BulkExtensions" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.4" />
-    <PackageReference Include="Neo" Version="3.0.0-preview4" />
+    <PackageReference Include="Neo" Version="3.0.0-preview5" />
     <PackageReference Include="Neo.LevelDb.Dev" Version="3.0.0-pre4" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.6.0" />
   </ItemGroup>
 
 
-  <ItemGroup>
-    <!--<ProjectReference Include="..\..\neo\src\neo\neo.csproj" />-->
+  <ItemGroup><!--<ProjectReference Include="..\..\neo\src\neo\neo.csproj" />-->
+  
+    <Content Update="config.testnet.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="protocol.testnet.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 
