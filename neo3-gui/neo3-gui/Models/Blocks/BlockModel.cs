@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Query.Internal;
@@ -28,8 +29,8 @@ namespace Neo.Models.Blocks
             ConsensusData = new ConsensusDataModel(block.ConsensusData);
             if (block.Transactions.NotEmpty())
             {
-                SystemFee = new BigDecimal(block.Transactions.Sum(t => t.SystemFee), NativeContract.GAS.Decimals).ToString();
-                NetworkFee = new BigDecimal(block.Transactions.Sum(t => t.NetworkFee), NativeContract.GAS.Decimals).ToString();
+                SystemFee = new BigDecimal((BigInteger)block.Transactions.Sum(t => t.SystemFee), NativeContract.GAS.Decimals).ToString();
+                NetworkFee = new BigDecimal((BigInteger)block.Transactions.Sum(t => t.NetworkFee), NativeContract.GAS.Decimals).ToString();
             }
         }
 

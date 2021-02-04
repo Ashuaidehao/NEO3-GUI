@@ -27,7 +27,7 @@ namespace Neo.Models.Jobs
                 var accounts = Program.Starter.CurrentWallet.GetAccounts().ToList();
 
                 using var snapshot = Blockchain.Singleton.GetSnapshot();
-                if (snapshot.Height <= _lastHeight)
+                if (snapshot.GetHeight() <= _lastHeight)
                 {
                     return null;
                 }
@@ -47,7 +47,7 @@ namespace Neo.Models.Jobs
                 BigInteger gas = BigInteger.Zero;
                 foreach (UInt160 account in accounts.Where(a => !a.WatchOnly).Select(p => p.ScriptHash))
                 {
-                    gas += NativeContract.NEO.UnclaimedGas(snapshot, account, snapshot.Height + 1);
+                    gas += NativeContract.NEO.UnclaimedGas(snapshot, account, snapshot.GetHeight() + 1);
                 }
 
                 var unclaimedGas = new BigDecimal(gas, NativeContract.GAS.Decimals);
@@ -56,7 +56,7 @@ namespace Neo.Models.Jobs
                     UnclaimedGas = unclaimedGas,
                     Accounts = list,
                 };
-                _lastHeight = snapshot.Height;
+                _lastHeight = snapshot.GetHeight();
                 return new WsMessage()
                 {
                     MsgType = WsMessageType.Push,

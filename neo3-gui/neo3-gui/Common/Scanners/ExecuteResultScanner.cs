@@ -35,7 +35,7 @@ namespace Neo.Common.Scanners
                     {
                         _scanHeight++;
                     }
-                    if (_scanHeight > Blockchain.Singleton.Height)
+                    if (_scanHeight > Blockchain.Singleton.GetHeight())
                     {
                         await Task.Delay(TimeSpan.FromSeconds(5));
                     }
@@ -63,7 +63,7 @@ namespace Neo.Common.Scanners
         /// <returns></returns>
         public async Task<bool> Sync(uint blockHeight)
         {
-            if (blockHeight > Blockchain.Singleton.Height)
+            if (blockHeight > Blockchain.Singleton.GetHeight())
             {
                 return false;
             }
@@ -76,7 +76,7 @@ namespace Neo.Common.Scanners
             var block = Blockchain.Singleton.GetBlock(blockHeight);
             var blockTime = block.Timestamp.FromTimestampMS();
 
-            var balanceChanges = new HashSet<(UInt160 account, UInt160 asset)>();
+            //var balanceChanges = new HashSet<(UInt160 account, UInt160 asset)>();
             foreach (var transaction in block.Transactions)
             {
                 _db.AddTransaction(new TransactionInfo()
@@ -86,7 +86,7 @@ namespace Neo.Common.Scanners
                     Sender = transaction.Sender,
                     Time = blockTime,
                 });
-                balanceChanges.Add((transaction.Sender, NativeContract.GAS.Hash));
+                //balanceChanges.Add((transaction.Sender, NativeContract.GAS.Hash));
                 var invokeMethods = GetInvokeMethods(transaction);
                 if (invokeMethods.NotEmpty())
                 {
@@ -118,14 +118,7 @@ namespace Neo.Common.Scanners
                         Asset = item.Asset,
                         Trigger = item.Trigger,
                     });
-                    if (item.From != null)
-                    {
-                        balanceChanges.Add((item.From, item.Asset));
-                    }
-                    if (item.To != null)
-                    {
-                        balanceChanges.Add((item.To, item.Asset));
-                    }
+
                 }
             }
 
@@ -134,12 +127,13 @@ namespace Neo.Common.Scanners
                 _db.AddTransfer(transferInfo);
             }
 
+            var balanceChanges = _levelDb.GetBalancingAccounts(blockHeight);
             if (balanceChanges.NotEmpty())
             {
                 using var snapshot = Blockchain.Singleton.GetSnapshot();
                 foreach (var balanceChange in balanceChanges)
                 {
-                    UpdateBalance(balanceChange.account, balanceChange.asset, snapshot);
+                    UpdateBalance(balanceChange.Account, balanceChange.Asset, snapshot);
                 }
             }
 
@@ -210,6 +204,7 @@ namespace Neo.Common.Scanners
                 case ContractEventType.Create:
                     {
                         var newContract = GenerateNewNep5ContractInfo(contractEvent.Contract, txId, blockTime);
+                        newContract.Name = contractEvent.Name;
                         _db.CreateContract(newContract);
                         break;
                     }
@@ -277,12 +272,12 @@ namespace Neo.Common.Scanners
 
 
 
-        private void UpdateBalance(UInt160 account, UInt160 asset, SnapshotView snapshot)
+        private void UpdateBalance(UInt160 account, UInt160 asset, DataCache snapshot)
         {
             try
             {
                 var balance = account.GetBalanceOf(asset, snapshot).Value;
-                _db.UpdateBalance(account, asset, balance, snapshot.Height);
+                _db.UpdateBalance(account, asset, balance, snapshot.GetHeight());
             }
             catch
             {

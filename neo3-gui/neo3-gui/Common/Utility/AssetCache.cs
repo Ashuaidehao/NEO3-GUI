@@ -9,6 +9,7 @@ using Neo.Ledger;
 using Neo.Models;
 using Neo.Persistence;
 using Neo.SmartContract;
+using Neo.SmartContract.Native;
 using Neo.VM;
 using Neo.VM.Types;
 
@@ -42,7 +43,7 @@ namespace Neo.Common.Utility
         /// <param name="assetId"></param>
         /// <param name="snapshot"></param>
         /// <returns></returns>
-        public static AssetInfo GetAssetInfo(UInt160 assetId, StoreView snapshot, bool readFromDb = true)
+        public static AssetInfo GetAssetInfo(UInt160 assetId, DataCache snapshot, bool readFromDb = true)
         {
             if (_assets.ContainsKey(assetId))
             {
@@ -59,11 +60,11 @@ namespace Neo.Common.Utility
         /// <param name="assetId"></param>
         /// <param name="snapshot"></param>
         /// <returns></returns>
-        public static AssetInfo GetAssetInfoFromChain(UInt160 assetId, StoreView snapshot)
+        public static AssetInfo GetAssetInfoFromChain(UInt160 assetId, DataCache snapshot)
         {
             using var sb = new ScriptBuilder();
-            sb.EmitAppCall(assetId, "decimals");
-            sb.EmitAppCall(assetId, "symbol");
+            sb.EmitDynamicCall(assetId, "decimals");
+            sb.EmitDynamicCall(assetId, "symbol");
             //sb.EmitAppCall(assetId, "name");
             var contract = snapshot.GetContract(assetId);
             if (contract == null)
@@ -73,9 +74,10 @@ namespace Neo.Common.Utility
             try
             {
                 using var engine = sb.ToArray().RunTestMode(snapshot);
+                //NativeContract.Ledger.
                 if (engine.State.HasFlag(VMState.FAULT))
                 {
-                    Console.WriteLine($"Cannot find Nep5 Asset[{assetId}] at height:{snapshot.Height}");
+                    Console.WriteLine($"Cannot find Nep5 Asset[{assetId}] at height:{snapshot.GetHeight()}");
                     return null;
                 }
                 string name = contract.Manifest.Name;
@@ -138,7 +140,7 @@ namespace Neo.Common.Utility
         {
             using var snapshot = Blockchain.Singleton.GetSnapshot();
             using var sb = new ScriptBuilder();
-            sb.EmitAppCall(asset, "totalSupply");
+            sb.EmitDynamicCall(asset, "totalSupply");
             using var engine = sb.ToArray().RunTestMode(snapshot);
             var total = engine.ResultStack.FirstOrDefault().ToBigInteger();
             var assetInfo = GetAssetInfo(asset);
@@ -153,7 +155,7 @@ namespace Neo.Common.Utility
             foreach (var asset in assets)
             {
                 assetInfos.Add(GetAssetInfo(asset));
-                sb.EmitAppCall(asset, "totalSupply");
+                sb.EmitDynamicCall(asset, "totalSupply");
             }
             using var engine = sb.ToArray().RunTestMode(snapshot);
             var values = engine.ResultStack.Select(s => s.ToBigInteger()).ToList();

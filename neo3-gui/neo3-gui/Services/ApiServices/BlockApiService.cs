@@ -58,7 +58,7 @@ namespace Neo.Services.ApiServices
         /// <returns></returns>
         public async Task<object> GetLastBlocks(int limit = 10, int? height = null)
         {
-            var lastHeight = Blockchain.Singleton.Height;
+            var lastHeight = Blockchain.Singleton.GetHeight();
             if (height > lastHeight)
             {
                 return Error(ErrorCode.BlockHeightInvalid);
@@ -152,7 +152,7 @@ namespace Neo.Services.ApiServices
         private BlockModel ToBlockModel(Block block)
         {
             var model = new BlockModel(block);
-            model.Confirmations = Blockchain.Singleton.Height - block.Index + 1;
+            model.Confirmations = Blockchain.Singleton.GetHeight() - block.Index + 1;
 
             //if (block.Transactions.NotEmpty())
             //{
@@ -173,7 +173,7 @@ namespace Neo.Services.ApiServices
         private async Task<IEnumerable<Block>> GetBlockByRange(int low, int high)
         {
             low = low < 0 ? 0 : low;
-            high = high > Blockchain.Singleton.Height ? (int)Blockchain.Singleton.Height : high;
+            high = high > Blockchain.Singleton.GetHeight() ? (int)Blockchain.Singleton.GetHeight() : high;
 
             var tasks = Enumerable.Range(low, high - low + 1).Reverse().Select(async (i) => GetBlockByHeight((uint)i));
             await Task.WhenAll(tasks);

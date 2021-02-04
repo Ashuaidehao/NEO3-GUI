@@ -427,10 +427,10 @@ namespace Neo.Services.ApiServices
                 return Error(ErrorCode.WalletNotOpen);
             }
             BigInteger gas = BigInteger.Zero;
-            using (SnapshotView snapshot = Blockchain.Singleton.GetSnapshot())
+            using (var snapshot = Blockchain.Singleton.GetSnapshot())
                 foreach (UInt160 account in CurrentWallet.GetAccounts().Where(a => !a.WatchOnly).Select(p => p.ScriptHash))
                 {
-                    gas += NativeContract.NEO.UnclaimedGas(snapshot, account, snapshot.Height + 1);
+                    gas += NativeContract.NEO.UnclaimedGas(snapshot, account, snapshot.GetHeight() + 1);
                 }
             return new UnclaimedGasModel()
             {
@@ -682,7 +682,7 @@ namespace Neo.Services.ApiServices
                 }
                 foreach (var transfer in transferRequests)
                 {
-                    sb.EmitAppCall(assetHash, "transfer", sender, transfer.Receiver, transfer.Amount.Value, null);
+                    sb.EmitDynamicCall(assetHash, "transfer", sender, transfer.Receiver, transfer.Amount.Value, null);
                     sb.Emit(OpCode.ASSERT);
                 }
             }

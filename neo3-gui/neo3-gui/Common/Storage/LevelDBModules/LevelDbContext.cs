@@ -26,6 +26,8 @@ namespace Neo.Common.Storage.LevelDBModules
         private readonly byte[] BalancePrefix = { 0xfb };
         private readonly byte[] TransferPrefix = { 0xfa };
         private readonly byte[] ContractEventPrefix = { 0xf9 };
+        private readonly byte[] BalanceChangingPrefix = { 0xf8 };
+
 
 
 
@@ -141,16 +143,37 @@ namespace Neo.Common.Storage.LevelDBModules
             return value?.DeserializeJson<AssetInfo>();
         }
 
+        private byte[] BalanceAccountsKey(uint height) => BalanceChangingPrefix.Append(BitConverter.GetBytes(height));
+
+
+        /// <summary>
+        /// Save Balance-Changed Accounts in Specified Block
+        /// </summary>
+        /// <param name="height"></param>
+        /// <param name="accounts"></param>
+        public void UpdateBalancingAccounts(uint height, HashSet<AccountAsset> accounts)
+        {
+            var key = BalanceAccountsKey(height);
+            writeBatch.Put(key, accounts.SerializeJsonBytes());
+        }
+
+        /// <summary>
+        /// Get Balance-Changed Accounts in Specified Block
+        /// </summary>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        public HashSet<AccountAsset> GetBalancingAccounts(uint height)
+        {
+            var key = BalanceAccountsKey(height);
+            var value = _db.Get(key).DeserializeJson<HashSet<AccountAsset>>();
+            return value;
+        }
+
 
         private byte[] BalanceKey(UInt160 account, UInt160 asset) => BalancePrefix.Append(account.ToArray(), asset.ToArray());
         public void UpdateBalance(UInt160 account, UInt160 asset, BigInteger balance, uint height)
         {
             var key = BalanceKey(account, asset);
-            //var value = GetBalance(key);
-            //if (value?.Height >= height)
-            //{
-            //    return;
-            //}
             var balanceRecord = new BalanceStorageItem() { Balance = balance, Height = height };
             writeBatch.Put(key, balanceRecord.SerializeJsonBytes());
         }

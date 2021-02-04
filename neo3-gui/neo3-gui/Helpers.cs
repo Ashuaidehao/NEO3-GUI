@@ -416,7 +416,7 @@ namespace Neo
         /// <param name="account"></param>
         /// <param name="snapshot"></param>
         /// <returns></returns>
-        public static AccountType GetAccountType(this WalletAccount account, SnapshotView snapshot)
+        public static AccountType GetAccountType(this WalletAccount account, DataCache snapshot)
         {
             if (account.Contract != null)
             {
@@ -443,7 +443,7 @@ namespace Neo
         /// <param name="asset"></param>
         /// <param name="snapshot"></param>
         /// <returns></returns>
-        public static List<BigDecimal> GetNativeBalanceOf<T>(this IEnumerable<UInt160> addresses, Nep17Token<T> asset, StoreView snapshot) where T : AccountState, new()
+        public static List<BigDecimal> GetNativeBalanceOf<T>(this IEnumerable<UInt160> addresses, FungibleToken<T> asset, DataCache snapshot) where T : AccountState, new()
         {
             var balances = new List<BigDecimal>();
             foreach (var account in addresses)
@@ -475,7 +475,7 @@ namespace Neo
         /// <param name="assetId"></param>
         /// <param name="snapshot"></param>
         /// <returns></returns>
-        public static List<BigDecimal> GetBalanceOf(this IEnumerable<UInt160> addresses, UInt160 assetId, SnapshotView snapshot)
+        public static List<BigDecimal> GetBalanceOf(this IEnumerable<UInt160> addresses, UInt160 assetId, DataCache snapshot)
         {
             var assetInfo = AssetCache.GetAssetInfo(assetId, snapshot);
             if (assetInfo == null)
@@ -494,7 +494,7 @@ namespace Neo
             using var sb = new ScriptBuilder();
             foreach (var address in addresses)
             {
-                sb.EmitAppCall(assetId, "balanceOf", address);
+                sb.EmitDynamicCall(assetId, "balanceOf", address);
             }
 
             using ApplicationEngine engine = sb.ToArray().RunTestMode(snapshot);
@@ -526,20 +526,20 @@ namespace Neo
         /// <param name="assetId"></param>
         /// <param name="snapshot"></param>
         /// <returns></returns>
-        public static BigDecimal GetBalanceOf(this UInt160 address, UInt160 assetId, StoreView snapshot)
+        public static BigDecimal GetBalanceOf(this UInt160 address, UInt160 assetId, DataCache snapshot)
         {
             var assetInfo = AssetCache.GetAssetInfo(assetId, snapshot);
             if (assetInfo == null)
             {
-                return new BigDecimal(0, 0);
+                return new BigDecimal(BigInteger.Zero, 0);
             }
 
             using var sb = new ScriptBuilder();
-            sb.EmitAppCall(assetId, "balanceOf", address);
+            sb.EmitDynamicCall(assetId, "balanceOf", address);
             using var engine = sb.ToArray().RunTestMode(snapshot);
             if (engine.State.HasFlag(VMState.FAULT))
             {
-                return new BigDecimal(0, 0);
+                return new BigDecimal(BigInteger.Zero, 0);
             }
             var balances = engine.ResultStack.Pop().GetInteger();
             return new BigDecimal(balances, assetInfo.Decimals);
@@ -576,7 +576,7 @@ namespace Neo
             var asset = AssetCache.GetAssetInfo(assetId);
             if (asset == null)
             {
-                return (new BigDecimal(0, 0), null);
+                return (new BigDecimal(BigInteger.Zero, 0), null);
             }
 
             return (new BigDecimal(amount, asset.Decimals), asset);
@@ -978,17 +978,94 @@ namespace Neo
         }
 
 
-        public static ApplicationEngine RunTestMode(this byte[] script, StoreView snapshot, IVerifiable container = null)
+        public static ApplicationEngine RunTestMode(this byte[] script, DataCache snapshot, IVerifiable container = null)
         {
             return ApplicationEngine.Run(script, snapshot, container, gas: Constant.TestMode);
         }
 
 
-        public static ContractState GetContract(this StoreView snapshot, UInt160 hash)
+        public static ContractState GetContract(this DataCache snapshot, UInt160 hash)
         {
-            return NativeContract.Management.GetContract(snapshot, hash);
+            return NativeContract.ContractManagement.GetContract(snapshot, hash);
         }
 
+
+        public static uint GetHeight(this Blockchain blockchain)
+        {
+            return blockchain.View.GetHeight();
+        }
+
+
+        public static uint GetHeight(this DataCache snapshot)
+        {
+            return NativeContract.Ledger.CurrentIndex(snapshot);
+        }
+
+        public static Header GetCurrentHeader(this DataCache snapshot)
+        {
+            return NativeContract.Ledger.GetHeader(snapshot, snapshot.GetHeight());
+        }
+
+        public static Block GetBlock(this Blockchain blockchain, uint index)
+        {
+            return blockchain.View.GetBlock(index);
+        }
+
+        public static Block GetBlock(this DataCache snapshot, uint index)
+        {
+            return NativeContract.Ledger.GetBlock(snapshot, index);
+        }
+
+        public static Header GetHeader(this Blockchain blockchain, uint index)
+        {
+            return blockchain.View.GetHeader(index);
+        }
+
+        public static Header GetHeader(this DataCache snapshot, uint index)
+        {
+            return NativeContract.Ledger.GetHeader(snapshot, index);
+        }
+
+        public static Header GetHeader(this Blockchain blockchain, UInt256 hash)
+        {
+            return blockchain.View.GetHeader(hash);
+        }
+
+        public static Header GetHeader(this DataCache snapshot, UInt256 hash)
+        {
+            return NativeContract.Ledger.GetHeader(snapshot, hash);
+        }
+        public static Block GetBlock(this Blockchain blockchain, UInt256 hash)
+        {
+            return blockchain.View.GetBlock(hash);
+        }
+
+        public static Block GetBlock(this DataCache snapshot, UInt256 hash)
+        {
+            return NativeContract.Ledger.GetBlock(snapshot, hash);
+        }
+
+
+        public static Transaction GetTransaction(this Blockchain blockchain, UInt256 hash)
+        {
+            return blockchain.View.GetTransaction(hash);
+        }
+
+        public static Transaction GetTransaction(this DataCache snapshot, UInt256 hash)
+        {
+            return NativeContract.Ledger.GetTransaction(snapshot, hash);
+        }
+
+
+        public static TransactionState GetTransactionState(this Blockchain blockchain, UInt256 hash)
+        {
+            return blockchain.View.GetTransactionState(hash);
+        }
+
+        public static TransactionState GetTransactionState(this DataCache snapshot, UInt256 hash)
+        {
+            return NativeContract.Ledger.GetTransactionState(snapshot, hash);
+        }
 
         public static string GetExMessage(this Exception ex)
         {
@@ -1000,5 +1077,7 @@ namespace Neo
             }
             return msg;
         }
+
+
     }
 }

@@ -51,13 +51,29 @@ namespace Neo.Common.Consoles
         }
     }
 
+    public class LoggerSettings
+    {
+        public string Path { get; }
+        public bool ConsoleOutput { get; }
+        public bool Active { get; }
+
+        public LoggerSettings(IConfigurationSection section)
+        {
+            this.Path = string.Format(section.GetValue("Path", "Logs_{0}"), ProtocolSettings.Default.Magic.ToString("X8"));
+            this.ConsoleOutput = section.GetValue("ConsoleOutput", false);
+            this.Active = section.GetValue("Active", false);
+        }
+    }
+
     public class StorageSettings
     {
         public string Engine { get; }
+        public string Path { get; }
 
         public StorageSettings(IConfigurationSection section)
         {
-            this.Engine = section.GetSection("Engine").Value;
+            this.Engine = section.GetValue("Engine", "LevelDBStore");
+            this.Path = section.GetValue("Path", "Data_LevelDB_{0}");
         }
     }
 
@@ -71,8 +87,8 @@ namespace Neo.Common.Consoles
 
         public P2PSettings(IConfigurationSection section)
         {
-            this.Port = ushort.Parse(section.GetSection("Port").Value);
-            this.WsPort = ushort.Parse(section.GetSection("WsPort").Value);
+            this.Port = ushort.Parse(section.GetValue("Port", "10333"));
+            this.WsPort = ushort.Parse(section.GetValue("WsPort", "10334"));
             this.MinDesiredConnections = section.GetValue("MinDesiredConnections", Peer.DefaultMinDesiredConnections);
             this.MaxConnections = section.GetValue("MaxConnections", Peer.DefaultMaxConnections);
             this.MaxConnectionsPerAddress = section.GetValue("MaxConnectionsPerAddress", 3);
@@ -83,17 +99,15 @@ namespace Neo.Common.Consoles
     {
         public string Path { get; }
         public string Password { get; }
-        public bool StartConsensus { get; }
         public bool IsActive { get; }
 
         public UnlockWalletSettings(IConfigurationSection section)
         {
             if (section.Exists())
             {
-                this.Path = section.GetSection("Path").Value;
-                this.Password = section.GetSection("Password").Value;
-                this.StartConsensus = bool.Parse(section.GetSection("StartConsensus").Value);
-                this.IsActive = bool.Parse(section.GetSection("IsActive").Value);
+                this.Path = section.GetValue("Path", "");
+                this.Password = section.GetValue("Password", "");
+                this.IsActive = bool.Parse(section.GetValue("IsActive", "false"));
             }
         }
     }

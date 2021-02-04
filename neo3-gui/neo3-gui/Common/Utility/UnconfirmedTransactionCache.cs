@@ -45,6 +45,10 @@ namespace Neo.Common.Utility
                         continue;
                     }
                     var asset = AssetCache.GetAssetInfo(transfer.Asset);
+                    if (asset == null)
+                    {
+                        continue;
+                    }
                     transfer.Symbol = asset.Symbol;
                     transfer.Decimals = asset.Decimals;
                     transfers.Add(transfer);

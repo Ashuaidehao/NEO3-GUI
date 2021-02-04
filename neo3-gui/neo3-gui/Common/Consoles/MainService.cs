@@ -1,6 +1,5 @@
 using Akka.Actor;
 using Microsoft.Extensions.Configuration;
-using Neo.Consensus;
 using Neo.IO;
 using Neo.IO.Json;
 using Neo.Ledger;
@@ -104,7 +103,7 @@ namespace Neo.Common.Consoles
             uint start = read_start ? r.ReadUInt32() : 0;
             uint count = r.ReadUInt32();
             uint end = start + count - 1;
-            if (end <= Blockchain.Singleton.Height) yield break;
+            if (end <= Blockchain.Singleton.View.GetHeight()) yield break;
             for (uint height = start; height <= end; height++)
             {
                 var size = r.ReadInt32();
@@ -112,7 +111,7 @@ namespace Neo.Common.Consoles
                     throw new ArgumentException($"Block {height} exceeds the maximum allowed size");
 
                 byte[] array = r.ReadBytes(size);
-                if (height > Blockchain.Singleton.Height)
+                if (height > Blockchain.Singleton.GetHeight())
                 {
                     Block block = array.AsSerializable<Block>();
                     yield return block;
@@ -145,7 +144,7 @@ namespace Neo.Common.Consoles
 
             foreach (var path in paths)
             {
-                if (path.Start > Blockchain.Singleton.Height + 1) break;
+                if (path.Start > Blockchain.Singleton.GetHeight() + 1) break;
                 if (path.IsCompressed)
                     using (FileStream fs = new FileStream(path.FileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                     using (ZipArchive zip = new ZipArchive(fs, ZipArchiveMode.Read))
@@ -279,7 +278,7 @@ namespace Neo.Common.Consoles
 
             using (ScriptBuilder scriptBuilder = new ScriptBuilder())
             {
-                scriptBuilder.EmitAppCall(scriptHash, args[2], contractParameters.ToArray());
+                scriptBuilder.EmitDynamicCall(scriptHash, args[2], contractParameters.ToArray());
                 tx.Script = scriptBuilder.ToArray();
                 Console.WriteLine($"Invoking script with: '{tx.Script.ToHexString()}'");
             }
@@ -431,7 +430,6 @@ namespace Neo.Common.Consoles
         {
             if (args.Length != 3) return false;
             if (!byte.TryParse(args[2], out byte viewnumber)) return false;
-            NeoSystem.Consensus?.Tell(new ConsensusService.SetViewNumber { ViewNumber = viewnumber });
             return true;
         }
 
@@ -540,16 +538,16 @@ namespace Neo.Common.Consoles
             string path;
             if (args.Length >= 3 && uint.TryParse(args[2], out uint start))
             {
-                if (Blockchain.Singleton.Height < start) return true;
+                if (Blockchain.Singleton.GetHeight() < start) return true;
                 count = args.Length >= 4 ? uint.Parse(args[3]) : uint.MaxValue;
-                count = Math.Min(count, Blockchain.Singleton.Height - start + 1);
+                count = Math.Min(count, Blockchain.Singleton.GetHeight() - start + 1);
                 path = $"chain.{start}.acc";
                 writeStart = true;
             }
             else
             {
                 start = 0;
-                count = Blockchain.Singleton.Height - start + 1;
+                count = Blockchain.Singleton.GetHeight() - start + 1;
                 path = args.Length >= 3 ? args[2] : "chain.acc";
                 writeStart = false;
             }
@@ -789,10 +787,10 @@ namespace Neo.Common.Consoles
         {
             if (NoWallet()) return true;
             BigInteger gas = BigInteger.Zero;
-            using (SnapshotView snapshot = Blockchain.Singleton.GetSnapshot())
+            using (var snapshot = Blockchain.Singleton.GetSnapshot())
                 foreach (UInt160 account in CurrentWallet.GetAccounts().Select(p => p.ScriptHash))
                 {
-                    gas += NativeContract.NEO.UnclaimedGas(snapshot, account, snapshot.Height + 1);
+                    gas += NativeContract.NEO.UnclaimedGas(snapshot, account, snapshot.GetHeight() + 1);
                 }
             Console.WriteLine($"unclaimed gas: {new BigDecimal(gas, NativeContract.GAS.Decimals)}");
             return true;
@@ -1051,7 +1049,7 @@ namespace Neo.Common.Consoles
             {
                 while (!cancel.Token.IsCancellationRequested)
                 {
-                    NeoSystem.LocalNode.Tell(Message.Create(MessageCommand.Ping, PingPayload.Create(Blockchain.Singleton.Height)));
+                    NeoSystem.LocalNode.Tell(Message.Create(MessageCommand.Ping, PingPayload.Create(Blockchain.Singleton.GetHeight())));
                     await Task.Delay(Blockchain.TimePerBlock, cancel.Token);
                 }
             });
@@ -1062,7 +1060,7 @@ namespace Neo.Common.Consoles
                 while (!cancel.Token.IsCancellationRequested)
                 {
                     Console.SetCursorPosition(0, 0);
-                    WriteLineWithoutFlicker($"block: {Blockchain.Singleton.Height}/{Blockchain.Singleton.HeaderHeight}  connected: {LocalNode.Singleton.ConnectedCount}  unconnected: {LocalNode.Singleton.UnconnectedCount}", Console.WindowWidth - 1);
+                    WriteLineWithoutFlicker($"block: {Blockchain.Singleton.GetHeight()}  connected: {LocalNode.Singleton.ConnectedCount}  unconnected: {LocalNode.Singleton.UnconnectedCount}", Console.WindowWidth - 1);
 
                     int linesWritten = 1;
                     foreach (RemoteNode node in LocalNode.Singleton.GetRemoteNodes().OrderByDescending(u => u.LastBlockIndex).Take(Console.WindowHeight - 2).ToArray())
@@ -1101,20 +1099,13 @@ namespace Neo.Common.Consoles
         {
             switch (args[1].ToLower())
             {
-                case "consensus":
-                    return OnStartConsensusCommand(args);
+ 
                 default:
                     return base.OnCommand(args);
             }
         }
 
-        private bool OnStartConsensusCommand(string[] args)
-        {
-            if (NoWallet()) return true;
-            ShowPrompt = false;
-            NeoSystem.StartConsensus(CurrentWallet);
-            return true;
-        }
+    
 
         protected internal override void OnStop()
         {
@@ -1292,7 +1283,17 @@ namespace Neo.Common.Consoles
                         Settings.Initialize(new ConfigurationBuilder().AddJsonFile("config.mainnet.json").Build());
                         break;
                 }
-            NeoSystem = new NeoSystem(Settings.Default.Storage.Engine);
+
+            try
+            {
+                NeoSystem = new NeoSystem(Settings.Default.Storage.Engine, Settings.Default.Storage.Path);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+           
             using (IEnumerator<Block> blocksBeingImported = GetBlocksFromFile().GetEnumerator())
             {
                 while (true)
@@ -1330,10 +1331,7 @@ namespace Neo.Common.Consoles
                 {
                     Console.WriteLine($"failed to open file \"{Settings.Default.UnlockWallet.Path}\"");
                 }
-                if (Settings.Default.UnlockWallet.StartConsensus && CurrentWallet != null)
-                {
-                    OnStartConsensusCommand(null);
-                }
+
             }
         }
 
