@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Neo.Common;
@@ -11,13 +12,13 @@ namespace Neo
     {
         public static GuiStarter Starter = new GuiStarter();
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
 
-
+            await Starter.Start(args);
             CreateWebHostBuilder(args).Build().Start();
-            Starter.Run(args);
+            Starter.RunConsole();
             Starter.Stop();
 
         }

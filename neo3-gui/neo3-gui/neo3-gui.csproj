@@ -26,16 +26,11 @@
 
   <ItemGroup>
     <Content Remove="config.private.json" />
-    <Content Remove="protocol.private.json" />
   </ItemGroup>
 
 
   <ItemGroup>
     <None Include="config.private.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </None>
-    <None Include="protocol.private.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
@@ -50,12 +45,14 @@
   </ItemGroup>
 
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\neo\src\neo\neo.csproj" />
+  </ItemGroup>
+
+
   <ItemGroup><!--<ProjectReference Include="..\..\neo\src\neo\neo.csproj" />-->
   
     <Content Update="config.testnet.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="protocol.testnet.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

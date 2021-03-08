@@ -9,40 +9,38 @@ using Neo.Network.P2P;
 
 namespace Neo.Common.Consoles
 {
-    public class Settings
+    public class CliSettings
     {
+        public ProtocolSettings Protocol { get; private set; }
         public StorageSettings Storage { get; }
         public P2PSettings P2P { get; }
         public UnlockWalletSettings UnlockWallet { get; }
         public string PluginURL { get; }
 
-        static Settings _default;
+        static CliSettings _default;
 
         static bool UpdateDefault(IConfiguration configuration)
         {
-            var settings = new Settings(configuration.GetSection("ApplicationConfiguration"));
+            var settings = new CliSettings(configuration.GetSection("ApplicationConfiguration"));
+            settings.Protocol = ProtocolSettings.Load("config".GetEnvConfigPath());
             return null == Interlocked.CompareExchange(ref _default, settings, null);
         }
 
-        public static bool Initialize(IConfiguration configuration)
-        {
-            return UpdateDefault(configuration);
-        }
 
-        public static Settings Default
+
+        public static CliSettings Default
         {
             get
             {
                 if (_default == null)
                 {
-                    UpdateDefault(Neo.Utility.LoadConfig("config"));
+                    UpdateDefault("config".LoadConfig());
                 }
-
                 return _default;
             }
         }
 
-        public Settings(IConfigurationSection section)
+        public CliSettings(IConfigurationSection section)
         {
             this.Storage = new StorageSettings(section.GetSection("Storage"));
             this.P2P = new P2PSettings(section.GetSection("P2P"));
@@ -59,7 +57,7 @@ namespace Neo.Common.Consoles
 
         public LoggerSettings(IConfigurationSection section)
         {
-            this.Path = string.Format(section.GetValue("Path", "Logs_{0}"), ProtocolSettings.Default.Magic.ToString("X8"));
+            this.Path = string.Format(section.GetValue("Path", "Logs_{0}"), CliSettings.Default.Protocol.Magic.ToString("X8"));
             this.ConsoleOutput = section.GetValue("ConsoleOutput", false);
             this.Active = section.GetValue("Active", false);
         }

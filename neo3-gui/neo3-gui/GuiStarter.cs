@@ -22,12 +22,13 @@ namespace Neo
         {
             ExecuteResultLogTracker = new ExecuteResultLogTracker();
             ExecuteResultScanner = new ExecuteResultScanner();
-            Task.Run(() => ExecuteResultScanner.Start());
         }
 
-        public override void OnStart(string[] args)
+   
+        public override async Task Start(string[] args)
         {
-            base.OnStart(args);
+            await base.Start(args);
+            Task.Run(() => ExecuteResultScanner.Start());
             UnconfirmedTransactionCache.RegisterBlockPersistEvent(this.NeoSystem);
         }
 

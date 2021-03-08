@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Util.Internal;
 using Neo.Common;
+using Neo.Common.Consoles;
 using Neo.Common.Storage;
 using Neo.Common.Utility;
 using Neo.Cryptography;
@@ -93,7 +94,7 @@ namespace Neo.Services.ApiServices
                 {
                     case ".db3":
                         {
-                            UserWallet wallet = UserWallet.Create(path, password);
+                            UserWallet wallet = UserWallet.Create(path, password, CliSettings.Default.Protocol);
                             var account = hexPrivateKey.NotEmpty() ? wallet.CreateAccount(hexPrivateKey) : wallet.CreateAccount();
                             result.Accounts.Add(new AccountModel()
                             {
@@ -107,7 +108,7 @@ namespace Neo.Services.ApiServices
                         break;
                     case ".json":
                         {
-                            NEP6Wallet wallet = new NEP6Wallet(path);
+                            NEP6Wallet wallet = new NEP6Wallet(path, CliSettings.Default.Protocol);
                             wallet.Unlock(password);
                             var account = hexPrivateKey.NotEmpty() ? wallet.CreateAccount(hexPrivateKey) : wallet.CreateAccount();
                             wallet.Save();
@@ -427,11 +428,11 @@ namespace Neo.Services.ApiServices
                 return Error(ErrorCode.WalletNotOpen);
             }
             BigInteger gas = BigInteger.Zero;
-            using (var snapshot = Blockchain.Singleton.GetSnapshot())
-                foreach (UInt160 account in CurrentWallet.GetAccounts().Where(a => !a.WatchOnly).Select(p => p.ScriptHash))
-                {
-                    gas += NativeContract.NEO.UnclaimedGas(snapshot, account, snapshot.GetHeight() + 1);
-                }
+            var snapshot = Helpers.GetDefaultSnapshot();
+            foreach (UInt160 account in CurrentWallet.GetAccounts().Where(a => !a.WatchOnly).Select(p => p.ScriptHash))
+            {
+                gas += NativeContract.NEO.UnclaimedGas(snapshot, account, snapshot.GetHeight() + 1);
+            }
             return new UnclaimedGasModel()
             {
                 UnclaimedGas = new BigDecimal(gas, NativeContract.GAS.Decimals)
@@ -464,7 +465,7 @@ namespace Neo.Services.ApiServices
             }).ToArray();
             try
             {
-                Transaction tx = CurrentWallet.MakeTransaction(outputs);
+                Transaction tx = CurrentWallet.MakeTransaction(Helpers.GetDefaultSnapshot(), outputs);
                 if (tx == null)
                 {
                     return Error(ErrorCode.ClaimGasFail);
@@ -538,7 +539,7 @@ namespace Neo.Services.ApiServices
 
             try
             {
-                Transaction tx = CurrentWallet.MakeTransaction(new[]
+                Transaction tx = CurrentWallet.MakeTransaction(Helpers.GetDefaultSnapshot(), new[]
                 {
                     new TransferOutput
                     {
@@ -665,7 +666,7 @@ namespace Neo.Services.ApiServices
                 t.Asset
             });
             using var sb = new ScriptBuilder();
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            var snapshot = Helpers.GetDefaultSnapshot();
 
             foreach (var transferRequests in lookup)
             {
@@ -696,7 +697,7 @@ namespace Neo.Services.ApiServices
                     Scopes = WitnessScope.CalledByEntry,
                     Account = p
                 }).ToArray();
-            return CurrentWallet.MakeTransaction(script, null, cosigners, new TransactionAttribute[0]);
+            return CurrentWallet.MakeTransaction(snapshot, script, null, cosigners, new TransactionAttribute[0]);
         }
 
 
@@ -755,7 +756,7 @@ namespace Neo.Services.ApiServices
 
             try
             {
-                Transaction tx = CurrentWallet.MakeTransaction(outputs, sender);
+                Transaction tx = CurrentWallet.MakeTransaction(Helpers.GetDefaultSnapshot(), outputs, sender);
                 if (tx == null)
                 {
                     return Error(ErrorCode.BalanceNotEnough, "Insufficient funds");
@@ -795,7 +796,7 @@ namespace Neo.Services.ApiServices
             ContractParametersContext context;
             try
             {
-                context = ContractParametersContext.FromJson(signContext.DeserializeJson<JObject>());
+                context = ContractParametersContext.FromJson(signContext.DeserializeJson<JObject>(), Helpers.GetDefaultSnapshot());
             }
             catch (Exception e)
             {
@@ -848,7 +849,7 @@ namespace Neo.Services.ApiServices
             Transaction transaction = null;
             try
             {
-                ContractParametersContext context = ContractParametersContext.FromJson(signContext.DeserializeJson<JObject>());
+                ContractParametersContext context = ContractParametersContext.FromJson(signContext.DeserializeJson<JObject>(), Helpers.GetDefaultSnapshot());
                 if (!context.Completed)
                 {
                     return Error(ErrorCode.SignFail, signContext);
@@ -1119,16 +1120,16 @@ namespace Neo.Services.ApiServices
         private WalletModel GetWalletAddress(Wallet wallet, int count)
         {
             var result = new WalletModel();
-            using (var snapshot = Blockchain.Singleton.GetSnapshot())
+            var snapshot = Helpers.GetDefaultSnapshot();
+
+            result.Accounts.AddRange(wallet.GetAccounts().Take(count).Select(account => new AccountModel()
             {
-                result.Accounts.AddRange(wallet.GetAccounts().Take(count).Select(account => new AccountModel()
-                {
-                    ScriptHash = account.ScriptHash,
-                    Address = account.Address,
-                    WatchOnly = account.WatchOnly,
-                    AccountType = account.GetAccountType(snapshot),
-                }));
-            }
+                ScriptHash = account.ScriptHash,
+                Address = account.Address,
+                WatchOnly = account.WatchOnly,
+                AccountType = account.GetAccountType(snapshot),
+            }));
+
             GetNeoAndGas(result.Accounts);
             return result;
         }

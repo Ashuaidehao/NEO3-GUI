@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Neo.Common.Consoles;
 
 namespace Neo.Common.Storage.SQLiteModules
 {
@@ -38,7 +39,7 @@ namespace Neo.Common.Storage.SQLiteModules
             }
         }
 
-        public SQLiteContext() : this(Path.Combine($"Data_Track", $"track.{ProtocolSettings.Default.Magic}.db"))
+        public SQLiteContext() : this(Path.Combine($"Data_Track", $"track.{CliSettings.Default.Protocol.Magic}.db"))
         {
         }
 

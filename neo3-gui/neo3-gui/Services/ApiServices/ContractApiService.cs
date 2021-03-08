@@ -52,8 +52,7 @@ namespace Neo.Services.ApiServices
 
         public async Task<object> GetContract(UInt160 contractHash)
         {
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
-            var contract = snapshot.GetContract(contractHash);
+            var contract = contractHash.GetContract();
             if (contract == null)
             {
                 return Error(ErrorCode.UnknownContract);
@@ -67,8 +66,7 @@ namespace Neo.Services.ApiServices
 
         public async Task<object> GetManifestFile(UInt160 contractHash)
         {
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
-            var contract = snapshot.GetContract(contractHash);
+            var contract = contractHash.GetContract();
             if (contract == null)
             {
                 return Error(ErrorCode.UnknownContract);
@@ -108,7 +106,7 @@ namespace Neo.Services.ApiServices
             Transaction tx;
             try
             {
-                tx = CurrentWallet.MakeTransaction(script, sender);
+                tx = CurrentWallet.MakeTransaction(Helpers.GetDefaultSnapshot(), script, sender);
             }
             catch (InvalidOperationException ex)
             {
@@ -125,8 +123,7 @@ namespace Neo.Services.ApiServices
 
             UInt160 hash = SmartContract.Helper.GetContractHash(tx.Sender, nefFile.CheckSum, manifest.Name);
 
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
-            var oldContract = NativeContract.ContractManagement.GetContract(snapshot, hash);
+            var oldContract = hash.GetContract();
             if (oldContract != null)
             {
                 return Error(ErrorCode.ContractAlreadyExist);
@@ -159,8 +156,7 @@ namespace Neo.Services.ApiServices
             {
                 return Error(ErrorCode.ParameterIsNull);
             }
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
-            var contract = snapshot.GetContract(para.ContractHash);
+            var contract = para.ContractHash.GetContract();
             if (contract == null)
             {
                 return Error(ErrorCode.UnknownContract);
@@ -192,7 +188,7 @@ namespace Neo.Services.ApiServices
             }
             catch (InvalidOperationException ex)
             {
-                return Error(ErrorCode.EngineFault, ex.Message);
+                return Error(ErrorCode.EngineFault, $"{ex.Message}\r\nInnerError:{ex.InnerException}");
             }
             catch (Exception ex)
             {
@@ -213,6 +209,12 @@ namespace Neo.Services.ApiServices
             result.VmState = engine.State;
             result.GasConsumed = new BigDecimal((BigInteger)tx.SystemFee, NativeContract.GAS.Decimals);
             result.ResultStack = engine.ResultStack.Select(p => JStackItem.FromJson(p.ToParameter().ToJson())).ToList();
+            result.Notifications = engine.Notifications?.Select(e => new InvokeEventModel()
+            {
+                EventName = e.EventName,
+                Items = e.State.Select(j => JStackItem.FromJson(j.ToParameter().ToJson()))
+
+            }).ToList();
             if (engine.State.HasFlag(VMState.FAULT))
             {
                 return Error(ErrorCode.EngineFault);
@@ -298,7 +300,7 @@ namespace Neo.Services.ApiServices
         /// <returns></returns>
         public async Task<object> GetValidators()
         {
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            var snapshot = Helpers.GetDefaultSnapshot();
             var validators = NativeContract.NEO.GetCommittee(snapshot);
             var candidates = NativeContract.NEO.GetCandidates(snapshot);
             return candidates.OrderByDescending(v => v.Votes).Select(p => new ValidatorModel
@@ -336,7 +338,7 @@ namespace Neo.Services.ApiServices
             {
                 return Error(ErrorCode.InvalidPara);
             }
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            var snapshot = Helpers.GetDefaultSnapshot();
             var validators = NativeContract.NEO.GetCommittee(snapshot);
             if (validators.Any(v => v.Equals(publicKey)))
             {

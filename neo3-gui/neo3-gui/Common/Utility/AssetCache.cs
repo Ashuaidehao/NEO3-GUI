@@ -32,7 +32,7 @@ namespace Neo.Common.Utility
             {
                 return _assets[assetId];
             }
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            var snapshot = Helpers.GetDefaultSnapshot();
             return GetAssetInfo(assetId, snapshot, readFromDb);
         }
 
@@ -138,7 +138,7 @@ namespace Neo.Common.Utility
 
         public static BigDecimal? GetTotalSupply(UInt160 asset)
         {
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            var snapshot = Helpers.GetDefaultSnapshot();
             using var sb = new ScriptBuilder();
             sb.EmitDynamicCall(asset, "totalSupply");
             using var engine = sb.ToArray().RunTestMode(snapshot);
@@ -149,7 +149,7 @@ namespace Neo.Common.Utility
 
         public static List<BigDecimal?> GetTotalSupply(IEnumerable<UInt160> assets)
         {
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            var snapshot = Helpers.GetDefaultSnapshot();
             using var sb = new ScriptBuilder();
             var assetInfos = new List<AssetInfo>();
             foreach (var asset in assets)

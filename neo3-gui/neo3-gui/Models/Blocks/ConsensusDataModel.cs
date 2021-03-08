@@ -9,15 +9,15 @@ namespace Neo.Models.Blocks
 {
     public class ConsensusDataModel
     {
-        public ConsensusDataModel(ConsensusData consensus)
-        {
-            if (consensus != null)
-            {
-                Hash = consensus.Hash;
-                PrimaryIndex = consensus.PrimaryIndex;
-                Nonce = consensus.Nonce.ToString();
-            }
-        }
+        //public ConsensusDataModel(ConsensusData consensus)
+        //{
+        //    if (consensus != null)
+        //    {
+        //        Hash = consensus.Hash;
+        //        PrimaryIndex = consensus.PrimaryIndex;
+        //        Nonce = consensus.Nonce.ToString();
+        //    }
+        //}
 
         public uint PrimaryIndex { get; set; }
         public string Nonce { get; set; }

@@ -26,7 +26,7 @@ namespace Neo.Models.Blocks
             MerkleRoot = block.MerkleRoot;
             NextConsensusHash = block.NextConsensus;
             Witness = new WitnessModel(block.Witness);
-            ConsensusData = new ConsensusDataModel(block.ConsensusData);
+            //ConsensusData = new ConsensusDataModel(block.ConsensusData);
             if (block.Transactions.NotEmpty())
             {
                 SystemFee = new BigDecimal((BigInteger)block.Transactions.Sum(t => t.SystemFee), NativeContract.GAS.Decimals).ToString();
@@ -53,7 +53,7 @@ namespace Neo.Models.Blocks
         public string SystemFee { get; set; }
         public string NetworkFee { get; set; }
         public WitnessModel Witness { get; set; }
-        public ConsensusDataModel ConsensusData { get; set; }
+        //public ConsensusDataModel ConsensusData { get; set; }
         //public List<TransactionPreviewModel> Transactions { get; set; }
 
     }
