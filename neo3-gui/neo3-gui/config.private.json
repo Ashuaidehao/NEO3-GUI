@@ -1,7 +1,8 @@
 {
   "ApplicationConfiguration": {
     "Storage": {
-      "Engine": "LevelDBStore"
+      "Engine": "LevelDBStore",
+      "Path": "Data_LevelDB_55555"
     },
     "P2P": {
       "Port": 30333,

@@ -134,6 +134,68 @@ namespace Neo.Services.ApiServices
             return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
         }
 
+        public async Task<object> GetExecFeeFactor()
+        {
+            return NativeContract.Policy.GetExecFeeFactor(Helpers.GetDefaultSnapshot());
+        }
+
+        public async Task<object> SetExecFeeFactor(uint factor, List<UInt160> signers = null)
+        {
+            if (factor == 0 || factor > PolicyContract.MaxExecFeeFactor)
+            {
+                return Error(ErrorCode.InvalidPara, $"input value should between 0 and  1000");
+            }
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            using ScriptBuilder sb = new ScriptBuilder();
+            sb.EmitDynamicCall(NativeContract.Policy.Hash, "setExecFeeFactor", new ContractParameter
+            {
+                Type = ContractParameterType.Integer,
+                Value = factor
+            });
+            if (signers == null)
+            {
+                signers = new List<UInt160>();
+            }
+            var committee = NativeContract.NEO.GetCommitteeAddress(Helpers.GetDefaultSnapshot());
+            signers.Add(committee);
+            return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
+        }
+
+
+        public async Task<object> GetStoragePrice()
+        {
+            return NativeContract.Policy.GetStoragePrice(Helpers.GetDefaultSnapshot());
+        }
+
+
+        public async Task<object> SetStoragePrice(uint factor, List<UInt160> signers = null)
+        {
+            if (factor == 0 || factor > PolicyContract.MaxStoragePrice)
+            {
+                return Error(ErrorCode.InvalidPara, $"input value should between 0 and  10000000");
+            }
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            using ScriptBuilder sb = new ScriptBuilder();
+            sb.EmitDynamicCall(NativeContract.Policy.Hash, "setStoragePrice", new ContractParameter
+            {
+                Type = ContractParameterType.Integer,
+                Value = factor
+            });
+            if (signers == null)
+            {
+                signers = new List<UInt160>();
+            }
+            var committee = NativeContract.NEO.GetCommitteeAddress(Helpers.GetDefaultSnapshot());
+            signers.Add(committee);
+            return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
+        }
+
         public async Task<bool> IsBlocked(UInt160 account)
         {
             return NativeContract.Policy.IsBlocked(Helpers.GetDefaultSnapshot(), account);

@@ -20,7 +20,7 @@ namespace Neo.Models.Contracts
 
         public List<JStackItem> ResultStack { get; set; }
 
-        public List<InvokeEventModel> Notifications { get; set; }
+        public List<InvokeEventValueModel> Notifications { get; set; }
 
     }
 }

@@ -6,6 +6,6 @@ namespace Neo.Models.Transactions
     {
         public string Type => Usage.ToString();
         public TransactionAttributeType Usage { get; set; }
-        public byte[] Data { get; set; }
+        public string Data { get; set; }
     }
 }

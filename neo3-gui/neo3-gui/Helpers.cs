@@ -34,6 +34,7 @@ using Neo.Network.P2P.Payloads;
 using Neo.Persistence;
 using Neo.Services;
 using Neo.SmartContract;
+using Neo.SmartContract.Manifest;
 using Neo.SmartContract.Native;
 using Neo.VM;
 using Neo.VM.Types;
@@ -172,6 +173,26 @@ namespace Neo
         public static LocalNode GetDefaultLocalNode(this object obj)
         {
             return Program.Starter.LocalNode; ;
+        }
+
+
+        public static readonly Dictionary<string, ContractEventDescriptor> EventMetaCache = new Dictionary<string, ContractEventDescriptor>();
+        public static ContractEventDescriptor GetEvent(this UInt160 contractHash, string eventName)
+        {
+            var cachekey = contractHash + eventName;
+            if (EventMetaCache.ContainsKey(cachekey))
+            {
+                return EventMetaCache[cachekey];
+            }
+            var contract = GetDefaultSnapshot().GetContract(contractHash);
+            var eventMeta = contract?.Manifest.Abi.Events.FirstOrDefault(e => e.Name == eventName);
+            if (eventMeta == null)
+            {
+                return null;
+            }
+
+            EventMetaCache[cachekey] = eventMeta;
+            return eventMeta;
         }
 
         /// <summary>
@@ -1139,7 +1160,7 @@ namespace Neo
 
         public static ApplicationEngine RunTestMode(this byte[] script, DataCache snapshot, IVerifiable container = null)
         {
-            return ApplicationEngine.Run(script, snapshot?? GetDefaultSnapshot(), container, settings: CliSettings.Default.Protocol, gas: Constant.TestMode);
+            return ApplicationEngine.Run(script, snapshot ?? GetDefaultSnapshot(), container, settings: CliSettings.Default.Protocol, gas: Constant.TestMode);
         }
 
         public static ContractState GetContract(this DataCache snapshot, UInt160 hash)

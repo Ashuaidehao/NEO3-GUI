@@ -2,9 +2,10 @@
 
 namespace Neo.Models.Contracts
 {
-    public class InvokeEventModel
+    public class InvokeEventValueModel
     {
+        public UInt160 Contract { get; set; }
         public string EventName { get; set; }
-        public IEnumerable<JStackItem> Items { get; set; }
+        public object EventParameters { get; set; }
     }
 }

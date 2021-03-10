@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Akka.Util.Internal;
 using Neo.Common;
 using Neo.Common.Storage;
 using Neo.Common.Utility;
@@ -21,15 +22,15 @@ using Neo.SmartContract;
 using Neo.SmartContract.Manifest;
 using Neo.SmartContract.Native;
 using Neo.VM;
+using Neo.VM.Types;
 using Neo.Wallets;
 using Neo.Wallets.SQLite;
+using Array = Neo.VM.Types.Array;
 
 namespace Neo.Services.ApiServices
 {
     public class ContractApiService : ApiService
     {
-
-
         public async Task<object> GetAllContracts()
         {
             var list = new List<ContractInfoModel>();
@@ -188,7 +189,7 @@ namespace Neo.Services.ApiServices
             }
             catch (InvalidOperationException ex)
             {
-                return Error(ErrorCode.EngineFault, $"{ex.Message}\r\nInnerError:{ex.InnerException}");
+                return Error(ErrorCode.EngineFault, $"{ex.Message}\r\n   InnerError:{ex.InnerException}");
             }
             catch (Exception ex)
             {
@@ -209,12 +210,7 @@ namespace Neo.Services.ApiServices
             result.VmState = engine.State;
             result.GasConsumed = new BigDecimal((BigInteger)tx.SystemFee, NativeContract.GAS.Decimals);
             result.ResultStack = engine.ResultStack.Select(p => JStackItem.FromJson(p.ToParameter().ToJson())).ToList();
-            result.Notifications = engine.Notifications?.Select(e => new InvokeEventModel()
-            {
-                EventName = e.EventName,
-                Items = e.State.Select(j => JStackItem.FromJson(j.ToParameter().ToJson()))
-
-            }).ToList();
+            result.Notifications = engine.Notifications?.Select(ConvertToEventModel).ToList();
             if (engine.State.HasFlag(VMState.FAULT))
             {
                 return Error(ErrorCode.EngineFault);
@@ -228,7 +224,90 @@ namespace Neo.Services.ApiServices
             return result;
         }
 
+        private static InvokeEventValueModel ConvertToEventModel(NotifyEventArgs notify)
+        {
+            var model = new InvokeEventValueModel()
+            {
+                Contract = notify.ScriptHash,
+                EventName = notify.EventName,
+            };
+            var eventMeta = notify.ScriptHash.GetEvent(notify.EventName);
+            if (eventMeta?.Parameters.Any() == true)
+            {
+                var json = new Dictionary<string, object>();
+                for (var i = 0; i < eventMeta.Parameters.Length; i++)
+                {
+                    var p = eventMeta.Parameters[i];
+                    json[p.Name] = ConvertValue(notify.State[i], p.Type);
+                }
+                model.EventParameters = json;
+            }
+            return model;
+        }
 
+        public static object ConvertValue(StackItem item, ContractParameterType type)
+        {
+            try
+            {
+                switch (type)
+                {
+                    case ContractParameterType.Signature:
+                    case ContractParameterType.ByteArray:
+                        return item.GetSpan().ToHexString();
+                    case ContractParameterType.Boolean:
+                        return item.GetBoolean();
+                    case ContractParameterType.Integer:
+                        return item.GetInteger();
+
+                    case ContractParameterType.Hash160:
+                        return item != StackItem.Null ? new UInt160(item.GetSpan()) : null;
+                    case ContractParameterType.Hash256:
+                        return item != StackItem.Null ? new UInt256(item.GetSpan()) : null;
+                    case ContractParameterType.PublicKey:
+                        return item.GetSpan().ToHexString();
+                    case ContractParameterType.String:
+                        return item.GetString();
+                    case ContractParameterType.Array:
+                        var array = ((Array)item).Select(t => ConvertValue(t, ToContractParameterType(t.Type))).ToList();
+                        return array;
+                    //case ContractParameterType.Map:
+                    //    return ((Map) item).Select(t => new KeyValuePair<object, object>(ConvertValue(t["key"]), ConvertValue(t["value"])).tol;
+                    //    parameter.Value = ((JArray)json["value"]).Select(p =>
+                    //        new KeyValuePair<ContractParameter, ContractParameter>(JsonToContractParameter(p["key"]),
+                    //            JsonToContractParameter(p["value"]))).ToList();
+                    //    break;
+                    default:
+                        return item.ToJson();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return item.ToJson();
+            }
+        }
+
+        public static ContractParameterType ToContractParameterType(StackItemType type)
+        {
+            switch (type)
+            {
+                case StackItemType.Array:
+                case StackItemType.Struct:
+                    return ContractParameterType.Array;
+                case StackItemType.Boolean:
+                    return ContractParameterType.Boolean;
+                case StackItemType.Buffer:
+                case StackItemType.ByteString:
+                    return ContractParameterType.ByteArray;
+                case StackItemType.Integer:
+                    return ContractParameterType.Integer;
+                case StackItemType.Map:
+                    return ContractParameterType.Array;
+                case StackItemType.Any:
+                default:
+                    return ContractParameterType.Any;
+            }
+        }
 
         public static ContractParameter JsonToContractParameter(JObject json)
         {
