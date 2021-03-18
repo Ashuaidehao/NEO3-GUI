@@ -423,12 +423,8 @@ namespace Neo.Services.ApiServices
             {
                 return Error(ErrorCode.ValidatorAlreadyExist);
             }
-            VerificationContract contract = new VerificationContract
-            {
-                Script = SmartContract.Contract.CreateSignatureRedeemScript(publicKey),
-                ParameterList = new[] { ContractParameterType.Signature }
-            };
 
+            var contract = Contract.CreateSignatureContract(publicKey);
             var account = contract.ScriptHash;
             using ScriptBuilder sb = new ScriptBuilder();
             sb.EmitDynamicCall(NativeContract.NEO.Hash, "registerCandidate", publicKey);

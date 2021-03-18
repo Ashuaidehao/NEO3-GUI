@@ -1109,13 +1109,9 @@ namespace Neo
         }
 
 
-        public static VerificationContract ToVerificationContract(this ECPoint point)
+        public static Contract ToVerificationContract(this ECPoint point)
         {
-            VerificationContract contract = new VerificationContract
-            {
-                Script = SmartContract.Contract.CreateSignatureRedeemScript(point),
-                ParameterList = new[] { ContractParameterType.Signature }
-            };
+            var contract = Contract.CreateSignatureContract(point);
             return contract;
         }
 
