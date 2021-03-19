@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -15,9 +16,15 @@ namespace Neo.Models.Contracts
         {
             if (method != null)
             {
+                Offset = method.Offset;
+                Safe = method.Safe;
                 ReturnType = method.ReturnType;
             }
         }
+
+        public int Offset { get; set; }
+
+        public bool Safe { get; set; }
 
         /// <summary>
         /// ReturnType indicates the return type of the method. It can be one of the following values: 
@@ -25,6 +32,5 @@ namespace Neo.Models.Contracts
         /// </summary>
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ContractParameterType ReturnType { get; set; }
-
     }
 }

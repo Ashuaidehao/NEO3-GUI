@@ -18,7 +18,7 @@ class Blockdetail extends React.Component {
     this.state = {
       blockdetail: {},
       height: 0,
-      nonce: 0,
+      primaryIndex: 0,
       translist: [],
     };
   }
@@ -62,7 +62,7 @@ class Blockdetail extends React.Component {
             {
               blockdetail: res.result,
               witness: res.result.witness.scriptHash,
-              nonce: res.result.consensusData.nonce,
+              primaryIndex: res.result.primaryIndex,
               height: res.result.blockHeight,
             },
             () => {
@@ -102,7 +102,7 @@ class Blockdetail extends React.Component {
   };
   render() {
     const { t } = this.props;
-    const { blockdetail, nonce, height, translist } = this.state;
+    const { blockdetail, primaryIndex, height, translist } = this.state;
     return (
       <Layout className="gui-container">
         <Sync />
@@ -179,9 +179,9 @@ class Blockdetail extends React.Component {
                         </li>
                         <li>
                           <span className="hint">
-                            {t("blockchain.nounce")}：
+                            {t("blockchain.primary index")}：
                           </span>
-                          {nonce}
+                          {primaryIndex}
                         </li>
                         <li>
                           <span className="hint">

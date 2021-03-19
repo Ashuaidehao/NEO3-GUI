@@ -18,9 +18,8 @@ namespace Neo.Services.ApiServices
 
         public async Task<List<string>> GetCommittees()
         {
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
-            var points = NativeContract.NEO.GetCommittee(snapshot);
-            return points.Select(p => p.ToVerificationContract().Address).ToList();
+            var points = NativeContract.NEO.GetCommittee(Helpers.GetDefaultSnapshot());
+            return points.Select(p => p.ToVerificationContract().ScriptHash.ToAddress()).ToList();
         }
 
 
@@ -30,9 +29,8 @@ namespace Neo.Services.ApiServices
             {
                 return false;
             }
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
-            var points = NativeContract.NEO.GetCommittee(snapshot);
-            var committees = points.Select(p => p.ToVerificationContract().Address).ToList();
+            var points = NativeContract.NEO.GetCommittee(Helpers.GetDefaultSnapshot());
+            var committees = points.Select(p => p.ToVerificationContract().ScriptHash.ToAddress()).ToList();
             return CurrentWallet.GetAccounts().Any(a => committees.Contains(a.Address));
         }
 
@@ -72,7 +70,6 @@ namespace Neo.Services.ApiServices
             {
                 Value = publicKeys.Select(p => new ContractParameter(ContractParameterType.PublicKey) { Value = p }).ToList()
             });
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
             using var sb = new ScriptBuilder();
             sb.EmitDynamicCall(NativeContract.RoleManagement.Hash, "designateAsRole", paras.ToArray());
 
@@ -80,7 +77,7 @@ namespace Neo.Services.ApiServices
             {
                 signers = new List<UInt160>();
             }
-            var committee = NativeContract.NEO.GetCommitteeAddress(snapshot);
+            var committee = NativeContract.NEO.GetCommitteeAddress(Helpers.GetDefaultSnapshot());
             signers.Add(committee);
 
             return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
@@ -95,7 +92,7 @@ namespace Neo.Services.ApiServices
         /// <returns></returns>
         public async Task<object> GetNodesByRole(Role role, uint? height = null)
         {
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
+            var snapshot = Helpers.GetDefaultSnapshot();
             var points = NativeContract.RoleManagement.GetDesignatedByRole(snapshot, role, height ?? snapshot.GetHeight());
             return points?.Select(p => p.ToString()).ToList();
         }
@@ -105,114 +102,10 @@ namespace Neo.Services.ApiServices
 
         #region Policy
 
-        public async Task<uint> GetMaxTransactionsPerBlock()
-        {
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
-            return NativeContract.Policy.GetMaxTransactionsPerBlock(snapshot);
-        }
-
-
-
-        public async Task<object> SetMaxTransactionsPerBlock(uint max, List<UInt160> signers = null)
-        {
-            if (max > Block.MaxTransactionsPerBlock)
-            {
-                return Error(ErrorCode.InvalidPara, $"input value is bigger than {Block.MaxTransactionsPerBlock}");
-            }
-            if (CurrentWallet == null)
-            {
-                return Error(ErrorCode.WalletNotOpen);
-            }
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
-
-            using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitDynamicCall(NativeContract.Policy.Hash, "setMaxTransactionsPerBlock", new ContractParameter
-            {
-                Type = ContractParameterType.Integer,
-                Value = max
-            });
-
-            if (signers == null)
-            {
-                signers = new List<UInt160>();
-            }
-            var committee = NativeContract.NEO.GetCommitteeAddress(snapshot);
-            signers.Add(committee);
-            return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
-        }
-
-
-        public async Task<uint> GetMaxBlockSize()
-        {
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
-            return NativeContract.Policy.GetMaxBlockSize(snapshot);
-        }
-
-
-        public async Task<object> SetMaxBlockSize(uint max, List<UInt160> signers = null)
-        {
-            if (max > Message.PayloadMaxSize)
-            {
-                return Error(ErrorCode.InvalidPara, $"input value is bigger than {Message.PayloadMaxSize}");
-            }
-            if (CurrentWallet == null)
-            {
-                return Error(ErrorCode.WalletNotOpen);
-            }
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
-            using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitDynamicCall(NativeContract.Policy.Hash, "setMaxBlockSize", new ContractParameter
-            {
-                Type = ContractParameterType.Integer,
-                Value = max
-            });
-
-            if (signers == null)
-            {
-                signers = new List<UInt160>();
-            }
-            var committee = NativeContract.NEO.GetCommitteeAddress(snapshot);
-            signers.Add(committee);
-            return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
-        }
-
-        public async Task<long> GetMaxBlockSystemFee()
-        {
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
-            return NativeContract.Policy.GetMaxBlockSystemFee(snapshot);
-        }
-
-
-        public async Task<object> SetMaxBlockSystemFee(long max, List<UInt160> signers = null)
-        {
-            if (max <= 4007600)
-            {
-                return Error(ErrorCode.InvalidPara, $"input value is less than 4007600");
-            }
-            if (CurrentWallet == null)
-            {
-                return Error(ErrorCode.WalletNotOpen);
-            }
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
-            using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitDynamicCall(NativeContract.Policy.Hash, "setMaxBlockSystemFee", new ContractParameter
-            {
-                Type = ContractParameterType.Integer,
-                Value = max
-            });
-            if (signers == null)
-            {
-                signers = new List<UInt160>();
-            }
-            var committee = NativeContract.NEO.GetCommitteeAddress(snapshot);
-            signers.Add(committee);
-            return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
-        }
 
         public async Task<long> GetFeePerByte()
         {
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
-            return NativeContract.Policy.GetFeePerByte(snapshot);
+            return NativeContract.Policy.GetFeePerByte(Helpers.GetDefaultSnapshot());
         }
 
 
@@ -226,7 +119,6 @@ namespace Neo.Services.ApiServices
             {
                 return Error(ErrorCode.WalletNotOpen);
             }
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
             using ScriptBuilder sb = new ScriptBuilder();
             sb.EmitDynamicCall(NativeContract.Policy.Hash, "setFeePerByte", new ContractParameter
             {
@@ -237,15 +129,76 @@ namespace Neo.Services.ApiServices
             {
                 signers = new List<UInt160>();
             }
-            var committee = NativeContract.NEO.GetCommitteeAddress(snapshot);
+            var committee = NativeContract.NEO.GetCommitteeAddress(Helpers.GetDefaultSnapshot());
+            signers.Add(committee);
+            return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
+        }
+
+        public async Task<object> GetExecFeeFactor()
+        {
+            return NativeContract.Policy.GetExecFeeFactor(Helpers.GetDefaultSnapshot());
+        }
+
+        public async Task<object> SetExecFeeFactor(uint factor, List<UInt160> signers = null)
+        {
+            if (factor == 0 || factor > PolicyContract.MaxExecFeeFactor)
+            {
+                return Error(ErrorCode.InvalidPara, $"input value should between 0 and  1000");
+            }
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            using ScriptBuilder sb = new ScriptBuilder();
+            sb.EmitDynamicCall(NativeContract.Policy.Hash, "setExecFeeFactor", new ContractParameter
+            {
+                Type = ContractParameterType.Integer,
+                Value = factor
+            });
+            if (signers == null)
+            {
+                signers = new List<UInt160>();
+            }
+            var committee = NativeContract.NEO.GetCommitteeAddress(Helpers.GetDefaultSnapshot());
+            signers.Add(committee);
+            return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
+        }
+
+
+        public async Task<object> GetStoragePrice()
+        {
+            return NativeContract.Policy.GetStoragePrice(Helpers.GetDefaultSnapshot());
+        }
+
+
+        public async Task<object> SetStoragePrice(uint factor, List<UInt160> signers = null)
+        {
+            if (factor == 0 || factor > PolicyContract.MaxStoragePrice)
+            {
+                return Error(ErrorCode.InvalidPara, $"input value should between 0 and  10000000");
+            }
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            using ScriptBuilder sb = new ScriptBuilder();
+            sb.EmitDynamicCall(NativeContract.Policy.Hash, "setStoragePrice", new ContractParameter
+            {
+                Type = ContractParameterType.Integer,
+                Value = factor
+            });
+            if (signers == null)
+            {
+                signers = new List<UInt160>();
+            }
+            var committee = NativeContract.NEO.GetCommitteeAddress(Helpers.GetDefaultSnapshot());
             signers.Add(committee);
             return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
         }
 
         public async Task<bool> IsBlocked(UInt160 account)
         {
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
-            return NativeContract.Policy.IsBlocked(snapshot, account);
+            return NativeContract.Policy.IsBlocked(Helpers.GetDefaultSnapshot(), account);
         }
 
 
@@ -255,7 +208,6 @@ namespace Neo.Services.ApiServices
             {
                 return Error(ErrorCode.WalletNotOpen);
             }
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
             using ScriptBuilder sb = new ScriptBuilder();
             sb.EmitDynamicCall(NativeContract.Policy.Hash, "blockAccount", new ContractParameter
             {
@@ -266,7 +218,7 @@ namespace Neo.Services.ApiServices
             {
                 signers = new List<UInt160>();
             }
-            var committee = NativeContract.NEO.GetCommitteeAddress(snapshot);
+            var committee = NativeContract.NEO.GetCommitteeAddress(Helpers.GetDefaultSnapshot());
             signers.Add(committee);
             return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
         }
@@ -279,7 +231,6 @@ namespace Neo.Services.ApiServices
             {
                 return Error(ErrorCode.WalletNotOpen);
             }
-            using var snapshot = Blockchain.Singleton.GetSnapshot();
             using ScriptBuilder sb = new ScriptBuilder();
             sb.EmitDynamicCall(NativeContract.Policy.Hash, "unblockAccount", new ContractParameter
             {
@@ -290,7 +241,7 @@ namespace Neo.Services.ApiServices
             {
                 signers = new List<UInt160>();
             }
-            var committee = NativeContract.NEO.GetCommitteeAddress(snapshot);
+            var committee = NativeContract.NEO.GetCommitteeAddress(Helpers.GetDefaultSnapshot());
             signers.Add(committee);
             return await SignAndBroadcastTx(sb.ToArray(), signers.ToArray());
         }

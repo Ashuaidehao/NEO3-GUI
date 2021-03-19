@@ -270,58 +270,9 @@ namespace Neo.Common.Consoles
 
         public void Run(string[] args)
         {
-            if (Environment.UserInteractive)
-            {
-                if (args.Length > 0 && args[0] == "/install")
-                {
-                    if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                    {
-                        System.Console.WriteLine("Only support for installing services on Windows.");
-                        return;
-                    }
-                    string arguments = string.Format("create {0} start= auto binPath= \"{1}\"", ServiceName, Process.GetCurrentProcess().MainModule.FileName);
-                    if (!string.IsNullOrEmpty(Depends))
-                    {
-                        arguments += string.Format(" depend= {0}", Depends);
-                    }
-                    Process process = Process.Start(new ProcessStartInfo
-                    {
-                        Arguments = arguments,
-                        FileName = Path.Combine(Environment.SystemDirectory, "sc.exe"),
-                        RedirectStandardOutput = true,
-                        UseShellExecute = false
-                    });
-                    process.WaitForExit();
-                    System.Console.Write(process.StandardOutput.ReadToEnd());
-                }
-                else if (args.Length > 0 && args[0] == "/uninstall")
-                {
-                    if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                    {
-                        System.Console.WriteLine("Only support for installing services on Windows.");
-                        return;
-                    }
-                    Process process = Process.Start(new ProcessStartInfo
-                    {
-                        Arguments = string.Format("delete {0}", ServiceName),
-                        FileName = Path.Combine(Environment.SystemDirectory, "sc.exe"),
-                        RedirectStandardOutput = true,
-                        UseShellExecute = false
-                    });
-                    process.WaitForExit();
-                    System.Console.Write(process.StandardOutput.ReadToEnd());
-                }
-                else
-                {
-                    OnStart(args);
-                    RunConsole();
-                    OnStop();
-                }
-            }
-            else
-            {
-                ServiceBase.Run(new ServiceProxy(this));
-            }
+            OnStart(args);
+            RunConsole();
+            OnStop();
         }
 
         protected string ReadLine()

@@ -125,7 +125,6 @@ const Attrlist = ({ attributes }) => {
               {attributes.map((item, index) => {
                 return (
                   <li key={index}>
-                    <p>Url</p>
                     <p className="trans-table">
                       <span>
                         <span className="trans-type">

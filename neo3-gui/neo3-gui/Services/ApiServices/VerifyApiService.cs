@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Neo.Common;
+using Neo.Common.Consoles;
 using Neo.Models;
 using Neo.Wallets;
 
@@ -43,7 +44,7 @@ namespace Neo.Services.ApiServices
             }
             try
             {
-                var key = Wallet.GetPrivateKeyFromNEP2(nep2Key, password);
+                var key = Wallet.GetPrivateKeyFromNEP2(nep2Key, password, CliSettings.Default.Protocol.AddressVersion);
                 if (key.Length != 32)
                 {
                     return Error(ErrorCode.InvalidPrivateKey);

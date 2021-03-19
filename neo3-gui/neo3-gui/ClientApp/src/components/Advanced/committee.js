@@ -162,7 +162,7 @@ class AdvancedCommittee extends React.Component {
         <Row gutter={[30, 0]} style={{ minHeight: "calc( 100vh - 120px )" }}>
           <Col span={24} className="bg-white pv4">
           <Tabs className="committe-title" defaultActiveKey="1">
-            <TabPane tab={t("advanced.com-trans")} key="1">
+            {/* <TabPane tab={t("advanced.com-trans")} key="1">
               <Statistic title={t("advanced.com-trans-max")} value={transnum} prefix={<RetweetOutlined />}/>
               <Button className="mt3" type="primary" onClick={this.changeDialog(0)}>{t("advanced.modify")}</Button>
             </TabPane>
@@ -176,7 +176,7 @@ class AdvancedCommittee extends React.Component {
                 value={blockfee} prefix={<ForkOutlined />}
                 suffix={<div> * 10<sup>-8</sup></div>}/>
               <Button className="mt3" type="primary" onClick={this.changeDialog(2)}>{t("advanced.modify")}</Button>
-            </TabPane>
+            </TabPane> */}
             <TabPane tab={t("advanced.com-bytefee")} key="4">
               <Statistic title={t("advanced.com-bytefee-set")} value={bytefee} prefix={<RetweetOutlined />}/>
               <Button className="mt3" type="primary" onClick={this.changeDialog(3)}>{t("advanced.modify")}</Button>

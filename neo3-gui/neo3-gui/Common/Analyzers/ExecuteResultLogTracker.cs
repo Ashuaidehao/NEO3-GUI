@@ -17,7 +17,7 @@ namespace Neo.Common.Analyzers
 
         private readonly HashSet<UInt160> _cachedAssets = new HashSet<UInt160>();
 
-        void IPersistencePlugin.OnPersist(Block block, DataCache snapshot, IReadOnlyList<Blockchain.ApplicationExecuted> applicationExecutedList)
+        void IPersistencePlugin.OnPersist(NeoSystem system, Block block, DataCache snapshot, IReadOnlyList<Blockchain.ApplicationExecuted> applicationExecutedList)
         {
             Header header = snapshot.GetCurrentHeader();
             var analyzer = new BlockAnalyzer(snapshot, header, applicationExecutedList);
@@ -33,7 +33,6 @@ namespace Neo.Common.Analyzers
                 {
                     _levelDb.SaveAssetInfo(analyzerAssetInfo.Value);
                     _cachedAssets.Add(analyzerAssetInfo.Key);
-
                 }
             }
 
@@ -60,7 +59,7 @@ namespace Neo.Common.Analyzers
         }
 
 
-        void IPersistencePlugin.OnCommit(Block block, DataCache snapshot)
+        void IPersistencePlugin.OnCommit(NeoSystem system, Block block, DataCache snapshot)
         {
             _levelDb.Commit();
         }

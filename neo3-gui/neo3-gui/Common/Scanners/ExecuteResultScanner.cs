@@ -35,7 +35,7 @@ namespace Neo.Common.Scanners
                     {
                         _scanHeight++;
                     }
-                    if (_scanHeight > Blockchain.Singleton.GetHeight())
+                    if (_scanHeight > this.GetCurrentHeight())
                     {
                         await Task.Delay(TimeSpan.FromSeconds(5));
                     }
@@ -63,7 +63,7 @@ namespace Neo.Common.Scanners
         /// <returns></returns>
         public async Task<bool> Sync(uint blockHeight)
         {
-            if (blockHeight > Blockchain.Singleton.GetHeight())
+            if (blockHeight > this.GetCurrentHeight())
             {
                 return false;
             }
@@ -73,7 +73,7 @@ namespace Neo.Common.Scanners
                 return true;
             }
 
-            var block = Blockchain.Singleton.GetBlock(blockHeight);
+            var block = blockHeight.GetBlock();
             var blockTime = block.Timestamp.FromTimestampMS();
 
             //var balanceChanges = new HashSet<(UInt160 account, UInt160 asset)>();
@@ -130,7 +130,7 @@ namespace Neo.Common.Scanners
             var balanceChanges = _levelDb.GetBalancingAccounts(blockHeight);
             if (balanceChanges.NotEmpty())
             {
-                using var snapshot = Blockchain.Singleton.GetSnapshot();
+                var snapshot = this.GetDefaultSnapshot();
                 foreach (var balanceChange in balanceChanges)
                 {
                     UpdateBalance(balanceChange.Account, balanceChange.Asset, snapshot);

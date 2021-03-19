@@ -29,7 +29,7 @@ namespace Neo.Models.Transactions
             Attributes = tx.Attributes?.Select(a => new TranAttributeModel()
             {
                 Usage = a.Type,
-                //Data = a.Data,
+                Data = a.ToJson().ToString(),
             }).ToList();
             Witnesses = tx.Witnesses?.Select(w => new WitnessModel(w)
             ).ToList();

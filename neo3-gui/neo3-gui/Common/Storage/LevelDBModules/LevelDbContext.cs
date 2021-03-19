@@ -7,6 +7,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Neo.Common.Consoles;
 using Neo.IO;
 using Neo.Models;
 
@@ -41,7 +42,7 @@ namespace Neo.Common.Storage.LevelDBModules
                 Directory.CreateDirectory("Data_Track");
             }
         }
-        public LevelDbContext() : this(Path.Combine("Data_Track", $"TransactionLog_LevelDB_{ProtocolSettings.Default.Magic}"))
+        public LevelDbContext() : this(Path.Combine("Data_Track", $"TransactionLog_LevelDB_{CliSettings.Default.Protocol.Magic}"))
         {
         }
 

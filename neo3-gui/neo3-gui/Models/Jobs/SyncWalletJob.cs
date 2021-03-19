@@ -26,7 +26,7 @@ namespace Neo.Models.Jobs
             {
                 var accounts = Program.Starter.CurrentWallet.GetAccounts().ToList();
 
-                using var snapshot = Blockchain.Singleton.GetSnapshot();
+                var snapshot = this.GetDefaultSnapshot();
                 if (snapshot.GetHeight() <= _lastHeight)
                 {
                     return null;
