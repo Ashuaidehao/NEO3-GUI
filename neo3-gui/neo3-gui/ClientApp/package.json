@@ -1,6 +1,6 @@
 {
     "name": "neo-gui",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "private": true,
     "main": "main.js",
     "homepage": "./",
@@ -111,7 +111,7 @@
         "@babel/plugin-proposal-decorators": "^7.8.3",
         "@babel/preset-env": "^7.8.7",
         "cross-env": "^7.0.2",
-        "electron": "^7.1.14",
+        "electron": "^9.4.0",
         "electron-builder": "^22.4.1",
         "electron-devtools-installer": "^3.0.0"
     }

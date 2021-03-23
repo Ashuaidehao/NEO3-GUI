@@ -418,8 +418,8 @@ namespace Neo.Services.ApiServices
                 return Error(ErrorCode.InvalidPara);
             }
             var snapshot = Helpers.GetDefaultSnapshot();
-            var validators = NativeContract.NEO.GetCommittee(snapshot);
-            if (validators.Any(v => v.Equals(publicKey)))
+            var candidates = NativeContract.NEO.GetCandidates(snapshot);
+            if (candidates.Any(v => v.PublicKey.Equals(publicKey)))
             {
                 return Error(ErrorCode.ValidatorAlreadyExist);
             }
