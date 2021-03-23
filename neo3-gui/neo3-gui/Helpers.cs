@@ -320,7 +320,7 @@ namespace Neo
         /// <returns></returns>
         public static Transaction InitTransaction(this Wallet wallet, byte[] script, params Signer[] signers)
         {
-            var tx = wallet.MakeTransaction(GetDefaultSnapshot(), script, null, signers);
+            var tx = wallet.MakeTransaction(GetDefaultSnapshot(), script, null, signers, maxGas: 2000_00000000);
             return tx;
         }
 
