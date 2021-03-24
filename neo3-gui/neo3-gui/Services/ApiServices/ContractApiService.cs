@@ -185,7 +185,7 @@ namespace Neo.Services.ApiServices
 
             try
             {
-                tx = CurrentWallet.InitTransaction(sb.ToArray(), signers.ToArray());
+                tx = CurrentWallet.InitTransaction(sb.ToArray(), null, signers.ToArray());
             }
             catch (InvalidOperationException ex)
             {
@@ -428,8 +428,7 @@ namespace Neo.Services.ApiServices
             var account = contract.ScriptHash;
             using ScriptBuilder sb = new ScriptBuilder();
             sb.EmitDynamicCall(NativeContract.NEO.Hash, "registerCandidate", publicKey);
-
-            return await SignAndBroadcastTx(sb.ToArray(), account);
+            return await SignAndBroadcastTxWithSender(sb.ToArray(), account, account);
         }
 
 

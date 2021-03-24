@@ -37,14 +37,12 @@ namespace Neo.Services
             return new WsError() { Code = code, Message = message };
         }
 
-
-
-        protected async Task<object> SignAndBroadcastTx(byte[] script, params UInt160[] signers)
+        protected async Task<object> SignAndBroadcastTxWithSender(byte[] script, UInt160 sender, params UInt160[] signers)
         {
             Transaction tx;
             try
             {
-                tx = CurrentWallet.InitTransaction(script, signers);
+                tx = CurrentWallet.InitTransaction(script, sender, signers);
             }
             catch (InvalidOperationException ex)
             {
@@ -67,6 +65,11 @@ namespace Neo.Services
             await tx.Broadcast();
             result.TxId = tx.Hash;
             return result;
+        }
+
+        protected async Task<object> SignAndBroadcastTx(byte[] script, params UInt160[] signers)
+        {
+            return await SignAndBroadcastTxWithSender(script, null, signers);
         }
     }
 }
