@@ -64,7 +64,7 @@ namespace Neo.Models
         UnknownContract = 20028,
         [Description("Contract already onchain.")]
         ContractAlreadyExist = 20029,
-        [Description("Validator already exits.")]
+        [Description("Validator already exists.")]
         ValidatorAlreadyExist = 20030,
         [Description("No gas for claim.")]
         NoNeedClaimGas = 20031,

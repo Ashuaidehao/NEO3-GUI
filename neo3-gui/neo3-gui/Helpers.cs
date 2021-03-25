@@ -305,10 +305,10 @@ namespace Neo
         /// <param name="script"></param>
         /// <param name="signers"></param>
         /// <returns></returns>
-        public static Transaction InitTransaction(this Wallet wallet, byte[] script, params UInt160[] signers)
+        public static Transaction InitTransaction(this Wallet wallet, byte[] script, UInt160 sender = null, params UInt160[] signers)
         {
             var cosigners = signers.Select(account => new Signer { Account = account, Scopes = WitnessScope.Global }).ToArray();
-            return InitTransaction(wallet, script, cosigners);
+            return InitTransaction(wallet, script, sender, cosigners);
         }
 
         /// <summary>
@@ -316,11 +316,12 @@ namespace Neo
         /// </summary>
         /// <param name="wallet"></param>
         /// <param name="script"></param>
+        /// <param name="sender"></param>
         /// <param name="signers"></param>
         /// <returns></returns>
-        public static Transaction InitTransaction(this Wallet wallet, byte[] script, params Signer[] signers)
+        public static Transaction InitTransaction(this Wallet wallet, byte[] script, UInt160 sender = null, params Signer[] signers)
         {
-            var tx = wallet.MakeTransaction(GetDefaultSnapshot(), script, null, signers, maxGas: 2000_00000000);
+            var tx = wallet.MakeTransaction(GetDefaultSnapshot(), script, sender, signers, maxGas: 2000_00000000);
             return tx;
         }
 
