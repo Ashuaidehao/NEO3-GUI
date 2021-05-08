@@ -42,7 +42,7 @@ namespace Neo.Models.Contracts
         /// The trusts field is an array containing a set of contract hashes or group public keys. It can also be assigned with a wildcard *. If it is a wildcard *, then it means that it trusts any contract.
         /// If a contract is trusted, the user interface will not give any warnings when called by the contract.
         /// </summary>
-        public WildcardContainer<UInt160> Trusts { get; set; }
+        public WildcardContainer<ContractPermissionDescriptor> Trusts { get; set; }
 
 
         public string[] SupportedStandards

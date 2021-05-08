@@ -42,7 +42,7 @@ namespace Neo.Common.Storage.LevelDBModules
                 Directory.CreateDirectory("Data_Track");
             }
         }
-        public LevelDbContext() : this(Path.Combine("Data_Track", $"TransactionLog_LevelDB_{CliSettings.Default.Protocol.Magic}"))
+        public LevelDbContext() : this(Path.Combine("Data_Track", $"TransactionLog_LevelDB_{CliSettings.Default.Protocol.Network}"))
         {
         }
 

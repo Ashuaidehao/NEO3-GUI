@@ -346,7 +346,7 @@ namespace Neo
         /// <returns></returns>
         public static (bool, ContractParametersContext) TrySignTx(this Wallet wallet, Transaction tx)
         {
-            var context = new ContractParametersContext(GetDefaultSnapshot(), tx);
+            var context = new ContractParametersContext(GetDefaultSnapshot(), tx, CliSettings.Default.Protocol.Network);
             var signResult = wallet.SignContext(context);
             if (signResult)
             {
