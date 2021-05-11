@@ -38,7 +38,7 @@ namespace Neo.Common.Storage
 
         public TrackDB()
         {
-            _magic = CliSettings.Default.Protocol.Magic;
+            _magic = CliSettings.Default.Protocol.Network;
             _sqldb = new SQLiteContext(Path.Combine($"Data_Track", $"track.{_magic}.db"));
             _leveldb = new LevelDbContext(Path.Combine("Data_Track", $"TransactionLog_LevelDB_{_magic}"));
 

@@ -147,6 +147,71 @@ namespace Neo.Services.ApiServices
             return result;
         }
 
+
+
+        public async Task<object> UpdateContract(UInt160 contractHash, string nefPath, string manifestPath = null, bool sendTx = false, UInt160 sender = null)
+        {
+            if (CurrentWallet == null)
+            {
+                return Error(ErrorCode.WalletNotOpen);
+            }
+            if (nefPath.IsNull())
+            {
+                return Error(ErrorCode.ParameterIsNull, "nefPath is empty.");
+            }
+            if (manifestPath.IsNull())
+            {
+                manifestPath = Path.ChangeExtension(nefPath, ".manifest.json");
+            }
+            // Read nef
+            NefFile nefFile = ReadNefFile(nefPath);
+            // Read manifest
+            ContractManifest manifest = ReadManifestFile(manifestPath);
+            // Basic script checks
+            await CheckBadOpcode(nefFile.Script);
+
+            // Build script
+            using ScriptBuilder sb = new ScriptBuilder();
+            sb.EmitDynamicCall(contractHash, "update", nefFile.ToArray(), manifest.ToJson().ToString(), null);
+            var script = sb.ToArray();
+
+            var singers = new Signer[] { new Signer() { Account = sender, Scopes = WitnessScope.Global } };
+            Transaction tx;
+            try
+            {
+                tx = CurrentWallet.MakeTransaction(Helpers.GetDefaultSnapshot(), script, sender, singers);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Error(ErrorCode.EngineFault, ex.GetExMessage());
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("Insufficient GAS"))
+                {
+                    return Error(ErrorCode.GasNotEnough);
+                }
+                throw;
+            }
+
+            var result = new DeployResultModel
+            {
+                ContractHash = contractHash,
+                GasConsumed = new BigDecimal((BigInteger)tx.SystemFee, NativeContract.GAS.Decimals)
+            };
+            if (sendTx)
+            {
+                var (signSuccess, context) = CurrentWallet.TrySignTx(tx);
+                if (!signSuccess)
+                {
+                    return Error(ErrorCode.SignFail, context.SafeSerialize());
+                }
+                await tx.Broadcast();
+                result.TxId = tx.Hash;
+            }
+            return result;
+        }
+
         public async Task<object> InvokeContract(InvokeContractParameterModel para)
         {
             if (CurrentWallet == null)

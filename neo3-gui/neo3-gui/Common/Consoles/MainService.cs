@@ -345,7 +345,7 @@ namespace Neo.Common.Consoles
             ContractParametersContext context;
             try
             {
-                context = new ContractParametersContext(NeoSystem.StoreView, tx);
+                context = new ContractParametersContext(NeoSystem.StoreView, tx, CliSettings.Default.Protocol.Network);
             }
             catch (InvalidOperationException ex)
             {
@@ -982,7 +982,7 @@ namespace Neo.Common.Consoles
                 return true;
             }
 
-            ContractParametersContext context = new ContractParametersContext(snapshot, tx);
+            ContractParametersContext context = new ContractParametersContext(snapshot, tx, CliSettings.Default.Protocol.Network);
             CurrentWallet.Sign(context);
             if (context.Completed)
             {
@@ -1272,7 +1272,7 @@ namespace Neo.Common.Consoles
             }
         }
 
-     
+
         private void WriteBlocks(uint start, uint count, string path, bool writeStart)
         {
             uint end = start + count - 1;

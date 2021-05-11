@@ -39,7 +39,7 @@ namespace Neo.Common.Storage.SQLiteModules
             }
         }
 
-        public SQLiteContext() : this(Path.Combine($"Data_Track", $"track.{CliSettings.Default.Protocol.Magic}.db"))
+        public SQLiteContext() : this(Path.Combine($"Data_Track", $"track.{CliSettings.Default.Protocol.Network}.db"))
         {
         }
 
