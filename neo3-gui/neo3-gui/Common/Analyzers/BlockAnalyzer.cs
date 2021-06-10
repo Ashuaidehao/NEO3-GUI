@@ -90,7 +90,7 @@ namespace Neo.Common.Analyzers
             execResult.GasConsumed = appExec.GasConsumed;
             try
             {
-                execResult.ResultStack = appExec.Stack.Select(q => q.ToParameter().ToJson()).ToArray();
+                execResult.ResultStack = appExec.Stack.Select(q => q.ToContractParameter().ToJson()).ToArray();
             }
             catch (InvalidOperationException)
             {

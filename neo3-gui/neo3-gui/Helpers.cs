@@ -40,6 +40,8 @@ using Neo.VM;
 using Neo.VM.Types;
 using Neo.Wallets;
 using Neo.Wallets.SQLite;
+using Boolean = Neo.VM.Types.Boolean;
+using Buffer = Neo.VM.Types.Buffer;
 using VmArray = Neo.VM.Types.Array;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -1278,6 +1280,88 @@ namespace Neo
             return msg;
         }
 
+        /// <summary>
+        /// Converts the <see cref="StackItem"/> to a <see cref="ContractParameter"/>.
+        /// </summary>
+        /// <param name="item">The <see cref="StackItem"/> to convert.</param>
+        /// <returns>The converted <see cref="ContractParameter"/>.</returns>
+        public static ContractParameter ToContractParameter(this StackItem item, List<(StackItem, ContractParameter)> context = null)
+        {
+            if (item is null) throw new ArgumentNullException(nameof(item));
 
+            ContractParameter parameter = null;
+            switch (item)
+            {
+                case VmArray array:
+                    if (context is null)
+                        context = new List<(StackItem, ContractParameter)>();
+                    else
+                        (_, parameter) = context.FirstOrDefault(p => ReferenceEquals(p.Item1, item));
+                    if (parameter is null)
+                    {
+                        parameter = new ContractParameter { Type = ContractParameterType.Array };
+                        context.Add((item, parameter));
+                        parameter.Value = array.Select(p => ToContractParameter(p, context)).ToList();
+                    }
+                    break;
+                case Map map:
+                    if (context is null)
+                        context = new List<(StackItem, ContractParameter)>();
+                    else
+                        (_, parameter) = context.FirstOrDefault(p => ReferenceEquals(p.Item1, item));
+                    if (parameter is null)
+                    {
+                        parameter = new ContractParameter { Type = ContractParameterType.Map };
+                        context.Add((item, parameter));
+                        parameter.Value = map.Select(p =>
+                            new KeyValuePair<ContractParameter, ContractParameter>(ToContractParameter(p.Key, context),
+                                ToContractParameter(p.Value, context))).ToList();
+                    }
+                    break;
+                case Boolean _:
+                    parameter = new ContractParameter
+                    {
+                        Type = ContractParameterType.Boolean,
+                        Value = item.GetBoolean()
+                    };
+                    break;
+                case ByteString array:
+                    parameter = new ContractParameter
+                    {
+                        Type = ContractParameterType.ByteArray,
+                        Value = array.GetSpan().ToArray()
+                    };
+                    break;
+                case Buffer array:
+                    parameter = new ContractParameter
+                    {
+                        Type = ContractParameterType.ByteArray,
+                        Value = array.GetSpan().ToArray()
+                    };
+                    break;
+                case Integer i:
+                    parameter = new ContractParameter
+                    {
+                        Type = ContractParameterType.Integer,
+                        Value = i.GetInteger()
+                    };
+                    break;
+                case InteropInterface _:
+                    parameter = new ContractParameter
+                    {
+                        Type = ContractParameterType.InteropInterface
+                    };
+                    break;
+                case Null _:
+                    parameter = new ContractParameter
+                    {
+                        Type = ContractParameterType.Any
+                    };
+                    break;
+                default:
+                    throw new ArgumentException($"StackItemType({item.Type}) is not supported to ContractParameter.");
+            }
+            return parameter;
+        }
     }
 }
