@@ -274,7 +274,7 @@ namespace Neo.Services.ApiServices
             using ApplicationEngine engine = tx.Script.RunTestMode(null, tx);
             result.VmState = engine.State;
             result.GasConsumed = new BigDecimal((BigInteger)tx.SystemFee, NativeContract.GAS.Decimals);
-            result.ResultStack = engine.ResultStack.Select(p => JStackItem.FromJson(p.ToParameter().ToJson())).ToList();
+            result.ResultStack = engine.ResultStack.Select(p => JStackItem.FromJson(p.ToContractParameter().ToJson())).ToList();
             result.Notifications = engine.Notifications?.Select(ConvertToEventModel).ToList();
             if (engine.State.HasFlag(VMState.FAULT))
             {
