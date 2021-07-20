@@ -7,7 +7,7 @@
     },
     "Storage": {
       "Engine": "LevelDBStore",
-      "Path": "Data_LevelDB_55555"
+      "Path": "Data_LevelDB_4444"
     },
     "P2P": {
       "Port": 30333,
@@ -16,7 +16,7 @@
     "PluginURL": "https://github.com/neo-project/neo-modules/releases/download/v{1}/{0}.zip"
   },
   "ProtocolConfiguration": {
-    "Network": 55555,
+    "Network": 4444,
     "MillisecondsPerBlock": 15000,
     "MaxTraceableBlocks": 2102400,
     "ValidatorsCount": 1,
