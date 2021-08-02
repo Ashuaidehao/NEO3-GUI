@@ -192,10 +192,6 @@ class Datatrans extends React.Component {
       .getElementById("inHexHash")
       .value.replace(/(^\s*)|(\s*$)/g, "");
     if (inhexhash) {
-      if(inhexhash.length%2 !== 0){
-        message.error(t("datatrans.input error"));
-        return;
-      }
       let _base64 = this.convert.toBase64String(inhexhash);
       _this.setState({
         outhexhash: _base64,
@@ -282,7 +278,7 @@ class Datatrans extends React.Component {
             </Divider>
             <p className="trans-area">
               <label>Hex String:</label>
-              <Input id="inHexHash" type="text" placeholder="7472616e73666572"/>
+              <Input id="inHexHash" type="text" placeholder="63a3989cb4a99571aa00396d3c7155faea4098ba"/>
               <label>Base64:</label>
               <span id="outString" className="trans-text">
                 {this.state.outhexhash}
@@ -291,7 +287,7 @@ class Datatrans extends React.Component {
             </p>
             <p className="trans-area">
               <label>Base64:</label>
-              <Input id="inBaseHash" type="text" placeholder="transfer" />
+              <Input id="inBaseHash" type="text" placeholder="Y6OYnLSplXGqADltPHFV+upAmLo=" />
               <label>Hex String:</label>
               <span id="outHexString" className="trans-text">
                 {this.state.outbasehash}
