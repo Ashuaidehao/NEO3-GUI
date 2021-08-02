@@ -28,7 +28,7 @@ class DataConverter {
     var bytes = bs58check.decode(address);
     return "0x" + Buffer.from(bytes).toString("hex").slice(2);
   }
-
+  
   /**
    * direct reverse hexstring,input:'f9df308b7bb380469354062f6b73f9cb0124317b',output:'7b312401cbf9736b2f0654934680b37b8b30dff9'
    * @param {string} hexString
@@ -46,6 +46,14 @@ class DataConverter {
    */
   toBase64String(hexString) {
     return Buffer.from(hexString, "hex").toString("base64");
+  }
+
+  /**
+   * input:'Y6OYnLSplXGqADltPHFV+upAmLo=',output:'63a3989cb4a99571aa00396d3c7155faea4098ba'
+   * @param {*} base64
+   */
+  toHexString(str) {
+    return Buffer.from(str, "base64").toString("hex");
   }
 
   /**
