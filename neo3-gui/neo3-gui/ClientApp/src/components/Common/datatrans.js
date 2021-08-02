@@ -185,6 +185,33 @@ class Datatrans extends React.Component {
       });
     }
   };
+  base64Trans=()=>{
+    const { t } = this.props;
+    var _this = this;
+    var inhexhash = document
+      .getElementById("inHexHash")
+      .value.replace(/(^\s*)|(\s*$)/g, "");
+    if (inhexhash) {
+      if(inhexhash.length%2 !== 0){
+        message.error(t("datatrans.input error"));
+        return;
+      }
+      let _base64 = this.convert.toBase64String(inhexhash);
+      _this.setState({
+        outhexhash: _base64,
+      });
+    }
+    var inbasehash = document
+      .getElementById("inBaseHash")
+      .value.replace(/(^\s*)|(\s*$)/g, "");
+    if (inbasehash) {
+      // let _hash = this.convert.toHexString(inbasehash);
+      let _hash = Buffer.from(inbasehash, "base64").toString("hex");
+      _this.setState({
+        outbasehash: _hash,
+      });
+    }
+  };
   // numTrans = () =>{
   //     var _this = this;
   //     var inhexnum = document.getElementById("inHexNum").value.replace(/(^\s*)|(\s*$)/g, "");
@@ -245,6 +272,34 @@ class Datatrans extends React.Component {
             </p>
             <p className="text-r">
               <Button type="primary" onClick={this.stringTrans}>
+                Transform
+              </Button>
+            </p>
+          </li>
+          <li>
+            <Divider className="font-n">
+            Hex string <SwapOutlined className="small" /> Base 64
+            </Divider>
+            <p className="trans-area">
+              <label>Hex String:</label>
+              <Input id="inHexHash" type="text" placeholder="7472616e73666572"/>
+              <label>Base64:</label>
+              <span id="outString" className="trans-text">
+                {this.state.outhexhash}
+              </span>
+              <br />
+            </p>
+            <p className="trans-area">
+              <label>Base64:</label>
+              <Input id="inBaseHash" type="text" placeholder="transfer" />
+              <label>Hex String:</label>
+              <span id="outHexString" className="trans-text">
+                {this.state.outbasehash}
+              </span>
+              <br />
+            </p>
+            <p className="text-r">
+              <Button type="primary" onClick={this.base64Trans}>
                 Transform
               </Button>
             </p>
