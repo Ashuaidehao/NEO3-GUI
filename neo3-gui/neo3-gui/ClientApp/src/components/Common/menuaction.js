@@ -148,9 +148,7 @@ const Setting = ({ switchnetwork }) => {
         defaultValue={Network}
         onChange={(e) => switchNetwork(e.target.value)}
       >
-        <Radio value="mainnet" disabled>
-          {t("settings.mainnet")}
-        </Radio>
+        <Radio value="mainnet">{t("settings.mainnet")}</Radio>
         <Radio value="testnet">{t("settings.testnet")}</Radio>
         <Radio value="private">{t("settings.privatenet")}</Radio>
       </Radio.Group>

@@ -30,6 +30,14 @@
         "NEO_NETWORK": "testnet",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "neo3-gui-mainnet": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "NEO_NETWORK": "mainnet",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   }
 }
