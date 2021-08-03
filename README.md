@@ -6,7 +6,7 @@ Your feedbacks and suggestions are welcome. Please submit issues.
 
 ## Required Tools and Dependencies for development
 
-1. [Visual Studio 2019](https://visualstudio.microsoft.com/) and [.NET Core 3.1](https://dotnet.microsoft.com/download) 
+1. [Visual Studio 2019](https://visualstudio.microsoft.com/) and [.NET Core 5.0](https://dotnet.microsoft.com/download) 
 2. [Node.js](https://nodejs.org/) 
 
 ## Build and Run
