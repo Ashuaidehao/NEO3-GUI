@@ -53,10 +53,15 @@
             "./preload.js",
             "./package.json"
         ],
-        "extraResources": {
-            "from": "./build-neo-node/",
-            "to": "./build-neo-node/"
-        },
+        "extraResources": [
+            {
+                "from": "./build-neo-node/",
+                "to": "./build-neo-node/"
+            },
+            {
+                "filter": "./gui-config.json"
+            }
+        ],
         "win": {
             "target": "nsis",
             "icon": "public/logo512.png"

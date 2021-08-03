@@ -25,7 +25,7 @@ class Config {
     this.Port = config.Port || 8081;
     this.RPCURL = config.RPCURL || "http://localhost:" + this.Port;
     this.Language = config.Language || "";
-    this.Network = config.Network || "testnet";
+    this.Network = config.Network || "mainnet";
   };
 
   /**
