@@ -1,22 +1,23 @@
 import axios from "axios";
 import { message } from "antd";
-import { method } from "lodash";
+import Config from "../config";
 
+let count = 0;
 const request = async (method, params) => {
   // 默认Axios Post方法
-  const url = "http://localhost:8081";
+  const url = Config.RPCURL;
   if (method === "") {
     message.error("method null");
     return;
   }
   var options = Object.assign(
     {
-      id: "1",
+      id: count,
       method: method,
     },
     { params: params }
   );
-
+  count++;
   return await axios.post(url, options);
 };
 
