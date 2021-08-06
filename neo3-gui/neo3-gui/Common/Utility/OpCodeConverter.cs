@@ -42,50 +42,33 @@ namespace Neo.Common.Utility
         public static List<InstructionInfo> Parse(byte[] scripts)
         {
             var result = new List<InstructionInfo>();
-            var position = 0;
-            while (position < scripts.Length)
+            try
             {
-                var instruction = new InstructionInfo() { Position = position };
-                var op = scripts[position++];
-                instruction.OpCode = (OpCode)op;
-                var operandSizePrefix = _operandSizePrefixTable[op];
-                var operandSize = 0;
-                switch (operandSizePrefix)
+                var s = new Script(scripts);
+                for (int ip = 0; ip < scripts.Length;)
                 {
-                    case 0:
-                        operandSize = _operandSizeTable[op];
-                        break;
-                    case 1:
-                        operandSize = scripts[position];
-                        break;
-                    case 2:
-                        operandSize = BitConverter.ToUInt16(scripts, position);
-                        break;
-                    case 4:
-                        operandSize = BitConverter.ToInt32(scripts, position);
-                        break;
-                }
-                if (operandSize > 0)
-                {
-                    position += operandSizePrefix;
-                    if (position + operandSize > scripts.Length)
-                    {
-                        //warning
-                        instruction.OpData= new ReadOnlyMemory<byte>(scripts, position,scripts.Length-position).ToArray();
-                        result.Add(instruction);
-                        return result;
-                        //throw new InvalidOperationException();
-                    }
-                    instruction.OpData = new ReadOnlyMemory<byte>(scripts, position, operandSize).ToArray();
+                    var instruction = s.GetInstruction(ip);
+
+                    var instructionInfo = new InstructionInfo()
+                        {OpCode = instruction.OpCode, Position = ip, OpData = instruction.Operand.ToArray()};
+
                     if (instruction.OpCode == OpCode.SYSCALL)
                     {
-                        instruction.SystemCallMethod = _interopServiceMap[BitConverter.ToUInt32(instruction.OpData)];
+                        instructionInfo.SystemCallMethod = _interopServiceMap[BitConverter.ToUInt32(instructionInfo.OpData)];
                     }
-         
+
+                    result.Add(instructionInfo);
+
+
+                    ip += instruction.Size;
                 }
-                result.Add(instruction);
-                position += operandSize;
+
             }
+            catch (Exception e)
+            {
+                Console.WriteLine($"{scripts.ToHexString()}:{e}");
+            }
+     
             return result;
         }
 
