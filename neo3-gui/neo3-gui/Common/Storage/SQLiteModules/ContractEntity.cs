@@ -18,12 +18,13 @@ namespace Neo.Common.Storage.SQLiteModules
         /// </summary>
         public string Hash { get; set; }
 
-        #region Nep5Info
+        #region NepInfo
 
         public string Name { get; set; }
         public string Symbol { get; set; }
         public byte Decimals { get; set; }
-        
+
+        public AssetType AssetType { get; set; }
 
         #endregion
 
@@ -41,8 +42,20 @@ namespace Neo.Common.Storage.SQLiteModules
         /// <summary>
         /// Delete or migrate Contract transaction hash string, big-endian without "0x"
         /// </summary>
-        public string DeleteOrMigrateTxId { get; set; }
+        public string MigrateTxId { get; set; }
 
-        public string MigrateTo { get; set; }
+        /// <summary>
+        /// Delete or migrate Contract transaction hash string, big-endian without "0x"
+        /// </summary>
+        public string DeleteTxId { get; set; }
+
+    }
+
+
+    public enum AssetType
+    {
+        None,
+        Nep11,
+        Nep17,
     }
 }

@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Layout, Row, Col, Typography } from "antd";
 
-import Sync from "../components/sync";
+import Sync from "./sync";
 import "../static/css/site.css";
 import "../static/css/home.css";
 import img from "../static/images/logo.svg";

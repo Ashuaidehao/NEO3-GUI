@@ -50,12 +50,14 @@ class ContractUpgrade extends React.Component {
   selectNef = async () => {
     this.opendialog("nef", async (res) => {
       let nef = res.filePaths[0];
-      let manifest = nef.substring(0, nef.length - 3) + "manifest.json";
-      if (fs.existsSync(manifest)) {
-        await this.setState({ manipath: manifest });
+      if (nef) {
+        let manifest = nef.substring(0, nef.length - 3) + "manifest.json";
+        if (fs.existsSync(manifest)) {
+          await this.setState({ manipath: manifest });
+        }
+        await this.setState({ nefpath: nef, isOpenDialog: false });
+        this.onFill()
       }
-      await this.setState({ nefpath: nef, isOpenDialog: false });
-      this.onFill()
     });
   };
   selectMani = async () => {
