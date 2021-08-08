@@ -197,8 +197,9 @@ namespace Neo.Services.ApiServices
             }
             if (asset != null)
             {
-                filter.Contracts = new List<UInt160>() { asset };
+                filter.Assets = new List<UInt160>() { asset };
             }
+
             var trans = db.QueryTransactions(filter, true);
             var result = new PageList<TransactionPreviewModel>
             {

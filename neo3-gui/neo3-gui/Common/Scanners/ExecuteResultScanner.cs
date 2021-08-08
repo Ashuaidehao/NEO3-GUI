@@ -25,16 +25,28 @@ namespace Neo.Common.Scanners
         private bool _running = true;
         private uint _scanHeight = 0;
 
+        private uint _lastHeight = 0;
+        private DateTime _lastTime;
+
         public async Task Start()
         {
             _running = true;
             _scanHeight = _db.GetMaxSyncIndex() ?? 0;
+            _lastHeight = _scanHeight;
+            _lastTime = DateTime.Now;
             while (_running)
             {
                 try
                 {
                     if (await Sync(_scanHeight))
                     {
+                        if (_scanHeight - _lastHeight >= 500)
+                        {
+                            var span = DateTime.Now - _lastTime;
+                            Console.WriteLine($"Sync[{_lastHeight}-{_scanHeight}],cost:{span.TotalSeconds}");
+                            _lastTime=DateTime.Now;
+                            _lastHeight = _scanHeight;
+                        }
                         _scanHeight++;
                     }
                     if (_scanHeight > this.GetCurrentHeight())

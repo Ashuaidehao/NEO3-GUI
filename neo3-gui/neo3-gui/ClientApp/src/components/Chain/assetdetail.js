@@ -112,7 +112,7 @@ class Assetdetail extends React.Component {
                           <span className="hint">
                             {t("blockchain.precision")}：
                           </span>
-                          {assetdetail.decimals ? assetdetail.decimals : "--"}
+                          {assetdetail.decimals ? assetdetail.decimals : "0"}
                         </li>
                         <li>
                           <span className="hint">

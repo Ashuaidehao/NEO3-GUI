@@ -255,6 +255,11 @@ namespace Neo.Common.Storage
                 var contracts = filter.Contracts.Select(a => a.ToBigEndianHex()).Distinct().ToList();
                 query = query.Where(tx => tx.InvokeContracts.Any(c => contracts.Contains(c.Contract.Hash) && c.Contract.DeleteTxId == null));
             }
+            if (filter.Assets.NotEmpty())
+            {
+                var assets = filter.Assets.Select(a => a.ToBigEndianHex()).Distinct().ToList();
+                query = query.Where(tx => tx.Transfers.Any(c => assets.Contains(c.Asset.Hash) && c.Asset.DeleteTxId == null));
+            }
             var pageList = new PageList<TransactionInfo>();
             var pageIndex = filter.PageIndex <= 0 ? 0 : filter.PageIndex - 1;
             pageList.TotalCount = query.Count();

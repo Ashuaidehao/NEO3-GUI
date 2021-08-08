@@ -41,6 +41,11 @@ namespace Neo.Common.Storage
         public List<UInt160> Contracts { get; set; }
 
         /// <summary>
+        /// Relate  asset contracts hash
+        /// </summary>
+        public List<UInt160> Assets { get; set; }
+
+        /// <summary>
         /// start from 1,paged result only if this is not null
         /// </summary>
         public int PageIndex { get; set; }
