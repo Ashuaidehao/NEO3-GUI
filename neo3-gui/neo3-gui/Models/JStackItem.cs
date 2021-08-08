@@ -33,7 +33,7 @@ namespace Neo.Models
                 TypeCode = json["type"].TryGetEnum<ContractParameterType>(),
                 Type = json["type"].AsString(),
             };
-            if (parameter.Type == "ByteString")
+            if (parameter.Type == "ByteString" || parameter.Type == "Buffer")
             {
                 parameter.TypeCode = ContractParameterType.ByteArray;
             }

@@ -116,7 +116,7 @@ namespace Neo.Services.ApiServices
             using var db = new TrackDB();
             var record = db.GetContract(asset);
             var trans = db.QueryTransactions(new TransactionFilter()
-            { Contracts = new List<UInt160>() { asset }, PageSize = 0 });
+            { Assets = new List<UInt160>() { asset }, PageSize = 0 });
             return new AssetInfoModel()
             {
                 Asset = assetInfo.Asset,
