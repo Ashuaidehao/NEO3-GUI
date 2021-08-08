@@ -253,7 +253,7 @@ namespace Neo.Common.Storage
             if (filter.Contracts.NotEmpty())
             {
                 var contracts = filter.Contracts.Select(a => a.ToBigEndianHex()).Distinct().ToList();
-                query = query.Where(tx => tx.InvokeContracts.Any(c => contracts.Contains(c.Contract.Hash) && c.Contract.DeleteOrMigrateTxId == null));
+                query = query.Where(tx => tx.InvokeContracts.Any(c => contracts.Contains(c.Contract.Hash) && c.Contract.DeleteTxId == null));
             }
             var pageList = new PageList<TransactionInfo>();
             var pageIndex = filter.PageIndex <= 0 ? 0 : filter.PageIndex - 1;
@@ -357,7 +357,7 @@ namespace Neo.Common.Storage
         /// <returns></returns>
         public IEnumerable<BalanceInfo> FindAssetBalance(BalanceFilter filter)
         {
-            IQueryable<AssetBalanceEntity> query = _sqldb.AssetBalances.Include(a => a.Address).Include(a => a.Asset).Where(a => a.Asset.DeleteOrMigrateTxId == null);
+            IQueryable<AssetBalanceEntity> query = _sqldb.AssetBalances.Include(a => a.Address).Include(a => a.Asset).Where(a => a.Asset.DeleteTxId == null);
             if (filter.Addresses.NotEmpty())
             {
                 var addrs = filter.Addresses.Select(a => a.ToBigEndianHex()).ToList();
@@ -384,40 +384,29 @@ namespace Neo.Common.Storage
         }
 
 
-        public IEnumerable<Nep5ContractInfo> GetAllContracts()
+        public IEnumerable<ContractEntity> GetAllContracts()
         {
-            return _sqldb.Contracts.ToList().Select(ToNep5ContractInfo);
+            //return _sqldb.Contracts.ToList().Select(c => c.ToContractInfo());
+            return _sqldb.Contracts.ToList();
         }
 
 
         private ContractEntity GetActiveContract(UInt160 contract)
         {
             var contractHash = contract.ToBigEndianHex();
-            return _sqldb.Contracts.FirstOrDefault(c => c.Hash == contractHash && c.DeleteOrMigrateTxId == null);
+            return GetActiveContract(contractHash);
         }
 
-        public Nep5ContractInfo GetContract(UInt160 asset)
+        private ContractEntity GetActiveContract(string contractHash)
+        {
+            return _sqldb.Contracts.FirstOrDefault(c => c.Hash == contractHash && c.DeleteTxId == null);
+        }
+        public ContractEntity GetContract(UInt160 asset)
         {
             var assetInfo = GetActiveContract(asset);
-            return assetInfo == null ? null : ToNep5ContractInfo(assetInfo);
+            return assetInfo;
         }
 
-
-        private Nep5ContractInfo ToNep5ContractInfo(ContractEntity c)
-        {
-            return new Nep5ContractInfo()
-            {
-                Hash = UInt160.Parse(c.Hash),
-                Name = c.Name,
-                Symbol = c.Symbol,
-                Decimals = c.Decimals,
-                CreateTime = c.CreateTime,
-                CreateTxId = c.CreateTxId != null ? UInt256.Parse(c.CreateTxId) : null,
-                DeleteOrMigrateTxId = c.DeleteOrMigrateTxId != null ? UInt256.Parse(c.DeleteOrMigrateTxId) : null,
-                DeleteTime = c.DeleteTime,
-                MigrateTime = c.MigrateTime,
-            };
-        }
 
         #endregion
 
@@ -463,36 +452,27 @@ namespace Neo.Common.Storage
 
 
 
+
         /// <summary>
         /// Create contract, save immediately
         /// </summary>
         /// <param name="newContract"></param>
-        public void CreateContract(Nep5ContractInfo newContract)
+        public void CreateContract(ContractEntity newContract)
         {
-            var contractHash = newContract.Hash.ToBigEndianHex();
             var old = GetActiveContract(newContract.Hash);
             if (old == null)
             {
-                var contract = new ContractEntity()
-                {
-                    Hash = contractHash,
-                    Name = newContract.Name,
-                    Symbol = newContract.Symbol,
-                    Decimals = newContract.Decimals,
-                    CreateTime = newContract.CreateTime,
-                    CreateTxId = newContract.CreateTxId?.ToBigEndianHex(),
-                };
-                _sqldb.Contracts.Add(contract);
+                _sqldb.Contracts.Add(newContract);
                 _sqldb.SaveChanges();
 
                 //save create contract transaction record
-                _sqldb.InvokeRecords.Add(new InvokeRecordEntity()
-                {
-                    ContractId = contract.Id,
-                    TxId = contract.CreateTxId,
-                    Methods = "Deployed"
-                });
-                _sqldb.SaveChanges();
+                //_sqldb.InvokeRecords.Add(new InvokeRecordEntity()
+                //{
+                //    ContractId = newContract.Id,
+                //    TxId = newContract.CreateTxId,
+                //    Methods = "Deployed"
+                //});
+                //_sqldb.SaveChanges();
             }
         }
 
@@ -508,7 +488,7 @@ namespace Neo.Common.Storage
             var old = GetActiveContract(contractHash);
             if (old != null)
             {
-                old.DeleteOrMigrateTxId = txId.ToBigEndianHex();
+                old.DeleteTxId = txId.ToBigEndianHex();
                 old.DeleteTime = time;
                 _sqldb.SaveChanges();
             }
@@ -517,41 +497,33 @@ namespace Neo.Common.Storage
         /// <summary>
         /// Migrate contract, save immediately
         /// </summary>
-        /// <param name="contract"></param>
         /// <param name="migrateContract"></param>
-        /// <param name="txId"></param>
-        /// <param name="time"></param>
-        public void MigrateContract(UInt160 contract, Nep5ContractInfo migrateContract, UInt256 txId, DateTime time)
+        public void MigrateContract(ContractEntity migrateContract)
         {
-            var migrateContractHash = migrateContract.Hash.ToBigEndianHex();
-            var tx = txId.ToBigEndianHex();
-            var old = GetActiveContract(contract);
+            var old = GetActiveContract(migrateContract.Hash);
             if (old != null)
             {
-                old.DeleteOrMigrateTxId = tx;
-                old.MigrateTo = migrateContractHash;
-                old.MigrateTime = time;
-                var newContract = new ContractEntity()
+                var newUpdateRecord = new ContractUpdateRecordEntity()
                 {
-                    Hash = migrateContractHash,
-                    Name = migrateContract.Name,
-                    Symbol = migrateContract.Symbol,
-                    Decimals = migrateContract.Decimals,
-                    CreateTime = migrateContract.CreateTime,
-                    CreateTxId = tx,
+                    Hash = old.Hash,
+                    MigrateTxId = migrateContract.MigrateTxId,
+                    MigrateTime = migrateContract.MigrateTime.Value,
                 };
-                _sqldb.Contracts.Add(newContract);
-                _sqldb.SaveChanges();
 
-                _sqldb.InvokeRecords.Add(new InvokeRecordEntity()
-                {
-                    ContractId = newContract.Id,
-                    TxId = tx,
-                    Methods = "Deployed"
-                });
+                old.MigrateTxId = migrateContract.MigrateTxId;
+                old.MigrateTime = migrateContract.MigrateTime;
+                old.Symbol = migrateContract.Symbol;
+                old.AssetType = migrateContract.AssetType;
+                old.Decimals = migrateContract.Decimals;
+
+                _sqldb.ContractUpdateRecords.Add(newUpdateRecord);
+                //_sqldb.InvokeRecords.Add(new InvokeRecordEntity()
+                //{
+                //    ContractId = old.Id,
+                //    TxId = migrateContract.MigrateTxId,
+                //    Methods = "Updated"
+                //});
                 _sqldb.SaveChanges();
-                // migrate balance records to new contract
-                _sqldb.AssetBalances.Where(a => a.AssetId == old.Id).BatchUpdate(new AssetBalanceEntity() { AssetId = newContract.Id });
             }
         }
 
@@ -599,7 +571,7 @@ namespace Neo.Common.Storage
             IQueryable<Nep5TransferEntity> query = _sqldb.Nep5Transactions.Where(t => t.TxId != null)
                 .Include(t => t.From)
                 .Include(t => t.To)
-                .Include(t => t.Asset).Where(t => t.Asset.DeleteOrMigrateTxId == null);
+                .Include(t => t.Asset).Where(t => t.Asset.DeleteTxId == null);
 
             if (filter.FromOrTo.NotEmpty())
             {

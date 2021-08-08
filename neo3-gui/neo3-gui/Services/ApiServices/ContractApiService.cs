@@ -39,12 +39,12 @@ namespace Neo.Services.ApiServices
                 Hash = c.Hash,
                 Name = c.Name,
             }));
-            var nativeHashes = new HashSet<UInt160>(list.Select(x => x.Hash));
+            var nativeHashes = new HashSet<string>(list.Select(x => x.Hash.ToBigEndianHex()));
             using var db = new TrackDB();
             var assets = db.GetAllContracts()?.Where(a => !nativeHashes.Contains(a.Hash)).Select(a =>
                 new ContractInfoModel()
                 {
-                    Hash = a.Hash,
+                    Hash = UInt160.Parse(a.Hash),
                     Name = a.Name,
                 }).ToList();
             list.AddRange(assets);
@@ -248,10 +248,30 @@ namespace Neo.Services.ApiServices
                 signers.AddRange(para.Cosigners.Select(s => new Signer() { Account = s.Account, Scopes = s.Scopes, AllowedContracts = new UInt160[0] }));
             }
 
-            Transaction tx = null;
             using ScriptBuilder sb = new ScriptBuilder();
             sb.EmitDynamicCall(para.ContractHash, para.Method, contractParameters);
 
+            var testTx = new Transaction()
+            {
+                Signers = signers.ToArray(),
+                Attributes = new TransactionAttribute[0]
+            };
+            using ApplicationEngine engine = sb.ToArray().RunTestMode(null, testTx);
+
+            var result = new InvokeResultModel();
+            result.VmState = engine.State;
+            result.GasConsumed = new BigDecimal((BigInteger)engine.GasConsumed, NativeContract.GAS.Decimals);
+            result.ResultStack = engine.ResultStack.Select(p => JStackItem.FromJson(p.ToContractParameter().ToJson())).ToList();
+            result.Notifications = engine.Notifications?.Select(ConvertToEventModel).ToList();
+            if (engine.State.HasFlag(VMState.FAULT))
+            {
+                return Error(ErrorCode.EngineFault);
+            }
+            if (!para.SendTx)
+            {
+                return result;
+            }
+            Transaction tx = null;
             try
             {
                 tx = CurrentWallet.InitTransaction(sb.ToArray(), null, signers.ToArray());
@@ -273,20 +293,6 @@ namespace Neo.Services.ApiServices
             if (!signSuccess)
             {
                 return Error(ErrorCode.SignFail, context.SafeSerialize());
-            }
-            var result = new InvokeResultModel();
-            using ApplicationEngine engine = tx.Script.RunTestMode(null, tx);
-            result.VmState = engine.State;
-            result.GasConsumed = new BigDecimal((BigInteger)tx.SystemFee, NativeContract.GAS.Decimals);
-            result.ResultStack = engine.ResultStack.Select(p => JStackItem.FromJson(p.ToContractParameter().ToJson())).ToList();
-            result.Notifications = engine.Notifications?.Select(ConvertToEventModel).ToList();
-            if (engine.State.HasFlag(VMState.FAULT))
-            {
-                return Error(ErrorCode.EngineFault);
-            }
-            if (!para.SendTx)
-            {
-                return result;
             }
             await tx.Broadcast();
             result.TxId = tx.Hash;

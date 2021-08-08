@@ -49,7 +49,7 @@ namespace Neo.Common.Analyzers
             public readonly IDictionary<UInt160, AssetInfo> AssetInfos = new Dictionary<UInt160, AssetInfo>();
 
             /// <summary>
-            /// 
+            /// accounts of balance changed
             /// </summary>
             public readonly HashSet<AccountAsset> BalanceChangeAccounts = new HashSet<AccountAsset>();
         }
@@ -100,40 +100,36 @@ namespace Neo.Common.Analyzers
             execResult.Notifications = appExec.Notifications.Select(n => n.ToNotificationInfo()).ToList();
             Result.ExecuteResultInfos.Add(execResult);
 
-            foreach (var contract in execResult.Notifications.Select(n => n.Contract).Distinct())
-            {
-                var asset = AssetCache.GetAssetInfo(contract, _snapshot);
-                if (asset != null)
-                {
-                    Result.AssetInfos[asset.Asset] = asset;
-                }
-            }
-
-            if (execResult.VMState.HasFlag(VMState.FAULT))
+            if (execResult.VMState.HasFlag(VMState.FAULT) || execResult.Notifications.IsEmpty())
             {
                 //no need to track 
                 return;
             }
 
-            if (execResult.Notifications.IsEmpty())
-            {
-                //no need to track
-                return;
-            }
-
+            //foreach (var contract in execResult.Notifications.Select(n => n.Contract).Distinct())
+            //{
+            //    var asset = AssetCache.GetAssetInfo(contract, _snapshot);
+            //    if (asset != null)
+            //    {
+            //        Result.AssetInfos[asset.Asset] = asset;
+            //    }
+            //}
             foreach (var notification in appExec.Notifications)
             {
                 switch (notification.EventName)
                 {
-                    case "transfer":
-                    case "Transfer":
-                        ProcessTransfer(notification, appExec);
-                        break;
                     case "Deploy":
                         ProcessDeploy(notification, appExec);
                         break;
+                    case "Update":
+                        ProcessUpdate(notification, appExec);
+                        break;
                     case "Destory":
                         ProcessDestory(notification, appExec);
+                        break;
+                    case "transfer":
+                    case "Transfer":
+                        ProcessTransfer(notification, appExec);
                         break;
                     default:
                         break;
@@ -206,7 +202,21 @@ namespace Neo.Common.Analyzers
 
         private void ProcessUpdate(NotifyEventArgs notification, Blockchain.ApplicationExecuted appExec)
         {
-
+            if (notification.State.Count != 1) { return; }
+            var hash = notification.State[0].GetByteSafely();
+            if (hash == null || hash.Length != 20) { return; }
+            var contractHash = new UInt160(hash);
+            if (!Result.ContractChangeEvents.ContainsKey(appExec.Transaction.Hash))
+            {
+                Result.ContractChangeEvents[appExec.Transaction.Hash] = new List<ContractEventInfo>();
+            }
+            ContractState contract = NativeContract.ContractManagement.GetContract(_snapshot, contractHash);
+            Result.ContractChangeEvents[appExec.Transaction.Hash].Add(new ContractEventInfo() { Contract = contractHash, Name = contract?.Manifest.Name, Event = ContractEventType.Migrate });
+            var asset = AssetCache.GetAssetInfoFromChain(contractHash, _snapshot);
+            if (asset != null)
+            {
+                Result.AssetInfos[asset.Asset] = asset;
+            }
         }
 
         private void ProcessDestory(NotifyEventArgs notification, Blockchain.ApplicationExecuted appExec)

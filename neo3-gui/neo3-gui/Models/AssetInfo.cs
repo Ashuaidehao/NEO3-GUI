@@ -4,6 +4,8 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Neo.Common.Storage;
+using Neo.Common.Storage.SQLiteModules;
 
 namespace Neo.Models
 {
@@ -15,5 +17,7 @@ namespace Neo.Models
         public string Symbol { get; set; }
 
         public byte Decimals { get; set; }
+
+        public AssetType Type { get; set; }
     }
 }

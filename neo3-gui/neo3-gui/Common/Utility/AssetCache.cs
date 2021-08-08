@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using Neo.Common.Storage;
 using Neo.Common.Storage.LevelDBModules;
+using Neo.Common.Storage.SQLiteModules;
 using Neo.Ledger;
 using Neo.Models;
 using Neo.Persistence;
@@ -49,60 +50,59 @@ namespace Neo.Common.Utility
             {
                 return _assets[assetId];
             }
-            return GetAssetInfoFromChain(assetId, snapshot) ?? (readFromDb ? GetAssetInfoFromDb(assetId) : null);
+            return GetAssetInfoFromChain(assetId, snapshot) ?? (readFromDb ? GetAssetInfoFromLevelDb(assetId) : null);
         }
 
 
         /// <summary>
-        /// read nep5 from chain, and set cache
-        /// https://github.com/neo-project/proposals/blob/master/nep-5.mediawiki
+        /// read nep17 from chain, and set cache
+        /// https://github.com/neo-project/proposals/blob/master/nep-17.mediawiki
         /// </summary>
         /// <param name="assetId"></param>
         /// <param name="snapshot"></param>
         /// <returns></returns>
         public static AssetInfo GetAssetInfoFromChain(UInt160 assetId, DataCache snapshot)
         {
-            using var sb = new ScriptBuilder();
-            sb.EmitDynamicCall(assetId, "decimals");
-            sb.EmitDynamicCall(assetId, "symbol");
-            //sb.EmitAppCall(assetId, "name");
             var contract = snapshot.GetContract(assetId);
             if (contract == null)
             {
                 return null;
             }
+            var assetType = contract.CheckNepAsset();
+            if (assetType == AssetType.None)
+            {
+                return null;
+            }
             try
             {
+                using var sb = new ScriptBuilder();
+                sb.EmitDynamicCall(assetId, "decimals");
+                sb.EmitDynamicCall(assetId, "symbol");
                 using var engine = sb.ToArray().RunTestMode(snapshot);
-                //NativeContract.Ledger.
                 if (engine.State.HasFlag(VMState.FAULT))
                 {
-                    Console.WriteLine($"Cannot find Nep5 Asset[{assetId}] at height:{snapshot.GetHeight()}");
+                    Console.WriteLine($"Contract [{assetId}] is not Asset at height:{snapshot.GetHeight()}");
                     return null;
                 }
                 string name = contract.Manifest.Name;
                 string symbol = engine.ResultStack.Pop().GetString();
                 byte decimals = (byte)engine.ResultStack.Pop().GetInteger();
                 symbol = symbol == "neo" || symbol == "gas" ? symbol.ToUpper() : symbol;
-
-                if (string.IsNullOrWhiteSpace(name))
-                {
-                    return null;
-                }
                 var assetInfo = new AssetInfo()
                 {
                     Asset = assetId,
                     Decimals = decimals,
                     Symbol = symbol,
                     Name = name,
+                    Type = assetType,
                 };
+
                 _assets[assetId] = assetInfo;
                 return assetInfo;
-
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Invalid Nep5[{assetId}]:{e}");
+                Console.WriteLine($"Invalid Asset[{assetId}]:{e}");
                 return null;
             }
         }
@@ -115,7 +115,7 @@ namespace Neo.Common.Utility
         /// </summary>
         /// <param name="assetId"></param>
         /// <returns></returns>
-        public static AssetInfo GetAssetInfoFromDb(UInt160 assetId)
+        public static AssetInfo GetAssetInfoFromLevelDb(UInt160 assetId)
         {
             using var db = new LevelDbContext();
             var oldAsset = db.GetAssetInfo(assetId);
@@ -127,6 +127,7 @@ namespace Neo.Common.Utility
                     Decimals = oldAsset.Decimals,
                     Name = oldAsset.Name,
                     Symbol = oldAsset.Symbol,
+                    Type = oldAsset.Type,
                     //TotalSupply = oldAsset.TotalSupply,
                 };
                 _assets[assetId] = asset;
@@ -149,6 +150,10 @@ namespace Neo.Common.Utility
 
         public static List<BigDecimal?> GetTotalSupply(IEnumerable<UInt160> assets)
         {
+            if (assets.IsEmpty())
+            {
+                return new List<BigDecimal?>();
+            }
             var snapshot = Helpers.GetDefaultSnapshot();
             using var sb = new ScriptBuilder();
             var assetInfos = new List<AssetInfo>();

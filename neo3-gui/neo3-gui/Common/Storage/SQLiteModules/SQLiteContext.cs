@@ -30,6 +30,7 @@ namespace Neo.Common.Storage.SQLiteModules
         public DbSet<InvokeRecordEntity> InvokeRecords { get; set; }
 
         public DbSet<ContractEntity> Contracts { get; set; }
+        public DbSet<ContractUpdateRecordEntity> ContractUpdateRecords { get; set; }
 
         static SQLiteContext()
         {
@@ -78,7 +79,7 @@ namespace Neo.Common.Storage.SQLiteModules
         {
             try
             {
-                return SyncIndexes.OrderByDescending(s=>s.BlockHeight).FirstOrDefault()?.BlockHeight;
+                return SyncIndexes.OrderByDescending(s => s.BlockHeight).FirstOrDefault()?.BlockHeight;
             }
             catch (Exception e)
             {

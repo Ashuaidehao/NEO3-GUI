@@ -21,6 +21,7 @@ using Neo.Common;
 using Neo.Common.Consoles;
 using Neo.Common.Json;
 using Neo.Common.Storage;
+using Neo.Common.Storage.SQLiteModules;
 using Neo.Common.Utility;
 using Neo.Cryptography.ECC;
 using Neo.IO;
@@ -1362,6 +1363,65 @@ namespace Neo
                     throw new ArgumentException($"StackItemType({item.Type}) is not supported to ContractParameter.");
             }
             return parameter;
+        }
+
+        
+
+        /// <summary>
+        /// /检查Nep Token
+        /// </summary>
+        /// <param name="contract"></param>
+        /// <returns></returns>
+        public static AssetType CheckNepAsset(this ContractState contract)
+        {
+            bool hasTotalSupply = false;
+            bool hasSymbol = false;
+            bool hasDecimals = false;
+            bool hasBalanceOf = false;
+            bool hasNep17Transfer = false;
+            bool hasNep11Transfer = false;
+            bool hasTokensOf = false;
+
+            foreach (var method in contract.Manifest.Abi.Methods)
+            {
+                if (method.Name == "totalSupply" && method.Parameters.Length == 0)
+                {
+                    hasTotalSupply = true;
+                }
+                if (method.Name == "symbol" && method.Parameters.Length == 0)
+                {
+                    hasSymbol = true;
+                }
+                if (method.Name == "decimals" && method.Parameters.Length == 0)
+                {
+                    hasDecimals = true;
+                }
+                if (method.Name == "balanceOf" && method.Parameters.Length == 1)
+                {
+                    hasBalanceOf = true;
+                }
+                if (method.Name == "transfer" && method.Parameters.Length == 4)
+                {
+                    hasNep17Transfer = true;
+                }
+                if (method.Name == "transfer" && method.Parameters.Length == 3 && method.Parameters[0].Type == ContractParameterType.Hash160 && method.Parameters[1].Type == ContractParameterType.ByteArray && method.Parameters[2].Type == ContractParameterType.Any)
+                {
+                    hasNep11Transfer = true;
+                }
+                if (method.Name == "tokensOf" && method.Parameters.Length == 1)
+                {
+                    hasTokensOf = true;
+                }
+            }
+            if (hasTotalSupply && hasSymbol && hasDecimals && hasBalanceOf && hasNep17Transfer)
+            {
+                return AssetType.Nep17;
+            }
+            if (hasTotalSupply && hasSymbol && hasDecimals && hasBalanceOf && hasNep11Transfer && hasTokensOf)
+            {
+                return AssetType.Nep11;
+            }
+            return AssetType.None;
         }
     }
 }
