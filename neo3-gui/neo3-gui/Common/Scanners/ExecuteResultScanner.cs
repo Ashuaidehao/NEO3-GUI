@@ -86,8 +86,21 @@ namespace Neo.Common.Scanners
                 return true;
             }
 
+        
             var block = blockHeight.GetBlock();
             var blockTime = block.Timestamp.FromTimestampMS();
+            if (blockHeight == 0)
+            {
+                SyncNativeContracts(blockTime);
+            }
+
+            if (block.Transactions.Length == 0)
+            {
+                _db.AddSyncIndex(blockHeight);
+                return true;
+            }
+
+            SyncContracts(blockHeight, blockTime);
 
             foreach (var transaction in block.Transactions)
             {
@@ -108,7 +121,6 @@ namespace Neo.Common.Scanners
                 //}
             }
 
-            SyncContracts(blockHeight, blockTime);
 
             var transfers = new List<TransferInfo>();
             var transferItems = _levelDb.GetTransfers(blockHeight);
@@ -163,6 +175,32 @@ namespace Neo.Common.Scanners
         }
 
 
+        private void SyncNativeContracts(DateTime blockTime)
+        {
+            foreach (var nativeContract in NativeContract.Contracts)
+            {
+                var entity = new ContractEntity()
+                {
+                    Name = nativeContract.Name,
+                    Hash = nativeContract.Hash.ToBigEndianHex(),
+                    CreateTime = blockTime,
+                };
+                if (nativeContract is NeoToken neo)
+                {
+                    entity.Symbol = neo.Symbol;
+                    entity.Decimals = neo.Decimals;
+                    entity.AssetType = AssetType.Nep17;
+                }
+                if (nativeContract is GasToken gas)
+                {
+                    entity.Symbol = gas.Symbol;
+                    entity.Decimals = gas.Decimals;
+                    entity.AssetType = AssetType.Nep17;
+                }
+                _db.CreateContract(entity);
+            }
+        }
+
         /// <summary>
         /// sync contract create\update\delete state
         /// </summary>
@@ -170,31 +208,6 @@ namespace Neo.Common.Scanners
         /// <param name="blockTime"></param>
         private void SyncContracts(uint blockHeight, DateTime blockTime)
         {
-            if (blockHeight == 0)
-            {
-                foreach (var nativeContract in NativeContract.Contracts)
-                {
-                    var entity = new ContractEntity()
-                    {
-                        Name = nativeContract.Name,
-                        Hash = nativeContract.Hash.ToBigEndianHex(),
-                        CreateTime = blockTime,
-                    };
-                    if (nativeContract is NeoToken neo)
-                    {
-                        entity.Symbol = neo.Symbol;
-                        entity.Decimals = neo.Decimals;
-                        entity.AssetType = AssetType.Nep17;
-                    }
-                    if (nativeContract is GasToken gas)
-                    {
-                        entity.Symbol = gas.Symbol;
-                        entity.Decimals = gas.Decimals;
-                        entity.AssetType = AssetType.Nep17;
-                    }
-                    _db.CreateContract(entity);
-                }
-            }
             var contractEvents = _levelDb.GetContractEvent(blockHeight);
             if (contractEvents.NotEmpty())
             {
