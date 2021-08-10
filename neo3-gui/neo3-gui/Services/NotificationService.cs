@@ -27,16 +27,22 @@ namespace Neo.Services
             {
                 foreach (var job in _jobs)
                 {
-                    var now = DateTime.Now;
-                    if (job.NextTriggerTime <= now)
+                    try
                     {
-                        var msg = await job.Invoke();
-                        if (msg != null)
+                        var now = DateTime.Now;
+                        if (job.NextTriggerTime <= now)
                         {
-                            _hub.PushAll(msg);
+                            var msg = await job.Invoke();
+                            if (msg != null)
+                            {
+                                _hub.PushAll(msg);
+                            }
+                            job.LastTriggerTime = now;
                         }
-
-                        job.LastTriggerTime = now;
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Job Error[{job}]:{e}");
                     }
                 }
                 await Task.Delay(TimeSpan.FromSeconds(1));

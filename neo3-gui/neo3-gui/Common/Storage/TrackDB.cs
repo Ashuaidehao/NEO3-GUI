@@ -180,29 +180,29 @@ namespace Neo.Common.Storage
 
 
 
-        /// <summary>
-        /// update record will save after call <see cref="Commit"/> method;
-        /// new record will save immediately
-        /// </summary>
-        /// <param name="addressHash"></param>
-        /// <param name="assetInfo"></param>
-        /// <param name="balance"></param>
-        /// <param name="height"></param>
-        public void UpdateBalanceIndex(UInt160 addressHash, AssetInfo assetInfo, BigInteger balance, uint height)
-        {
-            if (addressHash == null) return;
-            var address = GetOrCreateAddress(addressHash);
-            var asset = GetActiveContract(assetInfo.Asset);
-            var balanceRecord = GetOrCreateBalance(address, asset, balance, height);
+        ///// <summary>
+        ///// update record will save after call <see cref="Commit"/> method;
+        ///// new record will save immediately
+        ///// </summary>
+        ///// <param name="addressHash"></param>
+        ///// <param name="assetInfo"></param>
+        ///// <param name="balance"></param>
+        ///// <param name="height"></param>
+        //public void UpdateBalanceIndex(UInt160 addressHash, AssetInfo assetInfo, BigInteger balance, uint height)
+        //{
+        //    if (addressHash == null) return;
+        //    var address = GetOrCreateAddress(addressHash);
+        //    var asset = GetActiveContract(assetInfo.Asset);
+        //    var balanceRecord = GetOrCreateBalance(address, asset, balance, height);
 
-            if (balanceRecord.BlockHeight >= height)
-            {
-                //no need update
-                return;
-            }
-            balanceRecord.Balance = balance.ToByteArray();
-            balanceRecord.BlockHeight = height;
-        }
+        //    if (balanceRecord.BlockHeight >= height)
+        //    {
+        //        //no need update
+        //        return;
+        //    }
+        //    balanceRecord.Balance = balance.ToByteArray();
+        //    balanceRecord.BlockHeight = height;
+        //}
 
 
         /// <summary>
@@ -213,6 +213,10 @@ namespace Neo.Common.Storage
         public PageList<TransactionInfo> QueryTransactions(TransactionFilter filter, bool includeTransfers = false)
         {
             IQueryable<TransactionEntity> query = _sqldb.Transactions;
+            if (includeTransfers)
+            {
+                query = query.Include(t => t.Transfers);
+            }
             if (filter.StartTime != null)
             {
                 query = query.Where(r => r.Time >= filter.StartTime.Value.ToUniversalTime());
@@ -269,8 +273,38 @@ namespace Neo.Common.Storage
             {
                 var list = query.OrderByDescending(g => g.Time)
                     .Skip(pageIndex * filter.PageSize)
-                    .Take(filter.PageSize);
-                pageList.List.AddRange(includeTransfers ? list.Select(ToTransactionWithTransfer) : list.Select(ToTransactionWithoutTransfer));
+                    .Take(filter.PageSize).ToList();
+
+                foreach (var tx in list.ToList())
+                {
+                    var transaction = new TransactionInfo()
+                    {
+                        TxId = UInt256.Parse(tx.TxId),
+                        BlockHeight = tx.BlockHeight,
+                        Sender = tx.Sender != null ? UInt160.Parse(tx.Sender.Hash) : null,
+                        Time = tx.Time.AsUtcTime(),
+                    };
+                    if (tx.Transfers.NotEmpty())
+                    {
+                        var time = tx.Time.ToTimestampMS();
+                        var transfers = new List<TransferInfo>();
+                        foreach (var t in tx.Transfers)
+                        {
+                            transfers.Add(new TransferInfo()
+                            {
+                                From = t.FromId != null ? UInt160.Parse(GetAddress(t.FromId.Value).Hash) : null,
+                                To = t.ToId != null ? UInt160.Parse(GetAddress(t.ToId.Value).Hash) : null,
+                                Amount = new BigInteger(t.Amount),
+                                TxId = UInt256.Parse(t.TxId),
+                                Asset = UInt160.Parse(GetContract(t.AssetId).Hash),
+                                TimeStamp = time,
+                            });
+                        }
+
+                        transaction.Transfers = transfers;
+                    }
+                    pageList.List.Add(transaction);
+                }
             }
             return pageList;
         }
@@ -296,15 +330,24 @@ namespace Neo.Common.Storage
             BlockHeight = tx.BlockHeight,
             Sender = tx.Sender != null ? UInt160.Parse(tx.Sender.Hash) : null,
             Time = tx.Time.AsUtcTime(),
-            Transfers = tx.Transfers.Select(t => new TransferInfo()
-            {
-                From = t.From != null ? UInt160.Parse(t.From.Hash) : null,
-                To = t.To != null ? UInt160.Parse(t.To.Hash) : null,
-                Amount = new BigInteger(t.Amount),
-                TxId = UInt256.Parse(t.TxId),
-                Asset = UInt160.Parse(t.Asset.Hash),
-                TimeStamp = t.Time.ToTimestampMS(),
-            }).ToList()
+            //Transfers = tx.Transfers.ToList(),
+            //    .Select(t=>new TransferInfo(){
+            //    From = t.FromId != null ? UInt160.Parse(GetAddress(t.FromId.Value).Hash) : null,
+            //    To = t.To != null ? UInt160.Parse(t.To.Hash) : null,
+            //    Amount = new BigInteger(t.Amount),
+            //    TxId = UInt256.Parse(t.TxId),
+            //    Asset = UInt160.Parse(t.Asset.Hash),
+            //    TimeStamp = t.Time.ToTimestampMS(),
+            //}),
+            //Transfers = tx.Transfers.Select(t => new TransferInfo()
+            //{
+            //    From = t.From != null ? UInt160.Parse(t.From.Hash) : null,
+            //    To = t.To != null ? UInt160.Parse(t.To.Hash) : null,
+            //    Amount = new BigInteger(t.Amount),
+            //    TxId = UInt256.Parse(t.TxId),
+            //    Asset = UInt160.Parse(t.Asset.Hash),
+            //    TimeStamp = t.Time.ToTimestampMS(),
+            //}).ToList()
         };
 
 
@@ -538,7 +581,9 @@ namespace Neo.Common.Storage
         #region Private
 
 
-        private readonly ConcurrentDictionary<UInt160, AddressEntity> _addressCache = new ConcurrentDictionary<UInt160, AddressEntity>();
+        private readonly ConcurrentDictionary<UInt160, AddressEntity> _addressCache = new();
+        private readonly ConcurrentDictionary<long, AddressEntity> _addressKeyCache = new();
+
         private AddressEntity GetOrCreateAddress(UInt160 address)
         {
             if (address == null) return null;
@@ -555,6 +600,7 @@ namespace Neo.Common.Storage
                 _sqldb.SaveChanges();
             }
             _addressCache[address] = old;
+            _addressKeyCache[old.Id] = old;
             return old;
         }
 
@@ -636,7 +682,39 @@ namespace Neo.Common.Storage
 
         #endregion
 
+        #region AddressAndContractCache
 
+        private readonly ConcurrentDictionary<long, ContractEntity> _contractCache = new();
+        public ContractEntity GetContract(long id)
+        {
+            if (_contractCache.ContainsKey(id))
+            {
+                return _contractCache[id];
+            }
+            var contract = _sqldb.Contracts.FirstOrDefault(c => c.Id == id);
+            if (contract != null)
+            {
+                _contractCache[id] = contract;
+            }
+            return contract;
+        }
+
+
+        public AddressEntity GetAddress(long id)
+        {
+            if (_addressKeyCache.ContainsKey(id))
+            {
+                return _addressKeyCache[id];
+            }
+            var address = _sqldb.Addresses.FirstOrDefault(c => c.Id == id);
+            if (address != null)
+            {
+                _addressKeyCache[id] = address;
+            }
+            return address;
+        }
+
+        #endregion
 
 
         public void Dispose()

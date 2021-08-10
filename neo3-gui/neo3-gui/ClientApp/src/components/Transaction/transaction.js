@@ -27,7 +27,7 @@ class Transaction extends React.Component {
       translist: [],
       loading: true,
       iswa: false,
-      show:false
+      show: false
     };
   }
   componentDidMount() {
@@ -44,31 +44,31 @@ class Transaction extends React.Component {
       this.allset(_params);
     } else if (page === "blockdetail") {
       _params.blockHeight = Number(_hash);
-      this.setState({params:_params})
+      this.setState({ params: _params })
       this.allset(_params);
     } else if (page === "reblockdetail") {
       _params.blockHeight = Number(_hash);
-      this.setState({params:_params})
+      this.setState({ params: _params })
       this.allset(_params);
     } else if (page === "addressdetail") {
       _params.address = Number(_hash);
       this.setState({
-        params:_params,
-        local:"/wallet/transaction:"
+        params: _params,
+        local: "/wallet/transaction:"
       })
       this.nepset(_params);
     } else if (page === "assetdetail") {
       _params.asset = _hash;
-      this.setState({params:_params})
+      this.setState({ params: _params })
       this.nepset(_params);
     } else if (page === "wallettrans") {
-      this.setState({local:"/wallet/transaction:"});
+      this.setState({ local: "/wallet/transaction:" });
       this.walletset(_params);
     } else if (page === "walletdetail") {
-      this.setState({local:"/wallet/transaction:"});
+      this.setState({ local: "/wallet/transaction:" });
       _params.address = _hash;
       this.walletset(_params);
-    } else{
+    } else {
       this.allset(_params);
     }
   }
@@ -121,19 +121,19 @@ class Transaction extends React.Component {
       "method": "GetMyTransactions",
       "params": params
     })
-    .then(function (response) {
-      var _data = response.data;
-      if (_data.msgType === -1) {
-        message.error("查询失败");
-        return;
-      } else {
-        callback(_data);
-      }
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error");
-    });
+      .then(function (response) {
+        var _data = response.data;
+        if (_data.msgType === -1) {
+          message.error("查询失败");
+          return;
+        } else {
+          callback(_data);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        console.log("error");
+      });
   }
   getAlltrans = (params, callback) => {
     axios.post('http://localhost:8081', {
@@ -141,20 +141,20 @@ class Transaction extends React.Component {
       "method": "QueryTransactions",
       "params": params
     })
-    .then(function (response) {
-      var _data = response.data;
-      if (_data.msgType === -1) {
-        console.log(_data)
-        message.error("查询失败");
-        return;
-      } else {
-        callback(_data);
-      }
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error");
-    });
+      .then(function (response) {
+        var _data = response.data;
+        if (_data.msgType === -1) {
+          console.log(_data)
+          message.error("查询失败");
+          return;
+        } else {
+          callback(_data);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        console.log("error");
+      });
   };
   getNeptrans = (params, callback) => {
     axios.post('http://localhost:8081', {
@@ -162,19 +162,19 @@ class Transaction extends React.Component {
       "method": "QueryNep5Transactions",
       "params": params
     })
-    .then(function (response) {
-      var _data = response.data;
-      if (_data.msgType === -1) {
-        message.error("查询失败");
-        return;
-      } else {
-        callback(_data);
-      }
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error");
-    });
+      .then(function (response) {
+        var _data = response.data;
+        if (_data.msgType === -1) {
+          message.error("查询失败");
+          return;
+        } else {
+          callback(_data);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        console.log("error");
+      });
   };
   loadMore = () => {
     this.setState({
@@ -220,7 +220,7 @@ class Transaction extends React.Component {
       );
     });
   }
-  loadNepMore = () =>{
+  loadNepMore = () => {
     this.setState({
       loading: true,
     });
@@ -242,7 +242,7 @@ class Transaction extends React.Component {
       );
     });
   }
-  visi = () =>{
+  visi = () => {
     this.setState({
       show: !this.state.show,
     });
@@ -254,12 +254,12 @@ class Transaction extends React.Component {
   }
   render = () => {
     const { t } = this.props;
-    const { translist, local, loading, iswa,isnpe, page, allpage } = this.state;
+    const { translist, local, loading, iswa, isnpe, page, allpage } = this.state;
     const loadMore = !loading && page <= allpage ? (
       <div className="text-c mb3">
-        {iswa ? (<Button type="primary" onClick={this.loadMyMore}>{ t('common.load more') }</Button>)
-        :isnpe ? (<Button type="primary" onClick={this.loadNepMore}>{ t('common.load more') }</Button>):
-        (<Button type="primary" onClick={this.loadMore}>{ t('common.load more') }</Button>)}
+        {iswa ? (<Button type="primary" onClick={this.loadMyMore}>{t('common.load more')}</Button>)
+          : isnpe ? (<Button type="primary" onClick={this.loadNepMore}>{t('common.load more')}</Button>) :
+            (<Button type="primary" onClick={this.loadMore}>{t('common.load more')}</Button>)}
       </div>
     ) : null;
     return (
@@ -278,23 +278,25 @@ class Transaction extends React.Component {
               title={<span className="succes-light">{t('blockchain.transaction.confirmed')}</span>}
               /> */}
               <div className="trans-detail">
-                  <p>
-                    <Link className="w500 ellipsis hash" to={{ pathname: local + item.txId, title: t("show detail"), 
-                      state: { from: _.get(this.props, 'location.pathname', null) } }}>{item.txId}</Link>
-                    <span className="float-r">{item.blockTime}</span>
-                  </p>
-                  {item.transfers[0]?
+                <p>
+                  <Link className="w500 ellipsis hash" to={{
+                    pathname: local + item.txId, title: t("show detail"),
+                    state: { from: _.get(this.props, 'location.pathname', null) }
+                  }}>{item.txId}</Link>
+                  <span className="float-r">{item.blockTime}</span>
+                </p>
+                {item.transfers?.length > 0 ?
                   <div>
                     <span className="w200 ellipsis">{item.transfers[0].fromAddress ? item.transfers[0].fromAddress : "--"}</span>
                     <SwapRightOutlined />
                     <span className="w200 ellipsis" >{item.transfers[0].toAddress ? item.transfers[0].toAddress : "--"}</span>
                     <span className="float-r"><span className="trans-amount">{item.transfers[0].amount}</span>{item.transfers[0].symbol}</span>
                   </div>
-                  :null}
+                  : null}
               </div>
             </List.Item>
           )}
-          />
+        />
         {/* <Searcharea show={this.show()} />
         <div className="pv1"></div> */}
       </div>

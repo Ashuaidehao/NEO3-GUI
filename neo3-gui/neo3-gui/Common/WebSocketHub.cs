@@ -12,14 +12,7 @@ namespace Neo.Common
     public class WebSocketHub
     {
         private int _limitCount = 10;
-        private readonly ConcurrentDictionary<WebSocketConnection, byte> _clients = new ConcurrentDictionary<WebSocketConnection, byte>();
-
-        public WebSocketHub()
-        {
-            //Task.Run(HeartBeatLoop);
-        }
-
-
+        private readonly ConcurrentDictionary<WebSocketConnection, byte> _clients = new();
 
         public bool Accept(WebSocketConnection connection)
         {
@@ -69,12 +62,9 @@ namespace Neo.Common
         /// <returns></returns>
         public void PushAll(WsMessage msg)
         {
-            if (_clients.Any())
+            foreach (var client in _clients.Keys)
             {
-                foreach (var client in _clients.Keys)
-                {
-                    client.PushMessage(msg);
-                }
+                client.PushMessage(msg);
             }
         }
 
@@ -84,6 +74,6 @@ namespace Neo.Common
             IsHeartBeating = false;
         }
 
-        
+
     }
 }
