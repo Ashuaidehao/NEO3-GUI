@@ -313,7 +313,7 @@ namespace Neo.Common.Consoles
             {
                 Console.WriteLine($"VM State: {engine.State}");
                 Console.WriteLine($"Gas Consumed: {engine.GasConsumed}");
-                Console.WriteLine($"Evaluation Stack: {new JArray(engine.ResultStack.Select(p => p.ToContractParameter().ToJson()))}");
+                Console.WriteLine($"Evaluation Stack: {new JArray(engine.ResultStack.Select(p => p.ToJObject()))}");
                 Console.WriteLine();
                 if (engine.State.HasFlag(VMState.FAULT))
                 {
