@@ -105,7 +105,15 @@ namespace Neo.Common.Storage.LevelDBModules
         {
             if (log != null && log.TxId != null)
             {
-                writeBatch.Put(ExecuteLogKey(log.TxId), log.SerializeJsonBytes());
+                try
+                {
+                    writeBatch.Put(ExecuteLogKey(log.TxId), log.SerializeJsonBytes());
+                }
+                catch (InvalidCastException e)
+                {
+                    log.ResultStack = e.ToString();
+                    writeBatch.Put(ExecuteLogKey(log.TxId), log.SerializeJsonBytes());
+                }
             }
         }
 

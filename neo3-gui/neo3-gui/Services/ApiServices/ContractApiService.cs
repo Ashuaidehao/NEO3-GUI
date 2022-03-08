@@ -239,7 +239,7 @@ namespace Neo.Services.ApiServices
             }
             catch (Exception e)
             {
-                return Error(ErrorCode.InvalidPara);
+                return Error(ErrorCode.InvalidPara, e.GetExMessage());
             }
 
             var signers = new List<Signer>();
@@ -261,11 +261,11 @@ namespace Neo.Services.ApiServices
             var result = new InvokeResultModel();
             result.VmState = engine.State;
             result.GasConsumed = new BigDecimal((BigInteger)engine.GasConsumed, NativeContract.GAS.Decimals);
-            result.ResultStack = engine.ResultStack.Select(p => JStackItem.FromJson(p.ToContractParameter().ToJson())).ToList();
+            result.ResultStack = engine.ResultStack.Select(p => JStackItem.FromJson(p.ToJObject())).ToList();
             result.Notifications = engine.Notifications?.Select(ConvertToEventModel).ToList();
             if (engine.State.HasFlag(VMState.FAULT))
             {
-                return Error(ErrorCode.EngineFault);
+                return Error(ErrorCode.EngineFault, engine.FaultException?.ToString());
             }
             if (!para.SendTx)
             {
@@ -310,7 +310,7 @@ namespace Neo.Services.ApiServices
             if (eventMeta?.Parameters.Any() == true)
             {
                 var json = new Dictionary<string, object>();
-                for (var i = 0; i < eventMeta.Parameters.Length; i++)
+                for (var i = 0; i < eventMeta.Parameters.Length && i < notify.State.Count; i++)
                 {
                     var p = eventMeta.Parameters[i];
                     json[p.Name] = ConvertValue(notify.State[i], p.Type);

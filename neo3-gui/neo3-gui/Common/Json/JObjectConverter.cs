@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -11,10 +12,15 @@ namespace Neo.Common.Json
 {
     public class JObjectConverter : JsonConverter<JObject>
     {
+        public const int MaxJsonLength = 10 * 1024 * 1024;
         public override JObject Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             using JsonDocument document = JsonDocument.ParseValue(ref reader);
-            var text= document.RootElement.Clone().ToString();
+            var text = document.RootElement.Clone().ToString();
+            if (!text.StartsWith("{"))
+            {
+                return (JString)text;
+            }
             return JObject.Parse(text);
         }
 
@@ -47,11 +53,15 @@ namespace Neo.Common.Json
                         if (pair.Value is null)
                             writer.WriteNullValue();
                         else
-                            Write(writer, pair.Value,options);
+                            Write(writer, pair.Value, options);
                     }
                     writer.WriteEndObject();
                     break;
-              
+            }
+
+            if (writer.BytesCommitted > MaxJsonLength)
+            {
+                throw new InvalidCastException("json is too long to write!");
             }
         }
     }

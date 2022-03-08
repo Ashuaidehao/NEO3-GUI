@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Akka.Actor;
 using Neo.Common;
 using Neo.Common.Consoles;
 using Neo.Common.Storage;
@@ -142,6 +144,14 @@ namespace Neo.Services.ApiServices
         {
             UnconfirmedTransactionCache.RemoveUnconfirmedTransactions(txId);
             return true;
+        }
+
+
+        public async Task<object> SendTransaction(string txRaw)
+        {
+            Transaction tx = Convert.FromBase64String(txRaw).AsSerializable<Transaction>();
+            Blockchain.RelayResult reason = Program.Starter.NeoSystem.Blockchain.Ask<Blockchain.RelayResult>(tx).Result;
+            return tx.ToJson(null);
         }
 
         /// <summary>
