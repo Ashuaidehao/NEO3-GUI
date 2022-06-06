@@ -108,8 +108,7 @@ namespace Neo.Services.ApiServices
                         break;
                     case ".json":
                         {
-                            NEP6Wallet wallet = new NEP6Wallet(path, CliSettings.Default.Protocol);
-                            wallet.Unlock(password);
+                            NEP6Wallet wallet = new NEP6Wallet(path, password, CliSettings.Default.Protocol);
                             var account = hexPrivateKey.NotEmpty() ? wallet.CreateAccount(hexPrivateKey) : wallet.CreateAccount();
                             wallet.Save();
                             result.Accounts.Add(new AccountModel()

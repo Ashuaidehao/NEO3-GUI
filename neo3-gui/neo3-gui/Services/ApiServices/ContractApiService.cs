@@ -95,7 +95,7 @@ namespace Neo.Services.ApiServices
             // Read manifest
             ContractManifest manifest = ReadManifestFile(manifestPath);
             // Basic script checks
-            await CheckBadOpcode(nefFile.Script);
+            await CheckBadOpcode(nefFile.Script.ToArray());
 
             // Build script
             using ScriptBuilder sb = new ScriptBuilder();
@@ -168,7 +168,7 @@ namespace Neo.Services.ApiServices
             // Read manifest
             ContractManifest manifest = ReadManifestFile(manifestPath);
             // Basic script checks
-            await CheckBadOpcode(nefFile.Script);
+            await CheckBadOpcode(nefFile.Script.ToArray());
 
             // Build script
             using ScriptBuilder sb = new ScriptBuilder();
@@ -456,7 +456,8 @@ namespace Neo.Services.ApiServices
         {
             var snapshot = Helpers.GetDefaultSnapshot();
             var validators = NativeContract.NEO.GetCommittee(snapshot);
-            var candidates = NativeContract.NEO.GetCandidates(snapshot);
+            //var candidates = NativeContract.NEO.GetCandidates(snapshot);
+            var candidates = snapshot.GetCandidates();
             return candidates.OrderByDescending(v => v.Votes).Select(p => new ValidatorModel
             {
                 Publickey = p.PublicKey.ToString(),
@@ -464,6 +465,7 @@ namespace Neo.Services.ApiServices
                 Active = validators.Contains(p.PublicKey)
             }).ToArray();
         }
+
 
 
 
@@ -493,7 +495,8 @@ namespace Neo.Services.ApiServices
                 return Error(ErrorCode.InvalidPara);
             }
             var snapshot = Helpers.GetDefaultSnapshot();
-            var candidates = NativeContract.NEO.GetCandidates(snapshot);
+            //var candidates = NativeContract.NEO.GetCandidates(snapshot);
+            var candidates = snapshot.GetCandidates();
             if (candidates.Any(v => v.PublicKey.Equals(publicKey)))
             {
                 return Error(ErrorCode.ValidatorAlreadyExist);
@@ -573,7 +576,7 @@ namespace Neo.Services.ApiServices
             {
                 throw new WsException(ErrorCode.ExceedMaxTransactionSize);
             }
-            using var stream = new BinaryReader(File.OpenRead(nefPath), Encoding.UTF8, false);
+            var stream = new MemoryReader(File.ReadAllBytes(nefPath));
             try
             {
                 return stream.ReadSerializable<NefFile>();

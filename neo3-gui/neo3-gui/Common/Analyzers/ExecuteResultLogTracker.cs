@@ -11,13 +11,25 @@ using Neo.Plugins;
 namespace Neo.Common.Analyzers
 {
 
-    public class ExecuteResultLogTracker : Plugin, IPersistencePlugin
+    public class ExecuteResultLogTracker : Plugin
     {
         private readonly LevelDbContext _levelDb = new LevelDbContext();
 
         private readonly HashSet<UInt160> _cachedAssets = new HashSet<UInt160>();
 
-        void IPersistencePlugin.OnPersist(NeoSystem system, Block block, DataCache snapshot, IReadOnlyList<Blockchain.ApplicationExecuted> applicationExecutedList)
+        public ExecuteResultLogTracker()
+        {
+            Blockchain.Committing += OnCommitting;
+            Blockchain.Committed += OnCommitted;
+        }
+
+        public override void Dispose()
+        {
+            Blockchain.Committing -= OnCommitting;
+            Blockchain.Committed -= OnCommitted;
+        }
+
+        void OnCommitting(NeoSystem system, Block block, DataCache snapshot, IReadOnlyList<Blockchain.ApplicationExecuted> applicationExecutedList)
         {
             Header header = snapshot.GetCurrentHeader();
             var analyzer = new BlockAnalyzer(snapshot, header, applicationExecutedList);
@@ -59,7 +71,7 @@ namespace Neo.Common.Analyzers
         }
 
 
-        void IPersistencePlugin.OnCommit(NeoSystem system, Block block, DataCache snapshot)
+        void OnCommitted(NeoSystem system, Block block)
         {
             _levelDb.Commit();
         }
