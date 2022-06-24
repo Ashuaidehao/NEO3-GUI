@@ -46,6 +46,7 @@ using Buffer = Neo.VM.Types.Buffer;
 using VmArray = Neo.VM.Types.Array;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 using Pointer = Neo.VM.Types.Pointer;
+using Neo.SmartContract.Iterators;
 
 namespace Neo
 {
@@ -55,7 +56,7 @@ namespace Neo
         public static readonly JsonSerializerOptions SerializeOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            IgnoreNullValues = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             PropertyNameCaseInsensitive = true,
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             Converters =
@@ -628,7 +629,7 @@ namespace Neo
         {
             if (account.Contract != null)
             {
-                if (account.Contract.Script.IsMultiSigContract(out _, out int _))
+                if (account.Contract.Script.IsMultiSigContract())
                 {
                     return AccountType.MultiSignature;
                 }
@@ -1179,6 +1180,12 @@ namespace Neo
             return notification;
         }
 
+        public static ApplicationEngine RunTestMode(this ReadOnlyMemory<byte> script, DataCache snapshot, IVerifiable container = null)
+        {
+            return ApplicationEngine.Run(script, snapshot ?? GetDefaultSnapshot(), container, settings: CliSettings.Default.Protocol, gas: Constant.TestMode);
+        }
+
+
         public static ApplicationEngine RunTestMode(this byte[] script, DataCache snapshot, IVerifiable container = null)
         {
             return ApplicationEngine.Run(script, snapshot ?? GetDefaultSnapshot(), container, settings: CliSettings.Default.Protocol, gas: Constant.TestMode);
@@ -1426,6 +1433,47 @@ namespace Neo
         public static string ToBase64String(this ReadOnlySpan<byte> data)
         {
             return data.ToArray().ToBase64String();
+        }
+
+        public static string ToBase64String(this Memory<byte> data)
+        {
+            return data.ToArray().ToBase64String();
+        }
+
+
+        public static bool IsSignatureContract(this byte[] script)
+        {
+            return Neo.SmartContract.Helper.IsSignatureContract(script);
+        }
+
+        public static bool IsMultiSigContract(this byte[] script)
+        {
+            return Neo.SmartContract.Helper.IsMultiSigContract(script);
+        }
+
+
+        public static (ECPoint PublicKey, BigInteger Votes)[] GetCandidates(this DataCache snapshot)
+        {
+            var sb = new ScriptBuilder();
+            sb.EmitDynamicCall(NativeContract.NEO.Hash, "getCandidates");
+            var engine = sb.ToArray().RunTestMode(snapshot);
+            var array = engine.ResultStack.Pop() as VmArray;
+            var list = new List<(ECPoint PublicKey, BigInteger Votes)>();
+            if (array.Count > 0)
+            {
+                foreach (Struct item in array)
+                {
+                    list.Add((ECPoint.FromBytes(item[0].GetSpan().ToArray(), ECCurve.Secp256r1), item[1].GetInteger()));
+                }
+
+            }
+            //var iterator = iop.GetInterface<IIterator>();
+            //var first = iterator.Value;
+            //while (iterator.Next())
+            //{
+            //    var val = iterator.Value;
+            //}
+            return list.ToArray();
         }
     }
 }

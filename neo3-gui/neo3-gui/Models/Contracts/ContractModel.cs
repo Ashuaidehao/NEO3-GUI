@@ -12,7 +12,7 @@ namespace Neo.Models.Contracts
         public ContractModel(ContractState contract)
         {
             ContractId = contract.Id;
-            Script = contract.Script;
+            Script = contract.Script.ToArray();
             Manifest = new ManifestModel(contract.Manifest);
         }
 

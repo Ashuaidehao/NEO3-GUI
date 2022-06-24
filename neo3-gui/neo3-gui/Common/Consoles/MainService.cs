@@ -148,8 +148,7 @@ namespace Neo.Common.Consoles
                     break;
                 case ".json":
                     {
-                        NEP6Wallet wallet = new NEP6Wallet(path, CliSettings.Default.Protocol);
-                        wallet.Unlock(password);
+                        NEP6Wallet wallet = new NEP6Wallet(path, password, CliSettings.Default.Protocol);
                         WalletAccount account = wallet.CreateAccount();
                         wallet.Save();
                         Console.WriteLine($"address: {account.Address}");
@@ -306,7 +305,7 @@ namespace Neo.Common.Consoles
             {
                 scriptBuilder.EmitDynamicCall(scriptHash, args[2], contractParameters.ToArray());
                 tx.Script = scriptBuilder.ToArray();
-                Console.WriteLine($"Invoking script with: '{tx.Script.ToHexString()}'");
+                Console.WriteLine($"Invoking script with: '{tx.Script.ToArray().ToHexString()}'");
             }
 
             using (ApplicationEngine engine = tx.Script.RunTestMode(null, tx))
@@ -1261,8 +1260,7 @@ namespace Neo.Common.Consoles
             }
             else
             {
-                NEP6Wallet nep6wallet = new NEP6Wallet(path, CliSettings.Default.Protocol);
-                nep6wallet.Unlock(password);
+                NEP6Wallet nep6wallet = new NEP6Wallet(path, password, CliSettings.Default.Protocol);
                 CurrentWallet = nep6wallet;
             }
         }

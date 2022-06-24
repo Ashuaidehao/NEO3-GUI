@@ -22,7 +22,7 @@ namespace Neo.Common.Utility
         static OpCodeConverter()
         {
             //初始化所有 InteropService Method
-            _interopServiceMap = ApplicationEngine.Services.ToDictionary(s=>s.Key,s=>s.Value.Name);
+            _interopServiceMap = ApplicationEngine.Services.ToDictionary(s => s.Key, s => s.Value.Name);
             //初始化所有 OpCode OperandSize
             foreach (FieldInfo field in typeof(OpCode).GetFields(BindingFlags.Public | BindingFlags.Static))
             {
@@ -39,6 +39,13 @@ namespace Neo.Common.Utility
             if (output.Any(p => p < '0' || p > 'z')) return byteArray.ToHexString();
             return output;
         }
+
+
+        public static List<InstructionInfo> Parse(ReadOnlyMemory<byte> scripts)
+        {
+            return Parse(scripts.ToArray());
+        }
+
         public static List<InstructionInfo> Parse(byte[] scripts)
         {
             var result = new List<InstructionInfo>();
@@ -50,7 +57,7 @@ namespace Neo.Common.Utility
                     var instruction = s.GetInstruction(ip);
 
                     var instructionInfo = new InstructionInfo()
-                        {OpCode = instruction.OpCode, Position = ip, OpData = instruction.Operand.ToArray()};
+                    { OpCode = instruction.OpCode, Position = ip, OpData = instruction.Operand.ToArray() };
 
                     if (instruction.OpCode == OpCode.SYSCALL)
                     {
@@ -68,7 +75,7 @@ namespace Neo.Common.Utility
             {
                 Console.WriteLine($"{scripts.ToHexString()}:{e}");
             }
-     
+
             return result;
         }
 
