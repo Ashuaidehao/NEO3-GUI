@@ -27,7 +27,10 @@ namespace Neo.Common.Storage.LevelDBModules
 
         public void Put(byte[] key, byte[] value)
         {
-            Native.leveldb_writebatch_put(handle, key, (UIntPtr)key.Length, value, (UIntPtr)value.Length);
+            if (value != null)
+            {
+                Native.leveldb_writebatch_put(handle, key, (UIntPtr)key.Length, value, (UIntPtr)value.Length);
+            }
         }
     }
 }

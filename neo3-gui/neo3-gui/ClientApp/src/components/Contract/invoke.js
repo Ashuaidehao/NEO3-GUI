@@ -395,10 +395,10 @@ class Contractinvoke extends React.Component {
                               // getValueFromEvent={this.handleparam}
                               label={<span>{item.name}</span>}
                               rules={[
-                                {
-                                  required: true,
-                                  message: t("input.required"),
-                                },
+                                // {
+                                //   required: true,
+                                //   message: t("input.required"),
+                                // },
                               ]}
                             >
                               {/* {item.type.toLowerCase() == 'array' ?

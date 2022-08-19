@@ -5,7 +5,6 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Neo.Common.Utility;
-using Neo.IO.Json;
 using Neo.Models.Contracts;
 using Neo.Network.P2P.Payloads;
 using Neo.SmartContract.Native;
@@ -19,8 +18,8 @@ namespace Neo.Models.Transactions
             TxId = tx.Hash;
             NetworkFee = new BigDecimal((BigInteger)tx.NetworkFee, NativeContract.GAS.Decimals);
             Nonce = tx.Nonce;
-            Script = tx.Script;
-            
+            Script = tx.Script.ToArray();
+
             Sender = tx.Sender;
             SystemFee = new BigDecimal((BigInteger)tx.SystemFee, NativeContract.GAS.Decimals);
             ValidUntilBlock = tx.ValidUntilBlock;
@@ -34,7 +33,7 @@ namespace Neo.Models.Transactions
             Witnesses = tx.Witnesses?.Select(w => new WitnessModel(w)
             ).ToList();
 
-            if (tx.Script != null)
+            if (tx.Script.Length > 0)
             {
                 ScriptCode = OpCodeConverter.Parse(tx.Script);
             }

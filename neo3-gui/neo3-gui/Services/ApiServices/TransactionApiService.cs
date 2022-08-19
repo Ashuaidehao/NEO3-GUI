@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Neo.Common;
+using Akka.Actor;
 using Neo.Common.Consoles;
 using Neo.Common.Storage;
-using Neo.Common.Storage.LevelDBModules;
 using Neo.Common.Utility;
 using Neo.IO;
-using Neo.IO.Json;
 using Neo.Ledger;
 using Neo.Models;
 using Neo.Models.Transactions;
@@ -57,8 +56,7 @@ namespace Neo.Services.ApiServices
                     {
                         Contract = n.Contract,
                         EventName = n.EventName,
-                        State = JStackItem.FromJson(n.State),
-
+                        State = n.State.ToJStackItem(),
                     }));
             }
             return model;
@@ -82,7 +80,7 @@ namespace Neo.Services.ApiServices
             }
             if (showJson)
             {
-                JObject json = transaction.ToJson(CliSettings.Default.Protocol);
+                var json = transaction.ToJson(CliSettings.Default.Protocol);
                 TransactionState txState = snapshot.GetTransactionState(txId);
                 if (txState != null)
                 {
@@ -144,6 +142,14 @@ namespace Neo.Services.ApiServices
             return true;
         }
 
+
+        public async Task<object> SendTransaction(string txRaw)
+        {
+            Transaction tx = Convert.FromBase64String(txRaw).AsSerializable<Transaction>();
+            Blockchain.RelayResult reason = Program.Starter.NeoSystem.Blockchain.Ask<Blockchain.RelayResult>(tx).Result;
+            return tx.ToJson(null);
+        }
+
         /// <summary>
         /// query all transactions(on chain)
         /// </summary>
@@ -165,6 +171,7 @@ namespace Neo.Services.ApiServices
             {
                 filter.Contracts = new List<UInt160>() { contract };
             }
+
             var trans = db.QueryTransactions(filter, true);
             var result = new PageList<TransactionPreviewModel>
             {
@@ -197,8 +204,9 @@ namespace Neo.Services.ApiServices
             }
             if (asset != null)
             {
-                filter.Contracts = new List<UInt160>() { asset };
+                filter.Assets = new List<UInt160>() { asset };
             }
+
             var trans = db.QueryTransactions(filter, true);
             var result = new PageList<TransactionPreviewModel>
             {
@@ -255,7 +263,7 @@ namespace Neo.Services.ApiServices
                 TxId = tx.TxId,
                 Timestamp = tx.Time.ToTimestampMS(),
                 BlockHeight = tx.BlockHeight,
-                Transfers = tx.Transfers?.Where(t => t.TxId == tx.TxId).Select(t => t.ToTransferModel()).ToList(),
+                Transfers = tx.Transfers?.Select(t => t.ToTransferModel()).ToList(),
             }).ToList();
 
             return model;

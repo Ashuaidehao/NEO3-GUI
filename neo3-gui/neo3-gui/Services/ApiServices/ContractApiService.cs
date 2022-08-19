@@ -3,28 +3,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Akka.Util.Internal;
-using Neo.Common;
 using Neo.Common.Storage;
 using Neo.Common.Utility;
 using Neo.Cryptography.ECC;
 using Neo.IO;
-using Neo.IO.Json;
-using Neo.Ledger;
 using Neo.Models;
-using Neo.Models.Blocks;
 using Neo.Models.Contracts;
-using Neo.Network.P2P;
 using Neo.Network.P2P.Payloads;
 using Neo.SmartContract;
 using Neo.SmartContract.Manifest;
 using Neo.SmartContract.Native;
 using Neo.VM;
 using Neo.VM.Types;
-using Neo.Wallets;
-using Neo.Wallets.SQLite;
 using Array = Neo.VM.Types.Array;
 
 namespace Neo.Services.ApiServices
@@ -39,12 +31,12 @@ namespace Neo.Services.ApiServices
                 Hash = c.Hash,
                 Name = c.Name,
             }));
-            var nativeHashes = new HashSet<UInt160>(list.Select(x => x.Hash));
+            var nativeHashes = new HashSet<string>(list.Select(x => x.Hash.ToBigEndianHex()));
             using var db = new TrackDB();
             var assets = db.GetAllContracts()?.Where(a => !nativeHashes.Contains(a.Hash)).Select(a =>
                 new ContractInfoModel()
                 {
-                    Hash = a.Hash,
+                    Hash = UInt160.Parse(a.Hash),
                     Name = a.Name,
                 }).ToList();
             list.AddRange(assets);
@@ -95,7 +87,7 @@ namespace Neo.Services.ApiServices
             // Read manifest
             ContractManifest manifest = ReadManifestFile(manifestPath);
             // Basic script checks
-            await CheckBadOpcode(nefFile.Script);
+            await CheckBadOpcode(nefFile.Script.ToArray());
 
             // Build script
             using ScriptBuilder sb = new ScriptBuilder();
@@ -168,7 +160,7 @@ namespace Neo.Services.ApiServices
             // Read manifest
             ContractManifest manifest = ReadManifestFile(manifestPath);
             // Basic script checks
-            await CheckBadOpcode(nefFile.Script);
+            await CheckBadOpcode(nefFile.Script.ToArray());
 
             // Build script
             using ScriptBuilder sb = new ScriptBuilder();
@@ -239,7 +231,7 @@ namespace Neo.Services.ApiServices
             }
             catch (Exception e)
             {
-                return Error(ErrorCode.InvalidPara);
+                return Error(ErrorCode.InvalidPara, e.GetExMessage());
             }
 
             var signers = new List<Signer>();
@@ -248,10 +240,30 @@ namespace Neo.Services.ApiServices
                 signers.AddRange(para.Cosigners.Select(s => new Signer() { Account = s.Account, Scopes = s.Scopes, AllowedContracts = new UInt160[0] }));
             }
 
-            Transaction tx = null;
             using ScriptBuilder sb = new ScriptBuilder();
             sb.EmitDynamicCall(para.ContractHash, para.Method, contractParameters);
 
+            var testTx = new Transaction()
+            {
+                Signers = signers.ToArray(),
+                Attributes = new TransactionAttribute[0]
+            };
+            using ApplicationEngine engine = sb.ToArray().RunTestMode(null, testTx);
+
+            var result = new InvokeResultModel();
+            result.VmState = engine.State;
+            result.GasConsumed = new BigDecimal((BigInteger)engine.GasConsumed, NativeContract.GAS.Decimals);
+            result.ResultStack = engine.ResultStack.Select(p => p.ToJStackItem()).ToList();
+            result.Notifications = engine.Notifications?.Select(ConvertToEventModel).ToList();
+            if (engine.State.HasFlag(VMState.FAULT))
+            {
+                return Error(ErrorCode.EngineFault, engine.FaultException?.ToString());
+            }
+            if (!para.SendTx)
+            {
+                return result;
+            }
+            Transaction tx = null;
             try
             {
                 tx = CurrentWallet.InitTransaction(sb.ToArray(), null, signers.ToArray());
@@ -274,20 +286,6 @@ namespace Neo.Services.ApiServices
             {
                 return Error(ErrorCode.SignFail, context.SafeSerialize());
             }
-            var result = new InvokeResultModel();
-            using ApplicationEngine engine = tx.Script.RunTestMode(null, tx);
-            result.VmState = engine.State;
-            result.GasConsumed = new BigDecimal((BigInteger)tx.SystemFee, NativeContract.GAS.Decimals);
-            result.ResultStack = engine.ResultStack.Select(p => JStackItem.FromJson(p.ToContractParameter().ToJson())).ToList();
-            result.Notifications = engine.Notifications?.Select(ConvertToEventModel).ToList();
-            if (engine.State.HasFlag(VMState.FAULT))
-            {
-                return Error(ErrorCode.EngineFault);
-            }
-            if (!para.SendTx)
-            {
-                return result;
-            }
             await tx.Broadcast();
             result.TxId = tx.Hash;
             return result;
@@ -304,7 +302,7 @@ namespace Neo.Services.ApiServices
             if (eventMeta?.Parameters.Any() == true)
             {
                 var json = new Dictionary<string, object>();
-                for (var i = 0; i < eventMeta.Parameters.Length; i++)
+                for (var i = 0; i < eventMeta.Parameters.Length && i < notify.State.Count; i++)
                 {
                     var p = eventMeta.Parameters[i];
                     json[p.Name] = ConvertValue(notify.State[i], p.Type);
@@ -346,13 +344,13 @@ namespace Neo.Services.ApiServices
                     //            JsonToContractParameter(p["value"]))).ToList();
                     //    break;
                     default:
-                        return item.ToJson();
+                        return item.SerializeJson();
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                return item.ToJson();
+                return item.SerializeJson();
             }
         }
 
@@ -378,53 +376,58 @@ namespace Neo.Services.ApiServices
             }
         }
 
-        public static ContractParameter JsonToContractParameter(JObject json)
+   
+        public static ContractParameter JsonToContractParameter(JsonElement json)
         {
+            var type = json.GetProperty("type").GetString();
             ContractParameter parameter = new ContractParameter
             {
-                Type = json["type"].TryGetEnum<ContractParameterType>()
+                //Type = type.ToEnum<ContractParameterType>()
             };
-            if (json["value"] == null)
+            if (!json.TryGetProperty("value", out var jsonValue))
             {
                 return parameter;
             }
-            if (json["type"].AsString() == "Address")
+            var value = jsonValue.GetString();
+            if (type == "Address")
             {
                 parameter.Type = ContractParameterType.Hash160;
-                parameter.Value = json["value"].AsString().ToScriptHash();
+                parameter.Value = value.ToScriptHash();
                 return parameter;
             }
+
+            parameter.Type = type.ToEnum<ContractParameterType>();
             switch (parameter.Type)
             {
                 case ContractParameterType.Signature:
                 case ContractParameterType.ByteArray:
-                    parameter.Value = Convert.FromBase64String(json["value"].AsString());
+                    parameter.Value = Convert.FromBase64String(value);
                     break;
                 case ContractParameterType.Boolean:
-                    parameter.Value = json["value"].AsBoolean();
+                    parameter.Value = jsonValue.GetBoolean();
                     break;
                 case ContractParameterType.Integer:
-                    parameter.Value = BigInteger.Parse(json["value"].AsString());
+                    parameter.Value = BigInteger.Parse(value);
                     break;
                 case ContractParameterType.Hash160:
-                    parameter.Value = UInt160.Parse(json["value"].AsString());
+                    parameter.Value = UInt160.Parse(value);
                     break;
                 case ContractParameterType.Hash256:
-                    parameter.Value = UInt256.Parse(json["value"].AsString());
+                    parameter.Value = UInt256.Parse(value);
                     break;
                 case ContractParameterType.PublicKey:
-                    parameter.Value = ECPoint.Parse(json["value"].AsString(), ECCurve.Secp256r1);
+                    parameter.Value = ECPoint.Parse(value, ECCurve.Secp256r1);
                     break;
                 case ContractParameterType.String:
-                    parameter.Value = json["value"].AsString();
+                    parameter.Value = value;
                     break;
                 case ContractParameterType.Array:
-                    parameter.Value = ((JArray)json["value"]).Select(p => JsonToContractParameter(p)).ToList();
+                    parameter.Value = jsonValue.EnumerateArray().Select(JsonToContractParameter).ToList();
                     break;
                 case ContractParameterType.Map:
-                    parameter.Value = ((JArray)json["value"]).Select(p =>
-                       new KeyValuePair<ContractParameter, ContractParameter>(JsonToContractParameter(p["key"]),
-                           JsonToContractParameter(p["value"]))).ToList();
+                    parameter.Value = jsonValue.EnumerateArray().Select(p =>
+                       new KeyValuePair<ContractParameter, ContractParameter>(JsonToContractParameter(p.GetProperty("key")), JsonToContractParameter(p.GetProperty("value")))
+                    ).ToList();
                     break;
                 default:
                     throw new ArgumentException();
@@ -450,7 +453,8 @@ namespace Neo.Services.ApiServices
         {
             var snapshot = Helpers.GetDefaultSnapshot();
             var validators = NativeContract.NEO.GetCommittee(snapshot);
-            var candidates = NativeContract.NEO.GetCandidates(snapshot);
+            //var candidates = NativeContract.NEO.GetCandidates(snapshot);
+            var candidates = snapshot.GetCandidates();
             return candidates.OrderByDescending(v => v.Votes).Select(p => new ValidatorModel
             {
                 Publickey = p.PublicKey.ToString(),
@@ -458,6 +462,7 @@ namespace Neo.Services.ApiServices
                 Active = validators.Contains(p.PublicKey)
             }).ToArray();
         }
+
 
 
 
@@ -487,7 +492,8 @@ namespace Neo.Services.ApiServices
                 return Error(ErrorCode.InvalidPara);
             }
             var snapshot = Helpers.GetDefaultSnapshot();
-            var candidates = NativeContract.NEO.GetCandidates(snapshot);
+            //var candidates = NativeContract.NEO.GetCandidates(snapshot);
+            var candidates = snapshot.GetCandidates();
             if (candidates.Any(v => v.PublicKey.Equals(publicKey)))
             {
                 return Error(ErrorCode.ValidatorAlreadyExist);
@@ -567,7 +573,7 @@ namespace Neo.Services.ApiServices
             {
                 throw new WsException(ErrorCode.ExceedMaxTransactionSize);
             }
-            using var stream = new BinaryReader(File.OpenRead(nefPath), Encoding.UTF8, false);
+            var stream = new MemoryReader(File.ReadAllBytes(nefPath));
             try
             {
                 return stream.ReadSerializable<NefFile>();

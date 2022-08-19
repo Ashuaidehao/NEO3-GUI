@@ -12,8 +12,8 @@ namespace Neo.Models.Transactions
         {
             if (witness != null)
             {
-                InvocationScript = witness.InvocationScript;
-                VerificationScript = witness.VerificationScript;
+                InvocationScript = witness.InvocationScript.ToArray();
+                VerificationScript = witness.VerificationScript.ToArray();
                 ScriptHash = witness.ScriptHash;
                 InvocationOpCode = OpCodeConverter.Parse(witness.InvocationScript);
                 VerificationOpCode = OpCodeConverter.Parse(witness.VerificationScript);

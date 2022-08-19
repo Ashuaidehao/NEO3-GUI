@@ -1,24 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Neo.IO.Json;
+using Neo.Json;
 
 namespace Neo.Common.Json
 {
-    public class JObjectConverter : JsonConverter<JObject>
+    public class JObjectConverter : JsonConverter<JToken>
     {
-        public override JObject Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public const int MaxJsonLength = 10 * 1024 * 1024;
+
+        public override bool CanConvert(Type typeToConvert)
         {
-            using JsonDocument document = JsonDocument.ParseValue(ref reader);
-            var text= document.RootElement.Clone().ToString();
-            return JObject.Parse(text);
+            return typeof(JToken).IsAssignableFrom(typeToConvert);
         }
 
-        public override void Write(Utf8JsonWriter writer, JObject value, JsonSerializerOptions options)
+        public override JToken Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            using JsonDocument document = JsonDocument.ParseValue(ref reader);
+            var text = document.RootElement.Clone().ToString();
+            if (!text.StartsWith("{"))
+            {
+                return (JString)text;
+            }
+            return JToken.Parse(text);
+        }
+
+        public override void Write(Utf8JsonWriter writer, JToken value, JsonSerializerOptions options)
         {
             switch (value)
             {
@@ -41,17 +53,21 @@ namespace Neo.Common.Json
                     break;
                 case JObject obj:
                     writer.WriteStartObject();
-                    foreach (KeyValuePair<string, JObject> pair in value.Properties)
+                    foreach (KeyValuePair<string, JToken> pair in obj.Properties)
                     {
                         writer.WritePropertyName(pair.Key);
                         if (pair.Value is null)
                             writer.WriteNullValue();
                         else
-                            Write(writer, pair.Value,options);
+                            Write(writer, pair.Value, options);
                     }
                     writer.WriteEndObject();
                     break;
-              
+            }
+
+            if (writer.BytesCommitted > MaxJsonLength)
+            {
+                throw new InvalidCastException("json is too long to write!");
             }
         }
     }

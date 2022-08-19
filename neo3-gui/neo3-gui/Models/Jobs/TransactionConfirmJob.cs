@@ -10,9 +10,9 @@ namespace Neo.Models.Jobs
 {
     public class TransactionConfirmJob : Job
     {
-        private static readonly ConcurrentBag<UnconfirmedTransactionCache.TempTransaction> _confirmedTransactions = new ConcurrentBag<UnconfirmedTransactionCache.TempTransaction>();
+        private static readonly ConcurrentBag<UnconfirmedTransactionCache.TempTransaction> _confirmedTransactions = new();
 
-   
+
         public TransactionConfirmJob(TimeSpan timeSpan)
         {
             IntervalTime = timeSpan;

@@ -27,6 +27,7 @@ namespace Neo.Common.Storage.SQLiteModules
         public AddressEntity From { get; set; }
 
         public long? ToId { get; set; }
+
         public AddressEntity To { get; set; }
 
         public byte[] Amount { get; set; }

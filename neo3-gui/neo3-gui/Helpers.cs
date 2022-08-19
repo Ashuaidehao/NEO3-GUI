@@ -21,11 +21,10 @@ using Neo.Common;
 using Neo.Common.Consoles;
 using Neo.Common.Json;
 using Neo.Common.Storage;
+using Neo.Common.Storage.SQLiteModules;
 using Neo.Common.Utility;
 using Neo.Cryptography.ECC;
 using Neo.IO;
-using Neo.IO.Json;
-using Neo.Ledger;
 using Neo.Models;
 using Neo.Models.Transactions;
 using Neo.Models.Wallets;
@@ -39,11 +38,9 @@ using Neo.SmartContract.Native;
 using Neo.VM;
 using Neo.VM.Types;
 using Neo.Wallets;
-using Neo.Wallets.SQLite;
-using Boolean = Neo.VM.Types.Boolean;
-using Buffer = Neo.VM.Types.Buffer;
-using VmArray = Neo.VM.Types.Array;
 using JsonSerializer = System.Text.Json.JsonSerializer;
+using VmArray = Neo.VM.Types.Array;
+using Pointer = Neo.VM.Types.Pointer;
 
 namespace Neo
 {
@@ -53,7 +50,7 @@ namespace Neo
         public static readonly JsonSerializerOptions SerializeOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            IgnoreNullValues = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             PropertyNameCaseInsensitive = true,
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             Converters =
@@ -66,6 +63,7 @@ namespace Neo
                 new DatetimeJsonConverter(),
                 new ByteArrayConverter(),
                 new JObjectConverter(),
+                new StackItemConverter(),
             }
         };
 
@@ -387,6 +385,26 @@ namespace Neo
             return JsonSerializer.SerializeToUtf8Bytes(obj, SerializeOptions);
         }
 
+
+        /// <summary>
+        /// serialize to utf8 json bytes, more performance than to json string
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static byte[] SerializeJsonBytesSafely<T>(this T obj)
+        {
+            try
+            {
+                return SerializeJsonBytes(obj);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
         /// <summary>
         /// serialize to utf8 json string
         /// </summary>
@@ -606,7 +624,7 @@ namespace Neo
         {
             if (account.Contract != null)
             {
-                if (account.Contract.Script.IsMultiSigContract(out _, out int _))
+                if (account.Contract.Script.IsMultiSigContract())
                 {
                     return AccountType.MultiSignature;
                 }
@@ -1124,12 +1142,12 @@ namespace Neo
         public static bool ToBigInteger(this JStackItem item, out BigInteger amount)
         {
             amount = 0;
-            if (item.TypeCode == ContractParameterType.Integer)
+            if (item.TypeCode == StackItemType.Integer)
             {
                 amount = (BigInteger)item.Value;
                 return true;
             }
-            if (item.TypeCode == ContractParameterType.ByteArray)
+            if (item.TypeCode == StackItemType.Buffer || item.TypeCode == StackItemType.Buffer)
             {
                 amount = new BigInteger((byte[])item.Value);
                 return true;
@@ -1153,9 +1171,15 @@ namespace Neo
             var notification = new NotificationInfo();
             notification.EventName = notify.EventName;
             notification.Contract = notify.ScriptHash;
-            notification.State = notify.State.ToJson();
+            notification.State = notify.State;
             return notification;
         }
+
+        public static ApplicationEngine RunTestMode(this ReadOnlyMemory<byte> script, DataCache snapshot, IVerifiable container = null)
+        {
+            return ApplicationEngine.Run(script, snapshot ?? GetDefaultSnapshot(), container, settings: CliSettings.Default.Protocol, gas: Constant.TestMode);
+        }
+
 
         public static ApplicationEngine RunTestMode(this byte[] script, DataCache snapshot, IVerifiable container = null)
         {
@@ -1280,88 +1304,236 @@ namespace Neo
             return msg;
         }
 
-        /// <summary>
-        /// Converts the <see cref="StackItem"/> to a <see cref="ContractParameter"/>.
-        /// </summary>
-        /// <param name="item">The <see cref="StackItem"/> to convert.</param>
-        /// <returns>The converted <see cref="ContractParameter"/>.</returns>
-        public static ContractParameter ToContractParameter(this StackItem item, List<(StackItem, ContractParameter)> context = null)
-        {
-            if (item is null) throw new ArgumentNullException(nameof(item));
 
-            ContractParameter parameter = null;
-            switch (item)
+        /// <summary>
+        /// Convert StackItem to JObject
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public static JStackItem ToJStackItem(this StackItem item)
+        {
+            return ToJStackItem(item, null);
+        }
+
+        private static JStackItem ToJStackItem(StackItem item, HashSet<StackItem> context)
+        {
+            JStackItem json = new();
+            json.TypeCode = item.Type;
+            switch (item.Type)
             {
-                case VmArray array:
-                    if (context is null)
-                        context = new List<(StackItem, ContractParameter)>();
-                    else
-                        (_, parameter) = context.FirstOrDefault(p => ReferenceEquals(p.Item1, item));
-                    if (parameter is null)
-                    {
-                        parameter = new ContractParameter { Type = ContractParameterType.Array };
-                        context.Add((item, parameter));
-                        parameter.Value = array.Select(p => ToContractParameter(p, context)).ToList();
-                    }
+                case StackItemType.Array:
+                    context ??= new HashSet<StackItem>(ReferenceEqualityComparer.Instance);
+                    if (!context.Add(item)) throw new InvalidOperationException();
+                    json.Value = ((VmArray)item).Select(p => ToJStackItem(p, context));
                     break;
-                case Map map:
-                    if (context is null)
-                        context = new List<(StackItem, ContractParameter)>();
-                    else
-                        (_, parameter) = context.FirstOrDefault(p => ReferenceEquals(p.Item1, item));
-                    if (parameter is null)
-                    {
-                        parameter = new ContractParameter { Type = ContractParameterType.Map };
-                        context.Add((item, parameter));
-                        parameter.Value = map.Select(p =>
-                            new KeyValuePair<ContractParameter, ContractParameter>(ToContractParameter(p.Key, context),
-                                ToContractParameter(p.Value, context))).ToList();
-                    }
+                case StackItemType.Boolean:
+                    json.Value = item.GetBoolean();
                     break;
-                case Boolean _:
-                    parameter = new ContractParameter
-                    {
-                        Type = ContractParameterType.Boolean,
-                        Value = item.GetBoolean()
-                    };
+                case StackItemType.Buffer:
+                case StackItemType.ByteString:
+                    json.Value = item.GetSpan().ToBase64String();
                     break;
-                case ByteString array:
-                    parameter = new ContractParameter
-                    {
-                        Type = ContractParameterType.ByteArray,
-                        Value = array.GetSpan().ToArray()
-                    };
+                case StackItemType.Integer:
+                    json.Value = item.GetInteger().ToString();
                     break;
-                case Buffer array:
-                    parameter = new ContractParameter
-                    {
-                        Type = ContractParameterType.ByteArray,
-                        Value = array.GetSpan().ToArray()
-                    };
+                case StackItemType.Map:
+                    context ??= new HashSet<StackItem>(ReferenceEqualityComparer.Instance);
+                    if (!context.Add(item)) throw new InvalidOperationException();
+                    json.Value = ((Map)item).Select(p => new KeyValuePair<JStackItem, JStackItem>(ToJStackItem(p.Key, context), ToJStackItem(p.Value, context))).ToList();
+                    //json.Value = ((Map)item).Select(p =>
+                    //{
+                    //    JObject item = new();
+                    //    item["key"] = ToJson(p.Key, context);
+                    //    item["value"] = ToJson(p.Value, context);
+                    //    return item;
+                    //}));
                     break;
-                case Integer i:
-                    parameter = new ContractParameter
-                    {
-                        Type = ContractParameterType.Integer,
-                        Value = i.GetInteger()
-                    };
+                case StackItemType.Pointer:
+                    json.Value = ((Pointer)item).Position;
                     break;
-                case InteropInterface _:
-                    parameter = new ContractParameter
-                    {
-                        Type = ContractParameterType.InteropInterface
-                    };
-                    break;
-                case Null _:
-                    parameter = new ContractParameter
-                    {
-                        Type = ContractParameterType.Any
-                    };
-                    break;
-                default:
-                    throw new ArgumentException($"StackItemType({item.Type}) is not supported to ContractParameter.");
             }
-            return parameter;
+            return json;
+        }
+
+        //public static JStackItem ToJStackItem(this JToken json)
+        //{
+        //    JStackItem parameter = new JStackItem
+        //    {
+        //        TypeCode = json["type"].AsEnum<StackItemType>(),
+        //    };
+
+        //    if (json["value"] != null)
+        //        switch (parameter.TypeCode)
+        //        {
+        //            case StackItemType.Buffer:
+        //            case StackItemType.ByteString:
+        //                parameter.Value = Convert.FromBase64String(json["value"].AsString());
+        //                break;
+        //            case StackItemType.Boolean:
+        //                parameter.Value = json["value"].AsBoolean();
+        //                break;
+        //            case StackItemType.Integer:
+        //                parameter.Value = BigInteger.Parse(json["value"].AsString());
+        //                break;
+        //            case StackItemType.Array:
+        //                parameter.Value = ((JArray)json["value"]).Select(p => ToJStackItem(p)).ToList();
+        //                break;
+        //            case StackItemType.Map:
+        //                parameter.Value = ((JArray)json["value"]).Select(p => new KeyValuePair<JStackItem, JStackItem>(ToJStackItem(p["key"]), ToJStackItem(p["value"]))).ToList();
+        //                break;
+        //            default:
+        //                throw new ArgumentException();
+        //        }
+        //    return parameter;
+        //}
+
+
+        /// <summary>
+        /// /检查Nep Token
+        /// </summary>
+        /// <param name="contract"></param>
+        /// <returns></returns>
+        public static AssetType CheckNepAsset(this ContractState contract)
+        {
+            bool hasTotalSupply = false;
+            bool hasSymbol = false;
+            bool hasDecimals = false;
+            bool hasBalanceOf = false;
+            bool hasNep17Transfer = false;
+            bool hasNep11Transfer = false;
+            bool hasTokensOf = false;
+
+            foreach (var method in contract.Manifest.Abi.Methods)
+            {
+                if (method.Name == "totalSupply" && method.Parameters.Length == 0)
+                {
+                    hasTotalSupply = true;
+                }
+                if (method.Name == "symbol" && method.Parameters.Length == 0)
+                {
+                    hasSymbol = true;
+                }
+                if (method.Name == "decimals" && method.Parameters.Length == 0)
+                {
+                    hasDecimals = true;
+                }
+                if (method.Name == "balanceOf" && method.Parameters.Length == 1)
+                {
+                    hasBalanceOf = true;
+                }
+                if (method.Name == "transfer" && method.Parameters.Length == 4)
+                {
+                    hasNep17Transfer = true;
+                }
+                if (method.Name == "transfer" && method.Parameters.Length == 3 && method.Parameters[0].Type == ContractParameterType.Hash160 && method.Parameters[1].Type == ContractParameterType.ByteArray && method.Parameters[2].Type == ContractParameterType.Any)
+                {
+                    hasNep11Transfer = true;
+                }
+                if (method.Name == "tokensOf" && method.Parameters.Length == 1)
+                {
+                    hasTokensOf = true;
+                }
+            }
+            if (hasTotalSupply && hasSymbol && hasDecimals && hasBalanceOf && hasNep17Transfer)
+            {
+                return AssetType.Nep17;
+            }
+            if (hasTotalSupply && hasSymbol && hasDecimals && hasBalanceOf && hasNep11Transfer && hasTokensOf)
+            {
+                return AssetType.Nep11;
+            }
+            return AssetType.None;
+        }
+
+
+
+        private static readonly ConcurrentDictionary<byte[], string> _strCache = new(ByteArrayValueComparer.Default);
+
+        public static string ToBase64String(this byte[] data)
+        {
+            return _strCache.GetOrAdd(data, Convert.ToBase64String);
+        }
+
+
+        public static string ToBase64String(this ReadOnlySpan<byte> data)
+        {
+            return data.ToArray().ToBase64String();
+        }
+
+        public static string ToBase64String(this Memory<byte> data)
+        {
+            return data.ToArray().ToBase64String();
+        }
+
+
+        public static bool IsSignatureContract(this byte[] script)
+        {
+            return Neo.SmartContract.Helper.IsSignatureContract(script);
+        }
+
+        public static bool IsMultiSigContract(this byte[] script)
+        {
+            return Neo.SmartContract.Helper.IsMultiSigContract(script);
+        }
+
+
+        public static (ECPoint PublicKey, BigInteger Votes)[] GetCandidates(this DataCache snapshot)
+        {
+            var sb = new ScriptBuilder();
+            sb.EmitDynamicCall(NativeContract.NEO.Hash, "getCandidates");
+            var engine = sb.ToArray().RunTestMode(snapshot);
+            var array = engine.ResultStack.Pop() as VmArray;
+            var list = new List<(ECPoint PublicKey, BigInteger Votes)>();
+            if (array.Count > 0)
+            {
+                foreach (Struct item in array)
+                {
+                    list.Add((ECPoint.FromBytes(item[0].GetSpan().ToArray(), ECCurve.Secp256r1), item[1].GetInteger()));
+                }
+
+            }
+            //var iterator = iop.GetInterface<IIterator>();
+            //var first = iterator.Value;
+            //while (iterator.Next())
+            //{
+            //    var val = iterator.Value;
+            //}
+            return list.ToArray();
+        }
+
+        /// <summary>
+        /// Convert To Enum
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="text"></param>
+        /// <param name="ignoreCase"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidCastException"></exception>
+        public static T ToEnum<T>(this string text, bool ignoreCase = false) where T : unmanaged, Enum
+        {
+            T result = Enum.Parse<T>(text, ignoreCase);
+            if (!Enum.IsDefined(result)) throw new InvalidCastException();
+            return result;
+        }
+
+        /// <summary>
+        /// Convert To Enum
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="text"></param>
+        /// <param name="defaultValue"></param>
+        /// <param name="ignoreCase"></param>
+        /// <returns></returns>
+        public static T AsEnum<T>(this string text, T defaultValue = default, bool ignoreCase = false) where T : unmanaged, Enum
+        {
+            try
+            {
+                return Enum.Parse<T>(text, ignoreCase);
+            }
+            catch
+            {
+                return defaultValue;
+            }
         }
     }
 }

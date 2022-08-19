@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Neo.Common.Storage;
@@ -23,16 +24,29 @@ namespace Neo.Common.Scanners
         private LevelDbContext _levelDb = new LevelDbContext();
         private bool _running = true;
         private uint _scanHeight = 0;
+
+        private uint _lastHeight = 0;
+        private DateTime _lastTime;
+
         public async Task Start()
         {
             _running = true;
             _scanHeight = _db.GetMaxSyncIndex() ?? 0;
+            _lastHeight = _scanHeight;
+            _lastTime = DateTime.Now;
             while (_running)
             {
                 try
                 {
                     if (await Sync(_scanHeight))
                     {
+                        if (_scanHeight - _lastHeight >= 500)
+                        {
+                            var span = DateTime.Now - _lastTime;
+                            Console.WriteLine($"Sync[{_lastHeight}-{_scanHeight}],cost:{span.TotalSeconds}");
+                            _lastTime=DateTime.Now;
+                            _lastHeight = _scanHeight;
+                        }
                         _scanHeight++;
                     }
                     if (_scanHeight > this.GetCurrentHeight())
@@ -55,7 +69,6 @@ namespace Neo.Common.Scanners
         }
 
 
-
         /// <summary>
         /// analysis block transaction execute result logs
         /// </summary>
@@ -73,10 +86,22 @@ namespace Neo.Common.Scanners
                 return true;
             }
 
+        
             var block = blockHeight.GetBlock();
             var blockTime = block.Timestamp.FromTimestampMS();
+            if (blockHeight == 0)
+            {
+                SyncNativeContracts(blockTime);
+            }
 
-            //var balanceChanges = new HashSet<(UInt160 account, UInt160 asset)>();
+            if (block.Transactions.Length == 0)
+            {
+                _db.AddSyncIndex(blockHeight);
+                return true;
+            }
+
+            SyncContracts(blockHeight, blockTime);
+
             foreach (var transaction in block.Transactions)
             {
                 _db.AddTransaction(new TransactionInfo()
@@ -86,19 +111,15 @@ namespace Neo.Common.Scanners
                     Sender = transaction.Sender,
                     Time = blockTime,
                 });
-                //balanceChanges.Add((transaction.Sender, NativeContract.GAS.Hash));
-                var invokeMethods = GetInvokeMethods(transaction);
-                if (invokeMethods.NotEmpty())
-                {
-                    foreach (var invokeMethod in invokeMethods)
-                    {
-                        _db.AddInvokeTransaction(transaction.Hash, invokeMethod.contract, string.Join(',', invokeMethod.methods));
-                    }
-                }
+                //var invokeMethods = GetInvokeMethods(transaction);
+                //if (invokeMethods.NotEmpty())
+                //{
+                //    foreach (var invokeMethod in invokeMethods)
+                //    {
+                //        _db.AddInvokeTransaction(transaction.Hash, invokeMethod.Key, string.Join(',', invokeMethod.Value));
+                //    }
+                //}
             }
-
-            SyncContracts(blockHeight, blockTime);
-
 
 
             var transfers = new List<TransferInfo>();
@@ -118,7 +139,6 @@ namespace Neo.Common.Scanners
                         Asset = item.Asset,
                         Trigger = item.Trigger,
                     });
-
                 }
             }
 
@@ -139,7 +159,12 @@ namespace Neo.Common.Scanners
 
             _db.AddSyncIndex(blockHeight);
             _db.Commit();
-            Console.WriteLine($"Synced:{_scanHeight}");
+
+            if (block.Transactions.Length > 0)
+            {
+                //Console.WriteLine($"Synced:{_scanHeight}[{block.Transactions.Length}] cost:[{_sw.ElapsedMilliseconds}]");
+                Console.WriteLine($"Synced:{_scanHeight}[{block.Transactions.Length}]");
+            }
             if (_db.LiveTime.TotalSeconds > 15)
             {
                 //release memory
@@ -150,6 +175,32 @@ namespace Neo.Common.Scanners
         }
 
 
+        private void SyncNativeContracts(DateTime blockTime)
+        {
+            foreach (var nativeContract in NativeContract.Contracts)
+            {
+                var entity = new ContractEntity()
+                {
+                    Name = nativeContract.Name,
+                    Hash = nativeContract.Hash.ToBigEndianHex(),
+                    CreateTime = blockTime,
+                };
+                if (nativeContract is NeoToken neo)
+                {
+                    entity.Symbol = neo.Symbol;
+                    entity.Decimals = neo.Decimals;
+                    entity.AssetType = AssetType.Nep17;
+                }
+                if (nativeContract is GasToken gas)
+                {
+                    entity.Symbol = gas.Symbol;
+                    entity.Decimals = gas.Decimals;
+                    entity.AssetType = AssetType.Nep17;
+                }
+                _db.CreateContract(entity);
+            }
+        }
+
         /// <summary>
         /// sync contract create\update\delete state
         /// </summary>
@@ -157,29 +208,6 @@ namespace Neo.Common.Scanners
         /// <param name="blockTime"></param>
         private void SyncContracts(uint blockHeight, DateTime blockTime)
         {
-            if (blockHeight == 0)
-            {
-                foreach (var nativeContract in NativeContract.Contracts)
-                {
-                    var entity = new Nep5ContractInfo()
-                    {
-                        Name = nativeContract.Name,
-                        Hash = nativeContract.Hash,
-                        CreateTime = blockTime,
-                    };
-                    if (nativeContract is NeoToken neo)
-                    {
-                        entity.Symbol = neo.Symbol;
-                        entity.Decimals = neo.Decimals;
-                    }
-                    if (nativeContract is GasToken gas)
-                    {
-                        entity.Symbol = gas.Symbol;
-                        entity.Decimals = gas.Decimals;
-                    }
-                    _db.CreateContract(entity);
-                }
-            }
             var contractEvents = _levelDb.GetContractEvent(blockHeight);
             if (contractEvents.NotEmpty())
             {
@@ -203,8 +231,9 @@ namespace Neo.Common.Scanners
             {
                 case ContractEventType.Create:
                     {
-                        var newContract = GenerateNewNep5ContractInfo(contractEvent.Contract, txId, blockTime);
-                        newContract.Name = contractEvent.Name;
+                        var newContract = GenerateContractEntity(contractEvent);
+                        newContract.CreateTxId = txId.ToBigEndianHex();
+                        newContract.CreateTime = blockTime;
                         _db.CreateContract(newContract);
                         break;
                     }
@@ -212,38 +241,40 @@ namespace Neo.Common.Scanners
                     _db.DeleteContract(contractEvent.Contract, txId, blockTime);
                     break;
                 case ContractEventType.Migrate:
-                    var migrateContract = GenerateNewNep5ContractInfo(contractEvent.MigrateToContract, txId, blockTime);
-                    _db.MigrateContract(contractEvent.Contract, migrateContract, txId, blockTime);
+                    var migrateContract = GenerateContractEntity(contractEvent);
+                    migrateContract.MigrateTxId = txId.ToBigEndianHex();
+                    migrateContract.MigrateTime = blockTime;
+                    _db.MigrateContract(migrateContract);
                     break;
             }
         }
 
 
-
-        private Nep5ContractInfo GenerateNewNep5ContractInfo(UInt160 contract, UInt256 txId, DateTime blockTime)
+        private ContractEntity GenerateContractEntity(ContractEventInfo contractEvent)
         {
-            var newContract = new Nep5ContractInfo()
+            var newContract = new ContractEntity()
             {
-                Hash = contract,
-                CreateTxId = txId,
-                CreateTime = blockTime,
+                Hash = contractEvent.Contract.ToBigEndianHex(),
+                Name = contractEvent.Name,
             };
-
-            var asset = AssetCache.GetAssetInfoFromDb(contract);
+            var asset = AssetCache.GetAssetInfoFromLevelDb(contractEvent.Contract);
             if (asset != null)
             {
                 newContract.Name = asset.Name;
                 newContract.Symbol = asset.Symbol;
                 newContract.Decimals = asset.Decimals;
+                newContract.AssetType = asset.Type;
             }
             return newContract;
         }
+
+
         /// <summary>
         /// get invoke methods from transaction script
         /// </summary>
         /// <param name="tx"></param>
         /// <returns></returns>
-        private List<(UInt160 contract, HashSet<string> methods)> GetInvokeMethods(Transaction tx)
+        private Dictionary<UInt160, HashSet<string>> GetInvokeMethods(Transaction tx)
         {
             var methodBox = new Dictionary<UInt160, HashSet<string>>();
 
@@ -267,7 +298,7 @@ namespace Neo.Common.Scanners
                     }
                 }
             }
-            return methodBox.Select(m => (m.Key, m.Value)).ToList();
+            return methodBox;
         }
 
 

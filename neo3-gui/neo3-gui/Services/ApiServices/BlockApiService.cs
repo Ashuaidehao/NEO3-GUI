@@ -1,18 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Threading.Tasks;
-using Akka.IO;
-using Neo.Common;
 using Neo.Common.Storage;
+using Neo.Common.Storage.SQLiteModules;
 using Neo.Common.Utility;
-using Neo.Ledger;
 using Neo.Models;
 using Neo.Models.Blocks;
-using Neo.Models.Wallets;
 using Neo.Network.P2P.Payloads;
-using Neo.SmartContract;
-using Neo.VM;
 
 namespace Neo.Services.ApiServices
 {
@@ -80,15 +74,15 @@ namespace Neo.Services.ApiServices
         public async Task<object> GetAllAssets()
         {
             using var db = new TrackDB();
-            var result = db.GetAllContracts()?.Where(a => a.Symbol.NotNull() && a.DeleteOrMigrateTxId == null).Select(a =>
-                 new AssetInfoModel()
-                 {
-                     Asset = a.Hash,
-                     Decimals = a.Decimals,
-                     Name = a.Name,
-                     Symbol = a.Symbol,
-                     CreateTime = a.CreateTime,
-                 }).ToList();
+            var result = db.GetAllContracts()?.Where(a => a.AssetType == AssetType.Nep17 && a.DeleteTxId == null).Select(a =>
+                   new AssetInfoModel()
+                   {
+                       Asset = UInt160.Parse(a.Hash),
+                       Decimals = a.Decimals,
+                       Name = a.Name,
+                       Symbol = a.Symbol,
+                       CreateTime = a.CreateTime,
+                   }).ToList();
 
 
             var totalSupplies = AssetCache.GetTotalSupply(result.Select(r => r.Asset));
@@ -113,9 +107,9 @@ namespace Neo.Services.ApiServices
             }
             var totalSupply = AssetCache.GetTotalSupply(asset);
             using var db = new TrackDB();
-            var record = db.GetContract(asset);
+            var record = db.GetActiveContract(asset);
             var trans = db.QueryTransactions(new TransactionFilter()
-            { Contracts = new List<UInt160>() { asset }, PageSize = 0 });
+            { Assets = new List<UInt160>() { asset }, PageSize = 0 });
             return new AssetInfoModel()
             {
                 Asset = assetInfo.Asset,

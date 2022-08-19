@@ -6,22 +6,16 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Akka.Actor;
 using Akka.Util.Internal;
-using Neo.Common;
 using Neo.Common.Consoles;
 using Neo.Common.Storage;
 using Neo.Common.Utility;
 using Neo.Cryptography;
-using Neo.IO;
-using Neo.IO.Json;
-using Neo.Ledger;
+using Neo.Json;
 using Neo.Models;
 using Neo.Models.Transactions;
 using Neo.Models.Wallets;
-using Neo.Network.P2P;
 using Neo.Network.P2P.Payloads;
-using Neo.Persistence;
 using Neo.SmartContract;
 using Neo.SmartContract.Native;
 using Neo.VM;
@@ -108,8 +102,7 @@ namespace Neo.Services.ApiServices
                         break;
                     case ".json":
                         {
-                            NEP6Wallet wallet = new NEP6Wallet(path, CliSettings.Default.Protocol);
-                            wallet.Unlock(password);
+                            NEP6Wallet wallet = new NEP6Wallet(path, password, CliSettings.Default.Protocol);
                             var account = hexPrivateKey.NotEmpty() ? wallet.CreateAccount(hexPrivateKey) : wallet.CreateAccount();
                             wallet.Save();
                             result.Accounts.Add(new AccountModel()

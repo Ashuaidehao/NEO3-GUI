@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Neo.Common.Consoles;
 using Neo.IO;
 using Neo.Models;
+using Neo.VM.Types;
 
 namespace Neo.Common.Storage.LevelDBModules
 {
@@ -105,7 +106,15 @@ namespace Neo.Common.Storage.LevelDBModules
         {
             if (log != null && log.TxId != null)
             {
-                writeBatch.Put(ExecuteLogKey(log.TxId), log.SerializeJsonBytes());
+                try
+                {
+                    writeBatch.Put(ExecuteLogKey(log.TxId), log.SerializeJsonBytes());
+                }
+                catch (InvalidCastException e)
+                {
+                    log.ResultStack = new StackItem[] { e.ToString() };
+                    writeBatch.Put(ExecuteLogKey(log.TxId), log.SerializeJsonBytes());
+                }
             }
         }
 

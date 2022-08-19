@@ -27,9 +27,10 @@ namespace Neo.Common.Storage.SQLiteModules
         public DbSet<AssetBalanceEntity> AssetBalances { get; set; }
         public DbSet<AddressEntity> Addresses { get; set; }
         public DbSet<TransactionEntity> Transactions { get; set; }
-        public DbSet<InvokeRecordEntity> InvokeRecords { get; set; }
+        //public DbSet<InvokeRecordEntity> InvokeRecords { get; set; }
 
         public DbSet<ContractEntity> Contracts { get; set; }
+        public DbSet<ContractUpdateRecordEntity> ContractUpdateRecords { get; set; }
 
         static SQLiteContext()
         {
@@ -41,6 +42,7 @@ namespace Neo.Common.Storage.SQLiteModules
 
         public SQLiteContext() : this(Path.Combine($"Data_Track", $"track.{CliSettings.Default.Protocol.Network}.db"))
         {
+            
         }
 
         public SQLiteContext(string filename)
@@ -78,7 +80,7 @@ namespace Neo.Common.Storage.SQLiteModules
         {
             try
             {
-                return SyncIndexes.OrderByDescending(s=>s.BlockHeight).FirstOrDefault()?.BlockHeight;
+                return SyncIndexes.OrderByDescending(s => s.BlockHeight).FirstOrDefault()?.BlockHeight;
             }
             catch (Exception e)
             {
