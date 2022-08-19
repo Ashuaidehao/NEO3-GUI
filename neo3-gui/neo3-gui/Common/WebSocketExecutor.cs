@@ -47,7 +47,7 @@ namespace Neo.Common
             }
         }
 
-        public async Task<object> Excute(WsRequest request)
+        public async Task<object> Execute(WsRequest request)
         {
             if (request.Method.IsNull())
             {

@@ -13,7 +13,6 @@ namespace Neo.Common.Storage.SQLiteModules
     public class TransactionEntity
     {
         [Key]
-        //public long Id { get; set; }
         public string TxId { get; set; }
         public uint BlockHeight { get; set; }
 

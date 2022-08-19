@@ -30,7 +30,7 @@ export default function ChainAsset() {
     }).catch(function (error) {
       console.log(error);
     });
-  });
+  }, []);
   return (
     <Layout className="gui-container">
       <Sync />

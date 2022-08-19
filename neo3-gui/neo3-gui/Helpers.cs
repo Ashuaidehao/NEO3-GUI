@@ -25,8 +25,6 @@ using Neo.Common.Storage.SQLiteModules;
 using Neo.Common.Utility;
 using Neo.Cryptography.ECC;
 using Neo.IO;
-using Neo.IO.Json;
-using Neo.Ledger;
 using Neo.Models;
 using Neo.Models.Transactions;
 using Neo.Models.Wallets;
@@ -40,13 +38,9 @@ using Neo.SmartContract.Native;
 using Neo.VM;
 using Neo.VM.Types;
 using Neo.Wallets;
-using Neo.Wallets.SQLite;
-using Boolean = Neo.VM.Types.Boolean;
-using Buffer = Neo.VM.Types.Buffer;
-using VmArray = Neo.VM.Types.Array;
 using JsonSerializer = System.Text.Json.JsonSerializer;
+using VmArray = Neo.VM.Types.Array;
 using Pointer = Neo.VM.Types.Pointer;
-using Neo.SmartContract.Iterators;
 
 namespace Neo
 {
@@ -69,6 +63,7 @@ namespace Neo
                 new DatetimeJsonConverter(),
                 new ByteArrayConverter(),
                 new JObjectConverter(),
+                new StackItemConverter(),
             }
         };
 
@@ -1147,12 +1142,12 @@ namespace Neo
         public static bool ToBigInteger(this JStackItem item, out BigInteger amount)
         {
             amount = 0;
-            if (item.TypeCode == ContractParameterType.Integer)
+            if (item.TypeCode == StackItemType.Integer)
             {
                 amount = (BigInteger)item.Value;
                 return true;
             }
-            if (item.TypeCode == ContractParameterType.ByteArray)
+            if (item.TypeCode == StackItemType.Buffer || item.TypeCode == StackItemType.Buffer)
             {
                 amount = new BigInteger((byte[])item.Value);
                 return true;
@@ -1176,7 +1171,7 @@ namespace Neo
             var notification = new NotificationInfo();
             notification.EventName = notify.EventName;
             notification.Contract = notify.ScriptHash;
-            notification.State = notify.State.ToJson();
+            notification.State = notify.State;
             return notification;
         }
 
@@ -1315,52 +1310,82 @@ namespace Neo
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public static JObject ToJObject(this StackItem item)
+        public static JStackItem ToJStackItem(this StackItem item)
         {
-            return ToJson(item, null);
+            return ToJStackItem(item, null);
         }
 
-
-        private static JObject ToJson(StackItem item, HashSet<StackItem> context)
+        private static JStackItem ToJStackItem(StackItem item, HashSet<StackItem> context)
         {
-            JObject json = new();
-            json["type"] = item.Type;
-            switch (item)
+            JStackItem json = new();
+            json.TypeCode = item.Type;
+            switch (item.Type)
             {
-                case VmArray array:
+                case StackItemType.Array:
                     context ??= new HashSet<StackItem>(ReferenceEqualityComparer.Instance);
-                    if (!context.Add(array)) throw new InvalidOperationException();
-                    json["value"] = new JArray(array.Select(p => ToJson(p, context)));
+                    if (!context.Add(item)) throw new InvalidOperationException();
+                    json.Value = ((VmArray)item).Select(p => ToJStackItem(p, context));
                     break;
-                case Boolean boolean:
-                    json["value"] = boolean.GetBoolean();
+                case StackItemType.Boolean:
+                    json.Value = item.GetBoolean();
                     break;
-                case Buffer buffer:
-                    json["value"] = buffer.InnerBuffer.ToBase64String();
+                case StackItemType.Buffer:
+                case StackItemType.ByteString:
+                    json.Value = item.GetSpan().ToBase64String();
                     break;
-                case ByteString _:
-                    json["value"] = item.GetSpan().ToBase64String();
+                case StackItemType.Integer:
+                    json.Value = item.GetInteger().ToString();
                     break;
-                case Integer integer:
-                    json["value"] = integer.GetInteger().ToString();
-                    break;
-                case Map map:
+                case StackItemType.Map:
                     context ??= new HashSet<StackItem>(ReferenceEqualityComparer.Instance);
-                    if (!context.Add(map)) throw new InvalidOperationException();
-                    json["value"] = new JArray(map.Select(p =>
-                    {
-                        JObject item = new();
-                        item["key"] = ToJson(p.Key, context);
-                        item["value"] = ToJson(p.Value, context);
-                        return item;
-                    }));
+                    if (!context.Add(item)) throw new InvalidOperationException();
+                    json.Value = ((Map)item).Select(p => new KeyValuePair<JStackItem, JStackItem>(ToJStackItem(p.Key, context), ToJStackItem(p.Value, context))).ToList();
+                    //json.Value = ((Map)item).Select(p =>
+                    //{
+                    //    JObject item = new();
+                    //    item["key"] = ToJson(p.Key, context);
+                    //    item["value"] = ToJson(p.Value, context);
+                    //    return item;
+                    //}));
                     break;
-                case Pointer pointer:
-                    json["value"] = pointer.Position;
+                case StackItemType.Pointer:
+                    json.Value = ((Pointer)item).Position;
                     break;
             }
             return json;
         }
+
+        //public static JStackItem ToJStackItem(this JToken json)
+        //{
+        //    JStackItem parameter = new JStackItem
+        //    {
+        //        TypeCode = json["type"].AsEnum<StackItemType>(),
+        //    };
+
+        //    if (json["value"] != null)
+        //        switch (parameter.TypeCode)
+        //        {
+        //            case StackItemType.Buffer:
+        //            case StackItemType.ByteString:
+        //                parameter.Value = Convert.FromBase64String(json["value"].AsString());
+        //                break;
+        //            case StackItemType.Boolean:
+        //                parameter.Value = json["value"].AsBoolean();
+        //                break;
+        //            case StackItemType.Integer:
+        //                parameter.Value = BigInteger.Parse(json["value"].AsString());
+        //                break;
+        //            case StackItemType.Array:
+        //                parameter.Value = ((JArray)json["value"]).Select(p => ToJStackItem(p)).ToList();
+        //                break;
+        //            case StackItemType.Map:
+        //                parameter.Value = ((JArray)json["value"]).Select(p => new KeyValuePair<JStackItem, JStackItem>(ToJStackItem(p["key"]), ToJStackItem(p["value"]))).ToList();
+        //                break;
+        //            default:
+        //                throw new ArgumentException();
+        //        }
+        //    return parameter;
+        //}
 
 
         /// <summary>
@@ -1474,6 +1499,41 @@ namespace Neo
             //    var val = iterator.Value;
             //}
             return list.ToArray();
+        }
+
+        /// <summary>
+        /// Convert To Enum
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="text"></param>
+        /// <param name="ignoreCase"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidCastException"></exception>
+        public static T ToEnum<T>(this string text, bool ignoreCase = false) where T : unmanaged, Enum
+        {
+            T result = Enum.Parse<T>(text, ignoreCase);
+            if (!Enum.IsDefined(result)) throw new InvalidCastException();
+            return result;
+        }
+
+        /// <summary>
+        /// Convert To Enum
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="text"></param>
+        /// <param name="defaultValue"></param>
+        /// <param name="ignoreCase"></param>
+        /// <returns></returns>
+        public static T AsEnum<T>(this string text, T defaultValue = default, bool ignoreCase = false) where T : unmanaged, Enum
+        {
+            try
+            {
+                return Enum.Parse<T>(text, ignoreCase);
+            }
+            catch
+            {
+                return defaultValue;
+            }
         }
     }
 }

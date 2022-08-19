@@ -1,6 +1,6 @@
 {
     "name": "neo-gui",
-    "version": "1.4.2",
+    "version": "1.4.3",
     "private": true,
     "main": "main.js",
     "homepage": "./",

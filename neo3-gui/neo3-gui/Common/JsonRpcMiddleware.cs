@@ -7,7 +7,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Neo.IO.Json;
 using Neo.Models;
 
 namespace Neo.Common
@@ -44,7 +43,7 @@ namespace Neo.Common
                 message.Id = request.Id;
                 message.Method = request.Method;
                 var executor = _provider.GetService<WebSocketExecutor>();
-                var result = await executor.Excute(request);
+                var result = await executor.Execute(request);
                 if (result is WsError error)
                 {
                     message.MsgType = WsMessageType.Error;
