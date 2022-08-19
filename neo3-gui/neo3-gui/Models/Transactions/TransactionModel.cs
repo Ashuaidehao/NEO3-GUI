@@ -5,7 +5,6 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Neo.Common.Utility;
-using Neo.IO.Json;
 using Neo.Models.Contracts;
 using Neo.Network.P2P.Payloads;
 using Neo.SmartContract.Native;

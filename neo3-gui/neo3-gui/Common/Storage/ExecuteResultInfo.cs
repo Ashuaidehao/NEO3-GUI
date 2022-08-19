@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Neo.Common.Storage.SQLiteModules;
-using Neo.IO.Json;
 using Neo.SmartContract;
 using Neo.VM;
+using Neo.VM.Types;
 
 namespace Neo.Common.Storage
 {
@@ -24,7 +20,7 @@ namespace Neo.Common.Storage
         /// <summary>
         /// execute result json array
         /// </summary>
-        public JObject ResultStack { get; set; }
+        public StackItem[] ResultStack { get; set; }
         public List<NotificationInfo> Notifications { get; set; }
     }
 
@@ -41,7 +37,7 @@ namespace Neo.Common.Storage
 
         public string EventName { get; set; }
 
-        public JObject State { get; set; }
+        public StackItem State { get; set; }
 
     }
 }

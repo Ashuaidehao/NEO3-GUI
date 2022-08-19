@@ -115,7 +115,7 @@ namespace Neo.Common
                 session.Request = request;
 
                 var executor = _provider.GetService<WebSocketExecutor>();
-                var result = await executor.Excute(request);
+                var result = await executor.Execute(request);
                 if (result is WsError error)
                 {
                     message.MsgType = WsMessageType.Error;

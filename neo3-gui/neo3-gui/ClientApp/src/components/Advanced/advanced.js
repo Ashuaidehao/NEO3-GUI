@@ -60,7 +60,7 @@ class Advanced extends React.Component {
                 <Col span={6}>
                   <a
                     className="ml3"
-                    onClick={this.openUrl("https://neowish.ngd.network/neo3/")}
+                    onClick={this.openUrl("https://n3t5wish.ngd.network/")}
                   >
                     <PaperClipOutlined /> {t("advanced.test coin")}
                   </a>

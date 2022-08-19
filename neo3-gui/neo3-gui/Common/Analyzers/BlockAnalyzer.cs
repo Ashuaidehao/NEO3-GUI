@@ -90,11 +90,11 @@ namespace Neo.Common.Analyzers
             execResult.GasConsumed = appExec.GasConsumed;
             try
             {
-                execResult.ResultStack = appExec.Stack.Select(q => q.ToJObject()).ToArray();
+                execResult.ResultStack = appExec.Stack;
             }
             catch (InvalidOperationException)
             {
-                execResult.ResultStack = "error: recursive reference";
+                //execResult.ResultStack = "error: recursive reference";
             }
 
             execResult.Notifications = appExec.Notifications.Select(n => n.ToNotificationInfo()).ToList();

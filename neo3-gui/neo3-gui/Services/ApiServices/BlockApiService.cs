@@ -1,19 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Threading.Tasks;
-using Akka.IO;
-using Neo.Common;
 using Neo.Common.Storage;
 using Neo.Common.Storage.SQLiteModules;
 using Neo.Common.Utility;
-using Neo.Ledger;
 using Neo.Models;
 using Neo.Models.Blocks;
-using Neo.Models.Wallets;
 using Neo.Network.P2P.Payloads;
-using Neo.SmartContract;
-using Neo.VM;
 
 namespace Neo.Services.ApiServices
 {
@@ -114,7 +107,7 @@ namespace Neo.Services.ApiServices
             }
             var totalSupply = AssetCache.GetTotalSupply(asset);
             using var db = new TrackDB();
-            var record = db.GetContract(asset);
+            var record = db.GetActiveContract(asset);
             var trans = db.QueryTransactions(new TransactionFilter()
             { Assets = new List<UInt160>() { asset }, PageSize = 0 });
             return new AssetInfoModel()

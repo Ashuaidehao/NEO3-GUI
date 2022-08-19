@@ -26,7 +26,7 @@ export default function AssetDetail() {
     }).catch(function (error) {
       console.log(error);
     });
-  });
+  }, []);
   return (
     <Layout className="gui-container">
       <Sync />
