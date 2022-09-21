@@ -3,11 +3,11 @@
 import React from 'react';
 import { observer, inject } from "mobx-react";
 import { withRouter, Link } from 'react-router-dom';
-import axios from 'axios';
 import { Layout, Row, Col, List, Button, PageHeader, message } from 'antd';
 import { withTranslation } from "react-i18next";
 import Searcharea from './searcharea'
 import { SwapRightOutlined } from '@ant-design/icons';
+import { postAsync } from "../../core/request"
 
 const { Content } = Layout;
 @withTranslation()
@@ -115,66 +115,34 @@ class Transaction extends React.Component {
       });
     })
   }
-  getMytrans = (params, callback) => {
-    axios.post('http://localhost:8081', {
-      "id": "51",
-      "method": "GetMyTransactions",
-      "params": params
-    })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          message.error("查询失败");
-          return;
-        } else {
-          callback(_data);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+  getMytrans = async (params, callback) => {
+    let response = await postAsync("GetMyTransactions", params);
+    if (response.msgType === -1) {
+      message.error("查询失败");
+      return;
+    } else {
+      callback(response);
+    }
   }
-  getAlltrans = (params, callback) => {
-    axios.post('http://localhost:8081', {
-      "id": "51",
-      "method": "QueryTransactions",
-      "params": params
-    })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          console.log(_data)
-          message.error("查询失败");
-          return;
-        } else {
-          callback(_data);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+  getAlltrans = async (params, callback) => {
+    let response = await postAsync("QueryTransactions", params);
+    if (response.msgType === -1) {
+      console.log(response)
+      message.error("查询失败");
+      return;
+    } else {
+      callback(response);
+    }
   };
-  getNeptrans = (params, callback) => {
-    axios.post('http://localhost:8081', {
-      "id": "51",
-      "method": "QueryNep5Transactions",
-      "params": params
-    })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          message.error("查询失败");
-          return;
-        } else {
-          callback(_data);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+  getNeptrans = async (params, callback) => {
+    let response = await postAsync("QueryNep5Transactions", params);
+    if (response.msgType === -1) {
+      console.log(response)
+      message.error("查询失败");
+      return;
+    } else {
+      callback(response);
+    }
   };
   loadMore = () => {
     this.setState({

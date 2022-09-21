@@ -935,51 +935,13 @@ namespace Neo
                 Amount = amount.Value,
                 Asset = notification.ScriptHash,
             };
+
+            if (notify.Count == 4)
+            {
+                record.TokenId = notify[3].GetSpan().ToArray();
+            }
             return record;
         }
-
-
-        public static TransferNotifyItem GetTransferNotify(this VmArray notifyArray, UInt160 asset)
-        {
-            if (notifyArray.Count < 4) return null;
-            // Event name should be encoded as a byte array.
-            if (notifyArray[0].NotVmByteArray()) return null;
-
-            var eventName = notifyArray[0].GetString();
-            if (!"Transfer".Equals(eventName, StringComparison.OrdinalIgnoreCase)) return null;
-
-            var fromItem = notifyArray[1];
-            if (fromItem.NotVmByteArray() && fromItem.NotVmNull()) return null;
-
-            var fromBytes = fromItem.GetByteSafely();
-            if (fromBytes?.Length != 20)
-            {
-                fromBytes = null;
-            }
-
-            var toItem = notifyArray[2];
-            if (toItem != null && toItem.NotVmByteArray()) return null;
-
-            byte[] toBytes = toItem.GetByteSafely();
-            if (toBytes?.Length != 20)
-            {
-                toBytes = null;
-            }
-            if (fromBytes == null && toBytes == null) return null;
-
-            var amountItem = notifyArray[3];
-            if (amountItem.NotVmByteArray() && amountItem.NotVmInt()) return null;
-
-            var transfer = new TransferNotifyItem()
-            {
-                Asset = asset,
-                From = fromBytes == null ? null : new UInt160(fromBytes),
-                To = new UInt160(toBytes),
-                Amount = amountItem.GetInteger(),
-            };
-            return transfer;
-        }
-
 
 
         /// <summary>

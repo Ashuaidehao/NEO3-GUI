@@ -1,7 +1,6 @@
 /* eslint-disable */
 import React from "react";
 import "antd/dist/antd.css";
-import axios from "axios";
 import {
   Checkbox,
   PageHeader,
@@ -20,6 +19,7 @@ import { observer, inject } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import "../../static/css/advanced.css";
+import { postAsync } from "../../core/request";
 
 const { Option } = Select;
 
@@ -45,92 +45,65 @@ class Advancedcandidate extends React.Component {
       });
     });
   }
-  listPublicKey = (callback) => {
+  listPublicKey = async (callback) => {
     const { t } = this.props;
-    axios
-      .post("http://localhost:8081", {
-        id: "1",
-        method: "ListCandidatePublicKey",
-      })
-      .then(function (response) {
-        var _data = response.data;
-        console.log(_data);
-        if (_data.msgType === -1) {
-          let res = _data.error;
-          Modal.error({
-            title: t("contract.fail title"),
-            width: 400,
-            content: (
-              <div className="show-pri">
-                <p>
-                  {t("error code")}: {res.code}
-                </p>
-                <p>
-                  {t("error msg")}: {res.message}
-                </p>
-              </div>
-            ),
-            okText: t("button.ok"),
-          });
-          return;
-        } else if (_data.msgType === 3) {
-          callback(_data);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
+    let response = await postAsync("ListCandidatePublicKey");
+    if (response.msgType === -1) {
+      let res = response.error;
+      Modal.error({
+        title: t("contract.fail title"),
+        width: 400,
+        content: (
+          <div className="show-pri">
+            <p>
+              {t("error code")}: {res.code}
+            </p>
+            <p>
+              {t("error msg")}: {res.message}
+            </p>
+          </div>
+        ),
+        okText: t("button.ok"),
       });
+      return;
+    }
+    callback(response);
   };
-  onCandidate = (fieldsValue) => {
+  onCandidate = async (fieldsValue) => {
     const { t } = this.props;
-    axios
-      .post("http://localhost:8081", {
-        id: "1",
-        method: "ApplyForValidator",
-        params: {
-          pubkey: fieldsValue.pubkey,
-        },
-      })
-      .then(function (response) {
-        var _data = response.data;
-        console.log(_data);
-        if (_data.msgType === -1) {
-          let res = _data.error;
-          Modal.error({
-            title: t("advanced.candidate fail"),
-            width: 400,
-            content: (
-              <div className="show-pri">
-                <p>
-                  {t("error code")}: {res.code}
-                </p>
-                <p>
-                  {t("error msg")}: {res.message}
-                </p>
-              </div>
-            ),
-            okText: t("button.ok"),
-          });
-          return;
-        } else if (_data.msgType === 3) {
-          Modal.success({
-            title: t("advanced.candidate success"),
-            width: 400,
-            content: (
-              <div className="show-pri">
-                <p>TxID : {_data.result.txId ? _data.result.txId : "--"}</p>
-              </div>
-            ),
-            okText: t("button.ok"),
-          });
-          return;
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
+    let response = await postAsync("ApplyForValidator", {
+      pubkey: fieldsValue.pubkey,
+    });
+    if (response.msgType === -1) {
+      let res = response.error;
+      Modal.error({
+        title: t("advanced.candidate fail"),
+        width: 400,
+        content: (
+          <div className="show-pri">
+            <p>
+              {t("error code")}: {res.code}
+            </p>
+            <p>
+              {t("error msg")}: {res.message}
+            </p>
+          </div>
+        ),
+        okText: t("button.ok"),
       });
+      return;
+    }
+
+    Modal.success({
+      title: t("advanced.candidate success"),
+      width: 400,
+      content: (
+        <div className="show-pri">
+          <p>TxID : {response.result.txId ? response.result.txId : "--"}</p>
+        </div>
+      ),
+      okText: t("button.ok"),
+    });
   };
   render = () => {
     const { t } = this.props;

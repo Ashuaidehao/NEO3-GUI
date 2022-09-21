@@ -31,13 +31,19 @@ const post = (method, params) => {
 };
 
 const postAsync = async (method, params) => {
-  let response = await request(method, params);
-  if (response.status !== 200) {
-    let error = new Error("Response Error!");
-    error.response = response;
-    throw error;
+  try {
+    let response = await request(method, params);
+    if (response.status !== 200) {
+      let error = new Error("Response Error!");
+      error.response = response;
+      throw error;
+    }
+    return response.data;
+  } catch (e) {
+    console.error(e);
+    console.log(e.response);
+    throw e;
   }
-  return response.data;
 }
 
 export { post, postAsync };

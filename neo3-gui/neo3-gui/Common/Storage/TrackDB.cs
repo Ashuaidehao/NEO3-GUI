@@ -18,7 +18,7 @@ namespace Neo.Common.Storage
     {
         private readonly uint _magic;
         private readonly SQLiteContext _sqldb;
-        private readonly LevelDbContext _leveldb;
+        public readonly LevelDbContext _leveldb;
         private readonly DateTime _createTime = DateTime.Now;
 
         public TimeSpan LiveTime => DateTime.Now - _createTime;
@@ -152,7 +152,7 @@ namespace Neo.Common.Storage
             var to = GetOrCreateAddress(transfer.To);
             var asset = GetActiveContract(transfer.Asset);
 
-            var tran = new Nep5TransferEntity
+            var tran = new TransferEntity
             {
                 BlockHeight = transfer.BlockHeight,
                 TxId = transfer.TxId?.ToBigEndianHex(),
@@ -162,8 +162,9 @@ namespace Neo.Common.Storage
                 AssetId = asset.Id,
                 Time = transfer.TimeStamp.FromTimestampMS(),
                 Trigger = transfer.Trigger,
+                TokenId = transfer.TokenId,
             };
-            _sqldb.Nep5Transactions.Add(tran);
+            _sqldb.Transfers.Add(tran);
         }
 
 
@@ -363,7 +364,7 @@ namespace Neo.Common.Storage
                 var txIds = query.GroupBy(q => new { q.TxId, q.Time }).OrderByDescending(g => g.Key.Time).Select(g => g.Key)
                     .Skip(pageIndex * filter.PageSize)
                     .Take(filter.PageSize).Select(g => g.TxId).ToList();
-                pageList.List.AddRange(query.Where(q => txIds.Contains(q.TxId)).OrderByDescending(r => r.Time).ToList().Select(ToNep5TransferInfo));
+                pageList.List.AddRange(query.Where(q => txIds.Contains(q.TxId)).OrderByDescending(r => r.Time).ToList().Select(ToTransferInfo));
             }
             return pageList;
         }
@@ -385,7 +386,7 @@ namespace Neo.Common.Storage
             if (filter.PageSize > 0)
             {
                 pageList.List.AddRange(query.OrderByDescending(r => r.Time).Skip(pageIndex * filter.PageSize)
-                    .Take(filter.PageSize).ToList().Select(ToNep5TransferInfo));
+                    .Take(filter.PageSize).ToList().Select(ToTransferInfo));
             }
             return pageList;
         }
@@ -614,9 +615,9 @@ namespace Neo.Common.Storage
         }
 
 
-        private IQueryable<Nep5TransferEntity> BuildQuery(TransferFilter filter)
+        private IQueryable<TransferEntity> BuildQuery(TransferFilter filter)
         {
-            IQueryable<Nep5TransferEntity> query = _sqldb.Nep5Transactions.Where(t => t.TxId != null)
+            IQueryable<TransferEntity> query = _sqldb.Transfers.Where(t => t.TxId != null)
                 .Include(t => t.From)
                 .Include(t => t.To)
                 .Include(t => t.Asset).Where(t => t.Asset.DeleteTxId == null);
@@ -624,17 +625,20 @@ namespace Neo.Common.Storage
             if (filter.FromOrTo.NotEmpty())
             {
                 var addresses = filter.FromOrTo.Select(a => a.ToBigEndianHex()).ToList();
-                query = query.Where(r => addresses.Contains(r.From.Hash) || addresses.Contains(r.To.Hash));
+                var addressIds = _sqldb.Addresses.Where(a => addresses.Contains(a.Hash)).Select(a => a.Id).ToList();
+                query = query.Where(r => addressIds.Contains(r.FromId.Value) || addressIds.Contains(r.ToId.Value));
             }
             if (filter.From.NotEmpty())
             {
                 var addresses = filter.From.Select(a => a.ToBigEndianHex()).ToList();
-                query = query.Where(r => addresses.Contains(r.From.Hash));
+                var addressIds = _sqldb.Addresses.Where(a => addresses.Contains(a.Hash)).Select(a => a.Id).ToList();
+                query = query.Where(r => addressIds.Contains(r.FromId.Value));
             }
             if (filter.To.NotEmpty())
             {
                 var addresses = filter.To.Select(a => a.ToBigEndianHex()).ToList();
-                query = query.Where(r => addresses.Contains(r.To.Hash));
+                var addressIds = _sqldb.Addresses.Where(a => addresses.Contains(a.Hash)).Select(a => a.Id).ToList();
+                query = query.Where(r => addressIds.Contains(r.ToId.Value));
             }
             if (filter.StartTime != null)
             {
@@ -662,7 +666,7 @@ namespace Neo.Common.Storage
         }
 
 
-        private TransferInfo ToNep5TransferInfo(Nep5TransferEntity entity)
+        private TransferInfo ToTransferInfo(TransferEntity entity)
         {
             return new TransferInfo()
             {
@@ -672,7 +676,7 @@ namespace Neo.Common.Storage
                 To = entity.To != null ? UInt160.Parse(entity.To.Hash) : null,
                 Amount = new BigInteger(entity.Amount),
                 Asset = UInt160.Parse(entity.Asset.Hash),
-
+                TokenId = entity.TokenId,
                 TimeStamp = entity.Time.AsUtcTime().ToTimestampMS(),
             };
         }

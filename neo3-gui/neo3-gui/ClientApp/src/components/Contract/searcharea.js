@@ -6,6 +6,7 @@ import { Input, message } from "antd";
 import Topath from "../Common/topath";
 import { ArrowRightOutlined, SearchOutlined } from "@ant-design/icons";
 import { withTranslation } from "react-i18next";
+import { postAsync } from "../../core/request";
 
 @withTranslation()
 class Searcharea extends React.Component {
@@ -46,35 +47,21 @@ class Searcharea extends React.Component {
   stopPropagation(e) {
     e.nativeEvent.stopImmediatePropagation();
   }
-  searchContract = () => {
+  searchContract = async () => {
     const { t } = this.props;
     let _hash = this.refs.sinput.input.value.trim();
     if (!_hash) {
       message.info(t("search.check again"));
       return;
     }
-    var _this = this;
-    axios
-      .post("http://localhost:8081", {
-        id: "1111",
-        method: "GetContract",
-        params: {
-          contractHash: _hash,
-        },
-      })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          message.info(t("search.hash unexist"));
-          return;
-        } else if (_data.msgType === 3) {
-          _this.setState({ topath: "/contract/detail:" + _hash });
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    let response = await postAsync("GetContract", {
+      contractHash: _hash,
+    });
+    if (response.msgType === -1) {
+      message.info(t("search.hash unexist"));
+      return;
+    }
+    this.setState({ topath: "/contract/detail:" + _hash });
   };
   render = () => {
     const { t } = this.props;

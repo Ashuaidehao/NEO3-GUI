@@ -266,7 +266,7 @@ namespace Neo.Services.ApiServices
             Transaction tx = null;
             try
             {
-                tx = CurrentWallet.InitTransaction(sb.ToArray(), null, signers.ToArray());
+                tx = CurrentWallet.InitTransaction(sb.ToArray(), signers?.FirstOrDefault()?.Account, signers.ToArray());
             }
             catch (InvalidOperationException ex)
             {

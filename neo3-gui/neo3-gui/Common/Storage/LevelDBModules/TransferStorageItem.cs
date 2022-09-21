@@ -16,5 +16,6 @@ namespace Neo.Common.Storage.LevelDBModules
         public UInt160 Asset { get; set; }
         public UInt256 TxId { get; set; }
         public TriggerType Trigger { get; set; }
+        public string TokenId { get; set; }
     }
 }

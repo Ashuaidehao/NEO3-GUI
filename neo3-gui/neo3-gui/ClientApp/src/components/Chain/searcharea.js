@@ -6,6 +6,7 @@ import { Input, message } from "antd";
 import Topath from "../Common/topath";
 import { ArrowRightOutlined, SearchOutlined } from "@ant-design/icons";
 import { withTranslation } from "react-i18next";
+import { postAsync } from "../../core/request";
 
 @withTranslation()
 class Chainsearch extends React.Component {
@@ -46,38 +47,21 @@ class Chainsearch extends React.Component {
   stopPropagation(e) {
     e.nativeEvent.stopImmediatePropagation();
   }
-  searchChain = () => {
+  searchChain = async () => {
     const { t } = this.props;
-    let _this = this;
-
     let _height = Number(this.refs.sinput.input.value.trim());
     if (!_height && _height != 0) {
       message.info(t("search.check again"));
       return;
     }
-
-    axios
-      .post("http://localhost:8081", {
-        id: "1111",
-        method: "GetBlock",
-        params: {
-          index: _height,
-        },
-      })
-      .then(function (response) {
-        var _data = response.data;
-        console.log(_data);
-        if (_data.msgType === -1) {
-          message.info(t("blockchain.height unexist"));
-          return;
-        } else {
-          _this.setState({ topath: "/chain/detail:" + _height });
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    let response = await postAsync("GetBlock", {
+      index: _height,
+    });
+    if (response.msgType === -1) {
+      message.info(t("blockchain.height unexist"));
+      return;
+    }
+    this.setState({ topath: "/chain/detail:" + _height });
   };
   render = () => {
     const { t } = this.props;

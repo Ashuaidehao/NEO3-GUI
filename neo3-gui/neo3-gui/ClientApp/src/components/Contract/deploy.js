@@ -24,10 +24,12 @@ import { observer, inject } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import { remote } from "electron";
+import fs from "fs";
+import { postAsync } from "../../core/request";
+
 
 const { Content } = Layout;
 const { dialog } = remote;
-
 const { TextArea } = Input;
 
 @withTranslation()
@@ -39,50 +41,36 @@ class Contractdeploy extends React.Component {
     super(props);
     this.state = {
       size: "default",
-      mapath: "",
-      expath: "",
+      nefpath: "",
+      manipath: "",
       disabled: true,
       visible: false,
-      func: "",
       cost: -1,
       isOpenDialog: false,
     };
   }
-  selectNef = () => {
-    this.opendialog("nef", (res) => {
-      console.log(res)
-      this.setState(
-        {
-          expath: res.filePaths[0],
-          isOpenDialog: false,
-        },
-        () => {
-          this.onFill();
+  selectNef = async () => {
+    this.opendialog("nef", async (res) => {
+      let nef = res.filePaths[0];
+      if (nef) {
+        let manifest = nef.substring(0, nef.length - 3) + "manifest.json";
+        if (fs.existsSync(manifest)) {
+          await this.setState({ manipath: manifest });
         }
-      );
+        await this.setState({ nefpath: nef, isOpenDialog: false });
+        this.onFill()
+      }
     });
   };
-  selectMani = () => {
-    this.opendialog("json", (res) => {
-      console.log(res)
-      this.setState(
-        {
-          mapath: res.filePaths[0],
-          isOpenDialog: false,
-        },
-        () => {
-          this.onFill();
-        }
-      );
+  selectMani = async () => {
+    this.opendialog("json", async (res) => {
+      await this.setState({ manipath: res.filePaths[0], isOpenDialog: false });
+      this.onFill();
     });
   };
   browseDialog = () => {
     const { isOpenDialog } = this.state;
-    if (isOpenDialog === false) {
-      return false;
-    } else {
-      return true;
-    }
+    return isOpenDialog;
   };
   opendialog = (str, callback) => {
     if (this.browseDialog()) return;
@@ -109,8 +97,8 @@ class Contractdeploy extends React.Component {
   };
   onFill = () => {
     this.refs.formRef.setFieldsValue({
-      nefPath: this.state.expath,
-      manifestPath: this.state.mapath,
+      nefPath: this.state.nefpath,
+      manifestPath: this.state.manipath,
       tresult: this.state.tresult,
     });
   };
@@ -165,16 +153,10 @@ class Contractdeploy extends React.Component {
   };
   deployContract = (params, callback) => {
     const { t } = this.props;
-    axios
-      .post("http://localhost:8081", {
-        id: "1",
-        method: "DeployContract",
-        params: params,
-      })
-      .then(function (response) {
-        var _data = response.data;
-        if (_data.msgType === -1) {
-          let res = _data.error;
+    postAsync("DeployContract", params)
+      .then((data) => {
+        if (data.msgType === -1) {
+          let res = data.error;
           Modal.error({
             title: t("contract.fail title"),
             width: 400,
@@ -191,13 +173,12 @@ class Contractdeploy extends React.Component {
             okText: t("button.ok"),
           });
           return;
-        } else if (_data.msgType === 3) {
-          callback(_data);
+        } else if (data.msgType === 3) {
+          callback(data);
         }
       })
       .catch(function (error) {
-        console.log(error);
-        console.log("error");
+        // console.log(error);
       });
   };
   render = () => {

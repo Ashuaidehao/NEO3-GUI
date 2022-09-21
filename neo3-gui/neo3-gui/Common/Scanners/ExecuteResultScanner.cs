@@ -44,7 +44,7 @@ namespace Neo.Common.Scanners
                         {
                             var span = DateTime.Now - _lastTime;
                             Console.WriteLine($"Sync[{_lastHeight}-{_scanHeight}],cost:{span.TotalSeconds}");
-                            _lastTime=DateTime.Now;
+                            _lastTime = DateTime.Now;
                             _lastHeight = _scanHeight;
                         }
                         _scanHeight++;
@@ -86,7 +86,7 @@ namespace Neo.Common.Scanners
                 return true;
             }
 
-        
+
             var block = blockHeight.GetBlock();
             var blockTime = block.Timestamp.FromTimestampMS();
             if (blockHeight == 0)
@@ -111,16 +111,7 @@ namespace Neo.Common.Scanners
                     Sender = transaction.Sender,
                     Time = blockTime,
                 });
-                //var invokeMethods = GetInvokeMethods(transaction);
-                //if (invokeMethods.NotEmpty())
-                //{
-                //    foreach (var invokeMethod in invokeMethods)
-                //    {
-                //        _db.AddInvokeTransaction(transaction.Hash, invokeMethod.Key, string.Join(',', invokeMethod.Value));
-                //    }
-                //}
             }
-
 
             var transfers = new List<TransferInfo>();
             var transferItems = _levelDb.GetTransfers(blockHeight);
@@ -138,6 +129,7 @@ namespace Neo.Common.Scanners
                         Amount = item.Amount,
                         Asset = item.Asset,
                         Trigger = item.Trigger,
+                        TokenId = item.TokenId
                     });
                 }
             }

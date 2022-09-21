@@ -1,3 +1,4 @@
+import Config from "../../config";
 class NeoWebSocket {
   constructor() {
     this.processMethods = {};
@@ -18,7 +19,7 @@ class NeoWebSocket {
 
   createWebSocket = () => {
     this.log("creating new webscoket");
-    let ws = new WebSocket("ws://127.0.0.1:8081");
+    let ws = new WebSocket(Config.WSURL);
 
     ws.onopen = () => {
       this.log("[opened]");
