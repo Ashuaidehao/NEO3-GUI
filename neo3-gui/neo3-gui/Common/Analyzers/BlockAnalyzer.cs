@@ -88,14 +88,8 @@ namespace Neo.Common.Analyzers
             execResult.Trigger = appExec.Trigger;
             execResult.VMState = appExec.VMState;
             execResult.GasConsumed = appExec.GasConsumed;
-            try
-            {
-                execResult.ResultStack = appExec.Stack;
-            }
-            catch (InvalidOperationException)
-            {
-                //execResult.ResultStack = "error: recursive reference";
-            }
+            execResult.ResultStack = appExec.Stack;
+
 
             execResult.Notifications = appExec.Notifications.Select(n => n.ToNotificationInfo()).ToList();
             Result.ExecuteResultInfos.Add(execResult);
@@ -124,8 +118,8 @@ namespace Neo.Common.Analyzers
                     case "Update":
                         ProcessUpdate(notification, appExec);
                         break;
-                    case "Destory":
-                        ProcessDestory(notification, appExec);
+                    case "Destroy":
+                        ProcessDestroy(notification, appExec);
                         break;
                     case "transfer":
                     case "Transfer":
@@ -172,6 +166,7 @@ namespace Neo.Common.Analyzers
                     Amount = transfer.Amount,
                     TxId = appExec?.Transaction?.Hash,
                     Trigger = appExec.Trigger,
+                    TokenId = transfer.TokenId?.ToHexString(),
                 };
                 Result.Transfers.Add(transferStorageItem);
             }
@@ -219,7 +214,7 @@ namespace Neo.Common.Analyzers
             }
         }
 
-        private void ProcessDestory(NotifyEventArgs notification, Blockchain.ApplicationExecuted appExec)
+        private void ProcessDestroy(NotifyEventArgs notification, Blockchain.ApplicationExecuted appExec)
         {
             if (notification.State.Count != 1) { return; }
             var contractHash = notification.State[0].GetByteSafely();

@@ -8,7 +8,7 @@ import { withTranslation } from "react-i18next";
 import { postAsync } from "../../core/request";
 
 @withTranslation()
-class Searcharea extends React.Component {
+class AssetSearch extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -46,21 +46,21 @@ class Searcharea extends React.Component {
   stopPropagation(e) {
     e.nativeEvent.stopImmediatePropagation();
   }
-  searchContract = async () => {
+  searchAsset = async () => {
     const { t } = this.props;
-    let _hash = this.refs.sinput.input.value.trim();
-    if (!_hash) {
+    let hash = this.refs.sinput.input.value.trim();
+    if (!hash || hash.length != 42) {
       message.info(t("search.check again"));
       return;
     }
     let response = await postAsync("GetContract", {
-      contractHash: _hash,
+      contractHash: hash,
     });
     if (response.msgType === -1) {
-      message.info(t("search.hash unexist"));
+      message.info(t("search.check again"));
       return;
     }
-    this.setState({ topath: "/contract/detail:" + _hash });
+    this.setState({ topath: "/chain/asset:" + hash });
   };
   render = () => {
     const { t } = this.props;
@@ -77,10 +77,10 @@ class Searcharea extends React.Component {
             onClick={this.stopPropagation}
           >
             <Input
-              placeholder={t("search.hash-hint")}
-              onPressEnter={this.searchContract}
+              placeholder={t("search.asset-search-hint")}
+              onPressEnter={this.searchAsset}
               ref="sinput"
-              suffix={<ArrowRightOutlined onClick={this.searchContract} />}
+              suffix={<ArrowRightOutlined onClick={this.searchAsset} />}
             />
           </div>
         </div>
@@ -89,4 +89,4 @@ class Searcharea extends React.Component {
   };
 }
 
-export default Searcharea;
+export default AssetSearch;

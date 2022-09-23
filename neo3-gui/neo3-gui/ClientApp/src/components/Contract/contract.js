@@ -4,12 +4,13 @@ import { withRouter, Link } from 'react-router-dom';
 import 'antd/dist/antd.css';
 import '../../static/css/menu.css'
 import '../../static/css/contract.css'
-import { Layout, Menu, List, Row, Col, PageHeader, Typography,Avatar } from 'antd';
+import { Layout, Menu, List, Row, Col, PageHeader, Typography, Avatar } from 'antd';
 import axios from 'axios';
 import Sync from '../sync';
 import Searcharea from './searcharea'
 import { withTranslation } from "react-i18next";
 import { Copy } from '../copy';
+import { postAsync } from '../../core/request';
 
 const { Content } = Layout;
 
@@ -21,38 +22,26 @@ class Contract extends React.Component {
       size: 'default',
       visible: false,
       show: false,
-      assetlist:[]
+      assetlist: []
     };
   }
   componentDidMount() {
     this.getAllContracts();
   }
-  visi = () =>{
+  visi = () => {
     this.setState({
       show: !this.state.show,
     });
   }
-  getAllContracts = (info) => {
-    var _this = this;
-    axios.post('http://localhost:8081', {
-      "id": "1111",
-      "method": "GetAllContracts",
-      "params": {}
+  getAllContracts = async (info) => {
+    let response = await postAsync("GetAllContracts");
+    if (response.msgType === -1) {
+      message.error("查询失败");
+      return;
+    }
+    this.setState({
+      assetlist: response.result
     })
-    .then(function (response) {
-      var _data = response.data;
-      if (_data.msgType === -1) {
-        message.error("查询失败");
-        return;
-      }
-      _this.setState({
-        assetlist: _data.result
-      })
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error");
-    });
   }
   render = () => {
     const { t } = this.props;
@@ -72,7 +61,7 @@ class Contract extends React.Component {
                   <List.Item>
                     <List.Item.Meta
                       avatar={
-                        <Avatar src={"https://neo.org/images/gui/"+item.hash+".png"}/>
+                        <Avatar src={"https://neo.org/images/gui/" + item.hash + ".png"} />
                       }
                       title={<Link className="asset-link w450 ellipsis" to={"/contract/detail:" + item.hash} title={t("show detail")}>{item.name}</Link>}
                     />
@@ -82,7 +71,7 @@ class Contract extends React.Component {
               />
             </Col>
 
-          <Searcharea />
+            <Searcharea />
           </Row>
         </Content>
       </Layout>

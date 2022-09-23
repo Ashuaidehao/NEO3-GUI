@@ -1,11 +1,11 @@
 /* eslint-disable */
 import React from "react";
 import "antd/dist/antd.css";
-import axios from "axios";
 import { Input, message } from "antd";
 import Topath from "../Common/topath";
 import { ArrowRightOutlined, SearchOutlined } from "@ant-design/icons";
 import { withTranslation } from "react-i18next";
+import { postAsync } from "../../core/request";
 
 @withTranslation()
 class Chainsearch extends React.Component {
@@ -46,38 +46,26 @@ class Chainsearch extends React.Component {
   stopPropagation(e) {
     e.nativeEvent.stopImmediatePropagation();
   }
-  searchChain = () => {
+  searchChain = async () => {
     const { t } = this.props;
-    let _this = this;
-
-    let _height = Number(this.refs.sinput.input.value.trim());
-    if (!_height && _height != 0) {
+    let input = this.refs.sinput.input.value.trim();
+    let blockHeight = 0;
+    let blockHash = null;
+    if (input.length == 66) {
+      blockHash = input
+    } else {
+      blockHeight = Number(input);
+    }
+    if (!input) {
       message.info(t("search.check again"));
       return;
     }
-
-    axios
-      .post("http://localhost:8081", {
-        id: "1111",
-        method: "GetBlock",
-        params: {
-          index: _height,
-        },
-      })
-      .then(function (response) {
-        var _data = response.data;
-        console.log(_data);
-        if (_data.msgType === -1) {
-          message.info(t("blockchain.height unexist"));
-          return;
-        } else {
-          _this.setState({ topath: "/chain/detail:" + _height });
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    let response = !blockHash ? (await postAsync("GetBlock", { index: blockHeight })) : (await postAsync("GetBlockByHash", { hash: blockHash }));
+    if (response.msgType === -1) {
+      message.info(t("blockchain.search input-invalid"));
+      return;
+    }
+    this.setState({ topath: "/chain/detail:" + response.result.blockHeight });
   };
   render = () => {
     const { t } = this.props;

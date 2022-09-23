@@ -154,7 +154,7 @@ namespace Neo.Services.ApiServices
         /// query all transactions(on chain)
         /// </summary>
         /// <returns></returns>
-        public async Task<object> QueryTransactions(int pageIndex = 1, int limit = 100, uint? blockHeight = null, UInt160 address = null, UInt160 contract = null)
+        public async Task<object> QueryTransactions(int pageIndex = 1, int limit = 100, uint? blockHeight = null, UInt160 address = null, UInt160 contract = null, UInt256 blockHash = null)
         {
             using var db = new TrackDB();
             var filter = new TransactionFilter()
@@ -170,6 +170,14 @@ namespace Neo.Services.ApiServices
             if (contract != null)
             {
                 filter.Contracts = new List<UInt160>() { contract };
+            }
+            if (blockHash != null)
+            {
+                var block = this.GetDefaultSnapshot().GetBlock(blockHash);
+                if (block != null)
+                {
+                    filter.BlockHeight = block.Index;
+                }
             }
 
             var trans = db.QueryTransactions(filter, true);
@@ -230,6 +238,16 @@ namespace Neo.Services.ApiServices
         }
 
 
+        /// <summary>
+        /// query transaction info
+        /// </summary>
+        /// <returns></returns>
+        public async Task<PageList<TransferInfo>> QueryTransfersByTx(TransferFilter filter)
+        {
+            using var db = new TrackDB();
+            var result = db.QueryTransfersPagedByTx(filter) as PageList<TransferInfo>;
+            return result;
+        }
 
         /// <summary>
         /// GetTransactionLog

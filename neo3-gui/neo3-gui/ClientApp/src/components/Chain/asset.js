@@ -14,6 +14,7 @@ import Sync from "../sync";
 import { withTranslation, useTranslation } from "react-i18next";
 import { postAsync } from "../../core/request";
 import "../../static/css/chain.css";
+import AssetSearch from "./assetSearch";
 
 export default function ChainAsset() {
   const { Content } = Layout;
@@ -78,6 +79,7 @@ export default function ChainAsset() {
               />
             </div>
           </Col>
+          <AssetSearch></AssetSearch>
         </Row>
         <div className="pv1"></div>
       </Content>

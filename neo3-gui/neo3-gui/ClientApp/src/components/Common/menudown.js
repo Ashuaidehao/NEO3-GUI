@@ -4,7 +4,6 @@ import { observer, inject } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import "antd/dist/antd.css";
 import { message, Modal, Radio } from "antd";
-import axios from "axios";
 import { Addressdetail, Changepass, Setting } from "./menuaction";
 import {
   ReadOutlined,
@@ -16,7 +15,7 @@ import { withTranslation, Trans } from "react-i18next";
 import { shell } from "electron";
 import Config from "../../config";
 import neonode from "../../neonode";
-import { post } from "../../core/request";
+import { post, postAsync } from "../../core/request";
 import { walletStore } from "../../store/stores";
 
 @withTranslation()
@@ -52,45 +51,26 @@ class menuDown extends React.Component {
         console.log("error");
       });
   };
-  logout = () => {
+  logout = async () => {
     const { t } = this.props;
-    axios
-      .post("http://localhost:8081", {
-        id: "1234",
-        method: "CloseWallet",
-      })
-      .then(() => {
-        message.success(t("wallet.close wallet"), 2);
-        this.props.walletStore.logout();
-        this.props.history.push("/");
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+    let response = await postAsync("CloseWallet");
+    message.success(t("wallet.close wallet"), 2);
+    this.props.walletStore.logout();
+    this.props.history.push("/");
   };
   showModal = () => {
     this.setState({
       visible: true,
     });
   };
-  hideModal = () => {
+  hideModal = async () => {
     this.setState({
       visible: false,
     });
     if (this.state.change) {
       neonode.switchNode(this.state.network);
-      axios
-        .post("http://localhost:8081", {
-          id: "1234",
-          method: "CloseWallet",
-        })
-        .then(() => {
-          this.props.walletStore.logout();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      let response = await postAsync("CloseWallet");
+      this.props.walletStore.logout();
       this.props.blockSyncStore.setHeight({ syncHeight: -1, headerHeight: -1 });
       this.props.walletStore.logout();
       this.props.history.push("/");

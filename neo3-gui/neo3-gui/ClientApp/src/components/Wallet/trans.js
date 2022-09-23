@@ -3,7 +3,6 @@ import { Layout, Row, Col, Tabs } from "antd";
 import Transaction from "../Transaction/transaction";
 import Untransaction from "../Transaction/untransaction";
 import Sync from "../sync";
-import Searcharea, { Searchtttt } from "../Common/searcharea";
 import { withTranslation } from "react-i18next";
 
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -31,8 +30,8 @@ class Wallettrans extends React.Component {
               <Tabs
                 className="tran-title trans-list-title"
                 defaultActiveKey="1"
-                // tabBarExtraContent={<Searchtttt />}
-                // <ArrowLeftOutlined className="h2" onClick={this.back}/>}
+              // tabBarExtraContent={<Searchtttt />}
+              // <ArrowLeftOutlined className="h2" onClick={this.back}/>}
               >
                 <TabPane tab={t("blockchain.transactions")} key="1">
                   <Transaction page="wallettrans" />

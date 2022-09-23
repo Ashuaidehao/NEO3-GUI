@@ -12,12 +12,11 @@ import {
   Button,
   PageHeader,
 } from "antd";
-import axios from "axios";
-import Chainsearch from "./searcharea";
+import Chainsearch from "./chainSearch";
 import Sync from "../sync";
 import { withTranslation } from "react-i18next";
-
 import "../../static/css/contract.css";
+import { postAsync } from "../../core/request";
 
 const { Content } = Layout;
 
@@ -44,40 +43,26 @@ class Chain extends React.Component {
           blocklist: res.result,
           lastblock: res.result[res.result.length - 1].blockHeight - 1,
         },
-        () => {}
+        () => { }
       );
     });
   }
-  getBlock = (callback) => {
+  getBlock = async (callback) => {
     console.log(this.state.lastblock);
     let _params = this.state.lastblock
       ? {
-          limit: 50,
-          height: this.state.lastblock,
-        }
+        limit: 50,
+        height: this.state.lastblock,
+      }
       : {
-          limit: 50,
-        };
-    axios
-      .post("http://localhost:8081", {
-        id: "51",
-        method: "GetLastBlocks",
-        params: _params,
-      })
-      .then(function (response) {
-        var _data = response.data;
-        console.log(_data);
-        if (_data.msgType === -1) {
-          message.error("查询失败");
-          return;
-        } else {
-          callback(_data);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log("error");
-      });
+        limit: 50,
+      };
+    let response = await postAsync("GetLastBlocks", _params);
+    if (response.msgType < 0) {
+      message.error("Query fail!");
+      return;
+    }
+    callback(response)
   };
   loadMore = () => {
     this.setState({

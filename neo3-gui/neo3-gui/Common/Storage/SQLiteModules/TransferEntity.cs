@@ -5,8 +5,8 @@ using Neo.SmartContract;
 
 namespace Neo.Common.Storage.SQLiteModules
 {
-    [Table("Nep5Transfers")]
-    public class Nep5TransferEntity
+    [Table("Transfers")]
+    public class TransferEntity
     {
         [Key]
         public long Id { get; set; }
@@ -17,7 +17,6 @@ namespace Neo.Common.Storage.SQLiteModules
 
         [ForeignKey(nameof(TxId))]
         public TransactionEntity Transaction { get; set; }
-
 
         public long AssetId { get; set; }
         public ContractEntity Asset { get; set; }
@@ -32,10 +31,11 @@ namespace Neo.Common.Storage.SQLiteModules
 
         public byte[] Amount { get; set; }
 
-
         public DateTime Time { get; set; }
 
         public TriggerType Trigger { get; set; }
+
+        public string TokenId { get; set; }
 
     }
 }

@@ -48,6 +48,15 @@ class DataConverter {
     return Buffer.from(hexString, "hex").toString("base64");
   }
 
+
+  /**
+   * input: 'Y6OYnLSplXGqADltPHFV+upAmLo=',output:'63a3989cb4a99571aa00396d3c7155faea4098ba'
+   * @param {*} base64String
+   */
+  fromBase64String(base64String) {
+    return Buffer.from(base64String, "base64").toString("hex");
+  }
+
   /**
    * Encode hex string to utf8 string,input:'7472616e73666572',output:'transfer'
    * @param {*} hexString

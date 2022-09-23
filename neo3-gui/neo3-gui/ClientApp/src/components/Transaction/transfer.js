@@ -19,7 +19,7 @@ import '../../static/css/wallet.css'
 import { Form, DatePicker, TimePicker } from 'antd';
 import Sync from '../sync';
 import { withTranslation } from "react-i18next";
-import { post } from "../../core/request";
+import { post, postAsync } from "../../core/request";
 
 const { Option } = Select;
 const { Content } = Layout;
@@ -41,7 +41,7 @@ class Transfer extends React.Component {
   }
   componentDidMount() {
     var _this = this;
-    post("GetMyBalances",{}).then(res =>{
+    post("GetMyBalances", {}).then(res => {
       var _data = response.data;
       if (_data.msgType === -1) {
         message.error(t("wallet.open wallet first"));
@@ -64,57 +64,42 @@ class Transfer extends React.Component {
       neo: _data.result.accounts
     })
   }
-  transfer = fieldsValue => {
+  transfer = async (fieldsValue) => {
     let _sender = this.state.addresslist[fieldsValue.sender].address;
-    let _this = this;
-    const{t}=this.props;
+    const { t } = this.props;
     this.setState({
       iconLoading: true
     })
-    axios.post('http://localhost:8081', {
-      "id": "5",
-      "method": "SendToAddress",
-      "params": {
-        "sender": _sender,
-        "receiver": fieldsValue.receiver.trim(),
-        "amount": fieldsValue.amount,
-        "asset": fieldsValue.asset
-      }
-    })
-    .then(function (response) {
-      var _data = response.data;
-      _this.setState({ iconLoading: false });
-      
-      if(_data.msgType === -1){
-        let res = _data.error;
-        Modal.error({
-          title: t('wallet.transfer send error'),
-          width: 400,
-          content: errorContent,
-          okText:"确认"
-        });
-        return;
-      }else{
-        Modal.success({
-          title: t('wallet.transfer send success'),
-          content: (
-            <div className="show-pri">
-              <p>{t("blockchain.transaction hash")}：</p>
-              <p>{_data.result.txId}</p>
-            </div>
-          ),
-          okText:"确认"
-        });
-        _this.refs.formRef.resetFields()
-        _this.setState({
-          selectadd:[]
-        })
-      }
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log("error");
+    let response = await postAsync("SendToAddress", {
+      "sender": _sender,
+      "receiver": fieldsValue.receiver.trim(),
+      "amount": fieldsValue.amount,
+      "asset": fieldsValue.asset
     });
+    this.setState({ iconLoading: false });
+    if (response.msgType === -1) {
+      Modal.error({
+        title: t('wallet.transfer send error'),
+        width: 400,
+        content: errorContent,
+        okText: "确认"
+      });
+      return;
+    }
+    Modal.success({
+      title: t('wallet.transfer send success'),
+      content: (
+        <div className="show-pri">
+          <p>{t("blockchain.transaction hash")}：</p>
+          <p>{response.result.txId}</p>
+        </div>
+      ),
+      okText: "确认"
+    });
+    this.refs.formRef.resetFields()
+    this.setState({
+      selectadd: []
+    })
   }
   render() {
     const { t } = this.props;
@@ -205,7 +190,7 @@ class Transfer extends React.Component {
                   <Form.Item>
                     <Button type="primary" htmlType="submit" loading={this.state.iconLoading}>
                       {t("button.send")}
-                  </Button>
+                    </Button>
                   </Form.Item>
                 </div>
                 <Alert

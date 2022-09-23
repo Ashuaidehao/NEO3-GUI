@@ -62,18 +62,13 @@ class ContractUpgrade extends React.Component {
   };
   selectMani = async () => {
     this.opendialog("json", async (res) => {
-      console.log(res)
       await this.setState({ manipath: res.filePaths[0], isOpenDialog: false });
       this.onFill();
     });
   };
   browseDialog = () => {
     const { isOpenDialog } = this.state;
-    if (isOpenDialog === false) {
-      return false;
-    } else {
-      return true;
-    }
+    return isOpenDialog;
   };
   opendialog = (str, callback) => {
     if (this.browseDialog()) return;

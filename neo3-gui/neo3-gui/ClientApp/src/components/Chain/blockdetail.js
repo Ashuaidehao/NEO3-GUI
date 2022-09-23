@@ -16,7 +16,8 @@ export default function BlockDetail() {
   const [height, setHeight] = useState(0);
   const [blockdetail, setBlockDetail] = useState({});
   const [translist, setTransList] = useState([]);
-  let blockHeight = Number(location.pathname.split(":").pop());
+  let identity = location.pathname.split(":").pop();
+  let blockHeight = Number(identity);
   useEffect(() => {
     postAsync("GetBlock", { index: blockHeight })
       .then(function (data) {
@@ -25,9 +26,6 @@ export default function BlockDetail() {
           return;
         }
         setBlockDetail(data.result);
-      })
-      .catch(function (error) {
-        console.log(error);
       });
 
     postAsync("QueryTransactions", { blockHeight: blockHeight, limit: 500, })
@@ -37,9 +35,6 @@ export default function BlockDetail() {
           return;
         }
         setTransList(msg.result.list);
-      })
-      .catch(function (error) {
-        console.log(error);
       });
   }, [height]);
   return (

@@ -1,12 +1,11 @@
 import React from 'react';
-import {BrowserRouter, Route , Switch,Redirect} from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import Home from '../components/home'
 import Sync from '../components/sync';
 
 import Chain from '../components/Chain/chain';
 import Chainlayout from '../components/Chain/chainlayout';
 import BlockDetail from '../components/Chain/blockdetail';
-import Blockhashdetail from '../components/Chain/hashdetail';
 import Chaintrans from '../components/Chain/trans';
 import ChainAsset from '../components/Chain/asset';
 import AssetDetail from '../components/Chain/assetdetail';
@@ -44,14 +43,13 @@ import { Layout } from 'antd';
 const BasicRoute = () => (
     <BrowserRouter>
         <Switch>
-            <Route exact path="/" component={Home}/>
-            <Route exact path="/sync" component={Sync}/>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/sync" component={Sync} />
             <Route path="/chain">
-                <Layout style={{ height: 'calc( 100vh )'}}>
+                <Layout style={{ height: 'calc( 100vh )' }}>
                     <Route component={Chainlayout} />
                     <Route exact path="/chain" component={Chain} />
                     <Route exact path="/chain/detail:height" component={BlockDetail} />
-                    <Route exact path="/chain/hashdetail:height" component={Blockhashdetail} />
                     <Route exact path="/chain/transaction" component={Chaintrans} />
                     <Route exact path="/chain/transaction:hash" component={Transdetail} />
                     <Route exact path="/chain/untransaction:hash" component={Untransdetail} />
@@ -60,8 +58,8 @@ const BasicRoute = () => (
                 </Layout>
             </Route>
             <Route path="/wallet">
-                <Layout style={{ height: 'calc( 100vh )'}}>
-                    <Route  component={Walletlayout} />
+                <Layout style={{ height: 'calc( 100vh )' }}>
+                    <Route component={Walletlayout} />
                     <Route exact path="/wallet/walletlist" component={Authenticated(Walletlist)} />
                     <Route exact path="/wallet/walletlist:address" component={Authenticated(Walletdetail)} />
                     <Route exact path="/wallet/address:address" component={Authenticated(Walletdetail)} />
@@ -72,7 +70,7 @@ const BasicRoute = () => (
                 </Layout>
             </Route>
             <Route path="/contract">
-                <Layout style={{ height: 'calc( 100vh )'}}>
+                <Layout style={{ height: 'calc( 100vh )' }}>
                     <Route component={Contractlayout} />
                     <Route exact path="/contract" component={Contract} />
                     <Route exact path="/contract/detail:hash" component={Contractdetail} />
@@ -82,7 +80,7 @@ const BasicRoute = () => (
                 </Layout>
             </Route>
             <Route path="/advanced">
-                <Layout style={{ height: 'calc( 100vh )'}}>
+                <Layout style={{ height: 'calc( 100vh )' }}>
                     <Route component={Advancedlayout} />
                     <Route exact path="/advanced" component={Advanced} />
                     <Route exact path="/advanced/vote" component={Authenticated(Advancedvote)} />

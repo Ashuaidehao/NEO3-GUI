@@ -23,7 +23,7 @@ namespace Neo.Common.Storage.SQLiteModules
 
         public DbSet<IdentityEntity> Identities { get; set; }
         public DbSet<SyncIndex> SyncIndexes { get; set; }
-        public DbSet<Nep5TransferEntity> Nep5Transactions { get; set; }
+        public DbSet<TransferEntity> Transfers { get; set; }
         public DbSet<AssetBalanceEntity> AssetBalances { get; set; }
         public DbSet<AddressEntity> Addresses { get; set; }
         public DbSet<TransactionEntity> Transactions { get; set; }
@@ -105,10 +105,10 @@ namespace Neo.Common.Storage.SQLiteModules
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Nep5TransferEntity>().HasIndex(p => p.FromId);
-            modelBuilder.Entity<Nep5TransferEntity>().HasIndex(p => p.ToId);
-            modelBuilder.Entity<Nep5TransferEntity>().HasIndex(p => p.Time);
-            modelBuilder.Entity<Nep5TransferEntity>().HasIndex(p => p.TxId);
+            modelBuilder.Entity<TransferEntity>().HasIndex(p => p.FromId);
+            modelBuilder.Entity<TransferEntity>().HasIndex(p => p.ToId);
+            modelBuilder.Entity<TransferEntity>().HasIndex(p => p.Time);
+            modelBuilder.Entity<TransferEntity>().HasIndex(p => p.TxId);
 
             modelBuilder.Entity<AddressEntity>().HasIndex(p => p.Hash);
 

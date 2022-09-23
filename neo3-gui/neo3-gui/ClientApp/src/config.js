@@ -22,8 +22,10 @@ class Config {
    * init config object from json data
    */
   initConfig = (config) => {
+    this.Host = config.Host || "localhost"
     this.Port = config.Port || 8081;
-    this.RPCURL = config.RPCURL || "http://localhost:" + this.Port;
+    this.RPCURL = "http://" + this.Host + ":" + this.Port;
+    this.WSURL = "ws://" + this.Host + ":" + this.Port;
     this.Language = config.Language || "";
     this.Network = config.Network || "mainnet";
   };
