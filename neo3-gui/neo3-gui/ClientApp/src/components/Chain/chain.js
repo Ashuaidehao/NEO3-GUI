@@ -12,10 +12,9 @@ import {
   Button,
   PageHeader,
 } from "antd";
-import Chainsearch from "./searcharea";
+import Chainsearch from "./chainSearch";
 import Sync from "../sync";
 import { withTranslation } from "react-i18next";
-
 import "../../static/css/contract.css";
 import { postAsync } from "../../core/request";
 

@@ -96,7 +96,7 @@ namespace Neo.Common.Storage.SQLiteModules
                 DataSource = _filename
             };
             optionsBuilder.UseSqlite(sb.ToString());
-            optionsBuilder.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
+            //optionsBuilder.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
         }
 
 

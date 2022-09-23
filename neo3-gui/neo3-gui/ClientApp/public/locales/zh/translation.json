@@ -111,7 +111,8 @@
     "transaction info": "交易信息",
     "transactions": "交易列表",
     "unconfirmed transactions": "待确认交易",
-    "witness": "见证人"
+    "witness": "见证人",
+    "search input-invalid": "查询的区块不存在"
   },
   "button": {
     "cancel": "取消",
@@ -194,11 +195,12 @@
   "please input password": "请输入密码",
   "please select file location": "请选择文件存储位置",
   "search": {
-    "chain-hint": "输入需要查找的 height",
+    "chain-hint": "输入需要查找的高度或Hash",
     "check again": "请检查输入是否正确",
     "hash unexist": "该合约hash不存在，请查证后再输入",
     "hash-hint": "输入需要查找的脚本散列",
-    "height unexist": "该高度不存在，请查证后再输入"
+    "height unexist": "该高度不存在，请查证后再输入",
+    "asset-search-hint": "请输入资产Hash"
   },
   "select account": "选择地址",
   "select path": "选择路径",

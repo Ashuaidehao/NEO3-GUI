@@ -9,7 +9,6 @@ import Searcharea from './searcharea'
 import { SwapRightOutlined } from '@ant-design/icons';
 import { postAsync } from "../../core/request"
 
-const { Content } = Layout;
 @withTranslation()
 @inject("walletStore")
 @observer
@@ -50,14 +49,16 @@ class Transaction extends React.Component {
       _params.blockHeight = Number(_hash);
       this.setState({ params: _params })
       this.allset(_params);
-    } else if (page === "addressdetail") {
-      _params.address = Number(_hash);
-      this.setState({
-        params: _params,
-        local: "/wallet/transaction:"
-      })
-      this.nepset(_params);
-    } else if (page === "assetdetail") {
+    }
+    // else if (page === "addressdetail") {
+    //   _params.address = Number(_hash);
+    //   this.setState({
+    //     params: _params,
+    //     local: "/wallet/transaction:"
+    //   })
+    //   this.nepset(_params);
+    // } 
+    else if (page === "assetdetail") {
       _params.asset = _hash;
       this.setState({ params: _params })
       this.nepset(_params);

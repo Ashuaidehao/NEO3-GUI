@@ -1,7 +1,6 @@
 /* eslint-disable */
 import React from "react";
 import "antd/dist/antd.css";
-import axios from "axios";
 import { Input, message } from "antd";
 import Topath from "../Common/topath";
 import { ArrowRightOutlined, SearchOutlined } from "@ant-design/icons";
@@ -49,19 +48,24 @@ class Chainsearch extends React.Component {
   }
   searchChain = async () => {
     const { t } = this.props;
-    let _height = Number(this.refs.sinput.input.value.trim());
-    if (!_height && _height != 0) {
+    let input = this.refs.sinput.input.value.trim();
+    let blockHeight = 0;
+    let blockHash = null;
+    if (input.length == 66) {
+      blockHash = input
+    } else {
+      blockHeight = Number(input);
+    }
+    if (!input) {
       message.info(t("search.check again"));
       return;
     }
-    let response = await postAsync("GetBlock", {
-      index: _height,
-    });
+    let response = !blockHash ? (await postAsync("GetBlock", { index: blockHeight })) : (await postAsync("GetBlockByHash", { hash: blockHash }));
     if (response.msgType === -1) {
-      message.info(t("blockchain.height unexist"));
+      message.info(t("blockchain.search input-invalid"));
       return;
     }
-    this.setState({ topath: "/chain/detail:" + _height });
+    this.setState({ topath: "/chain/detail:" + response.result.blockHeight });
   };
   render = () => {
     const { t } = this.props;

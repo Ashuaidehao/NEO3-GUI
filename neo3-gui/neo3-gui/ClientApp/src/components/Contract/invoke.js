@@ -21,8 +21,11 @@ import { SwapOutlined } from "@ant-design/icons";
 import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import DynamicArray from "./dynamicArray";
-import { post } from "../../core/request";
+import { post, postAsync } from "../../core/request";
 import { MinusSquareOutlined, PlusOutlined } from "@ant-design/icons";
+import ParameterInput from "../Common/parameterInput";
+import { createRef } from "react";
+import FormItem from "antd/lib/form/FormItem";
 
 const { Option } = Select;
 
@@ -42,47 +45,33 @@ const typeOption = ["ByteArray", "Address", "Hash160"];
 class Contractinvoke extends React.Component {
   constructor(props) {
     super(props);
+    this.myForm = createRef();
     this.state = {
       size: 'default',
-        path:"",
-        disabled:false,
-        visible: false,
-        modal:false,
-        loading:false,
-        methods:[],
-        params:[],
-        methodselect:""
-      };
-    }
-    toHome = () =>{
-      location.href=location.origin;
-    }
-    showDrawer = () => {
-      this.setState({
-        visible: true,
-      });
+      path: "",
+      disabled: false,
+      visible: false,
+      modal: false,
+      loading: false,
+      methods: [],
+      params: [],
+      methodselect: ""
     };
-    onClose = () => {
-      this.setState({
-        visible: false,
-      });
-    };
-    showDetail = () =>{
-      this.searchContract(res=>{
-        this.refs.formRef.resetFields()
-        this.setState({
-          hash:res.contractHash,
-          methods:res.manifest.abi.methods,
-          params:[],
-          tresult:""
-        })
-        this.refs.formRef.setFieldsValue({
-          guihash:this.state.hash
-        })
-      });
-      console.log(this.refs.formRef);
+  }
+  toHome = () => {
+    location.href = location.origin;
+  }
+  showDrawer = () => {
+    this.setState({
+      visible: true,
+    });
   };
-  searchContract = (callback) => {
+  onClose = () => {
+    this.setState({
+      visible: false,
+    });
+  };
+  searchContract = async () => {
     const { t } = this.props;
     let _hash = this.refs.sinput.input.value.trim();
     if (!_hash) {
@@ -90,33 +79,42 @@ class Contractinvoke extends React.Component {
       return;
     }
     this.setState({ loading: true });
-    var _this = this;
     var params = { contractHash: _hash };
-    post("GetContract", params)
-      .then(function (response) {
-        var _data = response.data;
-        _this.setState({loading:false});
-        if(_data.msgType === -1){
-          _this.setState({
-            methods: [],
-            params: [],
-            tresult: "",
-          });
-          _this.refs.formRef.resetFields();
-          _this.refs.formRef.setFieldsValue({
-            guihash: _hash,
-          });
-          message.info(t("contract.search fail"));
-          return;
-        }else if(_data.msgType === 3){
-          callback(_data.result)
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
+    let response = await postAsync("GetContract", params);
+    this.setState({ loading: false });
+    if (response.msgType === -1) {
+      this.setState({
+        methods: [],
+        params: [],
+        tresult: "",
       });
+      this.myForm.current.resetFields();
+      this.myForm.current.setFieldsValue({
+        guihash: _hash,
+      });
+      message.info(t("contract.search fail"));
+      return;
+    }
+
+    let result = response.result;
+    this.myForm.current.resetFields()
+    this.setState({
+      hash: result.contractHash,
+      methods: result.manifest.abi.methods,
+      params: [],
+      tresult: ""
+    })
+    this.myForm.current.setFieldsValue({
+      guihash: this.state.hash
+    })
+    // callback(response.result);
   };
   showPara = (e) => {
+    this.myForm.current.resetFields();
+    this.myForm.current.setFieldsValue({
+      guihash: this.state.hash,
+      guimethod: e,
+    });
     this.setState({
       params: this.state.methods[e].parameters,
       methodselect: this.state.methods[e],
@@ -124,7 +122,6 @@ class Contractinvoke extends React.Component {
   };
   makeParams = (data) => {
     let method = this.state.methodselect;
-
     let _params = {
       contractHash: this.state.hash,
       method: method.name,
@@ -136,44 +133,44 @@ class Contractinvoke extends React.Component {
     let inside = new Array();
     this.state.params.map((item, index) => {
       //深拷贝
-      let _item = JSON.parse(JSON.stringify(item));
+      let parameterItem = JSON.parse(JSON.stringify(item));
+      let value = data[parameterItem.name];
 
-      let _type = method.parameters[index].type.toLowerCase();
-      _item.value = data[_item.name];
+      //检测字符串中是否包含两种类型值
+      // if (_type.search(/(hash160)|(bytearray)/g) !== -1 && typeof _item.value === "object") {
+      //   _item.type = _item.value.type;
+      //   _item.value = _item.value.value;
+      // }
 
-        //检测字符串中是否包含两种类型值
-        if(_type.search(/(hash160)|(bytearray)/g) !== -1 && typeof _item.value  === "object"){
-          _item.type = _item.value.type;
-          _item.value = _item.value.string;
-        }
+      if (value.type === 'Array') {
+        value.value = JSON.parse(value.value);
+      }
+      if (value.type) {
+        parameterItem.type = value.type;
+        parameterItem.value = value.value;
+      } else {
+        parameterItem.value = value;
+      }
 
-        if(_type === 'any'){
-          _item.type = 'String';
-          _item.value = _item.value;
-        }
-        
-        if(_type === 'array'){
-          _item.value = JSON.parse(_item.value);
-        }
-        inside = inside.concat(_item);
-      })
-      if(inside) _params.parameters = inside;
+      inside = inside.concat(parameterItem);
+    })
+    if (inside) _params.parameters = inside;
 
     //构造consigners
     let cosigners = new Array();
     data.cosigners
       ? data.cosigners.map((item) => {
-          let _list = {};
-          _list.account = item;
-          cosigners = cosigners.concat(_list);
-        })
+        let _list = {};
+        _list.account = item;
+        cosigners = cosigners.concat(_list);
+      })
       : null;
     if (cosigners) _params.cosigners = cosigners;
 
     return _params;
   };
   onFill = () => {
-    this.refs.formRef.setFieldsValue({
+    this.myForm.current.setFieldsValue({
       tresult: this.state.tresult,
     });
   };
@@ -185,7 +182,7 @@ class Contractinvoke extends React.Component {
       },
       this.onFill()
     );
-    this.refs.formRef
+    this.myForm.current
       .validateFields()
       .then((data) => {
         let params = this.makeParams(data);
@@ -216,7 +213,7 @@ class Contractinvoke extends React.Component {
         },
         _this.onFill()
       );
-      _this.refs.formRef.resetFields();
+      _this.myForm.current.resetFields();
 
       Modal.success({
         title: t("contract.invoke contract"),
@@ -233,56 +230,50 @@ class Contractinvoke extends React.Component {
       });
     });
   };
-  invokeContract = (params, callback) => {
+
+  invokeContract = async (params, callback) => {
     const { t } = this.props;
-    post("InvokeContract", params)
-      .then(function (res) {
-        var _data = res.data;
-        if (_data.msgType === -1) {
-          Modal.error({
-            title: t("contract.fail title"),
-            width: 600,
-            content: (
-              <div className="show-pri">
-                <p>
-                  {t("error code")}: {_data.error.code}
-                </p>
-                <p>
-                  {t("error msg")}: {_data.error.message}
-                </p>
-              </div>
-            ),
-            okText: t("button.ok"),
-          });
-          return;
-        } else if (_data.msgType === 3) {
-          callback(_data);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
+    let response = await postAsync("InvokeContract", params);
+    if (response.msgType === -1) {
+      Modal.error({
+        title: t("contract.fail title"),
+        width: 600,
+        content: (
+          <div className="show-pri">
+            <p>
+              {t("error code")}: {response.error.code}
+            </p>
+            <p>
+              {t("error msg")}: {response.error.message}
+            </p>
+          </div>
+        ),
+        okText: t("button.ok"),
       });
+      return;
     }
-    handleCancel = () => {
-      this.setState({
-        modal: false,
-      });
-    };
-    makeArray = () =>{
-      this.setState({
-        modal: true
-      });
-    }
-    handleparam = (val) =>{
-      if(val.length <= 0) return "";
-      this.handleCancel()
-      return JSON.stringify(val);
-    }
-    onOk = () => {
-      form.submit();
-    };
-    render = () =>{
-    const {methods,params,disabled} = this.state;
+    callback(response);
+  }
+  handleCancel = () => {
+    this.setState({
+      modal: false,
+    });
+  };
+  makeArray = () => {
+    this.setState({
+      modal: true
+    });
+  }
+  handleparam = (val) => {
+    if (val.length <= 0) return "";
+    this.handleCancel()
+    return JSON.stringify(val);
+  }
+  onOk = () => {
+    form.submit();
+  };
+  render = () => {
+    const { methods, params, disabled } = this.state;
     const accounts = this.props.walletStore.accountlist;
     const { t } = this.props;
     return (
@@ -302,7 +293,7 @@ class Contractinvoke extends React.Component {
               <PageHeader title={t("contract.invoke contract")}></PageHeader>
 
               {/* <DynamicArray handleparam={this.handleparam.bind(this)}/> */}
-              <Form ref="formRef" className="trans-form" onFinish={this.invoke}>
+              <Form ref={this.myForm} className="trans-form" onFinish={this.invoke}>
                 <Row className="mt3 mb5">
                   <Col span={20}>
                     <Form.Item
@@ -346,48 +337,9 @@ class Contractinvoke extends React.Component {
                     ) : null}
                     {params.map((item, index) => {
                       return (
-                        <div key={index}>
-                          {item.type.toLowerCase() === "bytearray" ||
-                          item.type.toLowerCase() == "hash160" ? (
-                            <Form.Item
-                              className="spec-row"
-                              label={<span>{item.name}</span>}
-                            >
-                              <Input.Group compact>
-                                <Form.Item
-                                  name={[item.name, "type"]}
-                                  style={{
-                                    display: "inline-block",
-                                    width: "30%",
-                                  }}
-                                  rules={[{ required: true, message: "type" }]}
-                                >
-                                  <Select
-                                    placeholder="Select Type"
-                                    style={{ width: "100%" }}
-                                  >
-                                    <Option value="ByteArray">ByteArray</Option>
-                                    <Option value="Hash160">Hash160</Option>
-                                    <Option value="Address">Address</Option>
-                                  </Select>
-                                </Form.Item>
-                                <Form.Item
-                                  name={[item.name, "string"]}
-                                  style={{
-                                    display: "inline-block",
-                                    width: "70%",
-                                  }}
-                                  rules={[
-                                    { required: true, message: "String" },
-                                  ]}
-                                >
-                                  <Input
-                                    style={{ width: "100%" }}
-                                    placeholder="String"
-                                  />
-                                </Form.Item>
-                              </Input.Group>
-                            </Form.Item>
+                        <div key={[item.name, item.type, index]}>
+                          {item.type.toLowerCase() === "bytearray" || item.type.toLowerCase() == "hash160" || item.type.toLowerCase() === 'any' ? (
+                            <ParameterInput name={item.name} type={item.type}></ParameterInput>
                           ) : (
                             <Form.Item
                               className="param-input"
@@ -409,62 +361,63 @@ class Contractinvoke extends React.Component {
                           // getValueFromEvent={this.handleparam}
                           onSearch={this.makeArray}
                         />:<Input placeholder={item.type}/>} */}
-                        {item.type.toLowerCase() === 'any'?
-                        <Input placeholder="String"/>:
-                        <Input placeholder={item.type}/>}
-                      </Form.Item>)
-                      }
-                    </div>
-                  )}
-                )}
-                <Form.Item
-                  name="cosigners"
-                  label={t("contract.cosigners")}>
-                  <Select
-                    placeholder={t("contract.choose account")}
-                    mode="tags"
-                    style={{ width: '100%'}}>
-                    {accounts.map((item)=>{
-                      return(
-                      <Option key={item.address}>{item.address}</Option>
+
+
+                              <Input placeholder={item.type} />
+                            </Form.Item>)
+                          }
+                        </div>
                       )
-                    })}
-                  </Select>
+                    }
+                    )}
+                    <Form.Item
+                      name="cosigners"
+                      label={t("contract.cosigners")}>
+                      <Select
+                        placeholder={t("contract.choose account")}
+                        mode="tags"
+                        style={{ width: '100%' }}>
+                        {accounts.map((item) => {
+                          return (
+                            <Option key={item.address}>{item.address}</Option>
+                          )
+                        })}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col span={4}>
+                    <Button className="w200 form-btn" onClick={this.searchContract} loading={this.state.loading}>{t("button.search")}</Button>
+                  </Col>
+                </Row>
+                <Form.Item className="text-c w200" >
+                  <Button type="primary" htmlType="button" onClick={this.testInvoke}>
+                    {t('button.test invoke')}
+                  </Button>
                 </Form.Item>
-              </Col>
-              <Col span={4}>
-                <Button className="w200 form-btn" onClick={this.showDetail} loading={this.state.loading}>{t("button.search")}</Button>
-              </Col>
-            </Row>
-            <Form.Item className="text-c w200" >
-              <Button type="primary"  htmlType="button" onClick={this.testInvoke}>
-               {t('button.test invoke')}
-              </Button>
-            </Form.Item>
-            <div className="pa3 mb5">
-              <p className="mb5 bolder">{t('contract.test result')}</p>
-              <TextArea rows={3} value={this.state.tresult}/>
-            </div>
-            <Form.Item className="text-c w200">
-              <Button className="mt3" type="primary" htmlType="submit" disabled={disabled} loading={this.state.iconLoading}>
-                {t("button.send")}
-              </Button>
-            </Form.Item>
-          </Form>
-          </Col>
-        </Row>
-        <Modal
-          title="构造Array-未翻译"
-          visible={this.state.modal}
-          footer={null}
-          onCancel={this.handleCancel}
-          width={600}
-        >
-          <DynamicArray handleparam={this.handleparam.bind(this)}/>
-        </Modal>
-        <Datatrans visible={this.state.visible} onClose={this.onClose} />
-      </Content>
-    </Layout>
+                <div className="pa3 mb5">
+                  <p className="mb5 bolder">{t('contract.test result')}</p>
+                  <TextArea rows={3} value={this.state.tresult} />
+                </div>
+                <Form.Item className="text-c w200">
+                  <Button className="mt3" type="primary" htmlType="submit" disabled={disabled} loading={this.state.iconLoading}>
+                    {t("button.send")}
+                  </Button>
+                </Form.Item>
+              </Form>
+            </Col>
+          </Row>
+          <Modal
+            title="构造Array-未翻译"
+            visible={this.state.modal}
+            footer={null}
+            onCancel={this.handleCancel}
+            width={600}
+          >
+            <DynamicArray handleparam={this.handleparam.bind(this)} />
+          </Modal>
+          <Datatrans visible={this.state.visible} onClose={this.onClose} />
+        </Content>
+      </Layout>
     );
   };
 }

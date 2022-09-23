@@ -4,7 +4,6 @@ import { observer, inject } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import "antd/dist/antd.css";
 import { message, Modal, Radio } from "antd";
-import axios from "axios";
 import { Addressdetail, Changepass, Setting } from "./menuaction";
 import {
   ReadOutlined,

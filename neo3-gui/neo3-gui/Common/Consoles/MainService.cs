@@ -27,8 +27,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using ECCurve = Neo.Cryptography.ECC.ECCurve;
-using ECPoint = Neo.Cryptography.ECC.ECPoint;
+
 
 namespace Neo.Common.Consoles
 {
@@ -84,21 +83,59 @@ namespace Neo.Common.Consoles
                 throw;
             }
 
-            using (IEnumerator<Block> blocksBeingImported = GetBlocksFromFile().GetEnumerator())
+            Task.Run(ImportAndStartNode);
+
+            //NeoSystem.StartNode(new ChannelsConfig
+            //{
+            //    Tcp = new IPEndPoint(IPAddress.Any, CliSettings.Default.P2P.Port),
+            //    WebSocket = new IPEndPoint(IPAddress.Any, CliSettings.Default.P2P.WsPort),
+            //    MinDesiredConnections = CliSettings.Default.P2P.MinDesiredConnections,
+            //    MaxConnections = CliSettings.Default.P2P.MaxConnections,
+            //    MaxConnectionsPerAddress = CliSettings.Default.P2P.MaxConnectionsPerAddress
+            //});
+            //if (CliSettings.Default.UnlockWallet.IsActive)
+            //{
+            //    try
+            //    {
+            //        OpenWallet(CliSettings.Default.UnlockWallet.Path, CliSettings.Default.UnlockWallet.Password);
+            //    }
+            //    catch (FileNotFoundException)
+            //    {
+            //        Console.WriteLine($"Warning: wallet file \"{CliSettings.Default.UnlockWallet.Path}\" not found.");
+            //    }
+            //    catch (CryptographicException)
+            //    {
+            //        Console.WriteLine($"failed to open file \"{CliSettings.Default.UnlockWallet.Path}\"");
+            //    }
+            //}
+        }
+
+        private async Task ImportAndStartNode()
+        {
+            await ImportBlocks();
+            await StartNode();
+        }
+
+
+        public async Task ImportBlocks()
+        {
+            using IEnumerator<Block> blocksBeingImported = GetBlocksFromFile().GetEnumerator();
+            while (true)
             {
-                while (true)
+                List<Block> blocksToImport = new List<Block>();
+                for (int i = 0; i < 10; i++)
                 {
-                    List<Block> blocksToImport = new List<Block>();
-                    for (int i = 0; i < 10; i++)
-                    {
-                        if (!blocksBeingImported.MoveNext()) break;
-                        blocksToImport.Add(blocksBeingImported.Current);
-                    }
-                    if (blocksToImport.Count == 0) break;
-                    await NeoSystem.Blockchain.Ask<Blockchain.ImportCompleted>(new Blockchain.Import { Blocks = blocksToImport });
-                    if (NeoSystem is null) return;
+                    if (!blocksBeingImported.MoveNext()) break;
+                    blocksToImport.Add(blocksBeingImported.Current);
                 }
+                if (blocksToImport.Count == 0) break;
+                await NeoSystem.Blockchain.Ask<Blockchain.ImportCompleted>(new Blockchain.Import { Blocks = blocksToImport });
+                if (NeoSystem is null) return;
             }
+        }
+
+        public async Task StartNode()
+        {
             NeoSystem.StartNode(new ChannelsConfig
             {
                 Tcp = new IPEndPoint(IPAddress.Any, CliSettings.Default.P2P.Port),
@@ -107,22 +144,6 @@ namespace Neo.Common.Consoles
                 MaxConnections = CliSettings.Default.P2P.MaxConnections,
                 MaxConnectionsPerAddress = CliSettings.Default.P2P.MaxConnectionsPerAddress
             });
-            if (CliSettings.Default.UnlockWallet.IsActive)
-            {
-                try
-                {
-                    OpenWallet(CliSettings.Default.UnlockWallet.Path, CliSettings.Default.UnlockWallet.Password);
-                }
-                catch (FileNotFoundException)
-                {
-                    Console.WriteLine($"Warning: wallet file \"{CliSettings.Default.UnlockWallet.Path}\" not found.");
-                }
-                catch (CryptographicException)
-                {
-                    Console.WriteLine($"failed to open file \"{CliSettings.Default.UnlockWallet.Path}\"");
-                }
-
-            }
         }
 
         public void Stop()

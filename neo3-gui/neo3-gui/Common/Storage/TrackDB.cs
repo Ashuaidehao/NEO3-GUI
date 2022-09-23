@@ -347,11 +347,11 @@ namespace Neo.Common.Storage
 
 
         /// <summary>
-        ///  Paged by Transactions
+        ///  Query Transfers Paged by Transactions
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public PageList<TransferInfo> QueryNep5Transactions(TransferFilter filter)
+        public PageList<TransferInfo> QueryTransfersPagedByTx(TransferFilter filter)
         {
             var query = BuildQuery(filter);
             var pageList = new PageList<TransferInfo>();
@@ -371,7 +371,7 @@ namespace Neo.Common.Storage
 
 
         /// <summary>
-        /// Paged by transfer
+        /// Query Transfers Paged by transfer
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>

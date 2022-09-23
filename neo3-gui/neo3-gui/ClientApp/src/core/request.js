@@ -34,7 +34,7 @@ const postAsync = async (method, params) => {
   try {
     let response = await request(method, params);
     if (response.status !== 200) {
-      let error = new Error("Response Error!");
+      let error = new Error("Http Error!");
       error.response = response;
       throw error;
     }

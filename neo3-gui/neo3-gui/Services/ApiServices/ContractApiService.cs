@@ -388,11 +388,16 @@ namespace Neo.Services.ApiServices
             {
                 return parameter;
             }
-            var value = jsonValue.GetString();
             if (type == "Address")
             {
                 parameter.Type = ContractParameterType.Hash160;
-                parameter.Value = value.ToScriptHash();
+                parameter.Value = jsonValue.GetString().ToScriptHash();
+                return parameter;
+            }
+            if (type == "HexString")
+            {
+                parameter.Type = ContractParameterType.ByteArray;
+                parameter.Value = jsonValue.GetString().HexToBytes();
                 return parameter;
             }
 
@@ -401,25 +406,25 @@ namespace Neo.Services.ApiServices
             {
                 case ContractParameterType.Signature:
                 case ContractParameterType.ByteArray:
-                    parameter.Value = Convert.FromBase64String(value);
+                    parameter.Value = Convert.FromBase64String(jsonValue.GetString());
                     break;
                 case ContractParameterType.Boolean:
                     parameter.Value = jsonValue.GetBoolean();
                     break;
                 case ContractParameterType.Integer:
-                    parameter.Value = BigInteger.Parse(value);
+                    parameter.Value = BigInteger.Parse(jsonValue.GetString());
                     break;
                 case ContractParameterType.Hash160:
-                    parameter.Value = UInt160.Parse(value);
+                    parameter.Value = UInt160.Parse(jsonValue.GetString());
                     break;
                 case ContractParameterType.Hash256:
-                    parameter.Value = UInt256.Parse(value);
+                    parameter.Value = UInt256.Parse(jsonValue.GetString());
                     break;
                 case ContractParameterType.PublicKey:
-                    parameter.Value = ECPoint.Parse(value, ECCurve.Secp256r1);
+                    parameter.Value = ECPoint.Parse(jsonValue.GetString(), ECCurve.Secp256r1);
                     break;
                 case ContractParameterType.String:
-                    parameter.Value = value;
+                    parameter.Value = jsonValue.GetString();
                     break;
                 case ContractParameterType.Array:
                     parameter.Value = jsonValue.EnumerateArray().Select(JsonToContractParameter).ToList();

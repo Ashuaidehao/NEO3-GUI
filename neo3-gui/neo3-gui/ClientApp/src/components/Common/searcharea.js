@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import "antd/dist/antd.css";
 import { useHistory } from "react-router-dom";
-import axios from "axios";
 import { Input, message } from "antd";
 import Topath from "../Common/topath";
 import { post, postAsync } from "../../core/request";

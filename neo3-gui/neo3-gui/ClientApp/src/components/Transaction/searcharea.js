@@ -1,7 +1,6 @@
 /* eslint-disable */
 import React from "react";
 import "antd/dist/antd.css";
-import axios from "axios";
 import { Input, message } from "antd";
 import Topath from "../Common/topath";
 import { ArrowRightOutlined, SearchOutlined } from "@ant-design/icons";

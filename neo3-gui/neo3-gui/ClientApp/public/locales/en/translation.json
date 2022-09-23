@@ -111,7 +111,8 @@
     "transaction info": "Transaction Info",
     "transactions": "Transactions",
     "unconfirmed transactions": "Unconfirmed Transactions",
-    "witness": "Witness"
+    "witness": "Witness",
+    "search input-invalid": "input block is not exist"
   },
   "button": {
     "cancel": "Cancel",
@@ -194,11 +195,12 @@
   "please input password": "Please input password",
   "please select file location": "Please select file location",
   "search": {
-    "chain-hint": "Pelese input height",
+    "chain-hint": "Please input height or hash",
     "check again": "Please check input",
     "hash unexist": "The hash not exist,please check again",
     "hash-hint": "Pelese input hash",
-    "height unexist": "The height not exist,please check again"
+    "height unexist": "The height not exist,please check again",
+    "asset-search-hint": "please input asset hash"
   },
   "select account": "Select Address",
   "select path": "Select Path",
