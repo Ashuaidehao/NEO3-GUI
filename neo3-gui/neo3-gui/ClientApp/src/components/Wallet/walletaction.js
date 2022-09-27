@@ -1,27 +1,25 @@
 /* eslint-disable */
 import React, { useState } from 'react';
 import 'antd/dist/antd.css';
-import { Form, message, Input, Button,Divider } from 'antd';
+import { Form, message, Input, Button, Divider } from 'antd';
 import { walletStore } from "../../store/stores";
-import { useTranslation,Trans } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import { post } from "../../core/request";
-import { remote } from 'electron';
+import { app, dialog } from '@electron/remote';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
-const { dialog } = remote;
-
-const Walletopen = ({feedback}) => {
-  feedback = feedback ? feedback:onOpen;
+const Walletopen = ({ feedback }) => {
+  feedback = feedback ? feedback : onOpen;
   const [form] = Form.useForm();
   const { t } = useTranslation();
   return (
     <div className="open">
       <Form form={form} onFinish={feedback}>
         <Form.Item name="path" onClick={opendialog(form)} rules={[{ required: true, message: t("wallet.please select file path") }]}>
-          <Input disabled className="dis-file" prefix={<UserOutlined />} placeholder={t("please select file location")}/>
+          <Input disabled className="dis-file" prefix={<UserOutlined />} placeholder={t("please select file location")} />
         </Form.Item>
         <Form.Item name="password" rules={[{ required: true, message: t("wallet.please input password") }]} >
-          <Input.Password placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />}/>
+          <Input.Password placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />} />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">{t("button.confirm")}</Button>
@@ -31,7 +29,7 @@ const Walletopen = ({feedback}) => {
   )
 };
 
-const Walletcreate = ({feedback}) => {
+const Walletcreate = ({ feedback }) => {
   const [form] = Form.useForm();
   const { t } = useTranslation();
   // const [loading, changeLoad] = useState(false);
@@ -40,27 +38,27 @@ const Walletcreate = ({feedback}) => {
     <div className="open">
       <Form form={form} onFinish={feedback}>
         <Form.Item name="path" onClick={opensavedialog(form)} rules={[{ required: true, message: t("wallet.please select file path") }]}>
-          <Input disabled className="dis-file" prefix={<UserOutlined />} placeholder={t("please select file location")}/>
+          <Input disabled className="dis-file" prefix={<UserOutlined />} placeholder={t("please select file location")} />
         </Form.Item>
         <Form.Item name="pass" rules={[{ required: true, message: t("wallet.please input password") }]} hasFeedback >
-          <Input.Password placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />}/>
+          <Input.Password placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />} />
         </Form.Item>
         <Form.Item name="veripass" dependencies={['pass']}
-        hasFeedback
-        rules={[
-          {
-            required: true,
-            message: t("wallet.please confirm password"),
-          },
-          ({ getFieldValue }) => ({
-            validator(rule, value) {
-              if (!value || getFieldValue('pass') === value) return Promise.resolve();
-              return Promise.reject(t("wallet.password not match"));
+          hasFeedback
+          rules={[
+            {
+              required: true,
+              message: t("wallet.please confirm password"),
             },
-          }),
-        ]}
+            ({ getFieldValue }) => ({
+              validator(rule, value) {
+                if (!value || getFieldValue('pass') === value) return Promise.resolve();
+                return Promise.reject(t("wallet.password not match"));
+              },
+            }),
+          ]}
         >
-          <Input.Password placeholder={t("wallet.please input twice")} maxLength={30} prefix={<LockOutlined />}/>
+          <Input.Password placeholder={t("wallet.please input twice")} maxLength={30} prefix={<LockOutlined />} />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">{t("button.confirm")}</Button>
@@ -75,9 +73,9 @@ const Walletprivate = () => {
   const { t } = useTranslation();
   const [showElem, changeShow] = useState(false);
   const [priva, changePrivate] = useState("");
-  const veriPrivate = values =>{
-    let params = {"privateKey":values.private};
-    post("VerifyPrivateKey",params).then(res =>{
+  const veriPrivate = values => {
+    let params = { "privateKey": values.private };
+    post("VerifyPrivateKey", params).then(res => {
       var _data = res.data;
       if (_data.msgType === -1) {
         message.error(t("wallet.private fail"));
@@ -95,21 +93,21 @@ const Walletprivate = () => {
     <div className="open">
       <Form form={form} onFinish={veriPrivate}>
         <Form.Item name="private" rules={[{ required: true, message: t("please input Hex/WIF private key") }]}>
-          <Input disabled={showElem} placeholder={t("please input Hex/WIF private key")}/>
+          <Input disabled={showElem} placeholder={t("please input Hex/WIF private key")} />
         </Form.Item>
-        {!showElem?(
-        <Form.Item>
-          <Button type="primary" htmlType="submit">{t("button.next")}</Button>
-        </Form.Item>
-        ):null}
+        {!showElem ? (
+          <Form.Item>
+            <Button type="primary" htmlType="submit">{t("button.next")}</Button>
+          </Form.Item>
+        ) : null}
       </Form>
-      {showElem?(
+      {showElem ? (
         <div>
-            <Button onClick={() => changeShow(false)}>{t("button.prev")}</Button>
-            <Divider>{t("wallet.private key save wallet title")}</Divider>
-            <Walletcreate feedback={onPrivate(priva)}></Walletcreate>
+          <Button onClick={() => changeShow(false)}>{t("button.prev")}</Button>
+          <Divider>{t("wallet.private key save wallet title")}</Divider>
+          <Walletcreate feedback={onPrivate(priva)}></Walletcreate>
         </div>
-      ):null}
+      ) : null}
     </div>
   )
 };
@@ -119,9 +117,9 @@ const Walletencrypted = () => {
   const { t } = useTranslation();
   const [showElem, changeShow] = useState(false);
   const [encrypt, changeEncrypted] = useState("");
-  const veriPrivate = values =>{
-    let params = {"nep2Key":values.private,"password":values.pass};
-    post("VerifyNep2Key",params).then(res =>{
+  const veriPrivate = values => {
+    let params = { "nep2Key": values.private, "password": values.pass };
+    post("VerifyNep2Key", params).then(res => {
       var _data = res.data;
       if (_data.msgType === -1) {
         message.error(t("wallet.encryred fail"));
@@ -138,27 +136,27 @@ const Walletencrypted = () => {
   return (
     <div className="open">
       <Form form={form} onFinish={veriPrivate}>
-        <Form.Item name="private" rules={[{ required: true, message: t("wallet.please input encrypted")}]}>
-          <Input disabled={showElem} placeholder={t("wallet.please input encrypted")}/>
+        <Form.Item name="private" rules={[{ required: true, message: t("wallet.please input encrypted") }]}>
+          <Input disabled={showElem} placeholder={t("wallet.please input encrypted")} />
         </Form.Item>
-        {!showElem?(
-        <Form.Item name="pass" rules={[{ required: true, message: t("wallet.please input password") }]} hasFeedback >
-          <Input.Password disabled={showElem} placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />}/>
-        </Form.Item>
-        ):null}
-        {!showElem?(
-        <Form.Item>
-          <Button type="primary" htmlType="submit">{t("button.next")}</Button>
-        </Form.Item>
-        ):null}
+        {!showElem ? (
+          <Form.Item name="pass" rules={[{ required: true, message: t("wallet.please input password") }]} hasFeedback >
+            <Input.Password disabled={showElem} placeholder={t("please input password")} maxLength={30} prefix={<LockOutlined />} />
+          </Form.Item>
+        ) : null}
+        {!showElem ? (
+          <Form.Item>
+            <Button type="primary" htmlType="submit">{t("button.next")}</Button>
+          </Form.Item>
+        ) : null}
       </Form>
-      {showElem?(
+      {showElem ? (
         <div>
-            <Button onClick={() => changeShow(false)}>{t("button.prev")}</Button>
-            <Divider>{t("wallet.private key save wallet title")}</Divider>
-            <Walletcreate feedback={onPrivate(encrypt)}></Walletcreate>
+          <Button onClick={() => changeShow(false)}>{t("button.prev")}</Button>
+          <Divider>{t("wallet.private key save wallet title")}</Divider>
+          <Walletcreate feedback={onPrivate(encrypt)}></Walletcreate>
         </div>
-      ):null}
+      ) : null}
     </div>
   )
 };
@@ -171,7 +169,7 @@ const onOpen = values => {
     "path": values.path,
     "password": values.password
   };
-  post("OpenWallet",params).then(res =>{
+  post("OpenWallet", params).then(res => {
     var _data = res.data;
     if (_data.msgType === -1) {
       message.error(<Trans>wallet.open wallet failed</Trans>);
@@ -196,7 +194,7 @@ const onCreate = values => {
     "password": values.veripass,
     "privateKey": values.private || ""
   };
-  post("CreateWallet",params).then(res =>{
+  post("CreateWallet", params).then(res => {
     var _data = res.data;
     console.log(_data);
     if (_data.msgType === -1) {
@@ -216,7 +214,7 @@ const onCreate = values => {
  * 私钥/加密私钥打开
  */
 const onPrivate = (priva) => {
-  return (values)=>{
+  return (values) => {
     values.private = priva;
     onCreate(values);
   }
@@ -225,7 +223,7 @@ const onPrivate = (priva) => {
 //打开弹窗
 const opendialog = (form) => {
   const { t } = useTranslation();
-  return ()=>{
+  return () => {
     dialog.showOpenDialog({
       title: t("wallet.open wallet file"),
       defaultPath: '/',
@@ -246,7 +244,7 @@ const opendialog = (form) => {
 //保存弹窗
 const opensavedialog = (form) => {
   const { t } = useTranslation();
-  return ()=>{
+  return () => {
     dialog.showSaveDialog({
       title: t("wallet.save wallet file title"),
       defaultPath: '/',

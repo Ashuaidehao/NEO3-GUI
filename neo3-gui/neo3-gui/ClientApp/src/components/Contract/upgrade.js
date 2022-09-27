@@ -21,14 +21,12 @@ import { FolderOpenOutlined, SwapOutlined } from "@ant-design/icons";
 import { observer, inject } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
-import { remote } from "electron";
+import { app, dialog } from '@electron/remote';
 import { postAsync } from "../../core/request";
 import fs from "fs";
 
 
 const { Content } = Layout;
-const { dialog } = remote;
-
 const { TextArea } = Input;
 
 @withTranslation()

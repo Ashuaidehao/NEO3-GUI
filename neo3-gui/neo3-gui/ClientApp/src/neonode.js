@@ -1,11 +1,11 @@
 import { spawn } from "child_process";
 import path from "path";
-import { remote } from "electron";
+import { app, dialog } from '@electron/remote';
 import Config from "./config";
 
 const isMac = process.platform === "darwin";
 const isWin = process.platform === "win32";
-const appPath = remote.app.getAppPath();
+const appPath = app.getAppPath();
 // const isPack = remote.app.isPackaged;
 
 class NeoNode {
