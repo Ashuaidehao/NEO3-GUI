@@ -197,8 +197,6 @@ namespace Neo.Common.Storage
         }
 
 
-
-
         /// <summary>
         ///  Paged by Transactions
         /// </summary>
@@ -248,15 +246,16 @@ namespace Neo.Common.Storage
                     tx.Transfers.Any(t => addresses.Contains(t.To.Hash)));
             }
 
-            if (filter.Contracts.NotEmpty())
-            {
-                var contracts = filter.Contracts.Select(a => a.ToBigEndianHex()).Distinct().ToList();
-                query = query.Where(tx => tx.InvokeContracts.Any(c => contracts.Contains(c.Contract.Hash) && c.Contract.DeleteTxId == null));
-            }
+            //if (filter.Contracts.NotEmpty())
+            //{
+            //    var contracts = filter.Contracts.Select(a => a.ToBigEndianHex()).Distinct().ToList();
+            //    query = query.Where(tx => tx.InvokeContracts.Any(c => contracts.Contains(c.Contract.Hash) && c.Contract.DeleteTxId == null));
+            //}
             if (filter.Assets.NotEmpty())
             {
                 var assets = filter.Assets.Select(a => a.ToBigEndianHex()).Distinct().ToList();
-                query = query.Where(tx => tx.Transfers.Any(c => assets.Contains(c.Asset.Hash) && c.Asset.DeleteTxId == null));
+                var assetIds = _sqldb.Contracts.Where(c => assets.Contains(c.Hash) && c.DeleteTxId == null).Select(c => c.Id).ToList();
+                query = query.Where(tx => tx.Transfers.Any(c => assetIds.Contains(c.AssetId)));
             }
             var pageList = new PageList<TransactionInfo>();
             var pageIndex = filter.PageIndex <= 0 ? 0 : filter.PageIndex - 1;
@@ -622,6 +621,18 @@ namespace Neo.Common.Storage
                 .Include(t => t.To)
                 .Include(t => t.Asset).Where(t => t.Asset.DeleteTxId == null);
 
+            if (filter.Asset != null)
+            {
+                var assetHash = filter.Asset.ToBigEndianHex();
+                var asset = _sqldb.Contracts.FirstOrDefault(a => a.Hash == assetHash);
+                var assetId = asset?.Id ?? -1;
+                query = query.Where(r => r.AssetId == assetId);
+            }
+            if (filter.TxIds.NotEmpty())
+            {
+                var txids = filter.TxIds.Select(t => t.ToBigEndianHex()).Distinct().ToList();
+                query = query.Where(r => txids.Contains(r.TxId));
+            }
             if (filter.FromOrTo.NotEmpty())
             {
                 var addresses = filter.FromOrTo.Select(a => a.ToBigEndianHex()).ToList();
@@ -648,20 +659,10 @@ namespace Neo.Common.Storage
             {
                 query = query.Where(r => r.Time <= filter.EndTime.Value.ToUniversalTime());
             }
-            if (filter.Asset != null)
-            {
-                query = query.Where(r => r.Asset.Hash == filter.Asset.ToBigEndianHex());
-            }
             if (filter.BlockHeight != null)
             {
                 query = query.Where(r => r.BlockHeight == filter.BlockHeight);
             }
-            if (filter.TxIds.NotEmpty())
-            {
-                var txids = filter.TxIds.Select(t => t.ToBigEndianHex()).Distinct().ToList();
-                query = query.Where(r => txids.Contains(r.TxId));
-            }
-
             return query;
         }
 

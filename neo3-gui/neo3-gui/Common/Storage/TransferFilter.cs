@@ -34,12 +34,7 @@ namespace Neo.Common.Storage
         public List<UInt160> To { get; set; }
 
         public List<UInt160> FromOrTo { get; set; }
-
-        /// <summary>
-        /// Relate contracts hash
-        /// </summary>
-        public List<UInt160> Contracts { get; set; }
-
+        
         /// <summary>
         /// Relate  asset contracts hash
         /// </summary>
