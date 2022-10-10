@@ -5,7 +5,7 @@ import Config from "../config";
 let count = 0;
 const request = async (method, params) => {
   // 默认Axios Post方法
-  const url = Config.RPCURL;
+  const url = Config.getRpcUrl();
   if (method === "") {
     message.error("method null");
     return;

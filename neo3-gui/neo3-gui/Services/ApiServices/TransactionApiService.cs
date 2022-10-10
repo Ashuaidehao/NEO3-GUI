@@ -169,7 +169,7 @@ namespace Neo.Services.ApiServices
             }
             if (contract != null)
             {
-                filter.Contracts = new List<UInt160>() { contract };
+                filter.Assets = new List<UInt160>() { contract };
             }
             if (blockHash != null)
             {
@@ -200,28 +200,25 @@ namespace Neo.Services.ApiServices
         public async Task<object> QueryNep5Transactions(int pageIndex = 1, int limit = 100, UInt160 address = null, UInt160 asset = null, uint? blockHeight = null)
         {
             using var db = new TrackDB();
-            var filter = new TransactionFilter()
+            var filter = new TransferFilter()
             {
                 BlockHeight = blockHeight,
                 PageIndex = pageIndex,
+                Asset = asset,
                 PageSize = limit
             };
             if (address != null)
             {
                 filter.FromOrTo = new List<UInt160>() { address };
             }
-            if (asset != null)
-            {
-                filter.Assets = new List<UInt160>() { asset };
-            }
-
-            var trans = db.QueryTransactions(filter, true);
+      
+            var trans = db.QueryTransfersPagedByTx(filter);
             var result = new PageList<TransactionPreviewModel>
             {
                 TotalCount = trans.TotalCount,
                 PageSize = trans.PageSize,
                 PageIndex = pageIndex,
-                List = ConvertToTransactionPreviewModel(trans.List),
+                List = trans.List.ToTransactionPreviewModel(),
             };
             return result;
         }

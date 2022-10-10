@@ -18,10 +18,9 @@ import {
 } from "antd";
 import Sync from "../sync";
 import { Layout } from "antd";
-import { remote } from "electron";
+import { app, dialog } from '@electron/remote';
 
 const { Content } = Layout;
-const { dialog } = remote;
 
 class Loadfile extends React.Component {
   constructor(props) {
@@ -35,7 +34,7 @@ class Loadfile extends React.Component {
   toHome = () => {
     location.href = location.origin;
   };
-  toPage = (e) => {};
+  toPage = (e) => { };
   selectNef = () => {
     this.opendialog((res) => {
       this.setState({ path: res.filePaths }, () => {

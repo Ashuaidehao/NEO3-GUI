@@ -3,7 +3,8 @@ import { useTranslation } from "react-i18next";
 import { Form, message, Input, Button, Radio } from "antd";
 import { walletStore } from "../../store/stores";
 import { post } from "../../core/request";
-import { shell, remote } from "electron";
+import { shell } from "electron";
+import { app, dialog } from '@electron/remote';
 import { LockOutlined } from "@ant-design/icons";
 import Config from "../../config";
 
@@ -166,7 +167,7 @@ const Setting = ({ switchnetwork }) => {
 
       <h4 className="mt3">{t("settings.about")}</h4>
       <p className="font-s">
-        {t("settings.version")} {remote.app.getVersion()}
+        {t("settings.version")} {app.getVersion()}
       </p>
 
       <div className="mt1 mb3 text-c small">
