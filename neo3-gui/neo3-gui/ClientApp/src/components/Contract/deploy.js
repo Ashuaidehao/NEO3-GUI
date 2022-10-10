@@ -1,7 +1,6 @@
 /* eslint-disable */
-import React, { useState } from "react";
+import React, { useState, createRef } from "react";
 import "antd/dist/antd.css";
-import axios from "axios";
 import {
   Input,
   Icon,
@@ -37,6 +36,7 @@ const { TextArea } = Input;
 class Contractdeploy extends React.Component {
   constructor(props) {
     super(props);
+    this.myForm = createRef();
     this.state = {
       size: "default",
       nefpath: "",
@@ -94,7 +94,7 @@ class Contractdeploy extends React.Component {
       });
   };
   onFill = () => {
-    this.refs.formRef.setFieldsValue({
+    this.myForm.current.setFieldsValue({
       nefPath: this.state.nefpath,
       manifestPath: this.state.manipath,
       tresult: this.state.tresult,
@@ -102,7 +102,7 @@ class Contractdeploy extends React.Component {
   };
   onTest = () => {
     const { t } = this.props;
-    this.refs.formRef
+    this.myForm.current
       .validateFields()
       .then((data) => {
         let _params = data;
@@ -142,7 +142,7 @@ class Contractdeploy extends React.Component {
         ),
         okText: t("button.ok"),
       });
-      this.refs.formRef.setFieldsValue({
+      this.myForm.current.setFieldsValue({
         nefPath: "",
         manifestPath: "",
         tresult: "",
@@ -190,7 +190,7 @@ class Contractdeploy extends React.Component {
             <Col span={24} className="bg-white pv4">
               <PageHeader title={t("contract.deploy contract")}></PageHeader>
               <Form
-                ref="formRef"
+                ref={this.myForm}
                 className="trans-form mt3"
                 onFinish={this.ondeploy}
               >

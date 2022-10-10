@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React from "react";
+import React, { createRef } from "react";
 import "antd/dist/antd.css";
 import { Input, message } from "antd";
 import Topath from "../Common/topath";
@@ -11,6 +11,7 @@ import { postAsync } from "../../core/request";
 class AssetSearch extends React.Component {
   constructor(props) {
     super(props);
+    this.assetInput = createRef();
     this.state = {
       size: "default",
       path: "",
@@ -48,7 +49,7 @@ class AssetSearch extends React.Component {
   }
   searchAsset = async () => {
     const { t } = this.props;
-    let hash = this.refs.sinput.input.value.trim();
+    let hash = this.assetInput.current.input.value.trim();
     if (!hash || hash.length != 42) {
       message.info(t("search.check again"));
       return;
@@ -73,13 +74,12 @@ class AssetSearch extends React.Component {
         <div className={this.state.cname}>
           <div
             className="search-detail"
-            ref="sarea"
             onClick={this.stopPropagation}
           >
             <Input
               placeholder={t("search.asset-search-hint")}
               onPressEnter={this.searchAsset}
-              ref="sinput"
+              ref={this.assetInput}
               suffix={<ArrowRightOutlined onClick={this.searchAsset} />}
             />
           </div>

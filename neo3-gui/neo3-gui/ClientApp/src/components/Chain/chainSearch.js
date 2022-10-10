@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React from "react";
+import React, { createRef } from "react";
 import "antd/dist/antd.css";
 import { Input, message } from "antd";
 import Topath from "../Common/topath";
@@ -11,6 +11,7 @@ import { postAsync } from "../../core/request";
 class Chainsearch extends React.Component {
   constructor(props) {
     super(props);
+    this.searchInput = createRef();
     this.state = {
       size: "default",
       path: "",
@@ -48,7 +49,7 @@ class Chainsearch extends React.Component {
   }
   searchChain = async () => {
     const { t } = this.props;
-    let input = this.refs.sinput.input.value.trim();
+    let input = this.searchInput.current.input.value.trim();
     let blockHeight = 0;
     let blockHash = null;
     if (input.length == 66) {
@@ -78,13 +79,12 @@ class Chainsearch extends React.Component {
         <div className={this.state.cname}>
           <div
             className="search-detail"
-            ref="sarea"
             onClick={this.stopPropagation}
           >
             <Input
               placeholder={t("search.chain-hint")}
               onPressEnter={this.searchChain}
-              ref="sinput"
+              ref={this.searchInput}
               suffix={<ArrowRightOutlined onClick={this.searchChain} />}
             />
           </div>

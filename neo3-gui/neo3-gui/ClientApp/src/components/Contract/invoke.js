@@ -21,22 +21,13 @@ import { SwapOutlined } from "@ant-design/icons";
 import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import DynamicArray from "./dynamicArray";
-import { post, postAsync } from "../../core/request";
-import { MinusSquareOutlined, PlusOutlined } from "@ant-design/icons";
+import { postAsync } from "../../core/request";
 import ParameterInput from "../Common/parameterInput";
 import { createRef } from "react";
-import FormItem from "antd/lib/form/FormItem";
 
 const { Option } = Select;
-
 const { TextArea } = Input;
 const { Content } = Layout;
-
-const layout = {
-  labelCol: { span: 0 },
-  wrapperCol: { span: 0 },
-};
-const typeOption = ["ByteArray", "Address", "Hash160"];
 
 @withTranslation()
 @inject("walletStore")
@@ -46,6 +37,7 @@ class Contractinvoke extends React.Component {
   constructor(props) {
     super(props);
     this.myForm = createRef();
+    this.contractHashInput = createRef();
     this.state = {
       size: 'default',
       path: "",
@@ -73,7 +65,7 @@ class Contractinvoke extends React.Component {
   };
   searchContract = async () => {
     const { t } = this.props;
-    let _hash = this.refs.sinput.input.value.trim();
+    let _hash = this.contractHashInput.current.input.value.trim();
     if (!_hash) {
       message.info(t("contract.search input check"));
       return;
@@ -307,7 +299,7 @@ class Contractinvoke extends React.Component {
                       ]}
                     >
                       {/* <Input defaultValue="0x9bde8f209c88dd0e7ca3bf0af0f476cdd8207789" ref="sinput" placeholder="Scripthash"/> */}
-                      <Input ref="sinput" placeholder="Scripthash" />
+                      <Input ref={this.contractHashInput} placeholder="Scripthash" />
                     </Form.Item>
 
                     <Form.Item

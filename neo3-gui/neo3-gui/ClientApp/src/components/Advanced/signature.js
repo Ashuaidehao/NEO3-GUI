@@ -1,11 +1,11 @@
 /* eslint-disable */
-import React from 'react';
+import React, { createRef } from 'react';
 import 'antd/dist/antd.css';
 import { Form, Input, Button } from 'antd';
 import { Layout, Row, Col, Tabs, message, PageHeader, Modal } from 'antd';
 import Sync from '../sync';
 import "../../static/css/advanced.css";
-import { withTranslation, useTranslation } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import { Trans } from 'react-i18next';
 import { post } from "../../core/request";
 
@@ -94,6 +94,7 @@ function error(data) {
 class Advancedsignature extends React.Component {
     constructor(props) {
         super(props);
+        this.myForm = createRef();
         this.state = {
             visible: false,
             signres: ""
@@ -106,14 +107,10 @@ class Advancedsignature extends React.Component {
             var _data = res.data;
             if (_data.msgType === -1) {
                 error(_data);
-                // changeBroad(values.sign)
-                // _this.refs.broadform.setFieldsValue({
-                //     broadcast:values.sign
-                // });
             } else if (_data.msgType === 3) {
                 success(_data);
                 // changeBroad(_data.result)
-                _this.refs.broadform.setFieldsValue({
+                _this.myForm.current.setFieldsValue({
                     broadcast: _data.result
                 });
             }
@@ -169,7 +166,7 @@ class Advancedsignature extends React.Component {
                                         <Form
                                             name="form"
                                             onFinish={this.onBroad}
-                                            ref="broadform"
+                                            ref={this.myForm}
                                         >
                                             <h4>{t('advanced.signature result')}</h4>
                                             <Form.Item

@@ -1,18 +1,16 @@
 /* eslint-disable */
-import React from 'react';
-import axios from 'axios';
+import React, { createRef } from 'react';
 import {
-  Modal, Input,
-  Form,
-  InputNumber,
-  Select,
-  Row,
-  Col,
-  message,
-  Divider,
-  Button,
+    Modal, Input,
+    Form,
+    InputNumber,
+    Select,
+    Row,
+    Col,
+    message,
+    Divider,
+    Button,
 } from 'antd';
-import { Layout } from 'antd';
 import '../../static/css/wallet.css'
 import { withTranslation, Trans } from "react-i18next";
 import { post } from "../../core/request";
@@ -22,29 +20,30 @@ const { Option } = Select;
 
 
 @withTranslation()
-class Multitomulti extends React.Component{
+class Multitomulti extends React.Component {
     constructor(props) {
         super(props);
+        this.myForm = createRef();
         this.state = {
             iconLoading: false,
-            assetlist:[],
-            addresslist:[]
+            assetlist: [],
+            addresslist: []
         };
     }
     setAddress = (key) => {
         // 地址-index 键值对对照组
-        if(this.state.addresslist.length === 0){
+        if (this.state.addresslist.length === 0) {
             var addresslist = {};
-            this.props.account.map((item,index)=>{
+            this.props.account.map((item, index) => {
                 addresslist[item.address] = index;
             })
             this.setState({
                 addresslist: addresslist
             })
         }
-        return () =>{
+        return () => {
             //对每个新增的field数据分别绑定
-            var add = event.target?event.target.textContent:null;
+            var add = event.target ? event.target.textContent : null;
             var target = this.state.addresslist[add];
             var _list = this.state.assetlist;
             _list[key] = this.props.account[target].balances;
@@ -52,28 +51,28 @@ class Multitomulti extends React.Component{
         }
     }
     toTrim = value => {
-        
-    // setNumber({ ...validatePrimeNumber(value), value });
 
-    //     console.log(e.target)
-    //     this.formRef.current.setFieldsValue({
-    //         receiver: (e.target.value).trim()
-    //     });
+        // setNumber({ ...validatePrimeNumber(value), value });
+
+        //     console.log(e.target)
+        //     this.formRef.current.setFieldsValue({
+        //         receiver: (e.target.value).trim()
+        //     });
     };
     clickToCopy = (text) => {
         navigator.clipboard.writeText(text)
         message.success(<Trans>common.copied</Trans>)
     }
-    transfer = values =>{
-        const {t}=this.props;
+    transfer = values => {
+        const { t } = this.props;
         var _this = this;
         this.setState({ iconLoading: true });
-        post("SendTo",values.params).then(res =>{
+        post("SendTo", values.params).then(res => {
             var _data = res.data;
             var result = res.data.result;
             _this.setState({ iconLoading: true });
 
-            if(_data.msgType === -1){
+            if (_data.msgType === -1) {
                 let res = _data.error;
                 let title = (<Trans>wallet.transfer send error</Trans>);
                 let content = (
@@ -84,11 +83,11 @@ class Multitomulti extends React.Component{
                 );
 
                 if (res.code === 20014) {
-                    title = (<Trans>wallet.transfer send error 20014</Trans>); 
+                    title = (<Trans>wallet.transfer send error 20014</Trans>);
                     content = (
                         <div className="show-pri">
                             <pre style={{ overflow: 'hidden', overflowX: 'auto', overflowY: 'scroll', maxHeight: '60vh', width: 'auto' }}>
-                                <code>{ JSON.stringify(JSON.parse(res.message), null, 2) }</code>
+                                <code>{JSON.stringify(JSON.parse(res.message), null, 2)}</code>
                             </pre>
                             <p>
                                 <Button type="link" style={{ margin: 0, color: '#00B594' }} onClick={() => this.clickToCopy(res.message)}>
@@ -111,150 +110,150 @@ class Multitomulti extends React.Component{
                     Modal.error(args);
                 }
                 return;
-            }else{
+            } else {
                 Modal.success({
-                title: t('wallet.transfer send success'),
-                content: (
-                    <div className="show-pri">
-                        <p>{t("blockchain.transaction hash")}：</p>
-                        <p>{result.txId}</p>
-                    </div>
-                ),
-                okText:t("button.confirm")
+                    title: t('wallet.transfer send success'),
+                    content: (
+                        <div className="show-pri">
+                            <p>{t("blockchain.transaction hash")}：</p>
+                            <p>{result.txId}</p>
+                        </div>
+                    ),
+                    okText: t("button.confirm")
                 });
-                _this.refs.formRef.resetFields()
-                _this.setState({
-                    assetlist:[],
-                    addresslist:[]
+                this.myForm.current.resetFields()
+                this.setState({
+                    assetlist: [],
+                    addresslist: []
                 })
             }
         })
     }
-    render = () =>{
+    render = () => {
         const { account, t } = this.props;
         const { assetlist } = this.state;
         return (
-        <div className="w600 info-detail mt3">
-        <Form ref="formRef" className="trans-form" onFinish={this.transfer}>
-            <Form.List name="params">
-                {(fields, { add, remove }) => {
-                fields.length===0?add():null;
-                return (
-                    <div>
-                    {fields.map((field) => (
-                      <div key={field.key}>
-                      <Row>
-                        <Col span="15">
-                        <Form.Item
-                            name={[field.name, "sender"]}
-                            label={t("wallet.from")}
-                            rules={[
-                            {
-                                required: true,
-                                message: t("wallet.please select a account"),
-                            },
-                            ]}
-                        >
-                            <Select
-                            placeholder={t("select account")}
-                            style={{ width: '100%' }}
-                            onChange={this.setAddress(field.key)}>
-                            {account.map((item,index) => {
-                                return (
-                                <Option key={item.address}>{item.address}</Option>
-                                )
-                            })}
-                            </Select>
-                        </Form.Item>
-                        </Col>
-                        <Col span="9">
-                            <Form.Item
-                                name={[field.name, "asset"]}
-                                label={t("wallet.asset")}
-                                rules={[
-                                {
-                                    required: true,
-                                    message: t("wallet.required"),
-                                },
-                                ]}
-                            >
-                            <Select
-                                placeholder={t("wallet.select")}
-                                style={{ width: '100%' }}>
-                                {!!assetlist[field.key]?assetlist[field.key].map((item) => {
-                                    return (
-                                    <Option key={item.asset}><span className="trans-symbol">{item.symbol} </span><small>{item.balance}</small></Option>
-                                    )
-                                }):null}
-                            </Select>
-                            </Form.Item>
-                        </Col>
-                        </Row>
-                        <Row>
-                        <Col span="15">
-                            {/*  pattern={value => value.replace(/[^0-9]/g, '')} */}
-                        <Form.Item
-                            name={[field.name, "receiver"]}
-                            label={t("wallet.to")}
-                            rules={[          {
-                                pattern:"^[N][1-9A-HJ-NP-Za-km-z]{32,34}$",
-                                message: t("wallet.address format"),
-                            },
-                            {
-                                required: true,
-                                message: t("wallet.please input a correct amount"),
-                            },
-                            ]}
-                        >
-                            <Input placeholder={t("input account")} />
-                        </Form.Item>
-                        </Col>
-                        <Col span="9">
-                        <Form.Item
-                            name={[field.name, "amount"]}
-                            label={t("wallet.amount")}
-                            rules={[
-                            {
-                                required: true,
-                                message: t("wallet.required"),
-                            },
-                            ]}>
-                            <InputNumber min={0} step={1} placeholder={t("wallet.amount")} />
-                        </Form.Item>
-                        </Col>
-                        {fields.length > 1 ? (
-                            <Divider orientation="right">
-                                <a className="delete-line" onClick={ () => { remove(field.name); }}><MinusSquareOutlined /> <span className="font-s">{t("wallet.delete add")}</span></a>
-                            </Divider>
-                        ) : null}
-                      </Row>
-                      </div>
-                    ))}
-                    <Form.Item className="mb0">
-                      <Button
-                        type="dashed"
-                        onClick={() => {
-                          add();
+            <div className="w600 info-detail mt3">
+                <Form ref={this.myForm} className="trans-form" onFinish={this.transfer}>
+                    <Form.List name="params">
+                        {(fields, { add, remove }) => {
+                            fields.length === 0 ? add() : null;
+                            return (
+                                <div>
+                                    {fields.map((field) => (
+                                        <div key={field.key}>
+                                            <Row>
+                                                <Col span="15">
+                                                    <Form.Item
+                                                        name={[field.name, "sender"]}
+                                                        label={t("wallet.from")}
+                                                        rules={[
+                                                            {
+                                                                required: true,
+                                                                message: t("wallet.please select a account"),
+                                                            },
+                                                        ]}
+                                                    >
+                                                        <Select
+                                                            placeholder={t("select account")}
+                                                            style={{ width: '100%' }}
+                                                            onChange={this.setAddress(field.key)}>
+                                                            {account.map((item, index) => {
+                                                                return (
+                                                                    <Option key={item.address}>{item.address}</Option>
+                                                                )
+                                                            })}
+                                                        </Select>
+                                                    </Form.Item>
+                                                </Col>
+                                                <Col span="9">
+                                                    <Form.Item
+                                                        name={[field.name, "asset"]}
+                                                        label={t("wallet.asset")}
+                                                        rules={[
+                                                            {
+                                                                required: true,
+                                                                message: t("wallet.required"),
+                                                            },
+                                                        ]}
+                                                    >
+                                                        <Select
+                                                            placeholder={t("wallet.select")}
+                                                            style={{ width: '100%' }}>
+                                                            {!!assetlist[field.key] ? assetlist[field.key].map((item) => {
+                                                                return (
+                                                                    <Option key={item.asset}><span className="trans-symbol">{item.symbol} </span><small>{item.balance}</small></Option>
+                                                                )
+                                                            }) : null}
+                                                        </Select>
+                                                    </Form.Item>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col span="15">
+                                                    {/*  pattern={value => value.replace(/[^0-9]/g, '')} */}
+                                                    <Form.Item
+                                                        name={[field.name, "receiver"]}
+                                                        label={t("wallet.to")}
+                                                        rules={[{
+                                                            pattern: "^[N][1-9A-HJ-NP-Za-km-z]{32,34}$",
+                                                            message: t("wallet.address format"),
+                                                        },
+                                                        {
+                                                            required: true,
+                                                            message: t("wallet.please input a correct amount"),
+                                                        },
+                                                        ]}
+                                                    >
+                                                        <Input placeholder={t("input account")} />
+                                                    </Form.Item>
+                                                </Col>
+                                                <Col span="9">
+                                                    <Form.Item
+                                                        name={[field.name, "amount"]}
+                                                        label={t("wallet.amount")}
+                                                        rules={[
+                                                            {
+                                                                required: true,
+                                                                message: t("wallet.required"),
+                                                            },
+                                                        ]}>
+                                                        <InputNumber min={0} step={1} placeholder={t("wallet.amount")} />
+                                                    </Form.Item>
+                                                </Col>
+                                                {fields.length > 1 ? (
+                                                    <Divider orientation="right">
+                                                        <a className="delete-line" onClick={() => { remove(field.name); }}><MinusSquareOutlined /> <span className="font-s">{t("wallet.delete add")}</span></a>
+                                                    </Divider>
+                                                ) : null}
+                                            </Row>
+                                        </div>
+                                    ))}
+                                    <Form.Item className="mb0">
+                                        <Button
+                                            type="dashed"
+                                            onClick={() => {
+                                                add();
+                                            }}
+                                            style={{ width: "100%" }}
+                                        >
+                                            <PlusOutlined /> {t("wallet.transfer add")}
+                                        </Button>
+                                    </Form.Item>
+                                </div>
+                            );
                         }}
-                        style={{ width: "100%" }}
-                      >
-                        <PlusOutlined /> {t("wallet.transfer add")}
-                      </Button>
-                    </Form.Item>
-                  </div>
-                );
-                }}
-            </Form.List>
+                    </Form.List>
 
-            <Form.Item>
-                <Button type="primary" htmlType="submit">
-                    {t("wallet.transfer")}
-                </Button>
-            </Form.Item>
-        </Form>
-        </div>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                            {t("wallet.transfer")}
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </div>
         );
     }
-} 
+}
 
 export default Multitomulti;

@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React from "react";
+import React, { createRef } from "react";
 import "antd/dist/antd.css";
 import { Input, message } from "antd";
 import Topath from "../Common/topath";
@@ -11,6 +11,7 @@ import { postAsync } from "../../core/request";
 class Searcharea extends React.Component {
   constructor(props) {
     super(props);
+    this.searchInput = createRef();
     this.state = {
       size: "default",
       path: "",
@@ -48,7 +49,7 @@ class Searcharea extends React.Component {
   }
   searchContract = async () => {
     const { t } = this.props;
-    let _hash = this.refs.sinput.input.value.trim();
+    let _hash = this.searchInput.current.input.value.trim();
     if (!_hash) {
       message.info(t("search.check again"));
       return;
@@ -73,13 +74,12 @@ class Searcharea extends React.Component {
         <div className={this.state.cname}>
           <div
             className="search-detail"
-            ref="sarea"
             onClick={this.stopPropagation}
           >
             <Input
               placeholder={t("search.hash-hint")}
               onPressEnter={this.searchContract}
-              ref="sinput"
+              ref={this.searchInput}
               suffix={<ArrowRightOutlined onClick={this.searchContract} />}
             />
           </div>
