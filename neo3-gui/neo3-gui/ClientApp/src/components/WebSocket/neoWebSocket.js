@@ -19,7 +19,7 @@ class NeoWebSocket {
 
   createWebSocket = () => {
     this.log("creating new webscoket");
-    let ws = new WebSocket(Config.WSURL);
+    let ws = new WebSocket(Config.getWsUrl());
 
     ws.onopen = () => {
       this.log("[opened]");

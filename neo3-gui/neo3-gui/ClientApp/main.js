@@ -11,6 +11,8 @@ const {
 } = require("electron"); // eslint-disable-line import/no-extraneous-dependencies
 const path = require("path");
 const url = require("url");
+const remote = require('@electron/remote/main');
+remote.initialize();
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -36,12 +38,14 @@ function createWindow() {
     webPreferences: {
       javascript: true,
       plugins: true,
-      nodeIntegration: false,
+      contextIsolation: false,
+      nodeIntegration: true,
       webSecurity: false,
       preload: path.join(__dirname, "./preload.js"),
     },
   });
 
+  remote.enable(mainWindow.webContents);
   // and load the index.html of the app.
   if (process.env.NODE_ENV === "development") {
     console.log("development");
@@ -71,6 +75,7 @@ function createWindow() {
   mainWindow.webContents.on("new-window", function (event, url) {
     event.preventDefault();
   });
+
 }
 
 if (!gotTheLock) {

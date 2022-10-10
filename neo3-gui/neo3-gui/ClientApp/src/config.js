@@ -1,9 +1,11 @@
 import fs from "fs";
 import path from "path";
-import { remote } from "electron";
+import { app, dialog } from '@electron/remote';
 
-const appPath = remote.app.getAppPath().replace("app.asar", "");
+const appPath = app.getAppPath().replace("app.asar", "");
 const CONFIG_FILE_NAME = path.join(appPath, "gui-config.json");
+let RPCURL = "";
+let WSURL = "";
 class Config {
   constructor() {
     try {
@@ -24,8 +26,8 @@ class Config {
   initConfig = (config) => {
     this.Host = config.Host || "localhost"
     this.Port = config.Port || 8081;
-    this.RPCURL = "http://" + this.Host + ":" + this.Port;
-    this.WSURL = "ws://" + this.Host + ":" + this.Port;
+    RPCURL = "http://" + this.Host + ":" + this.Port;
+    WSURL = "ws://" + this.Host + ":" + this.Port;
     this.Language = config.Language || "";
     this.Network = config.Network || "mainnet";
   };
@@ -58,6 +60,11 @@ class Config {
     this.Network = network;
     this.saveConfig();
   };
+
+  getRpcUrl = () => RPCURL;
+
+  getWsUrl = () => WSURL;
+
 }
 
 const config = new Config();

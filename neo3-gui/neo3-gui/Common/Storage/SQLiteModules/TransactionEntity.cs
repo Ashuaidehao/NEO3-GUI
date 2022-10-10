@@ -22,6 +22,5 @@ namespace Neo.Common.Storage.SQLiteModules
 
         public DateTime Time { get; set; }
         public IList<TransferEntity> Transfers { get; set; }
-        public IList<InvokeRecordEntity> InvokeContracts { get; set; }
     }
 }

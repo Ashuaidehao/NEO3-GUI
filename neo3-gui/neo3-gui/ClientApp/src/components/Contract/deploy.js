@@ -16,20 +16,18 @@ import {
   Button,
 } from "antd";
 import { Layout } from "antd";
-import Intitle from "../Common/intitle";
 import "../../static/css/wallet.css";
 import Sync from "../sync";
 import { FolderOpenOutlined } from "@ant-design/icons";
 import { observer, inject } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
-import { remote } from "electron";
+import { app, dialog } from '@electron/remote';
 import fs from "fs";
 import { postAsync } from "../../core/request";
 
 
 const { Content } = Layout;
-const { dialog } = remote;
 const { TextArea } = Input;
 
 @withTranslation()

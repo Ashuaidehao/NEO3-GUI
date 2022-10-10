@@ -27,7 +27,6 @@ namespace Neo.Common.Storage.SQLiteModules
         public DbSet<AssetBalanceEntity> AssetBalances { get; set; }
         public DbSet<AddressEntity> Addresses { get; set; }
         public DbSet<TransactionEntity> Transactions { get; set; }
-        //public DbSet<InvokeRecordEntity> InvokeRecords { get; set; }
 
         public DbSet<ContractEntity> Contracts { get; set; }
         public DbSet<ContractUpdateRecordEntity> ContractUpdateRecords { get; set; }
@@ -42,7 +41,7 @@ namespace Neo.Common.Storage.SQLiteModules
 
         public SQLiteContext() : this(Path.Combine($"Data_Track", $"track.{CliSettings.Default.Protocol.Network}.db"))
         {
-            
+
         }
 
         public SQLiteContext(string filename)
@@ -109,6 +108,7 @@ namespace Neo.Common.Storage.SQLiteModules
             modelBuilder.Entity<TransferEntity>().HasIndex(p => p.ToId);
             modelBuilder.Entity<TransferEntity>().HasIndex(p => p.Time);
             modelBuilder.Entity<TransferEntity>().HasIndex(p => p.TxId);
+            modelBuilder.Entity<TransferEntity>().HasIndex(p => new { p.AssetId, p.TxId, p.Time });
 
             modelBuilder.Entity<AddressEntity>().HasIndex(p => p.Hash);
 
@@ -117,10 +117,7 @@ namespace Neo.Common.Storage.SQLiteModules
             modelBuilder.Entity<SyncIndex>().HasIndex(p => p.BlockHeight);
 
             modelBuilder.Entity<TransactionEntity>().HasIndex(p => p.BlockHeight);
-
-            modelBuilder.Entity<InvokeRecordEntity>().HasIndex(p => p.TxId);
-            modelBuilder.Entity<InvokeRecordEntity>().HasIndex(p => p.ContractId);
-
+            
         }
     }
 }
