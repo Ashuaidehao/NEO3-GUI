@@ -2,7 +2,7 @@
 import React from "react";
 import { observer, inject } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css";
 import { message, Modal, Radio } from "antd";
 import { Addressdetail, Changepass, Setting } from "./menuaction";
 import {
@@ -21,8 +21,8 @@ import { walletStore } from "../../store/stores";
 @withTranslation()
 @inject("walletStore")
 @inject("blockSyncStore")
-@withRouter
 @observer
+@withRouter
 class menuDown extends React.Component {
   constructor(props) {
     super(props);

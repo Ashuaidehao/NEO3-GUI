@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React from 'react';
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.min.css';
 import {
   Checkbox,
   PageHeader,
@@ -15,8 +15,6 @@ import {
 } from 'antd';
 import { Layout } from 'antd';
 import Sync from '../sync';
-import { observer, inject } from "mobx-react";
-import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import "../../static/css/advanced.css";
 import { postAsync } from '../../core/request';
@@ -25,8 +23,6 @@ const { Option } = Select;
 const { Content } = Layout;
 
 @withTranslation()
-@observer
-@withRouter
 class Advancednoderole extends React.Component {
   constructor(props) {
     super(props);
@@ -44,7 +40,7 @@ class Advancednoderole extends React.Component {
     });
     console.log(response);
   }
-  render = () => {
+  render() {
     const { t } = this.props;
     const { disabled, rolelist } = this.state;
     return (

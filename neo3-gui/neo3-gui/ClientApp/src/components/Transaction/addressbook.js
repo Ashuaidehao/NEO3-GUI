@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React from "react";
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css";
 import axios from "axios";
 import { Table, Divider, Tag } from "antd";
 
@@ -28,11 +28,11 @@ class AddressBook extends React.Component {
       console.log("数据库打开报错");
     };
   }
-  getAddress = () => {};
-  addAddress = () => {};
-  delAddress = () => {};
-  updateAddress = () => {};
-  deTable = () => {};
+  getAddress = () => { };
+  addAddress = () => { };
+  delAddress = () => { };
+  updateAddress = () => { };
+  deTable = () => { };
   render() {
     return (
       <div>

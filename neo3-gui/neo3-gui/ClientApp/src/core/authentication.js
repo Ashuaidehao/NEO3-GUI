@@ -11,7 +11,6 @@ function Authenticated(Component) {
   }
 
   // 创建验证组件
-  @inject("walletStore")
   @observer
   class AuthenticatedComponent extends React.Component {
     render() {

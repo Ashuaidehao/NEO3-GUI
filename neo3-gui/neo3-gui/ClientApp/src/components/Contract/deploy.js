@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useState, createRef } from "react";
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css";
 import {
   Input,
   Icon,
@@ -18,21 +18,17 @@ import { Layout } from "antd";
 import "../../static/css/wallet.css";
 import Sync from "../sync";
 import { FolderOpenOutlined } from "@ant-design/icons";
-import { observer, inject } from "mobx-react";
-import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import { app, dialog } from '@electron/remote';
 import fs from "fs";
 import { postAsync } from "../../core/request";
-
+import { Authenticated } from '../../core/authentication';
 
 const { Content } = Layout;
 const { TextArea } = Input;
 
 @withTranslation()
-@inject("walletStore")
-@withRouter
-@observer
+@Authenticated
 class Contractdeploy extends React.Component {
   constructor(props) {
     super(props);
@@ -179,7 +175,7 @@ class Contractdeploy extends React.Component {
         // console.log(error);
       });
   };
-  render = () => {
+  render() {
     const { t } = this.props;
     const { disabled, cost } = this.state;
     return (

@@ -23,7 +23,7 @@ namespace Neo.Services.ApiServices
 {
     public class ContractApiService : ApiService
     {
-        public async Task<object> GetAllContracts()
+        public async Task<object> GetAllContracts(int pageIndex = 0, int pageSize = 100)
         {
             var list = new List<ContractInfoModel>();
             list.AddRange(NativeContract.Contracts.Select(c => new ContractInfoModel()
@@ -33,7 +33,7 @@ namespace Neo.Services.ApiServices
             }));
             var nativeHashes = new HashSet<string>(list.Select(x => x.Hash.ToBigEndianHex()));
             using var db = new TrackDB();
-            var assets = db.GetAllContracts()?.Where(a => !nativeHashes.Contains(a.Hash)).Select(a =>
+            var assets = db.GetAllContracts()?.Where(a => !nativeHashes.Contains(a.Hash)).Skip(pageIndex * pageSize).Take(pageSize).Select(a =>
                 new ContractInfoModel()
                 {
                     Hash = UInt160.Parse(a.Hash),
@@ -376,7 +376,7 @@ namespace Neo.Services.ApiServices
             }
         }
 
-   
+
         public static ContractParameter JsonToContractParameter(JsonElement json)
         {
             var type = json.GetProperty("type").GetString();

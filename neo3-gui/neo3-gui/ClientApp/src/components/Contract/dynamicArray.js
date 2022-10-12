@@ -1,5 +1,5 @@
 import React from "react";
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css";
 import { withTranslation } from "react-i18next";
 import { Form, Input, Button, Select, Row, Col } from "antd";
 import { PlusOutlined, MinusSquareOutlined } from "@ant-design/icons";
@@ -28,7 +28,7 @@ class DynamicArray extends React.Component {
   handleparam = (values) => {
     this.props.handleparam(values);
   };
-  render = () => {
+  render() {
     const { t } = this.props;
     return (
       <Form

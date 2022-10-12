@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { createRef } from "react";
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css";
 import { Input, message } from "antd";
 import Topath from "../Common/topath";
 import { ArrowRightOutlined, SearchOutlined } from "@ant-design/icons";
@@ -66,7 +66,7 @@ class Searcharea extends React.Component {
       this.setState({ topath: "transaction:" + _hash });
     }
   };
-  render = () => {
+  render() {
     const { t } = this.props;
     return (
       <div className="search-area">

@@ -125,7 +125,7 @@ class Onetomulti extends React.Component {
             }
         })
     }
-    render = () => {
+    render() {
         const { account } = this.props;
         const { selectadd } = this.state;
         const { t } = this.props;

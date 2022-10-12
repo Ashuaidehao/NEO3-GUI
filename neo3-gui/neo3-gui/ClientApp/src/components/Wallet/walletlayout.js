@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React from "react";
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css";
 import "../../static/css/menu.css";
 import "../../static/css/wallet.css";
 import { Link } from "react-router-dom";
@@ -14,7 +14,7 @@ const { SubMenu } = Menu;
 
 @withTranslation()
 class Walletlayout extends React.Component {
-  render = () => {
+  render() {
     const { t } = this.props;
     return (
       <div style={{ height: "100%" }}>

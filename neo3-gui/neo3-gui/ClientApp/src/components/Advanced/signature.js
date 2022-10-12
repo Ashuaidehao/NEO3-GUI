@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { createRef } from 'react';
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.min.css';
 import { Form, Input, Button } from 'antd';
 import { Layout, Row, Col, Tabs, message, PageHeader, Modal } from 'antd';
 import Sync from '../sync';
@@ -8,6 +8,7 @@ import "../../static/css/advanced.css";
 import { withTranslation } from "react-i18next";
 import { Trans } from 'react-i18next';
 import { post } from "../../core/request";
+import { Authenticated } from '../../core/authentication';
 
 
 const { Content } = Layout;
@@ -91,6 +92,7 @@ function error(data) {
 }
 
 @withTranslation()
+@Authenticated
 class Advancedsignature extends React.Component {
     constructor(props) {
         super(props);

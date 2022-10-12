@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React from 'react';
-import { withRouter, Link } from 'react-router-dom';
-import 'antd/dist/antd.css';
+import { Link } from 'react-router-dom';
+import 'antd/dist/antd.min.css';
 import '../../static/css/menu.css'
 import '../../static/css/contract.css'
 import { Layout, Menu, List, Row, Col, PageHeader, Typography, Avatar } from 'antd';
@@ -43,7 +43,7 @@ class Contract extends React.Component {
       assetlist: response.result
     })
   }
-  render = () => {
+  render() {
     const { t } = this.props;
     const { assetlist } = this.state;
     return (

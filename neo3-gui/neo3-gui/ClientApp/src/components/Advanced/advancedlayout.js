@@ -1,7 +1,5 @@
 /* eslint-disable */
 import React from "react";
-import { observer, inject } from "mobx-react";
-import { withRouter } from "react-router-dom";
 import { Layout, Menu } from "antd";
 import { Link } from "react-router-dom";
 import MenuDown from "../Common/menudown";
@@ -13,7 +11,7 @@ const { SubMenu } = Menu;
 
 @withTranslation()
 class Advancedlayout extends React.Component {
-  render = () => {
+  render() {
     const { t } = this.props;
     return (
       <div style={{ height: "100%" }}>

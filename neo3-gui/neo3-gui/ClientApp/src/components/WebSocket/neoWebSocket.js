@@ -10,11 +10,17 @@ class NeoWebSocket {
     console.log("NeoWebSocket=>", ...arguments);
   }
 
-  /**
-   * Only need call once over the entire app life
-   */
+  warn() {
+    console.warn("NeoWebSocket=>", ...arguments)
+  }
+
+
   initWebSocket = () => {
-    this.ws = this.createWebSocket();
+    try {
+      this.ws = this.createWebSocket();
+    } catch (error) {
+      this.warn(error);
+    }
   };
 
   createWebSocket = () => {
@@ -26,12 +32,12 @@ class NeoWebSocket {
     };
 
     ws.onclose = (e) => {
-      this.log("[closed]", e);
+      this.warn("[closed]", e);
       this.reconnectWebSocket();
     };
 
     ws.onerror = (e) => {
-      this.log("[error]", e);
+      this.warn("[error]", e);
     };
 
     ws.onmessage = this.processMessage;

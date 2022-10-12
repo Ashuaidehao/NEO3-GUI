@@ -14,7 +14,6 @@ import {
 import '../../static/css/wallet.css'
 import { withTranslation, Trans } from "react-i18next";
 import { post } from "../../core/request";
-
 import { MinusSquareOutlined, PlusOutlined } from '@ant-design/icons';
 const { Option } = Select;
 
@@ -26,39 +25,22 @@ class Multitomulti extends React.Component {
         this.myForm = createRef();
         this.state = {
             iconLoading: false,
-            assetlist: [],
-            addresslist: []
+            assetlist: []
         };
     }
-    setAddress = (key) => {
-        // 地址-index 键值对对照组
-        if (this.state.addresslist.length === 0) {
-            var addresslist = {};
-            this.props.account.map((item, index) => {
-                addresslist[item.address] = index;
-            })
+    setAddress = (formIndexKey, address) => {
+        var acct = this.props.account.find(a => a.address == address);
+        if (acct) {
+            let list = this.state.assetlist;
+            list[formIndexKey] = acct.balances;
             this.setState({
-                addresslist: addresslist
-            })
-        }
-        return () => {
-            //对每个新增的field数据分别绑定
-            var add = event.target ? event.target.textContent : null;
-            var target = this.state.addresslist[add];
-            var _list = this.state.assetlist;
-            _list[key] = this.props.account[target].balances;
-            this.setState({ assetlist: _list })
+                assetList: list
+            });
+        } else {
+            console.error(address, " not exits");
         }
     }
-    toTrim = value => {
 
-        // setNumber({ ...validatePrimeNumber(value), value });
-
-        //     console.log(e.target)
-        //     this.formRef.current.setFieldsValue({
-        //         receiver: (e.target.value).trim()
-        //     });
-    };
     clickToCopy = (text) => {
         navigator.clipboard.writeText(text)
         message.success(<Trans>common.copied</Trans>)
@@ -123,21 +105,19 @@ class Multitomulti extends React.Component {
                 });
                 this.myForm.current.resetFields()
                 this.setState({
-                    assetlist: [],
-                    addresslist: []
+                    assetlist: []
                 })
             }
         })
     }
-    render = () => {
+    render() {
         const { account, t } = this.props;
         const { assetlist } = this.state;
         return (
             <div className="w600 info-detail mt3">
-                <Form ref={this.myForm} className="trans-form" onFinish={this.transfer}>
+                <Form ref={this.myForm} className="trans-form" onFinish={this.transfer} initialValues={{ params: [null] }}>
                     <Form.List name="params">
                         {(fields, { add, remove }) => {
-                            fields.length === 0 ? add() : null;
                             return (
                                 <div>
                                     {fields.map((field) => (
@@ -157,7 +137,7 @@ class Multitomulti extends React.Component {
                                                         <Select
                                                             placeholder={t("select account")}
                                                             style={{ width: '100%' }}
-                                                            onChange={this.setAddress(field.key)}>
+                                                            onChange={(e) => this.setAddress(field.key, e)}>
                                                             {account.map((item, index) => {
                                                                 return (
                                                                     <Option key={item.address}>{item.address}</Option>

@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useState } from "react";
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css";
 import {
   Input,
   Icon,
@@ -19,10 +19,10 @@ import "../../static/css/wallet.css";
 import Sync from "../sync";
 import { FolderOpenOutlined, SwapOutlined } from "@ant-design/icons";
 import { observer, inject } from "mobx-react";
-import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import { app, dialog } from '@electron/remote';
 import { postAsync } from "../../core/request";
+import { Authenticated } from '../../core/authentication';
 import fs from "fs";
 
 
@@ -31,8 +31,8 @@ const { TextArea } = Input;
 
 @withTranslation()
 @inject("walletStore")
-@withRouter
 @observer
+@Authenticated
 class ContractUpgrade extends React.Component {
   constructor(props) {
     super(props);
@@ -209,7 +209,7 @@ class ContractUpgrade extends React.Component {
         message.error(t("contract.please select file path"));
       });
   }
-  render = () => {
+  render() {
     const { t } = this.props;
     const accounts = this.props.walletStore.accountlist;
 

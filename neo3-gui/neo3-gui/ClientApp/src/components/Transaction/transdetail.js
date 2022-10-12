@@ -2,17 +2,15 @@
 import React from 'react';
 import _ from 'lodash';
 import '../../static/css/trans.css';
-import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { Layout, Row, Col, Tabs, message, PageHeader, Divider } from 'antd';
-import { Hashdetail, Attrlist, Translist, Witlist,Scriptlist} from './translog';
+import { Hashdetail, Attrlist, Translist, Witlist, Scriptlist } from './translog';
 import Notifies from './translog';
 import Datatrans from '../Common/datatrans';
-import { withRouter } from "react-router-dom";
 import Sync from '../sync';
 import { useTranslation, withTranslation } from "react-i18next";
 import { post } from "../../core/request";
-
-import { SwapOutlined,ArrowLeftOutlined } from '@ant-design/icons';
+import { SwapOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -29,8 +27,8 @@ class Transcon extends React.Component {
       witnesses: [],
       attributes: [],
       notifies: [],
-      script:"",
-      scriptcode:[]
+      script: "",
+      scriptcode: []
     };
   }
   componentDidMount() {
@@ -41,8 +39,8 @@ class Transcon extends React.Component {
         witnesses: res.witnesses,
         attributes: res.attributes,
         notifies: res.notifies,
-        script:res.script,
-        scriptcode:res.scriptCode,
+        script: res.script,
+        scriptcode: res.scriptCode,
       });
     });
   }
@@ -61,7 +59,7 @@ class Transcon extends React.Component {
     let params = {
       "txId": location.pathname.split(":").pop()
     };
-    post("GetTransaction",params).then(res =>{
+    post("GetTransaction", params).then(res => {
       var _data = res.data;
       if (_data.msgType === -1) {
         message.error("查询失败");
@@ -74,21 +72,21 @@ class Transcon extends React.Component {
       _this.props.history.goBack();
     });
   }
-  notifiesData = () =>{
+  notifiesData = () => {
     console.log(this.state.notifies)
   }
-  back=()=>{
+  back = () => {
     const { location, history } = this.props;
-    const from = _.get(location, 'state.from', null);
+    const from = location.state?.from || null;
     if (from) {
       history.replace(from);
     } else {
       history.goBack();
     }
   }
-  render = () => {
+  render() {
     const { t } = this.props;
-    const { hashdetail, transfers, witnesses, attributes,script,scriptcode } = this.state;
+    const { hashdetail, transfers, witnesses, attributes, script, scriptcode } = this.state;
     return (
       <Layout className="gui-container">
         <Sync />
@@ -102,7 +100,7 @@ class Transcon extends React.Component {
                   <Translist transfers={transfers} />
                   <Attrlist attributes={attributes} />
                   <Witlist witnesses={witnesses} />
-                  <Scriptlist script={script} scriptcode={scriptcode}/>
+                  <Scriptlist script={script} scriptcode={scriptcode} />
                 </TabPane>
                 <TabPane tab={t("blockchain.transaction.log")} key="2">
                   <Notifies notifies={this.state.notifies} />

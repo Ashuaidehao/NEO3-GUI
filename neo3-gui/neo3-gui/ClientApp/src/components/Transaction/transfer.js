@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { createRef } from 'react';
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.min.css';
 import {
   Alert, Input,
   PageHeader,
@@ -98,7 +98,7 @@ class Transfer extends React.Component {
       selectadd: []
     })
   }
-  render = () => {
+  render() {
     const { t } = this.props;
     const { size, addresslist, selectadd } = this.state;
     return (

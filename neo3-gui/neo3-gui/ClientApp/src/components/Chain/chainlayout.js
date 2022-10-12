@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React from "react";
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css";
 import "../../static/css/menu.css";
 import "../../static/css/wallet.css";
 import { Layout, Menu, Icon } from "antd";
@@ -23,7 +23,7 @@ class Chainlayout extends React.Component {
   toHome = () => {
     location.href = location.origin;
   };
-  render = () => {
+  render() {
     const { t } = this.props;
     return (
       <div style={{ height: "100%" }}>

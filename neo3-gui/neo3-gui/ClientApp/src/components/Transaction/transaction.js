@@ -5,13 +5,10 @@ import { observer, inject } from "mobx-react";
 import { withRouter, Link } from 'react-router-dom';
 import { Layout, Row, Col, List, Button, PageHeader, message } from 'antd';
 import { withTranslation } from "react-i18next";
-import Searcharea from './searcharea'
 import { SwapRightOutlined } from '@ant-design/icons';
 import { postAsync } from "../../core/request"
 
 @withTranslation()
-@inject("walletStore")
-@observer
 @withRouter
 class Transaction extends React.Component {
   constructor(props) {
@@ -221,8 +218,8 @@ class Transaction extends React.Component {
       console.log(this.state.show)
     }
   }
-  render = () => {
-    const { t } = this.props;
+  render() {
+    const { t, location } = this.props;
     const { translist, local, loading, iswa, isnpe, page, allpage } = this.state;
     const loadMore = !loading && page <= allpage ? (
       <div className="text-c mb3">
@@ -231,6 +228,7 @@ class Transaction extends React.Component {
             (<Button type="primary" onClick={this.loadMore}>{t('common.load more')}</Button>)}
       </div>
     ) : null;
+    const path = location.pathname || null;
     return (
       <div>
         <List
@@ -248,10 +246,14 @@ class Transaction extends React.Component {
               /> */}
               <div className="trans-detail">
                 <p>
-                  <Link className="w500 ellipsis hash" to={{
-                    pathname: local + item.txId, title: t("show detail"),
-                    state: { from: _.get(this.props, 'location.pathname', null) }
-                  }}>{item.txId}</Link>
+                  <Link className="w500 ellipsis hash"
+                    to={{
+                      pathname: local + item.txId,
+                      state: { from: path }
+                    }}
+                    title={t("show detail")}
+                    state={{ from: path }}
+                  > {item.txId}</Link>
                   <span className="float-r">{item.blockTime}</span>
                 </p>
                 {item.transfers?.length > 0 ?
@@ -264,11 +266,12 @@ class Transaction extends React.Component {
                   : null}
               </div>
             </List.Item>
-          )}
+          )
+          }
         />
         {/* <Searcharea show={this.show()} />
         <div className="pv1"></div> */}
-      </div>
+      </div >
     );
   }
 }

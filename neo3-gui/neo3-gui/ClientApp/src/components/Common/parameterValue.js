@@ -86,9 +86,9 @@ class ParameterValue extends React.Component {
     });
   };
 
-  componentDidMount = () => {};
+  componentDidMount = () => { };
 
-  render = () => {
+  render() {
     const { value, type, options } = this.state;
     const optionItems = options.map((item, i) => (
       <option key={i}>{item}</option>

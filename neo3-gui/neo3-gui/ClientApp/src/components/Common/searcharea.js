@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useState, createRef } from "react";
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css";
 import { useHistory } from "react-router-dom";
 import { Input, message } from "antd";
 import Topath from "../Common/topath";
@@ -64,7 +64,7 @@ class Searcharea extends React.Component {
     }
     this.setState({ topath: "/contract/detail:" + _hash });
   };
-  render = () => {
+  render() {
     const { t } = this.props;
     return (
       <div className="search-area">

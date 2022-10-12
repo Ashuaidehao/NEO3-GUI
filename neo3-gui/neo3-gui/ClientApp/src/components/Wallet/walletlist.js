@@ -2,12 +2,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { observer, inject } from "mobx-react";
-import axios from 'axios';
 import { Layout, message, Row, Col, List, Avatar, Button, Typography, PageHeader, Modal, Input, Select, Form, InputNumber } from 'antd';
 import '../../static/css/wallet.css'
 import Sync from '../sync';
 import { withTranslation, useTranslation, Trans } from "react-i18next";
 import { post, postAsync } from "../../core/request";
+import { Authenticated } from '../../core/authentication';
 import { Copy } from '../copy';
 
 import {
@@ -21,6 +21,7 @@ const { Option } = Select;
 @withTranslation()
 @inject("walletStore")
 @observer
+@Authenticated
 class Walletlist extends React.Component {
   constructor(props) {
     super(props);

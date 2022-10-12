@@ -40,8 +40,7 @@ const postAsync = async (method, params) => {
     }
     return response.data;
   } catch (e) {
-    console.error(e);
-    console.log(e.response);
+    console.error(method, params, e.response, e);
     throw e;
   }
 }

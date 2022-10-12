@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React from "react";
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css";
 import { observer, inject } from "mobx-react";
 import {
   Input,
@@ -18,10 +18,10 @@ import { Layout } from "antd";
 import "../../static/css/wallet.css";
 import Sync from "../sync";
 import { SwapOutlined } from "@ant-design/icons";
-import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import DynamicArray from "./dynamicArray";
 import { postAsync } from "../../core/request";
+import { Authenticated } from '../../core/authentication';
 import ParameterInput from "../Common/parameterInput";
 import { createRef } from "react";
 
@@ -31,8 +31,8 @@ const { Content } = Layout;
 
 @withTranslation()
 @inject("walletStore")
-@withRouter
 @observer
+@Authenticated
 class Contractinvoke extends React.Component {
   constructor(props) {
     super(props);
@@ -264,7 +264,7 @@ class Contractinvoke extends React.Component {
   onOk = () => {
     form.submit();
   };
-  render = () => {
+  render() {
     const { methods, params, disabled } = this.state;
     const accounts = this.props.walletStore.accountlist;
     const { t } = this.props;
