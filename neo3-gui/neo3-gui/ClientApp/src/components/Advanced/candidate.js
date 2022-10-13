@@ -18,14 +18,14 @@ import Sync from "../sync";
 import { withTranslation } from "react-i18next";
 import "../../static/css/advanced.css";
 import { postAsync } from "../../core/request";
-import { Authenticated } from '../../core/authentication';
+import { withAuthenticated } from '../../core/authentication';
 const { Option } = Select;
 
 const CheckboxGroup = Checkbox.Group;
 const { Content } = Layout;
 
 @withTranslation()
-@Authenticated
+@withAuthenticated
 class Advancedcandidate extends React.Component {
   constructor(props) {
     super(props);

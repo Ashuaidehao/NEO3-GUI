@@ -13,14 +13,14 @@ import {
 } from '@ant-design/icons';
 import { withTranslation } from "react-i18next";
 import { postAsync } from '../../core/request';
-import { Authenticated } from '../../core/authentication';
+import { withAuthenticated } from '../../core/authentication';
 
 
 const { confirm } = Modal;
 const { Content } = Layout;
 
 @withTranslation()
-@Authenticated
+@withAuthenticated
 class Walletdetail extends React.Component {
   constructor(props) {
     super(props);

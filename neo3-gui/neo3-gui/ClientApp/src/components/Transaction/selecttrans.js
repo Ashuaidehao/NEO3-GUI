@@ -8,14 +8,14 @@ import Multitomulti from "./multitomulti";
 import Onetomulti from "./onetomulti";
 import Sync from "../sync";
 import { post } from "../../core/request";
-import { Authenticated } from '../../core/authentication';
+import { withAuthenticated } from '../../core/authentication';
 import { withTranslation } from "react-i18next";
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
 
 @withTranslation()
-@Authenticated
+@withAuthenticated
 class Transfer extends React.Component {
   constructor(props) {
     super(props);

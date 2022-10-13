@@ -8,7 +8,7 @@ import "../../static/css/advanced.css";
 import { withTranslation } from "react-i18next";
 import { Trans } from 'react-i18next';
 import { post } from "../../core/request";
-import { Authenticated } from '../../core/authentication';
+import { withAuthenticated } from '../../core/authentication';
 
 
 const { Content } = Layout;
@@ -92,7 +92,7 @@ function error(data) {
 }
 
 @withTranslation()
-@Authenticated
+@withAuthenticated
 class Advancedsignature extends React.Component {
     constructor(props) {
         super(props);

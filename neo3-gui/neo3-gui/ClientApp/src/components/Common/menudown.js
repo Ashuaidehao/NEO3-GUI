@@ -18,11 +18,11 @@ import neonode from "../../neonode";
 import { post, postAsync } from "../../core/request";
 import { walletStore } from "../../store/stores";
 
+@withRouter
 @withTranslation()
 @inject("walletStore")
 @inject("blockSyncStore")
 @observer
-@withRouter
 class menuDown extends React.Component {
   constructor(props) {
     super(props);

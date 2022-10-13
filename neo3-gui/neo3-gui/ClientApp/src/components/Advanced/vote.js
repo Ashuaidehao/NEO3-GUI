@@ -22,16 +22,16 @@ import { withTranslation, Trans } from "react-i18next";
 import "../../static/css/advanced.css";
 import { shell } from "electron";
 import { post } from '../../core/request';
-import { Authenticated } from '../../core/authentication';
+import { withAuthenticated } from '../../core/authentication';
 const { Option } = Select;
 
 const CheckboxGroup = Checkbox.Group;
 const { Content } = Layout;
 
+@withAuthenticated
 @withTranslation()
 @inject("walletStore")
 @observer
-@Authenticated
 class Advancedvote extends React.Component {
   constructor(props) {
     super(props);

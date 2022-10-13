@@ -22,13 +22,13 @@ import { withTranslation } from "react-i18next";
 import { app, dialog } from '@electron/remote';
 import fs from "fs";
 import { postAsync } from "../../core/request";
-import { Authenticated } from '../../core/authentication';
+import { withAuthenticated } from '../../core/authentication';
 
 const { Content } = Layout;
 const { TextArea } = Input;
 
 @withTranslation()
-@Authenticated
+@withAuthenticated
 class Contractdeploy extends React.Component {
   constructor(props) {
     super(props);

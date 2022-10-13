@@ -22,17 +22,18 @@ import { observer, inject } from "mobx-react";
 import { withTranslation } from "react-i18next";
 import { app, dialog } from '@electron/remote';
 import { postAsync } from "../../core/request";
-import { Authenticated } from '../../core/authentication';
+import { withAuthenticated } from '../../core/authentication';
 import fs from "fs";
 
 
 const { Content } = Layout;
 const { TextArea } = Input;
 
+
+@withAuthenticated
 @withTranslation()
 @inject("walletStore")
 @observer
-@Authenticated
 class ContractUpgrade extends React.Component {
   constructor(props) {
     super(props);

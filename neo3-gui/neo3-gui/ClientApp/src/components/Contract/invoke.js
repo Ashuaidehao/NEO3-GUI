@@ -21,7 +21,7 @@ import { SwapOutlined } from "@ant-design/icons";
 import { withTranslation } from "react-i18next";
 import DynamicArray from "./dynamicArray";
 import { postAsync } from "../../core/request";
-import { Authenticated } from '../../core/authentication';
+import { withAuthenticated } from '../../core/authentication';
 import ParameterInput from "../Common/parameterInput";
 import { createRef } from "react";
 
@@ -29,10 +29,10 @@ const { Option } = Select;
 const { TextArea } = Input;
 const { Content } = Layout;
 
+@withAuthenticated
 @withTranslation()
 @inject("walletStore")
 @observer
-@Authenticated
 class Contractinvoke extends React.Component {
   constructor(props) {
     super(props);

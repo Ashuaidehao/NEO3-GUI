@@ -9,7 +9,7 @@ import Sync from '../sync';
 import { observer, inject } from "mobx-react";
 import { useTranslation, withTranslation, Trans } from "react-i18next";
 import { post } from "../../core/request";
-import { Authenticated } from '../../core/authentication';
+import { withAuthenticated } from '../../core/authentication';
 import { WalletOutlined, RetweetOutlined, ForkOutlined, EditOutlined } from '@ant-design/icons';
 import { Copy } from '../copy';
 
@@ -17,10 +17,10 @@ const { Option } = Select;
 const { Content } = Layout;
 const { TabPane } = Tabs;
 
+@withAuthenticated
 @withTranslation()
 @inject("walletStore")
 @observer
-@Authenticated
 class AdvancedCommittee extends React.Component {
   constructor(props) {
     super(props);

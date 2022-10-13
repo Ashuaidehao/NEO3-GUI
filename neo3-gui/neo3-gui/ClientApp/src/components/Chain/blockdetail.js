@@ -1,7 +1,7 @@
 /* eslint-disable */
 //just test replace wallet//
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Layout, Row, Col, message, PageHeader, List } from "antd";
 import { SwapRightOutlined } from "@ant-design/icons";
 import Sync from "../sync";
@@ -12,6 +12,8 @@ import { withTranslation, useTranslation } from "react-i18next";
 export default function BlockDetail() {
   const { Content } = Layout;
   const { t } = useTranslation();
+  const location = useLocation();
+  const path = location.pathname || null;
 
   const [height, setHeight] = useState(0);
   const [blockdetail, setBlockDetail] = useState({});
@@ -183,7 +185,11 @@ export default function BlockDetail() {
                     <p>
                       <Link
                         className="w500 ellipsis hash"
-                        to={"/chain/transaction:" + item.txId}
+                        to={{
+                          pathname: "/chain/transaction:" + item.txId,
+                          state: { from: path }
+                        }}
+                        state={{ from: path }}
                         title={t("show detail")}
                       >
                         {item.txId}

@@ -4,14 +4,14 @@ import Transaction from "../Transaction/transaction";
 import Untransaction from "../Transaction/untransaction";
 import Sync from "../sync";
 import { withTranslation } from "react-i18next";
-import { Authenticated } from '../../core/authentication';
+import { withAuthenticated } from '../../core/authentication';
 
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
 
 @withTranslation()
-@Authenticated
+@withAuthenticated
 class Wallettrans extends React.Component {
   constructor(props) {
     super(props);
