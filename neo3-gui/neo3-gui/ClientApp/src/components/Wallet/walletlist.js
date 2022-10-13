@@ -1,23 +1,24 @@
-/* eslint-disable */
+2/* eslint-disable */
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { observer, inject } from "mobx-react";
-import axios from 'axios';
 import { Layout, message, Row, Col, List, Avatar, Button, Typography, PageHeader, Modal, Input, Select, Form, InputNumber } from 'antd';
 import '../../static/css/wallet.css'
 import Sync from '../sync';
 import { withTranslation, useTranslation, Trans } from "react-i18next";
 import { post, postAsync } from "../../core/request";
+import { withAuthenticated } from '../../core/authentication';
 import { Copy } from '../copy';
 
 import {
   PlusCircleOutlined
 } from '@ant-design/icons';
-import { values } from 'mobx';
 
 const { Content } = Layout;
 const { Option } = Select;
 
+
+@withAuthenticated
 @withTranslation()
 @inject("walletStore")
 @observer

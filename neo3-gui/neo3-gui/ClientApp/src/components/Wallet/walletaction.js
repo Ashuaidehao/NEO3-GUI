@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useState } from 'react';
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.min.css';
 import { Form, message, Input, Button, Divider } from 'antd';
 import { walletStore } from "../../store/stores";
 import { useTranslation, Trans } from "react-i18next";

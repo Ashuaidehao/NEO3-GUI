@@ -13,12 +13,14 @@ import {
 } from '@ant-design/icons';
 import { withTranslation } from "react-i18next";
 import { postAsync } from '../../core/request';
+import { withAuthenticated } from '../../core/authentication';
 
 
 const { confirm } = Modal;
 const { Content } = Layout;
 
 @withTranslation()
+@withAuthenticated
 class Walletdetail extends React.Component {
   constructor(props) {
     super(props);
@@ -107,7 +109,7 @@ class Walletdetail extends React.Component {
       okText: t("button.ok")
     });
   }
-  render = () => {
+  render() {
     const { assetlist, address } = this.state;
     const { t, location } = this.props;
     const accountType = _.get(location, 'props.accountType', 2);

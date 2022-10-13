@@ -1,7 +1,6 @@
 /* eslint-disable */
-import React from 'react';
-import 'antd/dist/antd.css';
-import axios from 'axios';
+import React, { createRef } from 'react';
+import 'antd/dist/antd.min.css';
 import {
   Alert, Input,
   PageHeader,
@@ -25,13 +24,11 @@ const { Option } = Select;
 const { Content } = Layout;
 const AutoCompleteOption = AutoComplete.Option;
 
-
-const { MonthPicker, RangePicker } = DatePicker;
-
 @withTranslation()
 class Transfer extends React.Component {
   constructor(props) {
     super(props);
+    this.myForm = createRef();
     this.state = {
       size: 'default',
       iconLoading: false,
@@ -96,7 +93,7 @@ class Transfer extends React.Component {
       ),
       okText: "确认"
     });
-    this.refs.formRef.resetFields()
+    this.myForm.resetFields()
     this.setState({
       selectadd: []
     })
@@ -108,7 +105,7 @@ class Transfer extends React.Component {
       <Layout className="gui-container">
         <Sync />
         <Content className="mt3">
-          <Form ref="formRef" className="trans-form" onFinish={this.transfer}>
+          <Form ref={this.myForm} className="trans-form" onFinish={this.transfer}>
             <Row gutter={[30, 0]} className="bg-white pv4" style={{ 'minHeight': 'calc( 100vh - 150px )' }}>
               <Col span={24}>
                 <PageHeader title={t("wallet.transfer")}></PageHeader>

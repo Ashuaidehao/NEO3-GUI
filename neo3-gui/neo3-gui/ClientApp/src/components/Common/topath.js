@@ -1,5 +1,5 @@
 import React from "react";
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css";
 import { Redirect } from "react-router-dom";
 
 class Topath extends React.Component {

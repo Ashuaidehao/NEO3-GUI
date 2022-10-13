@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React from "react";
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css";
 import {
   Checkbox,
   PageHeader,
@@ -15,21 +15,17 @@ import {
 } from "antd";
 import { Layout } from "antd";
 import Sync from "../sync";
-import { observer, inject } from "mobx-react";
-import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import "../../static/css/advanced.css";
 import { postAsync } from "../../core/request";
-
+import { withAuthenticated } from '../../core/authentication';
 const { Option } = Select;
 
 const CheckboxGroup = Checkbox.Group;
 const { Content } = Layout;
 
 @withTranslation()
-@inject("walletStore")
-@observer
-@withRouter
+@withAuthenticated
 class Advancedcandidate extends React.Component {
   constructor(props) {
     super(props);
@@ -105,7 +101,7 @@ class Advancedcandidate extends React.Component {
       okText: t("button.ok"),
     });
   };
-  render = () => {
+  render() {
     const { t } = this.props;
     const { disabled, accountlist } = this.state;
     return (

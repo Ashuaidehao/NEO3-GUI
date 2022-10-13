@@ -131,7 +131,7 @@ class ParameterInput extends React.Component {
     //     console.log(e);
     // }
 
-    render = () => {
+    render() {
         const { name, type } = this.props;
         const { options } = this.state;
         return (

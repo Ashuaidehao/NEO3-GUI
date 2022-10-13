@@ -40,7 +40,7 @@ class Untransaction extends React.Component {
     } else if (page === "wallet") {
       this.walletset(_params);
       this.setState({
-        local:"/wallet/untransaction:"
+        local: "/wallet/untransaction:"
       })
     } else {
       this.allset(_params);
@@ -77,7 +77,7 @@ class Untransaction extends React.Component {
     })
   }
   getMyuntrans = (params, callback) => {
-    post("GetMyUnconfirmedTransactions",params).then(res =>{
+    post("GetMyUnconfirmedTransactions", params).then(res => {
       var _data = res.data;
       if (_data.msgType === -1) {
         message.error("查询失败");
@@ -88,7 +88,7 @@ class Untransaction extends React.Component {
     });
   };
   getAlluntrans = (params, callback) => {
-    post("GetUnconfirmTransactions",params).then(res =>{
+    post("GetUnconfirmTransactions", params).then(res => {
       var _data = res.data;
       if (_data.msgType === -1) {
         message.error("查询失败");
@@ -142,15 +142,16 @@ class Untransaction extends React.Component {
       );
     });
   }
-  render = () => {
-    const { t } = this.props;
-    const { untranslist, loading, iswa, page, allpage,local } = this.state;
+  render() {
+    const { t, location } = this.props;
+    const { untranslist, loading, iswa, page, allpage, local } = this.state;
     const loadUnMore = !loading && page <= allpage ? (
       <div className="text-c mb3">
-        {iswa ? (<Button type="primary" onClick={this.loadMyUnMore}>{ t('common.load more') }</Button>)
-          : (<Button type="primary" onClick={this.loadUnMore}>{ t('common.load more') }</Button>)}
+        {iswa ? (<Button type="primary" onClick={this.loadMyUnMore}>{t('common.load more')}</Button>)
+          : (<Button type="primary" onClick={this.loadUnMore}>{t('common.load more')}</Button>)}
       </div>
     ) : null;
+    const path = location.pathname || null;
     return (
       <div>
         <List
@@ -167,11 +168,17 @@ class Untransaction extends React.Component {
               title={<span className="fail-light">{t('blockchain.transaction.unconfirmed')}</span>}
               /> */}
               <div className="trans-detail">
-                  <p>
-                    <Link className="w500 ellipsis hash" to={{ pathname: local + item.txId, title: t("show detail"), 
-                      state: { from: _.get(this.props, 'location.pathname', null) } }}>{item.txId}</Link>
-                    <span className="float-r">{item.blockTime}</span>
-                  </p>
+                <p>
+                  <Link className="w500 ellipsis hash"
+                    to={{
+                      pathname: local + item.txId,
+                      state: { from: path }
+                    }}
+                    title={t("show detail")}
+                    state={{ from: path }}
+                  >{item.txId}</Link>
+                  <span className="float-r">{item.blockTime}</span>
+                </p>
               </div>
             </List.Item>
           )}

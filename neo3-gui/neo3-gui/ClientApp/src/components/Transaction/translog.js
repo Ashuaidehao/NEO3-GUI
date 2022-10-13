@@ -274,7 +274,7 @@ class Notifies extends React.Component {
     super(props);
     this.state = {};
   }
-  render = () => {
+  render() {
     const { t } = this.props;
     const { notifies } = this.props;
     return (

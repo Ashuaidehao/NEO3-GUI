@@ -1,7 +1,6 @@
 /* eslint-disable */
 import React from "react";
-import { observer, inject } from "mobx-react";
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css";
 import { Alert, Tabs, Row, message, Col } from "antd";
 import { Layout } from "antd";
 import "../../static/css/wallet.css";
@@ -9,15 +8,14 @@ import Multitomulti from "./multitomulti";
 import Onetomulti from "./onetomulti";
 import Sync from "../sync";
 import { post } from "../../core/request";
-
+import { withAuthenticated } from '../../core/authentication';
 import { withTranslation } from "react-i18next";
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
 
 @withTranslation()
-@inject("walletStore")
-@observer
+@withAuthenticated
 class Transfer extends React.Component {
   constructor(props) {
     super(props);

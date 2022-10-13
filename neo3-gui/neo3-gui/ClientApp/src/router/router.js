@@ -60,13 +60,13 @@ const BasicRoute = () => (
             <Route path="/wallet">
                 <Layout style={{ height: 'calc( 100vh )' }}>
                     <Route component={Walletlayout} />
-                    <Route exact path="/wallet/walletlist" component={Authenticated(Walletlist)} />
-                    <Route exact path="/wallet/walletlist:address" component={Authenticated(Walletdetail)} />
-                    <Route exact path="/wallet/address:address" component={Authenticated(Walletdetail)} />
-                    <Route exact path="/wallet/transaction" component={Authenticated(Wallettrans)} />
-                    <Route exact path="/wallet/transaction:hash" component={Authenticated(Transdetail)} />
-                    <Route exact path="/wallet/untransaction:hash" component={Authenticated(Untransdetail)} />
-                    <Route exact path="/wallet/transfer" component={Authenticated(Selecttrans)} />
+                    <Route exact path="/wallet/walletlist" component={Walletlist} />
+                    <Route exact path="/wallet/walletlist:address" component={Walletdetail} />
+                    <Route exact path="/wallet/address:address" component={Walletdetail} />
+                    <Route exact path="/wallet/transaction" component={Wallettrans} />
+                    <Route exact path="/wallet/transaction:hash" component={Transdetail} />
+                    <Route exact path="/wallet/untransaction:hash" component={Untransdetail} />
+                    <Route exact path="/wallet/transfer" component={Selecttrans} />
                 </Layout>
             </Route>
             <Route path="/contract">
@@ -74,19 +74,19 @@ const BasicRoute = () => (
                     <Route component={Contractlayout} />
                     <Route exact path="/contract" component={Contract} />
                     <Route exact path="/contract/detail:hash" component={Contractdetail} />
-                    <Route exact path="/contract/deploy" component={Authenticated(Contractdeploy)} />
-                    <Route exact path="/contract/upgrade" component={Authenticated(ContractUpgrade)} />
-                    <Route exact path="/contract/invoke" component={Authenticated(Contractinvoke)} />
+                    <Route exact path="/contract/deploy" component={Contractdeploy} />
+                    <Route exact path="/contract/upgrade" component={ContractUpgrade} />
+                    <Route exact path="/contract/invoke" component={Contractinvoke} />
                 </Layout>
             </Route>
             <Route path="/advanced">
                 <Layout style={{ height: 'calc( 100vh )' }}>
                     <Route component={Advancedlayout} />
                     <Route exact path="/advanced" component={Advanced} />
-                    <Route exact path="/advanced/vote" component={Authenticated(Advancedvote)} />
-                    <Route exact path="/advanced/candidate" component={Authenticated(Advancedcandidate)} />
-                    <Route exact path="/advanced/signature" component={Authenticated(Advancedsignature)} />
-                    <Route exact path="/advanced/committee" component={Authenticated(Advancedcommittee)} />
+                    <Route exact path="/advanced/vote" component={Advancedvote} />
+                    <Route exact path="/advanced/candidate" component={Advancedcandidate} />
+                    <Route exact path="/advanced/signature" component={Advancedsignature} />
+                    <Route exact path="/advanced/committee" component={Advancedcommittee} />
                     <Route exact path="/advanced/designrole" component={Advanceddesignrole} />
                     <Route exact path="/advanced/getnoderole" component={Advancednoderole} />
                 </Layout>

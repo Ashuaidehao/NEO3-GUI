@@ -100,13 +100,18 @@ namespace Neo.Services.ApiServices
 
         public async Task<object> GetUnconfirmedTransaction(UInt256 txId)
         {
-            var transaction = Helpers.GetDefaultSnapshot().GetTransaction(txId);
-            if (transaction == null)
+            Program.Starter.NeoSystem.MemPool.TryGetValue(txId, out var tx);
+            if (tx == null)
             {
+                UnconfirmedTransactionCache.RemoveUnconfirmedTransactions(txId);
                 return Error(ErrorCode.TxIdNotFound);
             }
+            //var transaction = Helpers.GetDefaultSnapshot().GetTransaction(txId);
+            //if (transaction == null)
+            //{
+            //}
 
-            var model = new TransactionModel(transaction);
+            var model = new TransactionModel(tx);
             var tempTx = UnconfirmedTransactionCache.GetUnconfirmedTransaction(txId);
             if (tempTx?.Transfers.NotEmpty() == true)
             {

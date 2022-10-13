@@ -4,13 +4,14 @@ import Transaction from "../Transaction/transaction";
 import Untransaction from "../Transaction/untransaction";
 import Sync from "../sync";
 import { withTranslation } from "react-i18next";
+import { withAuthenticated } from '../../core/authentication';
 
-import { ArrowLeftOutlined } from "@ant-design/icons";
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
 
 @withTranslation()
+@withAuthenticated
 class Wallettrans extends React.Component {
   constructor(props) {
     super(props);
@@ -19,7 +20,7 @@ class Wallettrans extends React.Component {
       translist: [],
     };
   }
-  render = () => {
+  render() {
     const { t } = this.props;
     return (
       <Layout className="gui-container">

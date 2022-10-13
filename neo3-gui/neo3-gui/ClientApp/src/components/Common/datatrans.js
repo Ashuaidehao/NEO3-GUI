@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React from "react";
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css";
 import "../../static/css/trans.css";
 import "../../static/js/bundledemo.js";
 import {
@@ -38,7 +38,7 @@ class Datatrans extends React.Component {
     };
   }
   convert = new DataConvert();
-  componentDidMount() {}
+  componentDidMount() { }
   hexToString = (hex) => {
     var trimhex = hex.trim();
     var rawStr =
@@ -185,7 +185,7 @@ class Datatrans extends React.Component {
       });
     }
   };
-  base64Trans=()=>{
+  base64Trans = () => {
     const { t } = this.props;
     var _this = this;
     var inhexhash = document
@@ -274,11 +274,11 @@ class Datatrans extends React.Component {
           </li>
           <li>
             <Divider className="font-n">
-            Hex string <SwapOutlined className="small" /> Base 64
+              Hex string <SwapOutlined className="small" /> Base 64
             </Divider>
             <p className="trans-area">
               <label>Hex String:</label>
-              <Input id="inHexHash" type="text" placeholder="63a3989cb4a99571aa00396d3c7155faea4098ba"/>
+              <Input id="inHexHash" type="text" placeholder="63a3989cb4a99571aa00396d3c7155faea4098ba" />
               <label>Base64:</label>
               <span id="outString" className="trans-text">
                 {this.state.outhexhash}

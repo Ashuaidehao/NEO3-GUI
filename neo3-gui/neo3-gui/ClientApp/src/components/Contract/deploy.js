@@ -1,7 +1,6 @@
 /* eslint-disable */
-import React, { useState } from "react";
-import "antd/dist/antd.css";
-import axios from "axios";
+import React, { useState, createRef } from "react";
+import "antd/dist/antd.min.css";
 import {
   Input,
   Icon,
@@ -19,24 +18,21 @@ import { Layout } from "antd";
 import "../../static/css/wallet.css";
 import Sync from "../sync";
 import { FolderOpenOutlined } from "@ant-design/icons";
-import { observer, inject } from "mobx-react";
-import { withRouter } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import { app, dialog } from '@electron/remote';
 import fs from "fs";
 import { postAsync } from "../../core/request";
-
+import { withAuthenticated } from '../../core/authentication';
 
 const { Content } = Layout;
 const { TextArea } = Input;
 
 @withTranslation()
-@inject("walletStore")
-@withRouter
-@observer
+@withAuthenticated
 class Contractdeploy extends React.Component {
   constructor(props) {
     super(props);
+    this.myForm = createRef();
     this.state = {
       size: "default",
       nefpath: "",
@@ -94,7 +90,7 @@ class Contractdeploy extends React.Component {
       });
   };
   onFill = () => {
-    this.refs.formRef.setFieldsValue({
+    this.myForm.current.setFieldsValue({
       nefPath: this.state.nefpath,
       manifestPath: this.state.manipath,
       tresult: this.state.tresult,
@@ -102,7 +98,7 @@ class Contractdeploy extends React.Component {
   };
   onTest = () => {
     const { t } = this.props;
-    this.refs.formRef
+    this.myForm.current
       .validateFields()
       .then((data) => {
         let _params = data;
@@ -142,7 +138,7 @@ class Contractdeploy extends React.Component {
         ),
         okText: t("button.ok"),
       });
-      this.refs.formRef.setFieldsValue({
+      this.myForm.current.setFieldsValue({
         nefPath: "",
         manifestPath: "",
         tresult: "",
@@ -179,7 +175,7 @@ class Contractdeploy extends React.Component {
         // console.log(error);
       });
   };
-  render = () => {
+  render() {
     const { t } = this.props;
     const { disabled, cost } = this.state;
     return (
@@ -190,7 +186,7 @@ class Contractdeploy extends React.Component {
             <Col span={24} className="bg-white pv4">
               <PageHeader title={t("contract.deploy contract")}></PageHeader>
               <Form
-                ref="formRef"
+                ref={this.myForm}
                 className="trans-form mt3"
                 onFinish={this.ondeploy}
               >

@@ -17,7 +17,7 @@ class Blocktrans extends React.Component {
       translist: [],
     };
   }
-  render = () => {
+  render() {
     const { t } = this.props;
     return (
       <Layout className="gui-container">

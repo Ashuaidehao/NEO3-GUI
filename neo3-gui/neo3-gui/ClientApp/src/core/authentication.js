@@ -11,7 +11,6 @@ function Authenticated(Component) {
   }
 
   // 创建验证组件
-  @inject("walletStore")
   @observer
   class AuthenticatedComponent extends React.Component {
     render() {
@@ -29,4 +28,17 @@ function Authenticated(Component) {
 }
 
 
-export { Authenticated };
+function withAuthenticated(Component) {
+  function ComponentWithAuthenticatedProp(props) {
+    const walletOpen = walletStore.isOpen;
+    console.log("withAuthenticated", walletOpen);
+    return (
+      <div style={{ width: "100%", overflowY: "auto" }}>
+        {walletOpen ? <Component {...props} /> : <Wallet />}
+      </div>
+    );
+  }
+  return observer(ComponentWithAuthenticatedProp);
+}
+
+export { Authenticated, withAuthenticated };
