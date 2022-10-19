@@ -1,6 +1,5 @@
 /* eslint-disable */
 import React from 'react';
-import _ from 'lodash';
 import '../../static/css/trans.css';
 import { withRouter } from 'react-router-dom';
 import { Layout, Row, Col, Tabs, message, PageHeader, Divider } from 'antd';

@@ -89,22 +89,22 @@ class Contractinvoke extends React.Component {
     }
 
     let result = response.result;
-    this.myForm.current.resetFields()
+    this.myForm.current.resetFields();
     this.setState({
-      hash: result.contractHash,
       methods: result.manifest.abi.methods,
       params: [],
       tresult: ""
     })
     this.myForm.current.setFieldsValue({
-      guihash: this.state.hash
+      guihash: _hash
     })
     // callback(response.result);
   };
   showPara = (e) => {
+    let hash = this.contractHashInput.current.input.value.trim();
     this.myForm.current.resetFields();
     this.myForm.current.setFieldsValue({
-      guihash: this.state.hash,
+      guihash: hash,
       guimethod: e,
     });
     this.setState({
@@ -113,9 +113,10 @@ class Contractinvoke extends React.Component {
     });
   };
   makeParams = (data) => {
+    let hash = data.guihash;
     let method = this.state.methodselect;
     let _params = {
-      contractHash: this.state.hash,
+      contractHash: hash,
       method: method.name,
       parameters: [],
       cosigners: [],
@@ -298,7 +299,6 @@ class Contractinvoke extends React.Component {
                         },
                       ]}
                     >
-                      {/* <Input defaultValue="0x9bde8f209c88dd0e7ca3bf0af0f476cdd8207789" ref="sinput" placeholder="Scripthash"/> */}
                       <Input ref={this.contractHashInput} placeholder="Scripthash" />
                     </Form.Item>
 

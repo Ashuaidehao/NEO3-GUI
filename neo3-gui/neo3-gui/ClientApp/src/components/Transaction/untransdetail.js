@@ -1,6 +1,5 @@
 /* eslint-disable */
 import React from 'react';
-import _ from 'lodash';
 import '../../static/css/trans.css';
 import { Layout, Row, Col, Tabs, message } from 'antd';
 import Translog, { Hashdetail, Attrlist, Translist, Witlist } from './translog';

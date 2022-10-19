@@ -350,8 +350,9 @@ const Accounts = ({ accounts, name }) => {
             title={<div>
               <Link to={{
                 pathname: "/wallet/walletlist:" + item.address,
-                props: item
+                state: { account: item }
               }}
+                state={{ account: item }}
                 title={t("wallet.show detail")} >{item.address}</Link>
               <Copy msg={item.address} />
             </div>}

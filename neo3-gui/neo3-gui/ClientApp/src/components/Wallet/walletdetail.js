@@ -1,7 +1,7 @@
 /* eslint-disable */
 //just test replace wallet//
 import React from 'react';
-import axios from 'axios';
+import { withRouter } from "react-router-dom";
 import _ from 'lodash';
 import { Layout, Row, Col, Modal, List, Button, Typography, message, PageHeader } from 'antd';
 import Sync from '../sync';
@@ -19,6 +19,7 @@ import { withAuthenticated } from '../../core/authentication';
 const { confirm } = Modal;
 const { Content } = Layout;
 
+@withRouter
 @withTranslation()
 @withAuthenticated
 class Walletdetail extends React.Component {
@@ -112,7 +113,7 @@ class Walletdetail extends React.Component {
   render() {
     const { assetlist, address } = this.state;
     const { t, location } = this.props;
-    const accountType = _.get(location, 'props.accountType', 2);
+    const accountType = location.state?.account.accountType ?? 2;
     return (
       <Layout className="gui-container wa-detail">
 

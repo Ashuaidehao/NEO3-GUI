@@ -1,6 +1,5 @@
 /* eslint-disable */
 import React, { useState } from 'react';
-import _ from 'lodash';
 import "../../static/css/advanced.css";
 import '../../static/css/trans.css';
 import { Layout, Tabs, message, Row, Col, Modal, Button, Input, Select, Form, InputNumber, Tag } from 'antd';

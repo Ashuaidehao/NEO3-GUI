@@ -1,7 +1,6 @@
 /* eslint-disable */
 //just test replace wallet//
 import React from 'react';
-import _ from 'lodash';
 import { Link, withRouter } from 'react-router-dom';
 import { Layout, Row, Col, PageHeader, List, Button, message } from 'antd';
 import { withTranslation } from "react-i18next";
