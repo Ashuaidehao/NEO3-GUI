@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from "react";
 import { Layout, Row, Col, message, PageHeader, Table, Tag } from "antd";
 import Sync from "../sync";

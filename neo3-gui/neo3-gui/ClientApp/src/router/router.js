@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate, Outlet } from 'react-router-dom';
 import Home from '../components/home'
 import Sync from '../components/sync';
 
@@ -36,63 +36,49 @@ import Advancedcommittee from '../components/Advanced/committee';
 import Advanceddesignrole from '../components/Advanced/designrole';
 import Advancednoderole from '../components/Advanced/noderole';
 
-import { Authenticated } from '../core/authentication';
-
 import { Layout } from 'antd';
 
 const BasicRoute = () => (
     <BrowserRouter>
-        <Switch>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/sync" component={Sync} />
-            <Route path="/chain">
-                <Layout style={{ height: 'calc( 100vh )' }}>
-                    <Route component={Chainlayout} />
-                    <Route exact path="/chain" component={Chain} />
-                    <Route exact path="/chain/detail:height" component={BlockDetail} />
-                    <Route exact path="/chain/transaction" component={Chaintrans} />
-                    <Route exact path="/chain/transaction:hash" component={Transdetail} />
-                    <Route exact path="/chain/untransaction:hash" component={Untransdetail} />
-                    <Route exact path="/chain/asset" component={ChainAsset} />
-                    <Route exact path="/chain/asset:hash" component={AssetDetail} />
-                </Layout>
+        <Routes>
+            <Route exact path="/" element={<Home />} />
+            <Route exact path="/sync" element={<Sync />} />
+            <Route path="/chain" element={<Layout style={{ height: 'calc( 100vh )' }}><Chainlayout /><Outlet /></Layout>}>
+                <Route exact path="" element={<Chain />} />
+                <Route exact path="detail:height" element={<BlockDetail />} />
+                <Route exact path="transaction" element={<Chaintrans />} />
+                <Route exact path="transaction:hash" element={<Transdetail />} />
+                <Route exact path="untransaction:hash" element={<Untransdetail />} />
+                <Route exact path="asset" element={<ChainAsset />} />
+                <Route exact path="asset:hash" element={<AssetDetail />} />
             </Route>
-            <Route path="/wallet">
-                <Layout style={{ height: 'calc( 100vh )' }}>
-                    <Route component={Walletlayout} />
-                    <Route exact path="/wallet/walletlist" component={Walletlist} />
-                    <Route exact path="/wallet/walletlist:address" component={Walletdetail} />
-                    <Route exact path="/wallet/address:address" component={Walletdetail} />
-                    <Route exact path="/wallet/transaction" component={Wallettrans} />
-                    <Route exact path="/wallet/transaction:hash" component={Transdetail} />
-                    <Route exact path="/wallet/untransaction:hash" component={Untransdetail} />
-                    <Route exact path="/wallet/transfer" component={Selecttrans} />
-                </Layout>
+            <Route path="/wallet" element={<div><Layout style={{ height: 'calc( 100vh )' }}><Walletlayout /><Outlet /></Layout></div>}>
+                <Route exact path="walletlist" element={<Walletlist />} />
+                <Route exact path="walletlist:address" element={<Walletdetail />} />
+                <Route exact path="address:address" element={<Walletdetail />} />
+                <Route exact path="transaction" element={<Wallettrans />} />
+                <Route exact path="transaction:hash" element={<Transdetail />} />
+                <Route exact path="untransaction:hash" element={<Untransdetail />} />
+                <Route exact path="transfer" element={<Selecttrans />} />
             </Route>
-            <Route path="/contract">
-                <Layout style={{ height: 'calc( 100vh )' }}>
-                    <Route component={Contractlayout} />
-                    <Route exact path="/contract" component={Contract} />
-                    <Route exact path="/contract/detail:hash" component={Contractdetail} />
-                    <Route exact path="/contract/deploy" component={Contractdeploy} />
-                    <Route exact path="/contract/upgrade" component={ContractUpgrade} />
-                    <Route exact path="/contract/invoke" component={Contractinvoke} />
-                </Layout>
+            <Route path="/contract" element={<div><Layout style={{ height: 'calc( 100vh )' }}><Contractlayout /><Outlet /></Layout></div>}>
+                <Route exact path="" element={<Contract />} />
+                <Route exact path="detail:hash" element={<Contractdetail />} />
+                <Route exact path="deploy" element={<Contractdeploy />} />
+                <Route exact path="upgrade" element={<ContractUpgrade />} />
+                <Route exact path="invoke" element={<Contractinvoke />} />
             </Route>
-            <Route path="/advanced">
-                <Layout style={{ height: 'calc( 100vh )' }}>
-                    <Route component={Advancedlayout} />
-                    <Route exact path="/advanced" component={Advanced} />
-                    <Route exact path="/advanced/vote" component={Advancedvote} />
-                    <Route exact path="/advanced/candidate" component={Advancedcandidate} />
-                    <Route exact path="/advanced/signature" component={Advancedsignature} />
-                    <Route exact path="/advanced/committee" component={Advancedcommittee} />
-                    <Route exact path="/advanced/designrole" component={Advanceddesignrole} />
-                    <Route exact path="/advanced/getnoderole" component={Advancednoderole} />
-                </Layout>
+            <Route path="/advanced" element={<div><Layout style={{ height: 'calc( 100vh )' }}><Advancedlayout /><Outlet /></Layout></div>}>
+                <Route exact path="" element={<Advanced />} />
+                <Route exact path="vote" element={<Advancedvote />} />
+                <Route exact path="candidate" element={<Advancedcandidate />} />
+                <Route exact path="signature" element={<Advancedsignature />} />
+                <Route exact path="committee" element={<Advancedcommittee />} />
+                <Route exact path="designrole" element={<Advanceddesignrole />} />
+                <Route exact path="getnoderole" element={<Advancednoderole />} />
             </Route>
-            <Redirect from="*" to="/" />
-        </Switch>
+            <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
     </BrowserRouter>
 );
 

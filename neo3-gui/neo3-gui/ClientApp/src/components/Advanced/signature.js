@@ -12,7 +12,6 @@ import { withAuthenticated } from '../../core/authentication';
 
 
 const { Content } = Layout;
-const { TabPane } = Tabs;
 const { TextArea } = Input;
 
 function clickToCopy(text) {
@@ -137,64 +136,62 @@ class Advancedsignature extends React.Component {
                 <Content className="mt3">
                     <Row gutter={[30, 0]} className="mb1" style={{ 'minHeight': 'calc( 100vh - 150px )' }}>
                         <Col span={24} className="bg-white pv4">
-                            <Tabs className="tran-title" defaultActiveKey="1">
-                                {/* <TabPane tab={t("advanced.signature text")} key="1">
-                      <div>文本签名</div>
-                    </TabPane> */}
-                                <TabPane tab={t("advanced.signature trans")} key="2">
-                                    <div>
-                                        <Form
-                                            name="form"
-                                            onFinish={this.onSign}
-                                        >
-                                            <h4>{t("advanced.trans")} Json</h4>
-                                            <Form.Item
-                                                name="sign"
-                                                rules={[
-                                                    {
-                                                        required: true,
-                                                        message: 'Please input your json!',
-                                                    },
-                                                ]}
+                            <Tabs className="tran-title" defaultActiveKey="1"
+                                items={[
+                                    // {label:t("advanced.signature text"),key:1,children:(<div>文本签名</div>)},
+                                    // {label:t("advanced.signature verify"),key:3,children:(<div>验证签名</div>)},
+                                    {
+                                        label: t("advanced.signature trans"), key: 2, children: (<div>
+                                            <Form
+                                                name="form"
+                                                onFinish={this.onSign}
                                             >
-                                                <TextArea />
-                                            </Form.Item>
-                                            <Form.Item>
-                                                <Button type="primary" htmlType="submit">
-                                                    {t('advanced.signature')}
-                                                </Button>
-                                            </Form.Item>
-                                        </Form>
-                                        <Form
-                                            name="form"
-                                            onFinish={this.onBroad}
-                                            ref={this.myForm}
-                                        >
-                                            <h4>{t('advanced.signature result')}</h4>
-                                            <Form.Item
-                                                name="broadcast"
-                                                rules={[
-                                                    {
-                                                        required: true,
-                                                        message: 'Please input your json!',
-                                                    },
-                                                ]}
+                                                <h4>{t("advanced.trans")} Json</h4>
+                                                <Form.Item
+                                                    name="sign"
+                                                    rules={[
+                                                        {
+                                                            required: true,
+                                                            message: 'Please input your json!',
+                                                        },
+                                                    ]}
+                                                >
+                                                    <TextArea />
+                                                </Form.Item>
+                                                <Form.Item>
+                                                    <Button type="primary" htmlType="submit">
+                                                        {t('advanced.signature')}
+                                                    </Button>
+                                                </Form.Item>
+                                            </Form>
+                                            <Form
+                                                name="form"
+                                                onFinish={this.onBroad}
+                                                ref={this.myForm}
                                             >
-                                                <TextArea />
-                                            </Form.Item>
+                                                <h4>{t('advanced.signature result')}</h4>
+                                                <Form.Item
+                                                    name="broadcast"
+                                                    rules={[
+                                                        {
+                                                            required: true,
+                                                            message: 'Please input your json!',
+                                                        },
+                                                    ]}
+                                                >
+                                                    <TextArea />
+                                                </Form.Item>
 
-                                            <Form.Item>
-                                                <Button type="primary" htmlType="submit">
-                                                    {t('advanced.broadcast')}
-                                                </Button>
-                                            </Form.Item>
-                                        </Form>
-                                    </div>
-                                </TabPane>
-                                {/* <TabPane tab={t("advanced.signature verify")} key="3">
-                      <div>验证签名</div>
-                    </TabPane> */}
-                            </Tabs>
+                                                <Form.Item>
+                                                    <Button type="primary" htmlType="submit">
+                                                        {t('advanced.broadcast')}
+                                                    </Button>
+                                                </Form.Item>
+                                            </Form>
+                                        </div>)
+                                    }
+                                ]}
+                            />
                         </Col>
                     </Row>
                 </Content>

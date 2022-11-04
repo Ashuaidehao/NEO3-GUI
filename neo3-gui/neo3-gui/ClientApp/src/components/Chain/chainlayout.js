@@ -10,7 +10,6 @@ import { HomeOutlined, PartitionOutlined } from "@ant-design/icons";
 import { withTranslation } from "react-i18next";
 
 const { Sider } = Layout;
-const { SubMenu } = Menu;
 
 @withTranslation()
 class Chainlayout extends React.Component {
@@ -25,6 +24,30 @@ class Chainlayout extends React.Component {
   };
   render() {
     const { t } = this.props;
+    const menuItems = [
+      {
+        label: (
+          <Link to="/">
+            <HomeOutlined />
+            {t("sideBar.home")}
+          </Link>),
+        key: "item-home"
+      },
+      {
+        label: (
+          <span>
+            <PartitionOutlined />
+            <span>{t("sideBar.blockchain")}</span>
+          </span>),
+        key: "sub1",
+        children: [
+          { label: (<Link to="/chain">{t("sideBar.blocks")}</Link>), key: 1 },
+          { label: (<Link to="/chain/transaction">{t("sideBar.transactions")}</Link>), key: 2 },
+          { label: (<Link to="/chain/asset">{t("sideBar.assets")}</Link>), key: 3 }
+
+        ]
+      }
+    ];
     return (
       <div style={{ height: "100%" }}>
         <Sider className="menu-logo" style={{ height: "100%" }}>
@@ -34,33 +57,8 @@ class Chainlayout extends React.Component {
             defaultSelectedKeys={["1"]}
             defaultOpenKeys={["sub1"]}
             mode="inline"
-          >
-            <Menu.Item>
-              <Link to="/">
-                <HomeOutlined />
-                {t("sideBar.home")}
-              </Link>
-            </Menu.Item>
-            <SubMenu
-              key="sub1"
-              title={
-                <span>
-                  <PartitionOutlined />
-                  <span>{t("sideBar.blockchain")}</span>
-                </span>
-              }
-            >
-              <Menu.Item key="1">
-                <Link to="/chain">{t("sideBar.blocks")}</Link>
-              </Menu.Item>
-              <Menu.Item key="2">
-                <Link to="/chain/transaction">{t("sideBar.transactions")}</Link>
-              </Menu.Item>
-              <Menu.Item key="3">
-                <Link to="/chain/asset">{t("sideBar.assets")}</Link>
-              </Menu.Item>
-            </SubMenu>
-          </Menu>
+            items={menuItems}
+          />
           <MenuDown />
         </Sider>
       </div>

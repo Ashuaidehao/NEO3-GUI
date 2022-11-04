@@ -11,7 +11,6 @@ import {
   Col,
   Form,
   message,
-  Menu,
   Button,
   Layout,
 } from "antd";
@@ -224,9 +223,6 @@ class ContractUpgrade extends React.Component {
             className="bg-white pv4"
             style={{ minHeight: "calc( 100vh - 150px )" }} >
             <Col span={24}>
-              <a className="fix-btn" onClick={this.showDrawer}>
-                <SwapOutlined />
-              </a>
               <PageHeader title={t("contract.upgrade contract")}></PageHeader>
 
               <Form className="trans-form" ref={form => this.Form = form} onFinish={this.submitUpdate} >

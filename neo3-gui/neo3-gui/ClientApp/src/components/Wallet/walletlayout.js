@@ -10,12 +10,34 @@ import { HomeOutlined, WalletOutlined } from "@ant-design/icons";
 import { withTranslation } from "react-i18next";
 
 const { Sider } = Layout;
-const { SubMenu } = Menu;
 
 @withTranslation()
 class Walletlayout extends React.Component {
   render() {
     const { t } = this.props;
+    const menuItems = [
+      {
+        label: (
+          <Link to="/">
+            <HomeOutlined />
+            {t("sideBar.home")}
+          </Link>),
+        key: "item-home"
+      },
+      {
+        label: (
+          <span>
+            <WalletOutlined />
+            <span>{t("sideBar.wallet")}</span>
+          </span>),
+        key: "sub1",
+        children: [
+          { label: (<Link to="/wallet/walletlist">{t("sideBar.accounts")}</Link>), key: 1 },
+          { label: (<Link to="/wallet/transaction">{t("sideBar.transaction Records")}</Link>), key: 2 },
+          { label: (<Link to="/wallet/transfer">{t("sideBar.transfer")}</Link>), key: 3 }
+        ]
+      }
+    ];
     return (
       <div style={{ height: "100%" }}>
         <Sider className="menu-logo" style={{ height: "100%" }}>
@@ -25,35 +47,8 @@ class Walletlayout extends React.Component {
             defaultSelectedKeys={["1"]}
             defaultOpenKeys={["sub1"]}
             mode="inline"
-          >
-            <Menu.Item>
-              <Link to="/">
-                <HomeOutlined />
-                {t("sideBar.home")}
-              </Link>
-            </Menu.Item>
-            <SubMenu
-              key="sub1"
-              title={
-                <span>
-                  <WalletOutlined />
-                  <span>{t("sideBar.wallet")}</span>
-                </span>
-              }
-            >
-              <Menu.Item key="1">
-                <Link to="/wallet/walletlist">{t("sideBar.accounts")}</Link>
-              </Menu.Item>
-              <Menu.Item key="2">
-                <Link to="/wallet/transaction">
-                  {t("sideBar.transaction Records")}
-                </Link>
-              </Menu.Item>
-              <Menu.Item key="3">
-                <Link to="/wallet/transfer">{t("sideBar.transfer")}</Link>
-              </Menu.Item>
-            </SubMenu>
-          </Menu>
+            items={menuItems}
+          />
           <MenuDown />
         </Sider>
       </div>

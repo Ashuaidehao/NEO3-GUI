@@ -1,4 +1,4 @@
-2/* eslint-disable */
+/* eslint-disable */
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { observer, inject } from "mobx-react";
@@ -186,7 +186,7 @@ class Walletlist extends React.Component {
             width={400}
             centered
             title={this.state.modalTitle}
-            visible={this.state.visible}
+            open={this.state.visible}
             onCancel={this.handleCancel}
             footer={null}
           >
@@ -350,8 +350,9 @@ const Accounts = ({ accounts, name }) => {
             title={<div>
               <Link to={{
                 pathname: "/wallet/walletlist:" + item.address,
-                props: item
+                state: { account: item }
               }}
+                state={{ account: item }}
                 title={t("wallet.show detail")} >{item.address}</Link>
               <Copy msg={item.address} />
             </div>}

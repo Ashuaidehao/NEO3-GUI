@@ -1,19 +1,21 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import Backend from "i18next-xhr-backend";
+import HttpApi from "i18next-http-backend";
 import Config from "./config";
 
 const language = Config.Language || navigator.language.split(/[-_]/)[0]; // language without region code
 const FALLBACKLNG = "en";
 
 i18n
-  .use(Backend)
-  .use(initReactI18next) // passes i18n down to react-i18next
+  // .use(Backend)
+  // .use(initReactI18next) // passes i18n down to react-i18next
+  .use(HttpApi)
+  .use(initReactI18next)
   .init(
     {
       react: {
-        //   useSuspense: false,
-        wait: true,
+        useSuspense: true,
+        // wait: true,
       },
       // resources,
       lng: language,

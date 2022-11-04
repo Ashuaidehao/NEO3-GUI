@@ -1,12 +1,12 @@
 /* eslint-disable */
 //just test replace wallet//
 import React from 'react';
-import { observer, inject } from "mobx-react";
-import { withRouter, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Layout, Row, Col, List, Button, PageHeader, message } from 'antd';
 import { withTranslation } from "react-i18next";
 import { SwapRightOutlined } from '@ant-design/icons';
-import { postAsync } from "../../core/request"
+import { postAsync } from "../../core/request";
+import withRouter from '../../core/withRouter';
 
 @withTranslation()
 @withRouter
@@ -219,7 +219,8 @@ class Transaction extends React.Component {
     }
   }
   render() {
-    const { t, location } = this.props;
+    const { t } = this.props;
+    const { location } = this.props.router;
     const { translist, local, loading, iswa, isnpe, page, allpage } = this.state;
     const loadMore = !loading && page <= allpage ? (
       <div className="text-c mb3">

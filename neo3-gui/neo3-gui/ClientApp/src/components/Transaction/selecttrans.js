@@ -12,7 +12,6 @@ import { withAuthenticated } from '../../core/authentication';
 import { withTranslation } from "react-i18next";
 
 const { Content } = Layout;
-const { TabPane } = Tabs;
 
 @withTranslation()
 @withAuthenticated
@@ -46,13 +45,12 @@ class Transfer extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]} className="mb1">
             <Col span={24} className="bg-white pv4">
-              <Tabs className="tran-title" defaultActiveKey="1">
-                <TabPane tab={t("wallet.transfer")} key="1">
-                  <Multitomulti account={addresslist} />
-                </TabPane>
-                <TabPane tab={t("wallet.transfer bulk")} key="2">
-                  <Onetomulti account={addresslist} />
-                </TabPane>
+              <Tabs className="tran-title" defaultActiveKey="1"
+                items={[
+                  { label: t("wallet.transfer"), key: 1, children: (<Multitomulti account={addresslist} />) },
+                  { label: t("wallet.transfer bulk"), key: 2, children: (<Onetomulti account={addresslist} />) }
+                ]}
+              >
               </Tabs>
               <Alert
                 className="mt2 mb4"
