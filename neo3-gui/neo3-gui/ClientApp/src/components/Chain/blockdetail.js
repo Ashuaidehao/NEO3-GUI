@@ -184,7 +184,7 @@ export default function BlockDetail() {
                   <div className="trans-detail">
                     <p>
                       <Link
-                        className="w500 ellipsis hash"
+                        className="w530 ellipsis hash"
                         to={{
                           pathname: "/chain/transaction:" + item.txId,
                           state: { from: path }

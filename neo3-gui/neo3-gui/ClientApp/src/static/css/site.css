@@ -173,6 +173,12 @@ small,
   margin-right: auto;
   margin-left: auto;
 }
+.w530 {
+  max-width: 530px;
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+}
 .w600 {
   max-width: 650px;
   width: 100%;
