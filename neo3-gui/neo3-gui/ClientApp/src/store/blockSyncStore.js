@@ -1,7 +1,11 @@
 /* eslint-disable */
-import { observable, action } from "mobx";
+import { observable, action, makeObservable } from "mobx";
 
 class BlockSyncStore {
+  constructor() {
+    makeObservable(this);
+  }
+
   @observable syncHeight = -1;
   @observable headerHeight = -1;
 

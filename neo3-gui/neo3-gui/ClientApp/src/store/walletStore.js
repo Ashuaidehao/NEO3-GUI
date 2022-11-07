@@ -1,7 +1,11 @@
 /* eslint-disable */
-import { observable, action } from "mobx";
+import { observable, action, makeObservable } from "mobx";
 
 class WalletStore {
+  constructor() {
+    makeObservable(this);
+  }
+
   @observable isOpen = false;
   @observable accountlist = [];
   @observable unclaimedGas = "";
@@ -18,6 +22,9 @@ class WalletStore {
 
   @action setAccounts(accounts) {
     this.accountlist = accounts;
+    // if (accounts && !this.isOpen) {
+    //   this.setWalletState(true);
+    // }
   }
 
   @action addAccount(account) {

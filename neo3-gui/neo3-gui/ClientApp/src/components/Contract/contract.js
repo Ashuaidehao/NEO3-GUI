@@ -4,8 +4,7 @@ import { Link } from 'react-router-dom';
 import 'antd/dist/antd.min.css';
 import '../../static/css/menu.css'
 import '../../static/css/contract.css'
-import { Layout, Menu, List, Row, Col, PageHeader, Typography, Avatar } from 'antd';
-import axios from 'axios';
+import { Layout, List, Row, Col, PageHeader, Typography, Avatar } from 'antd';
 import Sync from '../sync';
 import Searcharea from './searcharea'
 import { withTranslation } from "react-i18next";
@@ -65,7 +64,7 @@ class Contract extends React.Component {
                       }
                       title={<Link className="asset-link w450 ellipsis" to={"/contract/detail:" + item.hash} title={t("show detail")}>{item.name}</Link>}
                     />
-                    <Typography>{item.hash} <Copy msg={item.hash} /></Typography>
+                    <Typography className='code'>{item.hash} <Copy msg={item.hash} /></Typography>
                   </List.Item>
                 )}
               />

@@ -8,7 +8,6 @@ import { withAuthenticated } from '../../core/authentication';
 
 
 const { Content } = Layout;
-const { TabPane } = Tabs;
 
 @withTranslation()
 @withAuthenticated
@@ -31,15 +30,13 @@ class Wallettrans extends React.Component {
               <Tabs
                 className="tran-title trans-list-title"
                 defaultActiveKey="1"
+                items={[
+                  { label: t("blockchain.transactions"), key: 1, children: (<Transaction page="wallettrans" />) },
+                  { label: t("blockchain.transaction.pending"), key: 2, children: (<Untransaction page="wallet" />) }
+                ]}
               // tabBarExtraContent={<Searchtttt />}
               // <ArrowLeftOutlined className="h2" onClick={this.back}/>}
               >
-                <TabPane tab={t("blockchain.transactions")} key="1">
-                  <Transaction page="wallettrans" />
-                </TabPane>
-                <TabPane tab={t("blockchain.transaction.pending")} key="2">
-                  <Untransaction page="wallet" />
-                </TabPane>
               </Tabs>
               {/* <Searcharea /> */}
             </Col>

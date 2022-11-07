@@ -7,12 +7,35 @@ import { HomeOutlined, FileSyncOutlined, ArrowRightOutlined, SearchOutlined } fr
 import { withTranslation } from "react-i18next";
 
 const { Sider } = Layout;
-const { SubMenu } = Menu;
 
 @withTranslation()
 class Contractlayout extends React.Component {
   render() {
     const { t } = this.props;
+    const menuItems = [
+      {
+        label: (
+          <Link to="/">
+            <HomeOutlined />
+            {t("sideBar.home")}
+          </Link>),
+        key: "item-home"
+      },
+      {
+        label: (
+          <span>
+            <FileSyncOutlined />
+            <span>{t("sideBar.contract")}</span>
+          </span>),
+        key: "sub1",
+        children: [
+          { label: (<Link to="/contract">{t("sideBar.search contract")}</Link>), key: 1 },
+          { label: (<Link to="/contract/deploy">{t("sideBar.deploy contract")}</Link>), key: 2 },
+          { label: (<Link to="/contract/invoke">{t("sideBar.invoke contract")}</Link>), key: 3 },
+          { label: (<Link to="/contract/upgrade">{t("sideBar.upgrade contract")}</Link>), key: 4 }
+        ]
+      }
+    ];
     return (
       <div style={{ height: "100%" }}>
         <Sider className="menu-logo" style={{ height: "100%" }}>
@@ -22,42 +45,8 @@ class Contractlayout extends React.Component {
             defaultSelectedKeys={["1"]}
             defaultOpenKeys={["sub1"]}
             mode="inline"
-          >
-            <Menu.Item>
-              <Link to="/">
-                <HomeOutlined />
-                {t("sideBar.home")}
-              </Link>
-            </Menu.Item>
-            <SubMenu
-              key="sub1"
-              title={
-                <span>
-                  <FileSyncOutlined />
-                  <span>{t("sideBar.contract")}</span>
-                </span>
-              }
-            >
-              <Menu.Item key="1">
-                <Link to="/contract">{t("sideBar.search contract")}</Link>
-              </Menu.Item>
-              <Menu.Item key="2">
-                <Link to="/contract/deploy">
-                  {t("sideBar.deploy contract")}
-                </Link>
-              </Menu.Item>
-              <Menu.Item key="3">
-                <Link to="/contract/invoke">
-                  {t("sideBar.invoke contract")}
-                </Link>
-              </Menu.Item>
-              <Menu.Item key="4">
-                <Link to="/contract/upgrade">
-                  {t("sideBar.upgrade contract")}
-                </Link>
-              </Menu.Item>
-            </SubMenu>
-          </Menu>
+            items={menuItems}
+          />
           <MenuDown />
         </Sider>
       </div>

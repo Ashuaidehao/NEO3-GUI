@@ -7,12 +7,36 @@ import { HomeOutlined, DisconnectOutlined } from "@ant-design/icons";
 import { withTranslation } from "react-i18next";
 
 const { Sider } = Layout;
-const { SubMenu } = Menu;
 
 @withTranslation()
 class Advancedlayout extends React.Component {
   render() {
     const { t } = this.props;
+    const menuItems = [
+      {
+        label: (
+          <Link to="/">
+            <HomeOutlined />
+            {t("sideBar.home")}
+          </Link>),
+        key: "item-home"
+      },
+      {
+        label: (
+          <span>
+            <DisconnectOutlined />
+            <span>{t("home.advanced")}</span>
+          </span>),
+        key: "sub1",
+        children: [
+          { label: (<Link to="/advanced">{t("advanced.tools")}</Link>), key: 1 },
+          { label: (<Link to="/advanced/candidate">{t("advanced.candidate")}</Link>), key: 2 },
+          { label: (<Link to="/advanced/vote">{t("advanced.vote")}</Link>), key: 3 },
+          { label: (<Link to="/advanced/signature">{t("advanced.signature")}</Link>), key: 4 },
+          { label: (<Link to="/advanced/committee">{t("advanced.committee")}</Link>), key: 5 }
+        ]
+      }
+    ];
     return (
       <div style={{ height: "100%" }}>
         <Sider className="menu-logo" style={{ height: "100%" }}>
@@ -22,45 +46,8 @@ class Advancedlayout extends React.Component {
             defaultSelectedKeys={["1"]}
             defaultOpenKeys={["sub1"]}
             mode="inline"
-          >
-            <Menu.Item>
-              <Link to="/">
-                <HomeOutlined />
-                {t("sideBar.home")}
-              </Link>
-            </Menu.Item>
-            <SubMenu
-              key="sub1"
-              title={
-                <span>
-                  <DisconnectOutlined />
-                  <span>{t("home.advanced")}</span>
-                </span>
-              }
-            >
-              <Menu.Item key="1">
-                <Link to="/advanced">{t("advanced.tools")}</Link>
-              </Menu.Item>
-              <Menu.Item key="2">
-                <Link to="/advanced/candidate">{t("advanced.candidate")}</Link>
-              </Menu.Item>
-              <Menu.Item key="3">
-                <Link to="/advanced/vote">{t("advanced.vote")}</Link>
-              </Menu.Item>
-              <Menu.Item key="4">
-                <Link to="/advanced/signature">{t("advanced.signature")}</Link>
-              </Menu.Item>
-              <Menu.Item key="5">
-                <Link to="/advanced/committee">{t("advanced.committee")}</Link>
-              </Menu.Item>
-              {/* <Menu.Item key="6">
-                <Link to="/advanced/designrole">{t("指派节点角色")}</Link>
-              </Menu.Item>
-              <Menu.Item key="7">
-                <Link to="/advanced/getnoderole">{t("根据角色查询节点")}</Link>
-              </Menu.Item> */}
-            </SubMenu>
-          </Menu>
+            items={menuItems}
+          />
           <MenuDown />
         </Sider>
       </div>
