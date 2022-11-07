@@ -247,7 +247,7 @@ class Transaction extends React.Component {
               /> */}
               <div className="trans-detail">
                 <p>
-                  <Link className="w500 ellipsis hash"
+                  <Link className="w500 ellipsis hash code"
                     to={{
                       pathname: local + item.txId,
                       state: { from: path }

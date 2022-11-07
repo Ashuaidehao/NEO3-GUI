@@ -64,7 +64,7 @@ class Contract extends React.Component {
                       }
                       title={<Link className="asset-link w450 ellipsis" to={"/contract/detail:" + item.hash} title={t("show detail")}>{item.name}</Link>}
                     />
-                    <Typography>{item.hash} <Copy msg={item.hash} /></Typography>
+                    <Typography className='code'>{item.hash} <Copy msg={item.hash} /></Typography>
                   </List.Item>
                 )}
               />
