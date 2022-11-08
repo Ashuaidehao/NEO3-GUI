@@ -14,7 +14,6 @@ import { Copy } from '../copy';
 
 const { Option } = Select;
 const { Content } = Layout;
-const { TabPane } = Tabs;
 
 @withAuthenticated
 @withTranslation()
@@ -160,49 +159,41 @@ class AdvancedCommittee extends React.Component {
         <Content className="mt3">
           <Row gutter={[30, 0]} style={{ minHeight: "calc( 100vh - 120px )" }}>
             <Col span={24} className="bg-white pv4">
-              <Tabs className="committe-title" defaultActiveKey="1">
-                {/* <TabPane tab={t("advanced.com-trans")} key="1">
-              <Statistic title={t("advanced.com-trans-max")} value={transnum} prefix={<RetweetOutlined />}/>
-              <Button className="mt3" type="primary" onClick={this.changeDialog(0)}>{t("advanced.modify")}</Button>
-            </TabPane>
-            <TabPane tab={t("advanced.com-blocksize")} key="2">
-              <Statistic title={t("advanced.com-blocksize-max")} value={blocksize} prefix={<EditOutlined />}/>
-              <Button className="mt3" type="primary" onClick={this.changeDialog(1)}>{t("advanced.modify")}</Button>
-            </TabPane>
-            <TabPane tab={t("advanced.com-blockfee")} key="3">
-              <Statistic
-                title={t("advanced.com-blockfee-max")}
-                value={blockfee} prefix={<ForkOutlined />}
-                suffix={<div> * 10<sup>-8</sup></div>}/>
-              <Button className="mt3" type="primary" onClick={this.changeDialog(2)}>{t("advanced.modify")}</Button>
-            </TabPane> */}
-                <TabPane tab={t("advanced.com-bytefee")} key="4">
-                  <Statistic title={t("advanced.com-bytefee-set")} value={bytefee} prefix={<RetweetOutlined />} />
-                  <Button className="mt3" type="primary" onClick={this.changeDialog(3)}>{t("advanced.modify")}</Button>
-                </TabPane>
-                <TabPane tab={t("advanced.com-account")} key="5">
-                  <h4 className="bolder mb4">{t("advanced.com-input")}</h4>
-                  <Input
-                    placeholder="NLGMSsGTDsLbAfGCBJvNmUMj16kvHHjFpa"
-                    prefix={<WalletOutlined />}
-                    onBlur={this.searchAdd} />
-                  {showlocked ? <div className="mt4">
-                    <span className="para-tag">
-                      {t("advanced.com-account-state")}
-                      {locked ? <em>{t("advanced.com-locked")}</em> : <em>{t("advanced.com-unlocked")}</em>}
-                    </span>
-                  </div>
-                    : null}
-                  <Button className="mt3" type="primary" onClick={this.changeDialog(4)}>{t("advanced.modify")}</Button>
-                </TabPane>
-              </Tabs>
+              <Tabs className="committe-title" defaultActiveKey="1"
+                items={[
+                  {
+                    label: t("advanced.com-bytefee"), key: 4, children: (
+                      <div><Statistic title={t("advanced.com-bytefee-set")} value={bytefee} prefix={<RetweetOutlined />} />
+                        <Button className="mt3" type="primary" onClick={this.changeDialog(3)}>{t("advanced.modify")}</Button>
+                      </div>)
+                  },
+                  {
+                    label: t("advanced.com-account"), key: 5, children: (
+                      <div>
+                        <h4 className="bolder mb4">{t("advanced.com-input")}</h4>
+                        <Input
+                          placeholder="NLGMSsGTDsLbAfGCBJvNmUMj16kvHHjFpa"
+                          prefix={<WalletOutlined />}
+                          onBlur={this.searchAdd} />
+                        {showlocked ? <div className="mt4">
+                          <span className="para-tag">
+                            {t("advanced.com-account-state")}
+                            {locked ? <em>{t("advanced.com-locked")}</em> : <em>{t("advanced.com-unlocked")}</em>}
+                          </span>
+                        </div>
+                          : null}
+                        <Button className="mt3" type="primary" onClick={this.changeDialog(4)}>{t("advanced.modify")}</Button>
+                      </div>)
+                  }
+                ]}
+              />
             </Col>
           </Row>
         </Content>
         <Modal
           className="set-modal"
           title={<Trans>{this.state.title}</Trans>}
-          visible={this.state.visible}
+          open={this.state.visible}
           onCancel={this.hideModal}
           footer={null}
         >

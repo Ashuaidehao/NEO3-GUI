@@ -163,6 +163,7 @@ class Contractinvoke extends React.Component {
     return _params;
   };
   onFill = () => {
+    console.log("OnFill");
     this.myForm.current.setFieldsValue({
       tresult: this.state.tresult,
     });
@@ -207,6 +208,10 @@ class Contractinvoke extends React.Component {
         _this.onFill()
       );
       _this.myForm.current.resetFields();
+      _this.myForm.current.setFieldsValue({
+        guihash: params.contractHash,
+        guimethod: params.method,
+      });
 
       Modal.success({
         title: t("contract.invoke contract"),
@@ -400,7 +405,7 @@ class Contractinvoke extends React.Component {
           </Row>
           <Modal
             title="构造Array-未翻译"
-            visible={this.state.modal}
+            open={this.state.modal}
             footer={null}
             onCancel={this.handleCancel}
             width={600}

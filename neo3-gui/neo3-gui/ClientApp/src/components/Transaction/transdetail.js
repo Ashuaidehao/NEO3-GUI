@@ -1,7 +1,6 @@
 /* eslint-disable */
 import React from 'react';
 import '../../static/css/trans.css';
-import { withRouter } from 'react-router-dom';
 import { Layout, Row, Col, Tabs, message, PageHeader, Divider } from 'antd';
 import { Hashdetail, Attrlist, Translist, Witlist, Scriptlist } from './translog';
 import Notifies from './translog';
@@ -10,9 +9,9 @@ import Sync from '../sync';
 import { useTranslation, withTranslation } from "react-i18next";
 import { post } from "../../core/request";
 import { SwapOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import withRouter from '../../core/withRouter';
 
 const { Content } = Layout;
-const { TabPane } = Tabs;
 
 @withTranslation()
 @withRouter
@@ -68,19 +67,19 @@ class Transcon extends React.Component {
       }
     }).catch(function () {
       console.log("error");
-      _this.props.history.goBack();
+      this.props.router.navigate(-1);
     });
   }
   notifiesData = () => {
     console.log(this.state.notifies)
   }
   back = () => {
-    const { location, history } = this.props;
+    const { location, navigate } = this.props.router;
     const from = location.state?.from || null;
     if (from) {
-      history.replace(from);
+      navigate(from, { replace: true });
     } else {
-      history.goBack();
+      navigate(-1);
     }
   }
   render() {
@@ -93,18 +92,21 @@ class Transcon extends React.Component {
           <Row gutter={[30, 0]} className="mb1">
             <Col span={24} className="bg-white pv4">
               <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
-              <Tabs className="tran-title" defaultActiveKey="1" tabBarExtraContent={<ArrowLeftOutlined className="h2" onClick={this.back} />}>
-                <TabPane tab={t("blockchain.transaction.content")} key="1">
-                  <Hashdetail hashdetail={hashdetail} />
-                  <Translist transfers={transfers} />
-                  <Attrlist attributes={attributes} />
-                  <Witlist witnesses={witnesses} />
-                  <Scriptlist script={script} scriptcode={scriptcode} />
-                </TabPane>
-                <TabPane tab={t("blockchain.transaction.log")} key="2">
-                  <Notifies notifies={this.state.notifies} />
-                </TabPane>
-              </Tabs>
+              <Tabs className="tran-title" defaultActiveKey="1" tabBarExtraContent={<ArrowLeftOutlined className="h2" onClick={this.back} />}
+                items={[
+                  {
+                    label: t("blockchain.transaction.content"), key: 1, children: (
+                      <div>
+                        <Hashdetail hashdetail={hashdetail} />
+                        <Translist transfers={transfers} />
+                        <Attrlist attributes={attributes} />
+                        <Witlist witnesses={witnesses} />
+                        <Scriptlist script={script} scriptcode={scriptcode} />
+                      </div>)
+                  },
+                  { label: t("blockchain.transaction.log"), key: 2, children: (<Notifies notifies={this.state.notifies} />) }
+                ]}
+              />
             </Col>
           </Row>
           <Datatrans visible={this.state.visible} onClose={this.onClose} />

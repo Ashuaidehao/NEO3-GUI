@@ -55,13 +55,7 @@ function createWindow() {
   } else {
     //Hide toolBar
     Menu.setApplicationMenu(null);
-    mainWindow.loadURL(
-      url.format({
-        protocol: "file",
-        slashes: true,
-        pathname: path.join(__dirname, "/build/index.html"),
-      })
-    );
+    mainWindow.loadFile(path.join(__dirname, "build", "index.html"));
   }
 
   // Emitted when the window is closed.

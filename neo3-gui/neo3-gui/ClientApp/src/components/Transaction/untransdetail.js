@@ -4,16 +4,13 @@ import '../../static/css/trans.css';
 import { Layout, Row, Col, Tabs, message } from 'antd';
 import Translog, { Hashdetail, Attrlist, Translist, Witlist } from './translog';
 import Datatrans from '../Common/datatrans';
-import { withRouter } from "react-router-dom";
 import Sync from '../sync';
 import { SwapOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { useTranslation, withTranslation } from "react-i18next";
 import { post } from "../../core/request";
+import withRouter from '../../core/withRouter';
 
 const { Content } = Layout;
-
-const { TabPane } = Tabs;
-
 @withTranslation()
 @withRouter
 class Untransdetail extends React.Component {
@@ -66,16 +63,16 @@ class Untransdetail extends React.Component {
       }
     }).catch(function () {
       console.log("error");
-      _this.props.history.goBack();
+      _this.props.router.navigate(-1);
     });
   }
   back = () => {
-    const { location, history } = this.props;
+    const { location, navigate } = this.props.router;
     const from = location.state?.from || null;
     if (from) {
-      history.replace(from);
+      navigate(from, { replace: true });
     } else {
-      history.goBack();
+      navigate(-1);
     }
   }
   render() {
@@ -88,13 +85,19 @@ class Untransdetail extends React.Component {
           <Row gutter={[30, 0]} className="mb1">
             <Col span={24} className="bg-white pv4">
               <a className="fix-btn" onClick={this.showDrawer}><SwapOutlined /></a>
-              <Tabs className="tran-title" defaultActiveKey="1" tabBarExtraContent={<ArrowLeftOutlined className="h2" onClick={this.back} />}>
-                <TabPane tab={t("blockchain.transaction.content")} key="1">
-                  <Hashdetail hashdetail={hashdetail} />
-                  <Translist transfers={transfers} />
-                  <Attrlist attributes={attributes} />
-                  <Witlist witnesses={witnesses} />
-                </TabPane>
+              <Tabs className="tran-title" defaultActiveKey="1" tabBarExtraContent={<ArrowLeftOutlined className="h2" onClick={this.back} />}
+                items={[
+                  {
+                    label: t("blockchain.transaction.content"), key: 1, children: (
+                      <div>
+                        <Hashdetail hashdetail={hashdetail} />
+                        <Translist transfers={transfers} />
+                        <Attrlist attributes={attributes} />
+                        <Witlist witnesses={witnesses} />
+                      </div>)
+                  }
+                ]}>
+
               </Tabs>
             </Col>
           </Row>

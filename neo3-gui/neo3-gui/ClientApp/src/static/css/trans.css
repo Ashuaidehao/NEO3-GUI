@@ -126,7 +126,7 @@
 .ant-list-item:hover .trans-detail .hash,
 .ant-list-item:hover .trans-detail a {
   font-weight: 700;
-  letter-spacing: 0.44px;
+  /* letter-spacing: 0.44px; */
 }
 .trans-detail {
   display: inline-block;

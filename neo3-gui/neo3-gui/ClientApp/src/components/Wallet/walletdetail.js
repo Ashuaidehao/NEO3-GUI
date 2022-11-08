@@ -1,7 +1,6 @@
 /* eslint-disable */
 //just test replace wallet//
 import React from 'react';
-import { withRouter } from "react-router-dom";
 import _ from 'lodash';
 import { Layout, Row, Col, Modal, List, Button, Typography, message, PageHeader } from 'antd';
 import Sync from '../sync';
@@ -14,6 +13,7 @@ import {
 import { withTranslation } from "react-i18next";
 import { postAsync } from '../../core/request';
 import { withAuthenticated } from '../../core/authentication';
+import withRouter from '../../core/withRouter';
 
 
 const { confirm } = Modal;
@@ -112,7 +112,8 @@ class Walletdetail extends React.Component {
   }
   render() {
     const { assetlist, address } = this.state;
-    const { t, location } = this.props;
+    const { t } = this.props;
+    const { location } = this.props.router;
     const accountType = location.state?.account.accountType ?? 2;
     return (
       <Layout className="gui-container wa-detail">

@@ -15,7 +15,6 @@ import contractimg from "../static/images/3.svg";
 import anicontractimg from "../static/images/3-ani.svg";
 import adavancedimg from "../static/images/4.svg";
 import aniadavancedimg from "../static/images/4-ani.svg";
-import bg from "../static/images/bg.svg";
 import { withTranslation } from "react-i18next";
 
 const { Text } = Typography;

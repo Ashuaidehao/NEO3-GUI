@@ -40,6 +40,7 @@ class NeoNode {
    * force restart node after 1 second (using config file)
    */
   switchNode(network) {
+    console.log("switche to:", network);
     if (network) {
       Config.changeNetwork(network);
     }

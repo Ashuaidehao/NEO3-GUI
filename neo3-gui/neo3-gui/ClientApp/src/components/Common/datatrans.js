@@ -239,7 +239,7 @@ class Datatrans extends React.Component {
         placement="right"
         closable={false}
         onClose={this.props.onClose}
-        visible={this.props.visible}
+        open={this.props.visible}
         getContainer={false}
         style={{ position: "absolute" }}
       >

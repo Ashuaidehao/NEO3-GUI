@@ -1,12 +1,11 @@
 /* eslint-disable */
 //just test replace wallet//
 import React from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Layout, Row, Col, PageHeader, List, Button, message } from 'antd';
 import { withTranslation } from "react-i18next";
 import { post } from "../../core/request";
-
-const { Content } = Layout;
+import withRouter from '../../core/withRouter';
 
 @withTranslation()
 @withRouter
@@ -142,7 +141,8 @@ class Untransaction extends React.Component {
     });
   }
   render() {
-    const { t, location } = this.props;
+    const { t } = this.props;
+    const { location } = this.props.router;
     const { untranslist, loading, iswa, page, allpage, local } = this.state;
     const loadUnMore = !loading && page <= allpage ? (
       <div className="text-c mb3">
@@ -168,7 +168,7 @@ class Untransaction extends React.Component {
               /> */}
               <div className="trans-detail">
                 <p>
-                  <Link className="w500 ellipsis hash"
+                  <Link className="w530 ellipsis hash"
                     to={{
                       pathname: local + item.txId,
                       state: { from: path }

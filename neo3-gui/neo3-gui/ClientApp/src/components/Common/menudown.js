@@ -1,7 +1,6 @@
 /* eslint-disable */
 import React from "react";
 import { observer, inject } from "mobx-react";
-import { withRouter } from "react-router-dom";
 import "antd/dist/antd.min.css";
 import { message, Modal, Radio } from "antd";
 import { Addressdetail, Changepass, Setting } from "./menuaction";
@@ -17,6 +16,7 @@ import Config from "../../config";
 import neonode from "../../neonode";
 import { post, postAsync } from "../../core/request";
 import { walletStore } from "../../store/stores";
+import withRouter from "../../core/withRouter";
 
 @withRouter
 @withTranslation()
@@ -56,7 +56,8 @@ class menuDown extends React.Component {
     let response = await postAsync("CloseWallet");
     message.success(t("wallet.close wallet"), 2);
     this.props.walletStore.logout();
-    this.props.history.push("/");
+    const { navigate } = this.props.router;
+    navigate("/");
   };
   showModal = () => {
     this.setState({
@@ -73,7 +74,8 @@ class menuDown extends React.Component {
       this.props.walletStore.logout();
       this.props.blockSyncStore.setHeight({ syncHeight: -1, headerHeight: -1 });
       this.props.walletStore.logout();
-      this.props.history.push("/");
+      const { navigate } = this.props.router;
+      navigate("/");
     }
   };
   getInset = (ele) => {
@@ -162,7 +164,7 @@ class menuDown extends React.Component {
         <Modal
           className="set-modal"
           title={<Trans>{this.state.title}</Trans>}
-          visible={this.state.visible}
+          open={this.state.visible}
           onCancel={this.hideModal}
           footer={null}
         >
