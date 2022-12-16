@@ -11,7 +11,6 @@ using Neo.Persistence;
 using Neo.SmartContract;
 using Neo.SmartContract.Native;
 using Neo.VM;
-using Array = Neo.VM.Types.Array;
 
 namespace Neo.Common.Analyzers
 {
@@ -156,20 +155,19 @@ namespace Neo.Common.Analyzers
                 Result.BalanceChangeAccounts.Add(new AccountAsset(transfer.To, transfer.Asset));
             }
 
-            if (appExec.Trigger == TriggerType.Application)
+
+            var transferStorageItem = new TransferStorageItem()
             {
-                var transferStorageItem = new TransferStorageItem()
-                {
-                    From = transfer.From,
-                    To = transfer.To,
-                    Asset = transfer.Asset,
-                    Amount = transfer.Amount,
-                    TxId = appExec?.Transaction?.Hash,
-                    Trigger = appExec.Trigger,
-                    TokenId = transfer.TokenId?.ToHexString(),
-                };
-                Result.Transfers.Add(transferStorageItem);
-            }
+                From = transfer.From,
+                To = transfer.To,
+                Asset = transfer.Asset,
+                Amount = transfer.Amount,
+                TxId = appExec?.Transaction?.Hash,
+                Trigger = appExec.Trigger,
+                TokenId = transfer.TokenId?.ToHexString(),
+            };
+            Result.Transfers.Add(transferStorageItem);
+
         }
 
 

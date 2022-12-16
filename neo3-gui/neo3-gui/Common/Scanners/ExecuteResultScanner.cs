@@ -86,7 +86,6 @@ namespace Neo.Common.Scanners
                 return true;
             }
 
-
             var block = blockHeight.GetBlock();
             var blockTime = block.Timestamp.FromTimestampMS();
             if (blockHeight == 0)
@@ -94,51 +93,82 @@ namespace Neo.Common.Scanners
                 SyncNativeContracts(blockTime);
             }
 
-            if (block.Transactions.Length == 0)
+            bool hasTxs = block.Transactions.Length > 0;
+            if (hasTxs)
             {
-                _db.AddSyncIndex(blockHeight);
-                return true;
-            }
-
-            SyncContracts(blockHeight, blockTime);
-
-            foreach (var transaction in block.Transactions)
-            {
-                _db.AddTransaction(new TransactionInfo()
+                SyncContracts(blockHeight, blockTime);
+                foreach (var transaction in block.Transactions)
                 {
-                    TxId = transaction.Hash,
-                    BlockHeight = blockHeight,
-                    Sender = transaction.Sender,
-                    Time = blockTime,
-                });
-            }
-
-            var transfers = new List<TransferInfo>();
-            var transferItems = _levelDb.GetTransfers(blockHeight);
-            if (transferItems.NotEmpty())
-            {
-                foreach (var item in transferItems)
-                {
-                    transfers.Add(new TransferInfo()
+                    _db.AddTransaction(new TransactionInfo()
                     {
+                        TxId = transaction.Hash,
                         BlockHeight = blockHeight,
-                        TimeStamp = block.Timestamp,
-                        TxId = item.TxId,
-                        From = item.From,
-                        To = item.To,
-                        Amount = item.Amount,
-                        Asset = item.Asset,
-                        Trigger = item.Trigger,
-                        TokenId = item.TokenId
+                        Sender = transaction.Sender,
+                        Time = blockTime,
                     });
                 }
+                var transfers = new List<TransferInfo>();
+                var transferItems = _levelDb.GetTransfers(blockHeight);
+                if (transferItems.NotEmpty())
+                {
+                    foreach (var item in transferItems.Where(t => t.TxId != null))
+                    {
+                        transfers.Add(new TransferInfo()
+                        {
+                            BlockHeight = blockHeight,
+                            TimeStamp = block.Timestamp,
+                            TxId = item.TxId,
+                            From = item.From,
+                            To = item.To,
+                            Amount = item.Amount,
+                            Asset = item.Asset,
+                            Trigger = item.Trigger,
+                            TokenId = item.TokenId
+                        });
+                    }
+                }
+                foreach (var transferInfo in transfers)
+                {
+                    _db.AddTransfer(transferInfo);
+                }
             }
+            SyncBalanceChanges(blockHeight);
 
-            foreach (var transferInfo in transfers)
+            _db.AddSyncIndex(blockHeight);
+
+            CommitAndReset(hasTxs);
+            if (hasTxs)
             {
-                _db.AddTransfer(transferInfo);
+                Console.WriteLine($"Synced:{_scanHeight}[{block.Transactions.Length}]");
             }
+            return true;
+        }
 
+
+        private void CommitAndReset(bool immediate)
+        {
+            var deadline = _db.LiveTime.TotalSeconds > 15;
+            if (immediate || deadline)
+            {
+                _db.Commit();
+            }
+            if (deadline)
+            {
+                //release memory
+                _db.Dispose();
+                _db = new TrackDB();
+            }
+        }
+
+
+        /// <summary>
+        /// Should run after <see cref="SyncContracts"/> method
+        /// update record will save after call <see cref="_db.Commit()"/> method;
+        /// new record will save immediately
+        /// </summary>
+        /// <param name="blockHeight"></param>
+        private void SyncBalanceChanges(uint blockHeight)
+        {
             var balanceChanges = _levelDb.GetBalancingAccounts(blockHeight);
             if (balanceChanges.NotEmpty())
             {
@@ -148,25 +178,13 @@ namespace Neo.Common.Scanners
                     UpdateBalance(balanceChange.Account, balanceChange.Asset, snapshot);
                 }
             }
-
-            _db.AddSyncIndex(blockHeight);
-            _db.Commit();
-
-            if (block.Transactions.Length > 0)
-            {
-                //Console.WriteLine($"Synced:{_scanHeight}[{block.Transactions.Length}] cost:[{_sw.ElapsedMilliseconds}]");
-                Console.WriteLine($"Synced:{_scanHeight}[{block.Transactions.Length}]");
-            }
-            if (_db.LiveTime.TotalSeconds > 15)
-            {
-                //release memory
-                _db.Dispose();
-                _db = new TrackDB();
-            }
-            return true;
         }
 
 
+        /// <summary>
+        /// sync native contracts state into sqldb immediately
+        /// </summary>
+        /// <param name="blockTime"></param>
         private void SyncNativeContracts(DateTime blockTime)
         {
             foreach (var nativeContract in NativeContract.Contracts)
@@ -194,7 +212,7 @@ namespace Neo.Common.Scanners
         }
 
         /// <summary>
-        /// sync contract create\update\delete state
+        /// sync contract create\update\delete state into sqldb immediately
         /// </summary>
         /// <param name="blockHeight"></param>
         /// <param name="blockTime"></param>
@@ -294,7 +312,13 @@ namespace Neo.Common.Scanners
         }
 
 
-
+        /// <summary>
+        /// update record will save after call <see cref="_db.Commit()"/> method;
+        /// new record will save immediately
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="asset"></param>
+        /// <param name="snapshot"></param>
         private void UpdateBalance(UInt160 account, UInt160 asset, DataCache snapshot)
         {
             try

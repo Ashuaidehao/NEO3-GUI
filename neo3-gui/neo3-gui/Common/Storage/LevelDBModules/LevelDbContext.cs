@@ -22,7 +22,7 @@ namespace Neo.Common.Storage.LevelDBModules
         private string _dbPath;
 
         private readonly byte[] ExecuteLogPrefix = { 0xff };
-        private readonly byte[] SyncIndexPrefix = { 0xfe };
+        //private readonly byte[] SyncIndexPrefix = { 0xfe };
         private readonly byte[] MaxSyncIndexPrefix = { 0xfd };
         private readonly byte[] AssetPrefix = { 0xfc };
         private readonly byte[] BalancePrefix = { 0xfb };
@@ -237,19 +237,7 @@ namespace Neo.Common.Storage.LevelDBModules
         //private byte[] SyncIndexKey(byte[] db, uint height) => SyncIndexPrefix.Append(db, BitConverter.GetBytes(height));
         private byte[] MaxSyncIndexKey(byte[] db) => MaxSyncIndexPrefix.Append(db);
 
-        /// <summary>
-        /// save synced height after call <see cref="Commit"/> method
-        /// </summary>
-        /// <param name="dbPrefix"></param>
-        /// <param name="height"></param>
-        /// <returns></returns>
-        public bool AddSyncIndex(byte[] dbPrefix, uint height)
-        {
-            //writeBatch.Put(SyncIndexKey(dbPrefix, height), new Byte[] { 1 });
-            //_db.Put(WriteOptions.Default, SyncIndexKey(dbPrefix, height), new Byte[] { 1 });
-            SetMaxSyncIndex(dbPrefix, height);
-            return true;
-        }
+
 
         /// <summary>
         /// is this height synced? true:yes
@@ -261,8 +249,6 @@ namespace Neo.Common.Storage.LevelDBModules
         {
             var max = GetMaxSyncIndex(dbPrefix);
             return max >= height;
-            //var value = _db.Get(ReadOptions.Default, SyncIndexKey(dbPrefix, height));
-            //return value != null;
         }
 
         /// <summary>
@@ -275,9 +261,19 @@ namespace Neo.Common.Storage.LevelDBModules
             var max = GetMaxSyncIndex(dbPrefix);
             if (max == null || max < height)
             {
-                writeBatch.Put(MaxSyncIndexKey(dbPrefix), BitConverter.GetBytes(height));
+                SetMaxSyncIndexForce(dbPrefix, height);
                 //_db.Put(WriteOptions.Default, MaxSyncIndexKey(dbPrefix), BitConverter.GetBytes(height));
             }
+        }
+
+        /// <summary>
+        /// save synced max height after call <see cref="Commit"/> method
+        /// </summary>
+        /// <param name="dbPrefix"></param>
+        /// <param name="height"></param>
+        public void SetMaxSyncIndexForce(byte[] dbPrefix, uint height)
+        {
+            writeBatch.Put(MaxSyncIndexKey(dbPrefix), BitConverter.GetBytes(height));
         }
 
         public uint? GetMaxSyncIndex(byte[] dbPrefix)
@@ -290,15 +286,7 @@ namespace Neo.Common.Storage.LevelDBModules
             return BitConverter.ToUInt32(max);
         }
 
-
-        public List<uint> ListSyncIndex(byte[] dbPrefix)
-        {
-            var result = _db.Find(ReadOptions.Default, SyncIndexPrefix.Concat(dbPrefix).ToArray(), (key, value) => key.Skip(17)).ToList();
-
-            return result.Select(r => BitConverter.ToUInt32(r.ToArray())).ToList();
-        }
-
-
+        
         public void Commit()
         {
             _db.Write(WriteOptions.Default, writeBatch);
