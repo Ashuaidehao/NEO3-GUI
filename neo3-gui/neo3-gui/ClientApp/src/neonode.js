@@ -28,7 +28,13 @@ class NeoNode {
   }
 
   start(env, errorCallback) {
-    this.node = this.runCommand("dotnet neo3-gui.dll", env, errorCallback);
+    if (isWin) {
+      this.node = this.runCommand("./neo3-gui.exe", env, errorCallback);
+
+    } else {
+      this.node = this.runCommand("./neo3-gui", env, errorCallback);
+    }
+    // this.node = this.runCommand("dotnet neo3-gui.dll", env, errorCallback);
   }
 
   startNode(network, port, errorCallback) {
@@ -40,7 +46,7 @@ class NeoNode {
    * force restart node after 1 second (using config file)
    */
   switchNode(network) {
-    console.log("switche to:", network);
+    console.log("switch to:", network);
     if (network) {
       Config.changeNetwork(network);
     }
@@ -82,7 +88,7 @@ class NeoNode {
     }
 
     const ps = spawn(command, [], {
-      shell: true,
+      shell: false,
       encoding: "utf8",
       cwd: path.join(startPath, "build-neo-node"),
       env: childEnv,

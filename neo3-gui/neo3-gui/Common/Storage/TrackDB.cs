@@ -79,11 +79,13 @@ namespace Neo.Common.Storage
             {
                 return;
             }
-            if ((levelMax == null && sqlMax == 0) || levelMax < sqlMax)
+            //if ((levelMax == null && sqlMax == 0) || levelMax < sqlMax)
+            if (sqlMax.HasValue)
             {
                 // try repair sync height
-                // when last sync: sqldb save successfully, but leveldb fails
-                _leveldb.AddSyncIndex(_sqldb.Identity, sqlMax.Value);
+                // when last sync: sqldb save successfully, set leveldb  with same sqldb index
+                Console.WriteLine($"Warning height:level[{levelMax}]-sql[{sqlMax}]");
+                _leveldb.SetMaxSyncIndexForce(_sqldb.Identity, sqlMax.Value);
                 _leveldb.Commit();
                 return;
             }
@@ -100,7 +102,7 @@ namespace Neo.Common.Storage
 
         public void AddSyncIndex(uint index)
         {
-            _leveldb.AddSyncIndex(_sqldb.Identity, index);
+            _leveldb.SetMaxSyncIndex(_sqldb.Identity, index);
             _sqldb.SyncIndexes.Add(new SyncIndex() { BlockHeight = index });
         }
 
@@ -115,10 +117,6 @@ namespace Neo.Common.Storage
             return _leveldb.GetMaxSyncIndex(_sqldb.Identity);
         }
 
-        public void SetMaxSyncIndex(uint index)
-        {
-            _leveldb.SetMaxSyncIndex(_sqldb.Identity, index);
-        }
 
         #endregion
 

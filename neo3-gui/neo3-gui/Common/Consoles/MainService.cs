@@ -1,20 +1,13 @@
 using Akka.Actor;
-using Microsoft.Extensions.Configuration;
 using Neo.IO;
 using Neo.Ledger;
 using Neo.Network.P2P;
-using Neo.Network.P2P.Capabilities;
 using Neo.Network.P2P.Payloads;
-using Neo.Persistence;
 using Neo.Plugins;
-using Neo.Services;
 using Neo.SmartContract;
-using Neo.SmartContract.Manifest;
 using Neo.SmartContract.Native;
-using Neo.VM;
 using Neo.Wallets;
 using Neo.Wallets.NEP6;
-using Neo.Wallets.SQLite;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,7 +16,6 @@ using System.Linq;
 using System.Net;
 using System.Numerics;
 using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -708,15 +700,9 @@ namespace Neo.Common.Consoles
                 throw new FileNotFoundException();
             }
 
-            if (Path.GetExtension(path) == ".db3")
-            {
-                CurrentWallet = UserWallet.Open(path, password, CliSettings.Default.Protocol);
-            }
-            else
-            {
-                NEP6Wallet nep6wallet = new NEP6Wallet(path, password, CliSettings.Default.Protocol);
-                CurrentWallet = nep6wallet;
-            }
+            NEP6Wallet nep6wallet = new NEP6Wallet(path, password, CliSettings.Default.Protocol);
+            CurrentWallet = nep6wallet;
+
         }
 
 
