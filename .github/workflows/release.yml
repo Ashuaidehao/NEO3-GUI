@@ -26,12 +26,12 @@ jobs:
         dotnet-version: ${{env.DOTNET_VERSION}}
 
     - name: Install dependencies
-      run: dotnet restore neo3-gui/neo3-gui.sln
+      run: dotnet restore neo3-gui/neo3-gui/neo3-gui.csproj
 
-    - name: Use Node.js ${{ env.NODE_VERSION }}
+    - name: Use Node.js ${{env.NODE_VERSION}}
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ env.NODE_VERSION }}
+        node-version: ${{env.NODE_VERSION}}
       
     - run: cd neo3-gui/neo3-gui/ClientApp/
     - run: npm install
