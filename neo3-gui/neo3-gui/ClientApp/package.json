@@ -217,6 +217,6 @@
     "@babel/plugin-proposal-decorators": "^7.19.3",
     "cross-env": "^7.0.3",
     "electron": "^21.1.1",
-    "electron-builder": "^23.6.0"
+    "electron-builder": "^24.13.3"
   }
 }
