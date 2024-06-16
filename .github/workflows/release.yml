@@ -32,9 +32,12 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{env.NODE_VERSION}}
+    
+    - name: publish
+      working-directory: neo3-gui/neo3-gui
+      run: sh publish.sh
+
       
-    - run: cd neo3-gui/neo3-gui/ClientApp/
-    - run: npm install
 
     # - name: Get Cache Files (osx-x64)
     #   uses: actions/cache@v3
