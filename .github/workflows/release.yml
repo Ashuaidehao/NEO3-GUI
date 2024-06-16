@@ -35,7 +35,15 @@ jobs:
     
     - name: publish
       working-directory: neo3-gui/neo3-gui
+      env:
+        CI: false
       run: sh publish.sh
+
+    - name: Upload release files
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-win
+        path: release-win
 
       
 
