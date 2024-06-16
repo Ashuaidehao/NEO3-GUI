@@ -57,7 +57,7 @@ jobs:
         name: release-win
         path: neo3-gui/neo3-gui/ClientApp/build-electron/*.exe
     
-        - name: Upload Mac Release Files
+    - name: Upload Mac Release Files
     - if: matrix.os == 'macos-latest'
       uses: actions/upload-artifact@v4
       with:
