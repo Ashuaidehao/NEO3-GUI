@@ -823,7 +823,7 @@ namespace Neo.Services.ApiServices
             try
             {
                 KeyPair key = account.GetKey();
-                byte[] signature = Crypto.Sign(Encoding.UTF8.GetBytes(text), key.PrivateKey, key.PublicKey.EncodePoint(false)[1..]);
+                byte[] signature = Crypto.Sign(Encoding.UTF8.GetBytes(text), key.PrivateKey, ECCurve.Secp256r1);
                 return signature;
             }
             catch (Exception e)

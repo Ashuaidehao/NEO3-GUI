@@ -131,7 +131,6 @@ namespace Neo.Common.Consoles
             NeoSystem.StartNode(new ChannelsConfig
             {
                 Tcp = new IPEndPoint(IPAddress.Any, CliSettings.Default.P2P.Port),
-                WebSocket = new IPEndPoint(IPAddress.Any, CliSettings.Default.P2P.WsPort),
                 MinDesiredConnections = CliSettings.Default.P2P.MinDesiredConnections,
                 MaxConnections = CliSettings.Default.P2P.MaxConnections,
                 MaxConnectionsPerAddress = CliSettings.Default.P2P.MaxConnectionsPerAddress

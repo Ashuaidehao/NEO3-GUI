@@ -178,12 +178,13 @@ namespace Neo.Common.Analyzers
             if (hash == null || hash.Length != 20) { return; }
 
             var contractHash = new UInt160(hash);
-            if (!Result.ContractChangeEvents.ContainsKey(appExec.Transaction.Hash))
+            var txHash = appExec.Transaction?.Hash ?? _header.Hash;
+            if (!Result.ContractChangeEvents.ContainsKey(txHash))
             {
-                Result.ContractChangeEvents[appExec.Transaction.Hash] = new List<ContractEventInfo>();
+                Result.ContractChangeEvents[txHash] = new List<ContractEventInfo>();
             }
             ContractState contract = NativeContract.ContractManagement.GetContract(_snapshot, contractHash);
-            Result.ContractChangeEvents[appExec.Transaction.Hash].Add(new ContractEventInfo() { Contract = contractHash, Name = contract?.Manifest.Name, Event = ContractEventType.Create });
+            Result.ContractChangeEvents[txHash].Add(new ContractEventInfo() { Contract = contractHash, Name = contract?.Manifest.Name, Event = ContractEventType.Create });
             var asset = AssetCache.GetAssetInfoFromChain(contractHash, _snapshot);
             if (asset != null)
             {
@@ -199,12 +200,13 @@ namespace Neo.Common.Analyzers
             var hash = notification.State[0].GetByteSafely();
             if (hash == null || hash.Length != 20) { return; }
             var contractHash = new UInt160(hash);
-            if (!Result.ContractChangeEvents.ContainsKey(appExec.Transaction.Hash))
+            var txHash = appExec.Transaction?.Hash ?? _header.Hash;
+            if (!Result.ContractChangeEvents.ContainsKey(txHash))
             {
-                Result.ContractChangeEvents[appExec.Transaction.Hash] = new List<ContractEventInfo>();
+                Result.ContractChangeEvents[txHash] = new List<ContractEventInfo>();
             }
             ContractState contract = NativeContract.ContractManagement.GetContract(_snapshot, contractHash);
-            Result.ContractChangeEvents[appExec.Transaction.Hash].Add(new ContractEventInfo() { Contract = contractHash, Name = contract?.Manifest.Name, Event = ContractEventType.Migrate });
+            Result.ContractChangeEvents[txHash].Add(new ContractEventInfo() { Contract = contractHash, Name = contract?.Manifest.Name, Event = ContractEventType.Migrate });
             var asset = AssetCache.GetAssetInfoFromChain(contractHash, _snapshot);
             if (asset != null)
             {
@@ -219,11 +221,12 @@ namespace Neo.Common.Analyzers
             if (contractHash == null || contractHash.Length != 20) { return; }
 
             var contract = new UInt160(contractHash);
-            if (!Result.ContractChangeEvents.ContainsKey(appExec.Transaction.Hash))
+            var txHash = appExec.Transaction?.Hash ?? _header.Hash;
+            if (!Result.ContractChangeEvents.ContainsKey(txHash))
             {
-                Result.ContractChangeEvents[appExec.Transaction.Hash] = new List<ContractEventInfo>();
+                Result.ContractChangeEvents[txHash] = new List<ContractEventInfo>();
             }
-            Result.ContractChangeEvents[appExec.Transaction.Hash].Add(new ContractEventInfo() { Contract = contract, Event = ContractEventType.Destroy });
+            Result.ContractChangeEvents[txHash].Add(new ContractEventInfo() { Contract = contract, Event = ContractEventType.Destroy });
         }
     }
 }
