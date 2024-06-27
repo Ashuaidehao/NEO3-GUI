@@ -745,7 +745,8 @@ namespace Neo
             {
                 return new BigDecimal(BigInteger.Zero, 0);
             }
-            var balances = engine.ResultStack.Pop().GetInteger();
+            var result = engine.ResultStack.Pop();
+            var balances = result == StackItem.Null ? 0 : result.GetInteger();
             return new BigDecimal(balances, assetInfo.Decimals);
         }
 

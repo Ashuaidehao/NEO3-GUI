@@ -117,7 +117,7 @@ class Wallet extends React.Component {
             {!this.state.showElem ? <div>{this.state.children}</div> : null}
           </div>
         </div>
-        <Footer className="mt1">Copyright © Neo Team 2014-2020</Footer>
+            <Footer className="mt1">Copyright © 2015-2024 The Neo Project.</Footer>
       </Layout>
     );
   };

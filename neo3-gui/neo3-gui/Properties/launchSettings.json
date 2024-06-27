@@ -19,7 +19,7 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "NEO_NETWORK": "private",
+        "NEO_NETWORK": "testnet",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },

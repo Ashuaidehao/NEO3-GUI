@@ -31,7 +31,16 @@ namespace Neo.Common.Json
 
         public override void Write(Utf8JsonWriter writer, StackItem value, JsonSerializerOptions options)
         {
-            WriteToJson(value, writer);
+            try
+            {
+                WriteToJson(value, writer);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{ex}]");
+                writer.Reset();
+            }
         }
 
         public override bool CanConvert(Type typeToConvert)

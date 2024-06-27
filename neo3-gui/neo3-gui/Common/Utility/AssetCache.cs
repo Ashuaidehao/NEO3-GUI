@@ -157,13 +157,24 @@ namespace Neo.Common.Utility
             var snapshot = Helpers.GetDefaultSnapshot();
             using var sb = new ScriptBuilder();
             var assetInfos = new List<AssetInfo>();
+            var values = new List<BigInteger?>();
             foreach (var asset in assets)
             {
                 assetInfos.Add(GetAssetInfo(asset));
                 sb.EmitDynamicCall(asset, "totalSupply");
+                using var engine = sb.ToArray().RunTestMode(snapshot);
+                if (engine.State == VMState.FAULT)
+                {
+                    Console.WriteLine($"{asset} has invalid totalsupply");
+                    values.Add(null);
+                }
+                else
+                {
+                    var totalSupply = engine.ResultStack.Pop();
+                    values.Add(totalSupply.ToBigInteger());
+                }
+
             }
-            using var engine = sb.ToArray().RunTestMode(snapshot);
-            var values = engine.ResultStack.Select(s => s.ToBigInteger()).ToList();
             var results = new List<BigDecimal?>();
             for (var i = 0; i < values.Count; i++)
             {

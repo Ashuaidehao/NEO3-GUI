@@ -110,7 +110,7 @@ namespace Neo.Common.Storage.LevelDBModules
                 {
                     writeBatch.Put(ExecuteLogKey(log.TxId), log.SerializeJsonBytes());
                 }
-                catch (InvalidCastException e)
+                catch (Exception e)
                 {
                     log.ResultStack = new StackItem[] { e.ToString() };
                     writeBatch.Put(ExecuteLogKey(log.TxId), log.SerializeJsonBytes());
