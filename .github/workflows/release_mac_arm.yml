@@ -1,4 +1,4 @@
-name: Release Mac
+name: Release Mac Arm
 
 on:
   workflow_dispatch:
@@ -40,7 +40,7 @@ jobs:
       working-directory: neo3-gui/neo3-gui
       env:
         CI: false
-      run: dotnet publish -r osx-x64 --sc -c Release -o ClientApp/build-neo-node
+      run: dotnet publish -r osx-arm64 --sc -c Release -o ClientApp/build-neo-node
 
     - name: build mac electron
       working-directory: neo3-gui/neo3-gui/ClientApp
@@ -48,7 +48,7 @@ jobs:
         CI: false
       run: |
         npm install
-        npx electron-builder --mac --x64 --arm64 --publish always 
+        npx electron-builder --mac --arm64 --publish always 
     
     - name: Upload Mac Release Files
       if: matrix.os == 'macos-latest'
